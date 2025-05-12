@@ -22,8 +22,9 @@ URL_componentes = urlparse(URL_base_oposiciones)
 URL_base = "https://www.boe.es/boe/dias/"
 URL_base_enlaces = "https://www.boe.es"
 
-# Cargamos un Excel con las fechas de los días que nos interesan
+texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
 
+# Cargamos un Excel con las fechas de los días que nos interesan
 # Verificar si el archivo Excel existe. Si no, crearlo
 if not os.path.exists("BOE-oposiciones.xlsx"):
     # Crear un nuevo libro de Excel
@@ -57,14 +58,23 @@ if df_busquedas.empty:
 
 # Si no paso argumentos, busca todas las convocatorias publicadas en un día concreto
 if len(sys.argv) < 2:
-    fecha_inicio = input(
-        f"Introduzca la fecha de publicación del B.O.E (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
+    texto_busqueda = input(
+        f"Introduzca el tipo de plaza a buscar [Si deja el campo en blanco se "
+        "buscarán todas las plazas publicadas en el día seleccionado]: "
     )
-    if not fecha_inicio:
-        fecha_inicio = fechas.fecha_hoy()
-    fecha_fin = fecha_inicio
-# Si paso argumentos, busca las convocatorias que coincidan en el rango de fechas
-else:
+    if not texto_busqueda:
+        fecha_inicio = input(
+            f"Introduzca la fecha de publicación del B.O.E (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
+        )
+        if not fecha_inicio:
+            fecha_inicio = fechas.fecha_hoy()
+        fecha_fin = fecha_inicio
+# Si paso argumentos o introduzco un filtro una vez en ejecución,
+# busca las convocatorias que coincidan en el rango de fechas
+if len(sys.argv) >= 2 or texto_busqueda:
+    # Si paso argumentos en la línea de comandos, los unimos en una cadena
+    if len(sys.argv) >= 2:
+        texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
     fecha_inicio = input(
         f"Introduzca la fecha de inicio (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
     )
@@ -124,27 +134,28 @@ for i, url in enumerate(
             f"\n{Fore.GREEN}Entre el {fecha_inicio} y {fecha_fin} no se ha publicado ningún proceso selectivo"
         )
 
-# Diccionario para almacenar los puestos encontrados
-diccionario_puestos = {
-    "Fecha": [],
-    "Puesto": [],
-    "Administración": [],
-    "Escala": [],
-    "Publicación": [],
-    "Enlace": [],
-}
+# Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
+lista_diccionarios_puestos = []
 
-""" Creamos el diccionario para guardar la busquedas de cada ejecución
-    El código está formado por:
-            # el enlace de cada boe a las opososiciones si la búsqueda es sin argumentos, y
-            # el enlace+textobusqueda si se pasa un argumento.
-         De esta manera el código es único para cada búsqueda.
-         "Código": [enlace+texto_busqueda]"""
+# Diccionario de listas donde se van almacenando los puestos encontrados hasta
+#   que se crea el DataFrame con el que se trabaja para guardar los resultados
+#   en el archivo Excel
+diccionario_puestos = {}
 
+# Diccionario de listas donde se guarda un código único para cada búsqueda
+#   para evitar volver a buscar en el BOE
+#   y así evitar duplicados en el archivo Excel
+#   El código está formado por:
+# el enlace de cada boe a las opososiciones si la búsqueda es sin argumentos, y
+# el enlace+textobusqueda si se pasa un argumento.
+#   De esta manera el código es único para cada búsqueda.
+#         "Código": [enlace+texto_busqueda]
 diccionario_busquedas = {"Código": []}
-texto_busqueda = ""
+codigo_busqueda = ""
 
-""" Empezar a buscar contenido en los enlaces encontrados"""
+""" 
+Empezar a buscar contenido en los enlaces encontrados
+"""
 
 # Mostrar progreso mientras se procesan los enlaces encontrados
 print(f"\n{Fore.BLUE}Procesando los enlaces encontrados...{Fore.RESET}")
@@ -153,12 +164,17 @@ for i, enlace in enumerate(
         enlaces_oposiciones, total=len(enlaces_oposiciones)
     )
 ):
-    # Generar el código único para cada búsqueda
+    # Genero el código único para cada búsqueda
     if len(sys.argv) < 2:  # Si no se pasa un argumento, el código es el enlace
         codigo = enlace
-    else:  # Si se pasa un argumento, lo añadimos al enlace añadiendo un "+"
-        texto_busqueda = "+".join(str(x) for x in sys.argv[1:])
-        codigo = enlace + "_" + texto_busqueda
+    if (
+        texto_busqueda
+    ):  # Si se pasa un argumento, lo añadimos al enlace añadiendo un "+"
+        if len(sys.argv) >= 2:
+            codigo_busqueda = "+".join(str(x) for x in sys.argv[1:])
+        else:
+            codigo_busqueda = texto_busqueda.replace(" ", "+")
+        codigo = enlace + "_" + codigo_busqueda
 
     # Comprobar si el enlace ya ha sido procesado
     if codigo not in df_busquedas["Código"].values:
@@ -167,120 +183,62 @@ for i, enlace in enumerate(
         soup = BeautifulSoup(page.content, "html.parser")
 
         # El texto que contiene la información de interés está dentro de un
-        #   div con el id "textoxslt"
+        #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
         contenidos = soup.find_all("div", id="textoxslt")
         titulo = soup.find(class_="documento-tit").text.strip()
-        fecha_boe = soup.find("div", class_="metadatos")
+        fecha_boe = soup.find("div", class_="metadatos").text.strip()
 
+        # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
         for contenido in contenidos:
-            if len(sys.argv) < 2:  # Si no se pasa un argumento
-                # Buscar el texto que sigue a "un puesto de" hasta la siguiente coma
-                match_puesto = re.search(
-                    r"(un puesto de|plazas de|una plaza de|puestos de|cuerpo de)(.*?)(,|\.)",
-                    contenido.text,
-                    re.IGNORECASE,
-                )
-                flag = True
-            else:  # Si pasamos argumentos en la linea de comandos para buscar un puesto
-                # los transformamos en cadena de texto
-                texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
-                match_puesto = coincidencias.buscar_coincidencias(
-                    texto_busqueda, contenido.text
-                )
-                flag = False
+            # La función devuelve una lista de diccionarios con las coincidencias y
+            # None si no se encuentra nada
+            diccionario = coincidencias.buscar_coincidencias_todas(
+                texto_busqueda, contenido.text, titulo, fecha_boe, enlace
+            )
+            # Si se encuentra una coincidencia, se añade al diccionario
+            if diccionario:
+                lista_diccionarios_puestos.extend(diccionario)
 
-            # Comenzamos a extraer la información que nos interesa
-            # el puesto
-            # la escala del puesto, y
-            # la fecha de publicación.
-            if (
-                match_puesto
-            ):  # Si se encuentra alguna plaza, sigue extrayendo información
-                # group(1) contiene el patrón encontrado (por ejemplo,
-                #   "un puesto de").
-                # group(2) contiene el texto capturado después del patrón.
-                if flag:
-                    texto_extraido = match_puesto.group(2).strip()
-                else:
-                    texto_extraido = (
-                        match_puesto.group(0).replace(",", "").strip()
-                    )  # Extraer el texto encontrado
-
-                # Buscamos en que Administración se convoca la plaza
-                match_administracion = re.search(
-                    r"(, del|, de la)(.*?)(,|\.)",
-                    titulo,
-                    re.IGNORECASE,
-                )
-                if match_administracion:
-                    texto_administracion = match_administracion.group(2).strip()
-                else:
-                    texto_administracion = "No disponible"
-
-                # Buscar el texto que sigue a "escala de" hasta el siguiente punto
-                # match_escala = re.search(
-                #    r"escala de (.*?\.)", contenido.text, re.IGNORECASE
-                # )
-
-                # Buscar coincidencias que contengan el puesto (texto extraido), seguido de cualquier carácter,
-                # y también "escala de" hasta el siguiente punto
-                patron_combinado = rf"{re.escape(texto_extraido)}.*?escala de (.*?\.)"
-                match_escala = re.search(
-                    patron_combinado, contenido.text, re.IGNORECASE
-                )
-
-                if match_escala:
-                    texto_escala = match_escala.group(
-                        1
-                    )  # Extraer el texto después del patrón
-                else:
-                    texto_escala = "No disponible"
-
-                # Buscamos el núm de BOE y fecha publicación
-                match_num_boe = re.search(r"(\d{1,2} de \w+ de \d{4})", fecha_boe.text)
-                if match_num_boe:
-                    fecha_publicacion = match_num_boe.group(1)
-                else:
-                    fecha_publicacion = "No disponible"
-
-                # Buscar el texto entre el primer « y la primera coma
-                match_publicacion = re.search(r"(«)([^,]*,[^,]*),", contenido.text)
-
-                if match_publicacion:
-                    texto_publicacion = match_publicacion.group(
-                        2
-                    )  # Extraer el texto entre corchete y coma
-                    if (
-                        texto_publicacion[:5] == "Bolet"
-                        or texto_publicacion[:5] == "Diari"
-                    ):
-                        None
-                else:
-                    texto_publicacion = "No disponible"
-                    print(f"{Fore.CYAN}Publicación:{Fore.RESET}\t «{texto_publicacion}")
-
-                # Vamos almacenando los puestos encontrados en el diccionario
-                diccionario_puestos["Fecha"].append(fecha_publicacion)
-                diccionario_puestos["Puesto"].append(texto_extraido)
-                diccionario_puestos["Administración"].append(texto_administracion)
-                diccionario_puestos["Escala"].append(texto_escala)
-                diccionario_puestos["Publicación"].append(texto_publicacion)
-                diccionario_puestos["Enlace"].append(enlace)
+# Convierte "lista_diccionarios_puestos" en diccionario de listas si hay coincidencias
+if len(lista_diccionarios_puestos) != 0:
+    diccionario_puestos = {
+        clave: [d[clave] for d in lista_diccionarios_puestos]
+        for clave in lista_diccionarios_puestos[0]
+    }
 
 
 """
-    Código para guardar los resultados en un archivo Excel
+    Código para crear el DataFrame e imprimirlo por pantalla antes de guadarlo en Excell
 """
 # Convertimos el "diccionario_puestos" en un DataFrame de pandas
 df_diccionario_puestos = pd.DataFrame(diccionario_puestos)
 # Combinar el DataFrame existente (df_opo_guardadas) con el nuevo (df_diccionario_puestos)
 df_combinado = pd.concat([df_opo_guardadas, df_diccionario_puestos], ignore_index=True)
+
+# Verificar las columnas del DataFrame antes de eliminar duplicados
+print(f"Columnas del DataFrame combinado: {df_combinado.columns.tolist()}")
+
+#! Este código es para hacer pruebas. Después borrarlo
+# Asegurarse de que las columnas necesarias existen
+columnas_necesarias = ["Puesto", "Fecha_boe", "Administración", "Escala"]
+for columna in columnas_necesarias:
+    if columna not in df_combinado.columns:
+        print(
+            f"⚠️ La columna '{columna}' no existe en el DataFrame. Se agregará con valores predeterminados."
+        )
+        df_combinado[columna] = "No disponible"
+#! Hasta aquí
+
 # Eliminar duplicados si es necesario, basándonos en columnas clave
 #   (por ejemplo, "Puesto" y "Fecha")
 df_combinado = df_combinado.drop_duplicates(
-    subset=["Puesto", "Fecha", "Administración", "Enlace"], keep="last"
+    subset=["Puesto", "Fecha_boe", "Administración", "Enlace"], keep="last"
 )
 
+
+"""
+    Código para guardar los resultados en un archivo Excel
+"""
 # Ahora convierto el "diccionario_busquedas" en otro DataFrame
 df_diccionario_busquedas = pd.DataFrame(diccionario_busquedas)
 # Combinar el DataFrame existente (df_busquedas) con el nuevo (df_diccionario_puestos)
@@ -291,25 +249,29 @@ df_busquedas_combinado = pd.concat(
 df_busquedas_combinado = df_busquedas_combinado.drop_duplicates(
     subset=["Código"], keep="last"
 )
-# Guardar los DataFrame en el archivo Excel creado al principio
-with pd.ExcelWriter(
-    "BOE-oposiciones.xlsx", mode="a", engine="openpyxl", if_sheet_exists="replace"
-) as writer:
-    df_busquedas_combinado.to_excel(writer, sheet_name="Búsquedas", index=False)
-    df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
-
-    # Imprimir el diccionario de convocatorias en la consola si hay resultados
-
+# Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
+try:
+    with pd.ExcelWriter(
+        "BOE-oposiciones.xlsx", mode="a", engine="openpyxl", if_sheet_exists="replace"
+    ) as writer:
+        df_busquedas_combinado.to_excel(writer, sheet_name="Búsquedas", index=False)
+        df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
+except PermissionError:
+    print(
+        f"\n{Fore.RED}El archivo 'BOE-oposiciones.xlsx' está abierto. "
+        f"Cierre el archivo y vuelva a intentarlo.{Fore.RESET}"
+    )
+    sys.exit(0)
 
 """
-    Ahora buscamos los resultados buscados por el usuario dentro del propio
+    Buscamos los resultados buscados por el usuario dentro del propio
      Dataframe, incluidas las fechas de inicio y fin 
 """
 
 # Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
 #   "Fecha_dt" para facilitar la comparación de fechas
 #   Si cambiamos directamente el formato de la columna fecha, al ejecutar, da un warning
-df_combinado["Fecha_dt"] = df_combinado["Fecha"].apply(fechas.convertir_fecha)
+df_combinado["Fecha_dt"] = df_combinado["Fecha_boe"].apply(fechas.convertir_fecha)
 
 # Filtrar el DataFrame por el rango de fechas
 # Las fechas de inicio y final son el primer y último elemento de "lista_fechas"
@@ -320,17 +282,6 @@ df_combinado_filtrado_por_fecha = df_combinado[
 
 # Eliminar la columna auxiliar "Fecha_dt" si no es necesaria
 df_combinado_filtrado = df_combinado_filtrado_por_fecha.drop(columns=["Fecha_dt"])
-
-# Formatear la columna "Fecha" al formato dd/mm/yy
-# df_combinado_filtrado_por_fecha["Fecha"] = df_combinado_filtrado_por_fecha[
-#    "Fecha"
-# ].dt.strftime("%d/%m/%Y")
-
-# Buscamos las coincidencias con la búsqueda introducida en la terminal
-if len(sys.argv) > 1:
-    texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
-else:
-    texto_busqueda = ""
 
 palabras_busqueda = texto_busqueda.split()
 patron_regex = (
