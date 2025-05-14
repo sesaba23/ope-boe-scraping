@@ -59,12 +59,12 @@ def imprimir_diccionario_puestos(diccionario_puestos, f_inicio, f_fin, busqueda=
 
     if not any(diccionario_puestos[key] for key in diccionario_puestos):
         print(
-            f"{Fore.RED}No se encontraron convocatorias para el periodo seleccionado{Fore.RESET}"
+            f"{Fore.RED}❌ No se encontraron convocatorias para el periodo seleccionado{Fore.RESET}"
         )
     else:
         print(
-            f"{Fore.LIGHTCYAN_EX}Los resultados se han guardado correctamente.\n"
-            "Puede consultar el histórico de búsquedas realizadas en el archivo: \n"
+            f"{Fore.LIGHTCYAN_EX}✅ Los resultados se han guardado correctamente.\n"
+            "📝 Puede consultar el histórico de búsquedas realizadas en el archivo: \n"
             f"{Fore.WHITE}{os.getcwd()}/BOE-oposiciones.xlsx'{Fore.LIGHTCYAN_EX}.\n"
             f"Hoja: {Fore.WHITE}'Oposiciones'."
         )

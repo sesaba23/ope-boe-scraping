@@ -143,7 +143,9 @@ def buscar_coincidencias_todas(
                     fecha_publicacion if fecha_publicacion else texto_no_disponible
                 ),
                 "Publicacion": (
-                    texto_publicacion if texto_publicacion else texto_no_disponible
+                    "«" + texto_publicacion
+                    if texto_publicacion
+                    else texto_no_disponible
                 ),
                 "Enlace": enlace if enlace else "Enlace " + texto_no_disponible,
             }

@@ -15,8 +15,8 @@ En un **terminal** ejecuta las siguientes acciones:
 1. Crear un entorno virtual (opcional pero recomendado): ```python -m venv env ```
    
 2. Para activar el entorno virtual:
-      - en Windows: ```.\env\Scripts\activate ```
-      - en Linux o Macos: ```source env/bin/activate ```
+      - en Windows: ```.\venv\Scripts\activate ```
+      - en Linux o Macos: ```source venv/bin/activate ```
 
 3. Para desactivar el entorno virtual: ```deactivate ```
 

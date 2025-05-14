@@ -2,13 +2,15 @@ import fechas
 import coincidencias
 import barraprogreso
 import impresiones
+import preparar_archivo_datos
+from entradas_datos import solicitar_fechas_y_validar
 
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import re, warnings  # Importar módulos de expresiones regulares
-import sys, os  # Importar sys para manejar argumentos de línea de comandos
+import sys  # Importar sys para manejar argumentos de línea de comandos
 from colorama import Fore, Style
 import pandas as pd
 from openpyxl import Workbook
@@ -16,7 +18,7 @@ from openpyxl import Workbook
 # Un ejemplo cualquiera de la dirección de la sección 'oposiciones y concursos'
 # de la página del BOE
 URL_base_oposiciones = "https://www.boe.es/boe/dias/2025/04/03/index.php?s=2B"
-# obtengo los componentes de la URL anterior
+# Obtengo los componentes de la URL anterior
 URL_componentes = urlparse(URL_base_oposiciones)
 # URL base que da acceso al calendario del BOE
 URL_base = "https://www.boe.es/boe/dias/"
@@ -24,27 +26,8 @@ URL_base_enlaces = "https://www.boe.es"
 
 texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
 
-# Cargamos un Excel con las fechas de los días que nos interesan
-# Verificar si el archivo Excel existe. Si no, crearlo
-if not os.path.exists("BOE-oposiciones.xlsx"):
-    # Crear un nuevo libro de Excel
-    wb = Workbook()
-    # Renombrar la hoja activa a "busquedas"
-    ws1 = wb.active
-    ws1.title = "Búsquedas"
-    # ws1["A1"] = "Código"
-    # Crear la segunda hoja
-    ws2 = wb.create_sheet(title="Oposiciones")
-    # Guardar el archivo
-    wb.save("BOE-oposiciones.xlsx")
-
-# Cargamos el archivo Excel
-excel_file = pd.ExcelFile("BOE-oposiciones.xlsx")
-
-# Leer todas las hojas como diccionario de DataFrames
-dataframes_dict = {
-    sheet_name: excel_file.parse(sheet_name) for sheet_name in excel_file.sheet_names
-}
+# Inicializo el archivo donde se va guardando la información para usar como BD
+dataframes_dict = preparar_archivo_datos.preparar_excel_y_dataframes()
 
 """df_busquedas almacena el histórico de búsquedas para evitar volver a buscar en el BOE
    df_opo_guardadas almacena el histórico de oposiciones buscadas para futuras consultas"""
@@ -55,54 +38,13 @@ if df_busquedas.empty:
 
 """ Código para solicitar al usuario la fecha de inicio y fin de la búsqueda
    y comprobar que son válidas """
+fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
 
-# Si no paso argumentos, busca todas las convocatorias publicadas en un día concreto
-if len(sys.argv) < 2:
-    texto_busqueda = input(
-        f"Introduzca el tipo de plaza a buscar [Si deja el campo en blanco se "
-        "buscarán todas las plazas publicadas en el día seleccionado]: "
-    )
-    if not texto_busqueda:
-        fecha_inicio = input(
-            f"Introduzca la fecha de publicación del B.O.E (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
-        )
-        if not fecha_inicio:
-            fecha_inicio = fechas.fecha_hoy()
-        fecha_fin = fecha_inicio
-# Si paso argumentos o introduzco un filtro una vez en ejecución,
-# busca las convocatorias que coincidan en el rango de fechas
-if len(sys.argv) >= 2 or texto_busqueda:
-    # Si paso argumentos en la línea de comandos, los unimos en una cadena
-    if len(sys.argv) >= 2:
-        texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
-    fecha_inicio = input(
-        f"Introduzca la fecha de inicio (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
-    )
-    # Si se elige la fecha por defecto, se asigna la fecha de hoy y no preguntamos
-    #   la fecha_fin. Asumimos que sólo se quiere buscar en el día actual
-    if not fecha_inicio:
-        fecha_inicio = fechas.fecha_hoy()
-        fecha_fin = fechas.fecha_hoy()
-    else:  # En caso contrario pregunta por la fecha de fin
-        fecha_fin = input(
-            f"Introduzca la fecha de fin (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
-        )
-    if not fecha_fin:  # Por defecto la fecha_fin es la fecha de hoy
-        fecha_fin = fechas.fecha_hoy()
+# Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
+texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
+    fecha_actual, fechas
+)
 
-# Comprobar si la fecha de inicio es válida
-try:
-    # Calculo las direcciones necesarias en función de las fechas en las que se
-    #   van a buscar las distintas oposiciones
-    lista_fechas = fechas.generar_rango_fechas(fecha_inicio, fecha_fin)
-except ValueError:
-    print(
-        f"\n{Fore.RED}Una de las fechas introducidas no es válida.Asegúrese de usar el formato dd/mm/yyyy."
-    )
-    sys.exit(0)
-    # Con el código "0" se indica que el programa terminó sin errores.
-    # No se muestra el mensaje de error en pantalla.
-    # con "1" indica el error por el que el programa terminó
 
 """ Código para generar la lista de URLs de los días seleccionados
    y buscar los enlaces a otros formatos (txt) """
@@ -206,100 +148,21 @@ if len(lista_diccionarios_puestos) != 0:
         for clave in lista_diccionarios_puestos[0]
     }
 
-
-"""
-    Código para crear el DataFrame e imprimirlo por pantalla antes de guadarlo en Excell
-"""
-# Convertimos el "diccionario_puestos" en un DataFrame de pandas
-df_diccionario_puestos = pd.DataFrame(diccionario_puestos)
-# Combinar el DataFrame existente (df_opo_guardadas) con el nuevo (df_diccionario_puestos)
-df_combinado = pd.concat([df_opo_guardadas, df_diccionario_puestos], ignore_index=True)
-
-# Verificar las columnas del DataFrame antes de eliminar duplicados
-print(f"Columnas del DataFrame combinado: {df_combinado.columns.tolist()}")
-
-#! Este código es para hacer pruebas. Después borrarlo
-# Asegurarse de que las columnas necesarias existen
-columnas_necesarias = ["Puesto", "Fecha_boe", "Administración", "Escala"]
-for columna in columnas_necesarias:
-    if columna not in df_combinado.columns:
-        print(
-            f"⚠️ La columna '{columna}' no existe en el DataFrame. Se agregará con valores predeterminados."
-        )
-        df_combinado[columna] = "No disponible"
-#! Hasta aquí
-
-# Eliminar duplicados si es necesario, basándonos en columnas clave
-#   (por ejemplo, "Puesto" y "Fecha")
-df_combinado = df_combinado.drop_duplicates(
-    subset=["Puesto", "Fecha_boe", "Administración", "Enlace"], keep="last"
+# Tratar los diccionarios que hemos creado para mezclarlos con los dataframes
+#   obtenidos del archivo Excel
+df_combinado, df_busquedas_combinado = preparar_archivo_datos.combinar_dataframes(
+    diccionario_puestos, diccionario_busquedas, df_opo_guardadas, df_busquedas
 )
 
-
-"""
-    Código para guardar los resultados en un archivo Excel
-"""
-# Ahora convierto el "diccionario_busquedas" en otro DataFrame
-df_diccionario_busquedas = pd.DataFrame(diccionario_busquedas)
-# Combinar el DataFrame existente (df_busquedas) con el nuevo (df_diccionario_puestos)
-df_busquedas_combinado = pd.concat(
-    [df_diccionario_busquedas, df_busquedas], ignore_index=True
-)
-# Eliminar duplicados si es necesario, basándonos en columnas clave (por ejemplo, "Código")
-df_busquedas_combinado = df_busquedas_combinado.drop_duplicates(
-    subset=["Código"], keep="last"
-)
 # Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
-try:
-    with pd.ExcelWriter(
-        "BOE-oposiciones.xlsx", mode="a", engine="openpyxl", if_sheet_exists="replace"
-    ) as writer:
-        df_busquedas_combinado.to_excel(writer, sheet_name="Búsquedas", index=False)
-        df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
-except PermissionError:
-    print(
-        f"\n{Fore.RED}El archivo 'BOE-oposiciones.xlsx' está abierto. "
-        f"Cierre el archivo y vuelva a intentarlo.{Fore.RESET}"
-    )
-    sys.exit(0)
+preparar_archivo_datos.guardar_excel(df_combinado, df_busquedas_combinado)
 
-"""
-    Buscamos los resultados buscados por el usuario dentro del propio
-     Dataframe, incluidas las fechas de inicio y fin 
-"""
 
-# Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
-#   "Fecha_dt" para facilitar la comparación de fechas
-#   Si cambiamos directamente el formato de la columna fecha, al ejecutar, da un warning
-df_combinado["Fecha_dt"] = df_combinado["Fecha_boe"].apply(fechas.convertir_fecha)
-
-# Filtrar el DataFrame por el rango de fechas
-# Las fechas de inicio y final son el primer y último elemento de "lista_fechas"
-df_combinado_filtrado_por_fecha = df_combinado[
-    (df_combinado["Fecha_dt"] >= lista_fechas[0])
-    & (df_combinado["Fecha_dt"] <= lista_fechas[-1])
-]
-
-# Eliminar la columna auxiliar "Fecha_dt" si no es necesaria
-df_combinado_filtrado = df_combinado_filtrado_por_fecha.drop(columns=["Fecha_dt"])
-
-palabras_busqueda = texto_busqueda.split()
-patron_regex = (
-    r"\b"
-    + r"\s+".join([rf"{clave}[\w/@\\]*(es)?" for clave in palabras_busqueda])
-    + r"(.*?)"
+# Filtrar el DataFrame por el texto de búsqueda introducido por el usuario y
+#  las fechas de inicio y fin
+df_filtrado_por_patron = preparar_archivo_datos.prepara_data_frame_mostrar_resultados(
+    texto_busqueda, df_combinado, lista_fechas
 )
-# Desactivar warnings relacionados con expresiones regulares
-warnings.filterwarnings("ignore", message="This pattern is interpreted")
-
-# Filtrar el DataFrame por coincidencias en la columna "Puesto"
-df_filtrado_por_patron = df_combinado_filtrado_por_fecha[
-    df_combinado_filtrado_por_fecha["Puesto"].str.contains(
-        patron_regex, flags=re.IGNORECASE, na=False
-    )
-]
-# Restaurar los warnings después de la operación
-warnings.filterwarnings("default", message="This pattern is interpreted")
 
 # Finalmente imprimimos en pantalla los resultados
 diccionario = df_filtrado_por_patron.to_dict(orient="list")
