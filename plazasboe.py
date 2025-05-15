@@ -40,9 +40,13 @@ if df_busquedas.empty:
    y comprobar que son válidas """
 fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
 
+if len(sys.argv) >= 2:
+    texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
+
+
 # Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
 texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
-    fecha_actual, fechas
+    texto_busqueda, fecha_actual, fechas
 )
 
 

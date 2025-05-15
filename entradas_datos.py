@@ -16,35 +16,31 @@ def validar_fechas(fecha_inicio_dt, fecha_fin_dt, fecha_actual_dt):
         raise ValueError("La fecha de inicio no puede ser posterior a la fecha de fin.")
 
 
-def solicitar_fechas_y_validar(fecha_actual, fechas, modo_test=False):
+def solicitar_fechas_y_validar(texto_busqueda, fecha_actual, fechas, modo_test=False):
     """
     Solicita al usuario las fechas de inicio y fin, valida que sean correctas,
     y devuelve las fechas junto con el texto de búsqueda.
     """
     fecha_inicio = ""
     fecha_fin = ""
-    texto_busqueda = ""
 
     while True:
         # Si no paso argumentos, busca todas las convocatorias publicadas en un día concreto
-        if len(sys.argv) < 2:
+        if not texto_busqueda:
             texto_busqueda = input(
                 f"Introduzca el {Fore.YELLOW}tipo de plaza{Fore.RESET} a buscar. "
                 "[Pulse «Enter» para buscar todas las plazas publicadas]: "
             )
             if not texto_busqueda:
                 fecha_inicio = input(
-                    f"Introduzca la fecha de publicación del B.O.E (dd/mm/yyyy) [Por defecto: {fechas.fecha_hoy()} (Hoy)]: "
+                    f"Introduzca la fecha de publicación del B.O.E (dd/mm/yyyy) [Por defecto: {fecha_actual} (Hoy)]: "
                 )
                 if not fecha_inicio:
                     fecha_inicio = fecha_actual
                 fecha_fin = fecha_inicio
         # Si paso argumentos o introduzco un filtro una vez en ejecución,
         # busca las convocatorias que coincidan en el rango de fechas
-        if len(sys.argv) >= 2 or texto_busqueda:
-            # Si paso argumentos en la línea de comandos, los unimos en una cadena
-            if len(sys.argv) >= 2:
-                texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
+        if texto_busqueda:
             fecha_inicio = input(
                 f"Introduzca la fecha de inicio (dd/mm/yyyy) [Por defecto: {fecha_actual} (Hoy)]: "
             )

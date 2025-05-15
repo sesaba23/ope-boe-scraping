@@ -9,21 +9,22 @@ def test_solicitar_fechas_y_validar(monkeypatch):
     en el archivo entrada_datos.py.
     """
 
-    # Caso 1: Usuario introduce fechas válidas
+    # Caso 1: Usuario introduce fechas válidas y texto de búsqueda
     inputs = iter(["01/05/2025", "07/05/2025"])
     monkeypatch.setattr(
         "builtins.input", lambda _: next(inputs, "")
     )  # Manejar StopIteration
 
-    fecha_actual = "12/05/2025"  # Simular la fecha actual
+    fecha_actual = "15/05/2025"  # Simular la fecha actual
     fechas = MockFechas()  # Simular el módulo fechas con un método generar_rango_fechas
 
     texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
-        fecha_actual, fechas
+        "ing téc ind", fecha_actual, fechas
     )
 
+    assert texto_busqueda == "ing téc ind"
     assert fecha_inicio == "01/05/2025"
-    assert fecha_fin == "07/05/2025"
+    assert fecha_fin == "07/05/2025"  # si no hay texto busqueda se igualan las fechas
     assert lista_fechas == [
         "01/05/2025",
         "02/05/2025",
@@ -34,21 +35,22 @@ def test_solicitar_fechas_y_validar(monkeypatch):
         "07/05/2025",
     ]
 
-    # Caso 2: Usuario deja las fechas en blanco (usa la fecha actual por defecto)
+    # Caso 2: Usuario no introduce texto de búsqueda y deja las fechas en blanco (usa la fecha actual por defecto)
     inputs = iter(["", ""])
     monkeypatch.setattr(
         "builtins.input", lambda _: next(inputs, "")
     )  # Manejar StopIteration
 
     texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
-        fecha_actual, fechas
+        "", fecha_actual, fechas
     )
 
+    assert texto_busqueda == ""
     assert fecha_inicio == fecha_actual
     assert fecha_fin == fecha_actual
     assert lista_fechas == [fecha_actual]
 
-    # Caso 3: Usuario introduce una fecha inválida
+    # Caso 3: Usuario introduce texto de búsqueda y una fecha inválida
     inputs = iter(["32/05/2028", "07/05/2025"])
     monkeypatch.setattr(
         "builtins.input", lambda _: next(inputs, "")
@@ -57,7 +59,7 @@ def test_solicitar_fechas_y_validar(monkeypatch):
     with pytest.raises(
         ValueError, match="time data '32/05/2028' does not match format '%d/%m/%Y'"
     ):
-        solicitar_fechas_y_validar(fecha_actual, fechas, modo_test=True)
+        solicitar_fechas_y_validar("ing téc ind", fecha_actual, fechas, modo_test=True)
 
 
 def test_fecha_no_superior_a_actual(monkeypatch):
@@ -66,7 +68,7 @@ def test_fecha_no_superior_a_actual(monkeypatch):
     no permite fechas superiores a la fecha actual.
     """
 
-    # Caso: Usuario introduce una fecha inicio posterior a la fecha actual
+    # Caso 4: Usuario introduce una fecha inicio posterior a la fecha actual
     inputs = iter(["13/05/2028", "12/05/2025"])  # Fechas posteriores a la fecha actual
     monkeypatch.setattr("builtins.input", lambda _: next(inputs, ""))
 
@@ -77,7 +79,7 @@ def test_fecha_no_superior_a_actual(monkeypatch):
         ValueError,
         match="La fecha de inicio no puede ser posterior a la fecha actual.",
     ):
-        solicitar_fechas_y_validar(fecha_actual, fechas, modo_test=True)
+        solicitar_fechas_y_validar("ing téc ind", fecha_actual, fechas, modo_test=True)
 
 
 class MockFechas:
