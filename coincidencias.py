@@ -1,5 +1,11 @@
+from mapa_plazas import buscar_municipio
+
 import re
 from word2number_es import w2n
+
+
+def quitar_parentesis(texto):
+    return re.sub(r"\s*\(.*?\)", "", texto)
 
 
 def formatear_texto(texto_contenido):
@@ -149,9 +155,19 @@ def buscar_coincidencias_todas(
                 ),
                 "Enlace": enlace if enlace else "Enlace " + texto_no_disponible,
             }
+            # Quito el texto que está entre paréntesis, es decir, la provincia
+            # Se usa para buscar los datos geográficos del municipio
+            municipio = quitar_parentesis(administracion)
+            # Busco el municipio al que pertenece la administración y su información
+            diccionario_municipio = buscar_municipio(municipio)
+            # Unir con el diccionario del municipio si existe
+            if diccionario_municipio:
+                resultado = {**resultado, **diccionario_municipio}
+                # print(resultado)
             resultados.append(resultado)
 
     if len(resultados) == 0:
         return None
     else:
+        # print(resultados)
         return resultados

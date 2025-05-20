@@ -4,6 +4,7 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 from entradas_datos import solicitar_fechas_y_validar
+from mapa_plazas import generar_mapa_municipios
 
 from datetime import datetime
 import requests
@@ -65,12 +66,24 @@ print(f"\n{Fore.BLUE}Obteniendo URLs de los días seleccionados...{Fore.RESET}")
 for i, url in enumerate(
     barraprogreso.barra_progreso_color(urls_dias, total=len(urls_dias))
 ):
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
+    try:
+        page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
+    except requests.exceptions.Timeout:
+        print(f"Timeout al acceder a {url}")
+        continue
+    except Exception as e:
+        print(f"Error al acceder a {url}: {e}")
+        continue
 
-    # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
-    #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
-    enlaces = soup.find_all("a", href=True)
+    try:
+        soup = BeautifulSoup(page.content, "html.parser")
+        # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
+        #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
+        enlaces = soup.find_all("a", href=True)
+    except Exception as e:
+        print(f"Error procesando el HTML de {url}: {e}")
+        continue
+
     for enlace in enlaces:
         if any(formato in enlace["href"] for formato in ["txt"]):
             enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
@@ -110,6 +123,8 @@ for i, enlace in enumerate(
         enlaces_oposiciones, total=len(enlaces_oposiciones)
     )
 ):
+    print(f"Procesando enlace: {enlace}")
+    #! Revisar para solo poner los if con texto busqueda
     # Genero el código único para cada búsqueda
     if len(sys.argv) < 2:  # Si no se pasa un argumento, el código es el enlace
         codigo = enlace
@@ -121,36 +136,69 @@ for i, enlace in enumerate(
         else:
             codigo_busqueda = texto_busqueda.replace(" ", "+")
         codigo = enlace + "_" + codigo_busqueda
+    #! fin revisión
 
     # Comprobar si el enlace ya ha sido procesado
     if codigo not in df_busquedas["Código"].values:
         diccionario_busquedas["Código"].append(codigo)
-        page = requests.get(enlace)
-        soup = BeautifulSoup(page.content, "html.parser")
+        # Peticiones HTTP con timeout para evitar bloqueos
+        try:
+            page = requests.get(enlace, timeout=5)  # 5 segundos de espera máximo
+        except requests.exceptions.Timeout:
+            print(f"Timeout al acceder a {enlace}")
+            continue
+        except Exception as e:
+            print(f"Error al acceder a {enlace}: {e}")
+            continue
 
-        # El texto que contiene la información de interés está dentro de un
-        #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
-        contenidos = soup.find_all("div", id="textoxslt")
-        titulo = soup.find(class_="documento-tit").text.strip()
-        fecha_boe = soup.find("div", class_="metadatos").text.strip()
+        try:
+            soup = BeautifulSoup(page.content, "html.parser")
+            # El texto que contiene la información de interés está dentro de un
+            #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
+            contenidos = soup.find_all("div", id="textoxslt")
+            titulo = soup.find(class_="documento-tit").text.strip()
+            fecha_boe = soup.find("div", class_="metadatos").text.strip()
+        except Exception as e:
+            print(f"Error procesando el HTML de {enlace}: {e}")
+            continue
 
         # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
         for contenido in contenidos:
-            # La función devuelve una lista de diccionarios con las coincidencias y
-            # None si no se encuentra nada
-            diccionario = coincidencias.buscar_coincidencias_todas(
-                texto_busqueda, contenido.text, titulo, fecha_boe, enlace
-            )
-            # Si se encuentra una coincidencia, se añade al diccionario
-            if diccionario:
-                lista_diccionarios_puestos.extend(diccionario)
+            try:
+                # La función devuelve una lista de diccionarios con las coincidencias y
+                # None si no se encuentra nada
+                diccionario = coincidencias.buscar_coincidencias_todas(
+                    texto_busqueda, contenido.text, titulo, fecha_boe, enlace
+                )
+                # Si se encuentra una coincidencia, se añade al diccionario
+                if diccionario:
+                    lista_diccionarios_puestos.extend(diccionario)
+            except Exception as e:
+                print(f"Error buscando coincidencias en {enlace}: {e}")
+                continue
 
-# Convierte "lista_diccionarios_puestos" en diccionario de listas si hay coincidencias
+"""
+    Convierte "lista_diccionarios_puestos" en un diccionario de listas si hay coincidencias
+    Trata de obtener todas las claves exitentes en todos los registros y combinarlas
+    De otra manera, sólo incluiría las claves del primer registro de la lista de diccionarios
+    Se puede dar el caso de que no se haya encontrado el municipio en el csv del primer
+    registro y, por tanto, no incluiría el resto de claves, aunque otros registros
+    las tuviesen.
+    Se mantiene el orden de las claves del diccionario
+"""
 if len(lista_diccionarios_puestos) != 0:
+    # Claves en el primer diccionario (orden principal)
+    claves_ordenadas = list(lista_diccionarios_puestos[0].keys())
+    # Añadir claves nuevas que puedan aparecer en otros diccionarios
+    for d in lista_diccionarios_puestos:
+        for k in d.keys():
+            if k not in claves_ordenadas:
+                claves_ordenadas.append(k)
     diccionario_puestos = {
-        clave: [d[clave] for d in lista_diccionarios_puestos]
-        for clave in lista_diccionarios_puestos[0]
+        clave: [d.get(clave) for d in lista_diccionarios_puestos]
+        for clave in claves_ordenadas
     }
+    # print(diccionario_puestos)
 
 # Tratar los diccionarios que hemos creado para mezclarlos con los dataframes
 #   obtenidos del archivo Excel
@@ -168,7 +216,7 @@ df_filtrado_por_patron = preparar_archivo_datos.prepara_data_frame_mostrar_resul
     texto_busqueda, df_combinado, lista_fechas
 )
 
-# Finalmente imprimimos en pantalla los resultados
+# Imprimimos en pantalla los resultados
 diccionario = df_filtrado_por_patron.to_dict(orient="list")
 impresiones.imprimir_diccionario_puestos(
     diccionario,
@@ -176,3 +224,6 @@ impresiones.imprimir_diccionario_puestos(
     f_fin=fecha_fin,
     busqueda=texto_busqueda,
 )
+
+# Mostramos en un mapa web los municipios encontrados en la búsqueda
+generar_mapa_municipios(df_filtrado_por_patron)

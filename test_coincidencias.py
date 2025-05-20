@@ -46,6 +46,11 @@ def test_buscar_coincidencias_completo():
         "Fecha_boe": "7 de mayo de 2025",
         "Publicacion": "«Boletín Oficial de la Provincia de Salamanca» número 74, de 16 de abril de 2025",
         "Enlace": "https://www.boe.es/buscar/doc.php?id=BOE-A-2025-9009",
+        "Habitantes": 155619,
+        "Latitud": 40.96497,
+        "Longitud": -5.663047,
+        "Municipio": "Salamanca",
+        "Provincia": "Salamanca",
     }, f"El texto esperado a partir del patrón: '{expresion}' no coincide con lo esperado"
 
     assert len(resultado) == 5, "El diccionario tiene menos elementos de los esperados"
@@ -65,5 +70,10 @@ def test_buscar_coincidencias_completo():
         "Fecha_boe": "7 de mayo de 2025",
         "Publicacion": "«Boletín Oficial de la Provincia de Salamanca» número 74, de 16 de abril de 2025",
         "Enlace": "https://www.boe.es/buscar/doc.php?id=BOE-A-2025-9009",
+        "Habitantes": 155619,
+        "Latitud": 40.96497,
+        "Longitud": -5.663047,
+        "Municipio": "Salamanca",
+        "Provincia": "Salamanca",
     }, f"El texto esperado a partir del patrón: '{expresion}' no coincide con lo esperado"
     assert len(resultado) == 1, "El diccionario debería tener sólo un elemento"

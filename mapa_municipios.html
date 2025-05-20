@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_4d377c025245a463e2c150c5a8df31ff {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_4d377c025245a463e2c150c5a8df31ff" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_4d377c025245a463e2c150c5a8df31ff = L.map(
+                "map_4d377c025245a463e2c150c5a8df31ff",
+                {
+                    center: [40.0, -3.7],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 6,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_0d3cf1734b5c42d3195f97cf82501a6a = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_0d3cf1734b5c42d3195f97cf82501a6a.addTo(map_4d377c025245a463e2c150c5a8df31ff);
+        
+    
+            var marker_cluster_d44a7f391deba1d6c396f547fbb9881d = L.markerClusterGroup(
+                {
+}
+            );
+        
+    
+            var marker_c94f26be9851e11454606b594c726533 = L.marker(
+                [38.90886, 1.432378],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_09e41e57e4abf15b1bbe434a1f4605f7 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_efc7dae6c191bf381aab6949d01a8804 = $(`<div id="html_efc7dae6c191bf381aab6949d01a8804" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a técnico/a industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Consejo Insular de Ibiza (Illes Balears)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 48.684             </div>`)[0];
+                popup_09e41e57e4abf15b1bbe434a1f4605f7.setContent(html_efc7dae6c191bf381aab6949d01a8804);
+            
+        
+
+        marker_c94f26be9851e11454606b594c726533.bindPopup(popup_09e41e57e4abf15b1bbe434a1f4605f7)
+        ;
+
+        
+    
+    
+            var marker_65d4ac4a96aa674c3aa60546e377c2d1 = L.marker(
+                [43.36229, -3.012567],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_4711b0081797911d25e17da51c030270 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_0de6c4230f349d7853f1e4d7463b85a4 = $(`<div id="html_0de6c4230f349d7853f1e4d7463b85a4" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico/a Industrial<br>             <b>Nº Plazas:</b> 2</br>             <b>Administración:</b> Ayuntamiento de Getxo (Bizkaia)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-762" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 80.770             </div>`)[0];
+                popup_4711b0081797911d25e17da51c030270.setContent(html_0de6c4230f349d7853f1e4d7463b85a4);
+            
+        
+
+        marker_65d4ac4a96aa674c3aa60546e377c2d1.bindPopup(popup_4711b0081797911d25e17da51c030270)
+        ;
+
+        
+    
+    
+            var marker_78d3c8d55cdcbbb877f1c5109c1ae8b3 = L.marker(
+                [40.67348, -4.090732],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_06ee9190e3b0f62ae16dd1f053cc1cbd = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_c01354bbf3ccc32deb9cd84770dd6e38 = $(`<div id="html_c01354bbf3ccc32deb9cd84770dd6e38" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingenieros/as Técnico Industriales<br>             <b>Nº Plazas:</b> 3</br>             <b>Administración:</b> Ayuntamiento de Guadarrama (Madrid)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 14.800             </div>`)[0];
+                popup_06ee9190e3b0f62ae16dd1f053cc1cbd.setContent(html_c01354bbf3ccc32deb9cd84770dd6e38);
+            
+        
+
+        marker_78d3c8d55cdcbbb877f1c5109c1ae8b3.bindPopup(popup_06ee9190e3b0f62ae16dd1f053cc1cbd)
+        ;
+
+        
+    
+    
+            var marker_612d003fcf69b43c04193588fabb61e7 = L.marker(
+                [40.94943, -4.119209],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_9f001518338571072b22bae978c8a22e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_16a1fc61d2ffaa16f1c4dbb2956d473c = $(`<div id="html_16a1fc61d2ffaa16f1c4dbb2956d473c" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico/a Industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Diputación Provincial de Segovia<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 56.660             </div>`)[0];
+                popup_9f001518338571072b22bae978c8a22e.setContent(html_16a1fc61d2ffaa16f1c4dbb2956d473c);
+            
+        
+
+        marker_612d003fcf69b43c04193588fabb61e7.bindPopup(popup_9f001518338571072b22bae978c8a22e)
+        ;
+
+        
+    
+    
+            var marker_6195cb575b1fe49b908038be9fb80cc6 = L.marker(
+                [40.59907, -3.712258],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_06f98887994d0a1fbbe0725308d3f74a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f27e49f1e2ac41d3728ec862e79cdee7 = $(`<div id="html_f27e49f1e2ac41d3728ec862e79cdee7" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero Técnico Industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Ayuntamiento de Tres Cantos (Madrid)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2629" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 41.064             </div>`)[0];
+                popup_06f98887994d0a1fbbe0725308d3f74a.setContent(html_f27e49f1e2ac41d3728ec862e79cdee7);
+            
+        
+
+        marker_6195cb575b1fe49b908038be9fb80cc6.bindPopup(popup_06f98887994d0a1fbbe0725308d3f74a)
+        ;
+
+        
+    
+    
+            var marker_89c4c8b7c7fb0b87ba9ec2df64e8b354 = L.marker(
+                [37.98344, -1.12989],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_5179b4ad0b0c73bb1f7e779e06ad2ae4 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_731b8c27d8bab65ab8c44e46d3fa039c = $(`<div id="html_731b8c27d8bab65ab8c44e46d3fa039c" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a técnico industrial<br>             <b>Nº Plazas:</b> 2</br>             <b>Administración:</b> Ayuntamiento de Murcia<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 436.870             </div>`)[0];
+                popup_5179b4ad0b0c73bb1f7e779e06ad2ae4.setContent(html_731b8c27d8bab65ab8c44e46d3fa039c);
+            
+        
+
+        marker_89c4c8b7c7fb0b87ba9ec2df64e8b354.bindPopup(popup_5179b4ad0b0c73bb1f7e779e06ad2ae4)
+        ;
+
+        
+    
+    
+            var marker_730c4e4d43968813004fbf0688ac2707 = L.marker(
+                [38.90886, 1.432378],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_28f8a9081f717f8565a28e30cad0b514 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_587052dba08b65e175fc34a379b336b4 = $(`<div id="html_587052dba08b65e175fc34a379b336b4" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico Industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Ayuntamiento de Eivissa (Illes Balears)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 48.684             </div>`)[0];
+                popup_28f8a9081f717f8565a28e30cad0b514.setContent(html_587052dba08b65e175fc34a379b336b4);
+            
+        
+
+        marker_730c4e4d43968813004fbf0688ac2707.bindPopup(popup_28f8a9081f717f8565a28e30cad0b514)
+        ;
+
+        
+    
+    
+            var marker_9a13ce1d209767f2bd66c79faddc5966 = L.marker(
+                [40.54754, -3.642091],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_32ece807acf8d5c7a73cc3968221328f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_89aab5c6d6522ee504c78b19a98c1d68 = $(`<div id="html_89aab5c6d6522ee504c78b19a98c1d68" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico/a Industrial<br>             <b>Nº Plazas:</b> 3</br>             <b>Administración:</b> Ayuntamiento de Alcobendas (Madrid)<br>             <b>Sistema:</b> Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 109.104             </div>`)[0];
+                popup_32ece807acf8d5c7a73cc3968221328f.setContent(html_89aab5c6d6522ee504c78b19a98c1d68);
+            
+        
+
+        marker_9a13ce1d209767f2bd66c79faddc5966.bindPopup(popup_32ece807acf8d5c7a73cc3968221328f)
+        ;
+
+        
+    
+    
+            var marker_a87d882ddc078e0b09118667d540f0ed = L.marker(
+                [37.40873, -4.485598],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_7c55ca86f4d935964a5dad8c39d4c561 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_1f069189bd77b9feb09bae382cd6ef05 = $(`<div id="html_1f069189bd77b9feb09bae382cd6ef05" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico/a Industrial<br>             <b>Nº Plazas:</b> 2</br>             <b>Administración:</b> Ayuntamiento de Lucena (Córdoba)<br>             <b>Sistema:</b> Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-5434" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 42.248             </div>`)[0];
+                popup_7c55ca86f4d935964a5dad8c39d4c561.setContent(html_1f069189bd77b9feb09bae382cd6ef05);
+            
+        
+
+        marker_a87d882ddc078e0b09118667d540f0ed.bindPopup(popup_7c55ca86f4d935964a5dad8c39d4c561)
+        ;
+
+        
+    
+    
+            var marker_22dd987c8b28e5db02724c74635e0a38 = L.marker(
+                [37.61441, -4.326089],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_877d4b68051a0af8d3ee6161dfcdf57a = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a2f994cf352ff6b817dd75f98cf030e9 = $(`<div id="html_a2f994cf352ff6b817dd75f98cf030e9" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico/a Industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Ayuntamiento de Baena (Córdoba)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-6330" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 20.915             </div>`)[0];
+                popup_877d4b68051a0af8d3ee6161dfcdf57a.setContent(html_a2f994cf352ff6b817dd75f98cf030e9);
+            
+        
+
+        marker_22dd987c8b28e5db02724c74635e0a38.bindPopup(popup_877d4b68051a0af8d3ee6161dfcdf57a)
+        ;
+
+        
+    
+    
+            var marker_3f4877b13612d58978fa14bdc90316f2 = L.marker(
+                [38.2655, -0.6984587],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_69b51a1fbe096f981864f93b13e02903 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f730c8c91a271671afd094612adc7ff2 = $(`<div id="html_f730c8c91a271671afd094612adc7ff2" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico Industrial<br>             <b>Nº Plazas:</b> 2</br>             <b>Administración:</b> Ayuntamiento de Elx/Elche (Alicante/Alacant)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-8683" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 230.112             </div>`)[0];
+                popup_69b51a1fbe096f981864f93b13e02903.setContent(html_f730c8c91a271671afd094612adc7ff2);
+            
+        
+
+        marker_3f4877b13612d58978fa14bdc90316f2.bindPopup(popup_69b51a1fbe096f981864f93b13e02903)
+        ;
+
+        
+    
+    
+            var marker_31e90b4472ea2f8a0e5615d0eca15c80 = L.marker(
+                [38.96479, -3.891293],
+                {
+}
+            ).addTo(marker_cluster_d44a7f391deba1d6c396f547fbb9881d);
+        
+    
+        var popup_65ac7db321862ab1a500ed7119fc086e = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_52de9ac0121cf3b6513eafb5539f1f6a = $(`<div id="html_52de9ac0121cf3b6513eafb5539f1f6a" style="width: 100.0%; height: 100.0%;">             <b>Puesto:</b> Ingeniero/a Técnico Industrial<br>             <b>Nº Plazas:</b> 1</br>             <b>Administración:</b> Ayuntamiento de Miguelturra (Ciudad Real)<br>             <b>Sistema:</b> Concurso-Oposición<br>             <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-8937" target="_blank">Enlace al B.O.E.</a><br>             <b>Habitantes:</b> 13.986             </div>`)[0];
+                popup_65ac7db321862ab1a500ed7119fc086e.setContent(html_52de9ac0121cf3b6513eafb5539f1f6a);
+            
+        
+
+        marker_31e90b4472ea2f8a0e5615d0eca15c80.bindPopup(popup_65ac7db321862ab1a500ed7119fc086e)
+        ;
+
+        
+    
+    
+            marker_cluster_d44a7f391deba1d6c396f547fbb9881d.addTo(map_4d377c025245a463e2c150c5a8df31ff);
+        
+</script>
+</html>
