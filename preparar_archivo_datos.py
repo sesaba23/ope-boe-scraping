@@ -7,6 +7,11 @@ import re
 from colorama import Fore
 import warnings
 
+# Para formatear el Excel
+from openpyxl import load_workbook
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
+
 
 def preparar_excel_y_dataframes():
     # Cargamos un Excel con las fechas de los días que nos interesan
@@ -20,6 +25,8 @@ def preparar_excel_y_dataframes():
         # ws1["A1"] = "Código"
         # Crear la segunda hoja
         ws2 = wb.create_sheet(title="Oposiciones")
+
+        ws3 = wb.create_sheet(title="Log-errores")
         # Guardar el archivo
         wb.save("BOE-oposiciones.xlsx")
 
@@ -68,7 +75,7 @@ def combinar_dataframes(
     return df_combinado, df_busquedas_combinado
 
 
-def guardar_excel(df_combinado, df_busquedas_combinado):
+def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
     """
     Código para guardar los resultados en un archivo Excel
     """
@@ -82,6 +89,9 @@ def guardar_excel(df_combinado, df_busquedas_combinado):
         ) as writer:
             df_busquedas_combinado.to_excel(writer, sheet_name="Búsquedas", index=False)
             df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
+            df_log_errores.to_excel(writer, sheet_name="Log-errores", index=False)
+        # Da formato al Excel
+        formatear_hoja_oposiciones()
     except PermissionError:
         print(
             f"\n{Fore.RED}El archivo 'BOE-oposiciones.xlsx' está abierto. "
@@ -135,3 +145,79 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
     warnings.filterwarnings("default", message="This pattern is interpreted")
 
     return df_filtrado_por_patron
+
+
+def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
+    wb = load_workbook(nombre_archivo)
+    ws = wb["Oposiciones"]
+
+    # Poner los títulos en negrita
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+
+    # Insertar autofiltro en la fila de títulos
+    ws.auto_filter.ref = ws.dimensions
+
+    # Inmovilizar la primera fila
+    ws.freeze_panes = "A2"
+
+    # Autoajustar el ancho de las columnas y limitar "Puesto" y "Administración"
+    max_width = 50
+    col_enlace = None
+    for col in ws.columns:
+        max_length = 0
+        col_letter = get_column_letter(col[0].column)
+        header = str(col[0].value).strip().lower()
+        if header == "enlace":
+            col_enlace = col[0].column  # Guardar el índice de la columna Enlace
+        for cell in col:
+            try:
+                cell_length = len(str(cell.value))
+                if cell_length > max_length:
+                    max_length = cell_length
+            except:
+                pass
+        # Limitar ancho para "Puesto" y "Administración"
+        if header in ["puesto", "administración"]:
+            ws.column_dimensions[col_letter].width = min(max_length + 2, max_width)
+        else:
+            ws.column_dimensions[col_letter].width = max_length + 2
+
+    # Formatear columna "Habitantes" como número sin decimales y con separador de miles
+    for idx, cell in enumerate(ws[1], 1):
+        if str(cell.value).strip().lower() == "habitantes":
+            col_letter = get_column_letter(idx)
+            for row in ws.iter_rows(
+                min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row
+            ):
+                for c in row:
+                    c.number_format = "#,##0"
+            break
+    # Formatear la columna Enlace como hipervínculo
+    if col_enlace:
+        col_letter = get_column_letter(col_enlace)
+        for row in ws.iter_rows(
+            min_row=2, min_col=col_enlace, max_col=col_enlace, max_row=ws.max_row
+        ):
+            for cell in row:
+                url = str(cell.value)
+                if url.startswith("http"):
+                    cell.hyperlink = url
+                    cell.style = "Hyperlink"
+
+    # Colorear filas alternativamente
+    fill1 = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+    fill2 = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="solid")
+    for idx, row in enumerate(ws.iter_rows(min_row=2, max_row=ws.max_row), start=2):
+        fill = fill1 if idx % 2 == 0 else fill2
+        for cell in row:
+            cell.fill = fill
+
+    # Ocultar la hoja "Búsquedas" si existe
+    if "Búsquedas" in wb.sheetnames:
+        wb["Búsquedas"].sheet_state = "hidden"
+
+    # Hacer "Oposiciones" la hoja activa
+    wb.active = wb.sheetnames.index("Oposiciones")
+
+    wb.save(nombre_archivo)

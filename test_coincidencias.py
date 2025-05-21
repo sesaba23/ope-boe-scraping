@@ -9,6 +9,16 @@ texto = (
     "mediante el sistema de concurso-oposición, en turno libre."
 )
 
+texto2 = """En el «Boletín Oficial de la Provincia de A Coruña» número 33, de 18 de febrero de 2025, 
+          se han publicado las bases que han de regir la convocatoria para proveer: 
+          Una plaza de Auxiliar técnico/a de biblioteca, perteneciente a la escala de Administración Especial, 
+          subescala Técnica y clase Auxiliar, mediante el sistema de concurso-oposición, en turno libre.
+          El plazo de presentación de solicitudes será de veinte días naturales a contar 
+          desde el siguiente al de la publicación de esta resolución en el «Boletín Oficial del Estado». 
+          Los sucesivos anuncios referentes a esta convocatoria, cuando procedan de conformidad 
+          con las bases, se harán públicos en la forma prevista en las propias bases.
+          A Coruña, 19 de febrero de 2025. El Diputado, José Ramón Riobóo Castro."""
+
 
 def test_buscar_coincidencias_completo():
     titulo = "Resolución de 16 de abril de 2025, de la Diputación Provincial de Salamanca, referente a la convocatoria para proveer varias plazas."

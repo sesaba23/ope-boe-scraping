@@ -151,10 +151,11 @@ def generar_mapa_municipios(df=None):
     archivo_mapa = "mapa_municipios.html"
     mapa.save(archivo_mapa)
 
-    # Abrir el mapa en el navegador por defecto
-    webbrowser.open("file://" + os.path.realpath(archivo_mapa))
+    if not df.empty:
+        # Abrir el mapa en el navegador por defecto
+        webbrowser.open("file://" + os.path.realpath(archivo_mapa))
 
-    print("✅ Mapa generado y abierto en el navegador.")
+        print("✅ Mapa generado y abierto en el navegador.")
 
 
 def mostrar_puestos_sin_coordenadas(df):

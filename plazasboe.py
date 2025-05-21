@@ -15,6 +15,12 @@ import sys  # Importar sys para manejar argumentos de línea de comandos
 from colorama import Fore, Style
 import pandas as pd
 from openpyxl import Workbook
+import time
+
+MAX_REINTENTOS = 3
+RETRASO_SEGUNDOS = 2
+
+tiempo_inicio = time.time()
 
 # Un ejemplo cualquiera de la dirección de la sección 'oposiciones y concursos'
 # de la página del BOE
@@ -34,6 +40,8 @@ dataframes_dict = preparar_archivo_datos.preparar_excel_y_dataframes()
    df_opo_guardadas almacena el histórico de oposiciones buscadas para futuras consultas"""
 df_busquedas = dataframes_dict["Búsquedas"]
 df_opo_guardadas = dataframes_dict["Oposiciones"]
+df_log_errores = dataframes_dict["Log-errores"]
+
 if df_busquedas.empty:
     df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
 
@@ -44,12 +52,10 @@ fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
 if len(sys.argv) >= 2:
     texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
 
-
 # Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
 texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
     texto_busqueda, fecha_actual, fechas
 )
-
 
 """ Código para generar la lista de URLs de los días seleccionados
    y buscar los enlaces a otros formatos (txt) """
@@ -61,37 +67,50 @@ urls_dias = [
 
 # Lista para almacenar los enlaces a otros formatos
 enlaces_oposiciones = []
+# lista de diccionarios para guardar un registro de errores al acceder a los enlaces
+lista_diccionario_errores = []
 
 print(f"\n{Fore.BLUE}Obteniendo URLs de los días seleccionados...{Fore.RESET}")
 for i, url in enumerate(
     barraprogreso.barra_progreso_color(urls_dias, total=len(urls_dias))
 ):
-    try:
-        page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
-    except requests.exceptions.Timeout:
-        print(f"Timeout al acceder a {url}")
-        continue
-    except Exception as e:
-        print(f"Error al acceder a {url}: {e}")
-        continue
+    reintentos = 0
+    page = None
+    while reintentos < 3:
+        try:
+            page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
+            break  # ëxito, salir del bucle
+        except requests.exceptions.Timeout:
+            reintentos += 1
+            print(f"Timeout al acceder a {url} (reintento {reintentos})")
+            if reintentos == 3:
+                lista_diccionario_errores.append({"Timeout al acceder": url})
+            time.sleep(RETRASO_SEGUNDOS)
+        except Exception as e:
+            reintentos += 1
+            print(f"Error al acceder a {url}: {e} (reintento {reintentos})")
+            if reintentos == 3:
+                lista_diccionario_errores.append({"Error al acceder": url})
+            time.sleep(RETRASO_SEGUNDOS)
+    if page is not None:
+        # Si no se pudo acceder tras los reintentos, pasar al siguiente
+        try:
+            soup = BeautifulSoup(page.content, "html.parser")
+            # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
+            #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
+            enlaces = soup.find_all("a", href=True)
+        except Exception as e:
+            print(f"Error procesando el HTML de {url}: {e}")
+            continue
 
-    try:
-        soup = BeautifulSoup(page.content, "html.parser")
-        # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
-        #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
-        enlaces = soup.find_all("a", href=True)
-    except Exception as e:
-        print(f"Error procesando el HTML de {url}: {e}")
-        continue
+        for enlace in enlaces:
+            if any(formato in enlace["href"] for formato in ["txt"]):
+                enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
 
-    for enlace in enlaces:
-        if any(formato in enlace["href"] for formato in ["txt"]):
-            enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
-
-    if not enlaces_oposiciones:
-        print(
-            f"\n{Fore.GREEN}Entre el {fecha_inicio} y {fecha_fin} no se ha publicado ningún proceso selectivo"
-        )
+        if not enlaces_oposiciones:
+            print(
+                f"\n{Fore.GREEN}Entre el {fecha_inicio} y {fecha_fin} no se ha publicado ningún proceso selectivo"
+            )
 
 # Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
 lista_diccionarios_puestos = []
@@ -123,59 +142,68 @@ for i, enlace in enumerate(
         enlaces_oposiciones, total=len(enlaces_oposiciones)
     )
 ):
-    print(f"Procesando enlace: {enlace}")
-    #! Revisar para solo poner los if con texto busqueda
     # Genero el código único para cada búsqueda
-    if len(sys.argv) < 2:  # Si no se pasa un argumento, el código es el enlace
+    if not texto_busqueda:  # Si no se pasa un argumento, el código es el enlace
         codigo = enlace
-    if (
-        texto_busqueda
-    ):  # Si se pasa un argumento, lo añadimos al enlace añadiendo un "+"
-        if len(sys.argv) >= 2:
-            codigo_busqueda = "+".join(str(x) for x in sys.argv[1:])
-        else:
-            codigo_busqueda = texto_busqueda.replace(" ", "+")
-        codigo = enlace + "_" + codigo_busqueda
-    #! fin revisión
+    else:
+        codigo_busqueda = texto_busqueda.replace(" ", "+")
+        codigo = f"{enlace}_{codigo_busqueda}"
 
     # Comprobar si el enlace ya ha sido procesado
     if codigo not in df_busquedas["Código"].values:
         diccionario_busquedas["Código"].append(codigo)
-        # Peticiones HTTP con timeout para evitar bloqueos
-        try:
-            page = requests.get(enlace, timeout=5)  # 5 segundos de espera máximo
-        except requests.exceptions.Timeout:
-            print(f"Timeout al acceder a {enlace}")
-            continue
-        except Exception as e:
-            print(f"Error al acceder a {enlace}: {e}")
-            continue
 
-        try:
-            soup = BeautifulSoup(page.content, "html.parser")
-            # El texto que contiene la información de interés está dentro de un
-            #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
-            contenidos = soup.find_all("div", id="textoxslt")
-            titulo = soup.find(class_="documento-tit").text.strip()
-            fecha_boe = soup.find("div", class_="metadatos").text.strip()
-        except Exception as e:
-            print(f"Error procesando el HTML de {enlace}: {e}")
-            continue
-
-        # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
-        for contenido in contenidos:
+        reintentos = 0
+        while reintentos < MAX_REINTENTOS:
             try:
-                # La función devuelve una lista de diccionarios con las coincidencias y
-                # None si no se encuentra nada
-                diccionario = coincidencias.buscar_coincidencias_todas(
-                    texto_busqueda, contenido.text, titulo, fecha_boe, enlace
-                )
-                # Si se encuentra una coincidencia, se añade al diccionario
-                if diccionario:
-                    lista_diccionarios_puestos.extend(diccionario)
+                print(f"Procesando enlace: {enlace}")
+                page = requests.get(enlace, timeout=5)
+                break  # Si la petición tiene éxito, salimos del bucle
+            except requests.exceptions.Timeout:
+                reintentos += 1
+                print(f"Timeout al acceder a {enlace} (reintento {reintentos})")
+                if reintentos == MAX_REINTENTOS:
+                    lista_diccionario_errores.append({"Timeout al acceder": enlace})
+                    continue
+                time.sleep(RETRASO_SEGUNDOS)
             except Exception as e:
-                print(f"Error buscando coincidencias en {enlace}: {e}")
+                reintentos += 1
+                print(f"Error al acceder a {enlace}: {e} (reintento {reintentos})")
+                if reintentos == MAX_REINTENTOS:
+                    lista_diccionario_errores.append({"Error al acceder": enlace})
+                    continue
+                time.sleep(RETRASO_SEGUNDOS)
+
+        if page is not None:
+            try:
+                soup = BeautifulSoup(page.content, "html.parser")
+                # El texto que contiene la información de interés está dentro de un
+                #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
+                contenidos = soup.find_all("div", id="textoxslt")
+                titulo = soup.find(class_="documento-tit").text.strip()
+                fecha_boe = soup.find("div", class_="metadatos").text.strip()
+            except Exception as e:
+                print(f"Error procesando el HTML de {enlace}: {e}")
+                lista_diccionario_errores.append({"Error procesando el HTML": enlace})
                 continue
+
+            # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
+            for contenido in contenidos:
+                try:
+                    # La función devuelve una lista de diccionarios con las coincidencias y
+                    # None si no se encuentra nada
+                    diccionario = coincidencias.buscar_coincidencias_todas(
+                        texto_busqueda, contenido.text, titulo, fecha_boe, enlace
+                    )
+                    # Si se encuentra una coincidencia, se añade al diccionario
+                    if diccionario:
+                        lista_diccionarios_puestos.extend(diccionario)
+                except Exception as e:
+                    print(f"Error buscando coincidencias en {enlace}: {e}")
+                    lista_diccionario_errores.append(
+                        {"Error buscando coincidencias": enlace}
+                    )
+                    continue
 
 """
     Convierte "lista_diccionarios_puestos" en un diccionario de listas si hay coincidencias
@@ -206,9 +234,23 @@ df_combinado, df_busquedas_combinado = preparar_archivo_datos.combinar_dataframe
     diccionario_puestos, diccionario_busquedas, df_opo_guardadas, df_busquedas
 )
 
-# Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
-preparar_archivo_datos.guardar_excel(df_combinado, df_busquedas_combinado)
+# Guardar los errores en el DataFrame de log de errores
+if lista_diccionario_errores:
+    fecha_error = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    errores_formateados = []
+    for d in lista_diccionario_errores:
+        for k, v in d.items():
+            errores_formateados.append(
+                {"Fecha": fecha_error, "Tipo de error": k, "Enlace Web": v}
+            )
+    df_log_errores = pd.concat(
+        [df_log_errores, pd.DataFrame(errores_formateados)], ignore_index=True
+    )
 
+# Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
+preparar_archivo_datos.guardar_excel(
+    df_combinado, df_busquedas_combinado, df_log_errores
+)
 
 # Filtrar el DataFrame por el texto de búsqueda introducido por el usuario y
 #  las fechas de inicio y fin
@@ -227,3 +269,23 @@ impresiones.imprimir_diccionario_puestos(
 
 # Mostramos en un mapa web los municipios encontrados en la búsqueda
 generar_mapa_municipios(df_filtrado_por_patron)
+
+tiempo_fin = time.time()
+duracion = tiempo_fin - tiempo_inicio
+if duracion < 60:
+    print(
+        f"\n{Fore.YELLOW}Tiempo total de ejecución: {duracion:.2f} segundos{Fore.RESET}"
+    )
+elif duracion < 3600:
+    minutos = int(duracion // 60)
+    segundos = int(duracion % 60)
+    print(
+        f"\n{Fore.YELLOW}Tiempo total de ejecución: {minutos} min {segundos} s{Fore.RESET}"
+    )
+else:
+    horas = int(duracion // 3600)
+    minutos = int((duracion % 3600) // 60)
+    segundos = int(duracion % 60)
+    print(
+        f"\n{Fore.YELLOW}⌛🕒 Tiempo total de ejecución: {horas} h {minutos} min {segundos} s{Fore.RESET}"
+    )
