@@ -6,6 +6,11 @@ init(autoreset=True)
 
 
 def barra_progreso_color(iterable, total=None):
+    """
+    Muestra una barra de progreso en consola con un texto adicional.
+    No se usa en la versión actual de la aplicación.
+    Se mantiene a efectos ilustrativos
+    """
     if total is None:
         total = len(iterable)
     spinner = ["|", "/", "-", "\\"]

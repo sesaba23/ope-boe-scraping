@@ -16,6 +16,7 @@ from colorama import Fore, Style
 import pandas as pd
 from openpyxl import Workbook
 import time
+from tqdm import tqdm
 
 MAX_REINTENTOS = 3
 RETRASO_SEGUNDOS = 2
@@ -71,9 +72,13 @@ enlaces_oposiciones = []
 lista_diccionario_errores = []
 
 print(f"\n{Fore.BLUE}Obteniendo URLs de los días seleccionados...{Fore.RESET}")
+""" Se mantiene a efectos ilustrativos: barra personalizada de progreso
 for i, url in enumerate(
     barraprogreso.barra_progreso_color(urls_dias, total=len(urls_dias))
 ):
+"""
+barra = tqdm(urls_dias, desc="", colour="blue")
+for url in barra:
     reintentos = 0
     page = None
     while reintentos < 3:
@@ -82,13 +87,17 @@ for i, url in enumerate(
             break  # ëxito, salir del bucle
         except requests.exceptions.Timeout:
             reintentos += 1
-            print(f"Timeout al acceder a {url} (reintento {reintentos})")
+            barra.set_description(
+                f"Timeout al acceder a {url} (reintento {reintentos})"
+            )
             if reintentos == 3:
                 lista_diccionario_errores.append({"Timeout al acceder": url})
             time.sleep(RETRASO_SEGUNDOS)
         except Exception as e:
             reintentos += 1
-            print(f"Error al acceder a {url}: {e} (reintento {reintentos})")
+            barra.set_description(
+                f"Error al acceder a {url}: {e} (reintento {reintentos})"
+            )
             if reintentos == 3:
                 lista_diccionario_errores.append({"Error al acceder": url})
             time.sleep(RETRASO_SEGUNDOS)
@@ -100,17 +109,23 @@ for i, url in enumerate(
             #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
             enlaces = soup.find_all("a", href=True)
         except Exception as e:
-            print(f"Error procesando el HTML de {url}: {e}")
+            barra.set_description(f"Error procesando el HTML de {url}: {e}")
             continue
 
         for enlace in enlaces:
             if any(formato in enlace["href"] for formato in ["txt"]):
                 enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
-
+        # Si no hay publicaciones en el BOE, mostramos mensaje y paramos la ejecución
         if not enlaces_oposiciones:
-            print(
-                f"\n{Fore.GREEN}Entre el {fecha_inicio} y {fecha_fin} no se ha publicado ningún proceso selectivo"
-            )
+            if fecha_fin == fecha_inicio:
+                print(
+                    f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
+                )
+            else:
+                print(
+                    f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
+                )
+            sys.exit(0)
 
 # Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
 lista_diccionarios_puestos = []
@@ -134,14 +149,23 @@ codigo_busqueda = ""
 """ 
 Empezar a buscar contenido en los enlaces encontrados
 """
-
+print(f"\n{Fore.GREEN}Procesando enlaces...{Fore.RESET}")
 # Mostrar progreso mientras se procesan los enlaces encontrados
-print(f"\n{Fore.BLUE}Procesando los enlaces encontrados...{Fore.RESET}")
+""" Se mantiene a efectos ilustrativos: barra personalizada de progreso
 for i, enlace in enumerate(
     barraprogreso.barra_progreso_color(
-        enlaces_oposiciones, total=len(enlaces_oposiciones)
+        enlaces_oposiciones,
+        total=len(enlaces_oposiciones),
     )
-):
+):"""
+barra = tqdm(
+    enlaces_oposiciones,
+    desc="",
+    colour="green",
+    dynamic_ncols=True,
+)
+for enlace in barra:
+    barra.set_description(f"{enlace[:19]}...{enlace[-15:]}")
     # Genero el código único para cada búsqueda
     if not texto_busqueda:  # Si no se pasa un argumento, el código es el enlace
         codigo = enlace
@@ -156,19 +180,22 @@ for i, enlace in enumerate(
         reintentos = 0
         while reintentos < MAX_REINTENTOS:
             try:
-                print(f"Procesando enlace: {enlace}")
                 page = requests.get(enlace, timeout=5)
                 break  # Si la petición tiene éxito, salimos del bucle
             except requests.exceptions.Timeout:
                 reintentos += 1
-                print(f"Timeout al acceder a {enlace} (reintento {reintentos})")
+                barra.set_description(
+                    f"Timeout al acceder a {enlace[-15:]} (reintento: {reintentos})"
+                )
                 if reintentos == MAX_REINTENTOS:
                     lista_diccionario_errores.append({"Timeout al acceder": enlace})
                     continue
                 time.sleep(RETRASO_SEGUNDOS)
             except Exception as e:
                 reintentos += 1
-                print(f"Error al acceder a {enlace}: {e} (reintento {reintentos})")
+                barra.set_description(
+                    f"{Fore.RED}Error al acceder a {enlace[-15:]}: {e}{Fore.RESET}"
+                )
                 if reintentos == MAX_REINTENTOS:
                     lista_diccionario_errores.append({"Error al acceder": enlace})
                     continue
@@ -183,7 +210,9 @@ for i, enlace in enumerate(
                 titulo = soup.find(class_="documento-tit").text.strip()
                 fecha_boe = soup.find("div", class_="metadatos").text.strip()
             except Exception as e:
-                print(f"Error procesando el HTML de {enlace}: {e}")
+                barra.set_description(
+                    f"Error procesando el HTML de {enlace[-15:]}: {e}"
+                )
                 lista_diccionario_errores.append({"Error procesando el HTML": enlace})
                 continue
 
@@ -192,14 +221,30 @@ for i, enlace in enumerate(
                 try:
                     # La función devuelve una lista de diccionarios con las coincidencias y
                     # None si no se encuentra nada
-                    diccionario = coincidencias.buscar_coincidencias_todas(
+                    lista_diccionarios_local = coincidencias.buscar_coincidencias_local(
                         texto_busqueda, contenido.text, titulo, fecha_boe, enlace
                     )
-                    # Si se encuentra una coincidencia, se añade al diccionario
-                    if diccionario:
-                        lista_diccionarios_puestos.extend(diccionario)
+                    # Si se encuentra una coincidencia en LOCAL, se añade al diccionario
+                    if lista_diccionarios_local:
+                        lista_diccionarios_puestos.extend(lista_diccionarios_local)
+                        for diccionario in lista_diccionarios_local:
+                            tqdm.write(
+                                f"{diccionario["Num_plazas"]} x {diccionario["Puesto"]} en {diccionario["Administración"]}"
+                            )
+                    else:  # Si no, busca en ESTADO
+                        diccionario_estado = coincidencias.buscar_coincidencias_estado(
+                            texto_busqueda, contenido.text, titulo, fecha_boe, enlace
+                        )
+                        if diccionario_estado:
+                            lista_diccionarios_puestos.append(diccionario_estado)
+                            tqdm.write(
+                                f"Convocatoria del Estado encontrada: {diccionario_estado["Puesto"]}"
+                            )
+
                 except Exception as e:
-                    print(f"Error buscando coincidencias en {enlace}: {e}")
+                    barra.set_description(
+                        f"Error buscando coincidencias en {enlace}: {e}"
+                    )
                     lista_diccionario_errores.append(
                         {"Error buscando coincidencias": enlace}
                     )
@@ -268,7 +313,8 @@ impresiones.imprimir_diccionario_puestos(
 )
 
 # Mostramos en un mapa web los municipios encontrados en la búsqueda
-generar_mapa_municipios(df_filtrado_por_patron)
+if not df_filtrado_por_patron.empty:
+    generar_mapa_municipios(df_filtrado_por_patron)
 
 tiempo_fin = time.time()
 duracion = tiempo_fin - tiempo_inicio

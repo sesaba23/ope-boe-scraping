@@ -105,46 +105,57 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
     Buscamos los resultados buscados por el usuario dentro del propio
     Dataframe, incluidas las fechas de inicio y fin
     """
+    if not df_combinado.empty:
+        # Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
+        #   "Fecha_dt" para facilitar la comparación de fechas
+        #   Si cambiamos directamente el formato de la columna fecha, al ejecutar, da un warning
+        df_combinado["Fecha_dt"] = df_combinado["Fecha_boe"].apply(convertir_fecha)
 
-    # Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
-    #   "Fecha_dt" para facilitar la comparación de fechas
-    #   Si cambiamos directamente el formato de la columna fecha, al ejecutar, da un warning
-    df_combinado["Fecha_dt"] = df_combinado["Fecha_boe"].apply(convertir_fecha)
+        # Filtrar el DataFrame por el rango de fechas
+        # Las fechas de inicio y final son el primer y último elemento de "lista_fechas"
+        df_combinado_filtrado_por_fecha = df_combinado[
+            (df_combinado["Fecha_dt"] >= lista_fechas[0])
+            & (df_combinado["Fecha_dt"] <= lista_fechas[-1])
+        ]
 
-    # Filtrar el DataFrame por el rango de fechas
-    # Las fechas de inicio y final son el primer y último elemento de "lista_fechas"
-    df_combinado_filtrado_por_fecha = df_combinado[
-        (df_combinado["Fecha_dt"] >= lista_fechas[0])
-        & (df_combinado["Fecha_dt"] <= lista_fechas[-1])
-    ]
-
-    # Ordenar el DataFrame por la columna "Fecha_dt" en orden cronológico inverso
-    df_combinado_filtrado_por_fecha = df_combinado_filtrado_por_fecha.sort_values(
-        by="Fecha_dt", ascending=True
-    )
-
-    # Eliminar la columna auxiliar "Fecha_dt" si no es necesaria
-    df_combinado_filtrado = df_combinado_filtrado_por_fecha.drop(columns=["Fecha_dt"])
-
-    palabras_busqueda = texto_busqueda.split()
-    patron_regex = (
-        r"\b"
-        + r"\s+".join([rf"{clave}[\w/@\\]*(es)?" for clave in palabras_busqueda])
-        + r"(.*?)"
-    )
-    # Desactivar warnings relacionados con expresiones regulares
-    warnings.filterwarnings("ignore", message="This pattern is interpreted")
-
-    # Filtrar el DataFrame por coincidencias en la columna "Puesto"
-    df_filtrado_por_patron = df_combinado_filtrado_por_fecha[
-        df_combinado_filtrado_por_fecha["Puesto"].str.contains(
-            patron_regex, flags=re.IGNORECASE, na=False
+        # Ordenar el DataFrame por la columna "Fecha_dt" en orden cronológico inverso
+        df_combinado_filtrado_por_fecha = df_combinado_filtrado_por_fecha.sort_values(
+            by="Fecha_dt", ascending=True
         )
-    ]
-    # Restaurar los warnings después de la operación
-    warnings.filterwarnings("default", message="This pattern is interpreted")
 
-    return df_filtrado_por_patron
+        # Eliminar la columna auxiliar "Fecha_dt" si no es necesaria
+        df_combinado_filtrado = df_combinado_filtrado_por_fecha.drop(
+            columns=["Fecha_dt"]
+        )
+
+        palabras_busqueda = texto_busqueda.split()
+        patron_regex = (
+            r"\b"
+            + r"\s+".join([rf"{clave}[\w/@\\]*(es)?" for clave in palabras_busqueda])
+            + r"(.*?)"
+        )
+        patron_regex = (
+            rf"(?=.*"
+            + r")(?=.*".join([re.escape(clave) for clave in palabras_busqueda])
+            + r")"
+        )
+
+        # Desactivar warnings relacionados con expresiones regulares
+        warnings.filterwarnings("ignore", message="This pattern is interpreted")
+
+        # Filtrar el DataFrame por coincidencias en la columna "Puesto"
+        df_filtrado_por_patron = df_combinado_filtrado_por_fecha[
+            df_combinado_filtrado_por_fecha["Puesto"].str.contains(
+                patron_regex, flags=re.IGNORECASE, na=False
+            )
+        ]
+        # Restaurar los warnings después de la operación
+        warnings.filterwarnings("default", message="This pattern is interpreted")
+
+        return df_filtrado_por_patron
+    else:
+        # Si al pasar el DataFrame a la función está vacío, devuelvo ese DataFrame
+        return df_combinado
 
 
 def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):

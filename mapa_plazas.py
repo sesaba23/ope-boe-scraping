@@ -139,11 +139,11 @@ def generar_mapa_municipios(df=None):
             <b>Nº Plazas:</b> {row['Num_plazas']}</br>
             <b>Administración:</b> {row['Administración']}<br>
             <b>Sistema:</b> {row['Sistema']}<br>
-            {enlace_html}<br>
-            <b>Habitantes:</b> {f"{int(row['Habitantes']):,}".replace(",", ".")}
+            <b>Fecha:</b> {row['Fecha_boe']}, {enlace_html}<br>
+            {f"{int(row['Habitantes']):,}".replace(",", ".")} habitantes<br>
             """
             folium.Marker(
-                location=[lat, lon], popup=folium.Popup(popup_html, max_width=300)
+                location=[lat, lon], popup=folium.Popup(popup_html, max_width=350)
             ).add_to(marker_cluster)
 
     mostrar_puestos_sin_coordenadas(df)
@@ -195,7 +195,7 @@ def mostrar_puestos_sin_coordenadas(df):
             <b>Puesto:</b> {row.get('Puesto', '')}<br>
             <b>Nº Plazas:</b> {row.get('Num_plazas', '')}<br>
             <b>Administración:</b> {row.get('Administración', '')}<br>
-            {enlace_html}<br>
+            <b>Fecha:</b> {row['Fecha_boe']}, {enlace_html}<br>
         </div>
         """
 
