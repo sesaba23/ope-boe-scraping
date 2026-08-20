@@ -9,7 +9,7 @@ from mapa_plazas import generar_mapa_municipios
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, ParserRejectedMarkup
-from urllib.parse import urljoin, urlparse
+from urllib.parse import parse_qs, urljoin, urlparse
 import sys  # Importar sys para manejar argumentos de línea de comandos
 from colorama import Fore
 import pandas as pd
@@ -18,6 +18,52 @@ from tqdm import tqdm
 
 MAX_REINTENTOS = 3
 RETRASO_SEGUNDOS = 2
+
+
+def _buscar_enlaces_2b_en_indice_general(contenido):
+    soup = BeautifulSoup(contenido, "html.parser")
+    enlaces_secciones = [
+        enlace
+        for enlace in soup.find_all("a", href=True)
+        if urlparse(enlace["href"]).path.endswith("index.php")
+        and "s" in parse_qs(urlparse(enlace["href"]).query)
+    ]
+    enlace_seccion_2b = next(
+        (
+            enlace
+            for enlace in enlaces_secciones
+            if parse_qs(urlparse(enlace["href"]).query).get("s") == ["2B"]
+        ),
+        None,
+    )
+    encabezado_2b = next(
+        (
+            encabezado
+            for encabezado in soup.find_all(["h2", "h3"])
+            if "II. Autoridades y personal. - B. Oposiciones y concursos"
+            in encabezado.get_text(" ", strip=True)
+        ),
+        None,
+    )
+
+    if enlace_seccion_2b is None and encabezado_2b is None:
+        if enlaces_secciones:
+            return []
+        raise ValueError("No se reconoce la estructura de secciones del índice")
+    if encabezado_2b is None:
+        raise ValueError("Se enlaza la sección II.B pero no se encuentra su contenido")
+
+    enlaces = []
+    enlaces_vistos = set()
+    for elemento in encabezado_2b.find_all_next():
+        if elemento.name == encabezado_2b.name:
+            break
+        if elemento.name == "a" and elemento.has_attr("href"):
+            href = elemento["href"]
+            if "txt" in href and href not in enlaces_vistos:
+                enlaces.append(elemento)
+                enlaces_vistos.add(href)
+    return enlaces
 
 
 def main():
@@ -90,6 +136,39 @@ def main():
             except requests.exceptions.HTTPError as e:
                 page = None
                 if e.response is not None and e.response.status_code == 404:
+                    break
+                if e.response is not None and e.response.status_code == 400:
+                    url_indice_general = url.split("?", 1)[0]
+                    try:
+                        page_indice_general = requests.get(
+                            url_indice_general, timeout=10
+                        )
+                        page_indice_general.raise_for_status()
+                    except requests.exceptions.RequestException as error_fallback:
+                        barra.set_description(
+                            f"Error al acceder a {url_indice_general}: {error_fallback}"
+                        )
+                        lista_diccionario_errores.append(
+                            {"Error al acceder": url_indice_general}
+                        )
+                        break
+                    try:
+                        enlaces_fallback = _buscar_enlaces_2b_en_indice_general(
+                            page_indice_general.content
+                        )
+                    except (ParserRejectedMarkup, ValueError) as error_estructura:
+                        barra.set_description(
+                            f"Error procesando el HTML de {url_indice_general}: "
+                            f"{error_estructura}"
+                        )
+                        lista_diccionario_errores.append(
+                            {"Error de estructura": url_indice_general}
+                        )
+                        break
+                    for enlace in enlaces_fallback:
+                        enlaces_oposiciones.append(
+                            urljoin(URL_BASE_ENLACES, enlace["href"])
+                        )
                     break
                 reintentos += 1
                 barra.set_description(

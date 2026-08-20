@@ -332,7 +332,10 @@ def test_rango_valido_404_valido_continua_hasta_el_final(monkeypatch):
     assert errores_guardados == []
 
 
-def test_404_al_descargar_publicacion_sigue_siendo_error(monkeypatch):
+@pytest.mark.parametrize("estado", [400, 404])
+def test_400_y_404_al_descargar_publicacion_siguen_siendo_error(
+    monkeypatch, estado
+):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=documento-inexistente"
     llamadas_publicacion = []
 
@@ -343,7 +346,7 @@ def test_404_al_descargar_publicacion_sigue_siendo_error(monkeypatch):
             )
         if url == enlace:
             llamadas_publicacion.append(url)
-            return _RespuestaHTTP("", 404)
+            return _RespuestaHTTP("", estado)
         raise AssertionError(f"URL inesperada: {url}")
 
     errores_guardados = _configurar_consulta_boe(
@@ -383,6 +386,166 @@ def test_dias_validos_sin_publicaciones_y_404_terminan_sin_publicaciones(
     assert len(llamadas) == 3
     assert "no se ha publicado ningún proceso selectivo" in texto_salida
     assert "No se pudo consultar el BOE" not in texto_salida
+
+
+def test_400_en_filtro_y_indice_general_sin_2b_es_dia_sin_publicaciones(
+    monkeypatch, capsys
+):
+    llamadas = []
+    html_indice_general = """
+        <a href="index.php?s=1">I. Disposiciones generales</a>
+        <h3>I. Disposiciones generales</h3>
+    """
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        if url.endswith("?s=2B"):
+            return _RespuestaHTTP("", 400)
+        return _RespuestaHTTP(html_indice_general)
+
+    _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 0
+    assert llamadas == [
+        "https://www.boe.es/boe/dias/2026/08/09/index.php?s=2B",
+        "https://www.boe.es/boe/dias/2026/08/09/index.php",
+    ]
+    assert "no se ha publicado ningún proceso selectivo" in capsys.readouterr().out
+
+
+def test_400_en_filtro_recupera_2b_desde_el_indice_general(monkeypatch):
+    enlaces = [
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1",
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-2",
+    ]
+    publicaciones_consultadas = []
+    html_indice_general = """
+        <a href="index.php?s=1">I. Disposiciones generales</a>
+        <a href="index.php?s=2B">II. B. Oposiciones y concursos</a>
+        <h3>II. Autoridades y personal. - B. Oposiciones y concursos</h3>
+        <a href="/diario_boe/txt.php?id=BOE-A-2026-1">Otros formatos</a>
+        <a href="/diario_boe/txt.php?id=BOE-A-2026-2">Otros formatos</a>
+        <h3>III. Otras disposiciones</h3>
+        <a href="/diario_boe/txt.php?id=fuera-de-2b">Otros formatos</a>
+    """
+
+    def obtener_url(url, timeout):
+        if url.endswith("?s=2B"):
+            return _RespuestaHTTP("", 400)
+        if url.endswith("index.php"):
+            return _RespuestaHTTP(html_indice_general)
+        if url in enlaces:
+            publicaciones_consultadas.append(url)
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert publicaciones_consultadas == enlaces
+    assert errores_guardados == []
+
+
+@pytest.mark.parametrize("estado_fallback", [400, 500])
+def test_error_http_en_indice_general_del_fallback_se_registra(
+    monkeypatch, estado_fallback
+):
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        if url.endswith("?s=2B"):
+            return _RespuestaHTTP("", 400)
+        return _RespuestaHTTP("", estado_fallback)
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 1
+    assert len(llamadas) == 2
+    assert errores_guardados[0]["Tipo de error"] == "Error al acceder"
+    assert errores_guardados[0]["Enlace Web"].endswith("/index.php")
+
+
+def test_fallback_con_estructura_no_reconocible_registra_error(monkeypatch):
+    def obtener_url(url, timeout):
+        if url.endswith("?s=2B"):
+            return _RespuestaHTTP("", 400)
+        return _RespuestaHTTP("<html><body>Contenido inesperado</body></html>")
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 1
+    assert errores_guardados[0]["Tipo de error"] == "Error de estructura"
+
+
+@pytest.mark.parametrize("estado", [429, 500])
+def test_429_y_5xx_del_indice_filtrado_conservan_los_reintentos(
+    monkeypatch, estado
+):
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        return _RespuestaHTTP("", estado)
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/08"], "08/08/2026", "08/08/2026"
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 1
+    assert len(llamadas) == 3
+    assert errores_guardados[0]["Tipo de error"] == "Error al acceder"
+
+
+def test_fallback_no_duplica_publicaciones(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-repetida"
+    publicaciones_consultadas = []
+    html_indice_general = """
+        <a href="index.php?s=2B">II. B. Oposiciones y concursos</a>
+        <h3>II. Autoridades y personal. - B. Oposiciones y concursos</h3>
+        <a href="/diario_boe/txt.php?id=BOE-A-2026-repetida">Otros formatos</a>
+        <a href="/diario_boe/txt.php?id=BOE-A-2026-repetida">HTML repetido</a>
+        <h3>III. Otras disposiciones</h3>
+    """
+
+    def obtener_url(url, timeout):
+        if url.endswith("?s=2B"):
+            return _RespuestaHTTP("", 400)
+        if url.endswith("index.php"):
+            return _RespuestaHTTP(html_indice_general)
+        if url == enlace:
+            publicaciones_consultadas.append(url)
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert publicaciones_consultadas == [enlace]
 
 
 def test_error_de_programacion_en_peticion_no_se_oculta(monkeypatch):
@@ -569,6 +732,14 @@ class _RespuestaHTTP:
             raise requests.exceptions.HTTPError(
                 f"{self.status_code} HTTP Error", response=self
             )
+
+
+def _html_publicacion_correcta():
+    return (
+        '<div class="documento-tit">Documento correcto</div>'
+        '<div class="metadatos">9 de agosto de 2026</div>'
+        '<div id="textoxslt">Contenido correcto</div>'
+    )
 
 
 def _configurar_consulta_boe(
