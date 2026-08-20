@@ -1,3 +1,4 @@
+import importlib
 import runpy
 import sys
 
@@ -10,6 +11,22 @@ import entradas_datos
 import impresiones
 import mapa_plazas
 import preparar_archivo_datos
+
+
+def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
+    def ejecucion_inesperada(*args, **kwargs):
+        raise AssertionError("El flujo principal se ejecutó durante la importación")
+
+    monkeypatch.setattr(
+        preparar_archivo_datos, "preparar_excel_y_dataframes", ejecucion_inesperada
+    )
+    monkeypatch.setattr(requests, "get", ejecucion_inesperada)
+    monkeypatch.setattr("builtins.input", ejecucion_inesperada)
+    sys.modules.pop("plazasboe", None)
+
+    modulo = importlib.import_module("plazasboe")
+
+    assert callable(modulo.main)
 
 
 def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypatch):
@@ -108,7 +125,14 @@ def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypat
     monkeypatch.setattr(impresiones, "imprimir_diccionario_puestos", lambda *args, **kwargs: None)
     monkeypatch.setattr(mapa_plazas, "generar_mapa_municipios", lambda *args: None)
 
-    runpy.run_path("plazasboe.py", run_name="__main__")
+    import plazasboe
+
+    monkeypatch.setattr(
+        plazasboe,
+        "solicitar_fechas_y_validar",
+        lambda *args: ("", "01/01/2025", "01/01/2025", ["2025/01/01"]),
+    )
+    plazasboe.main()
 
     assert enlaces_analizados == [enlace_correcto]
     assert codigos_guardados == [enlace_correcto]

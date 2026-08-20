@@ -8,11 +8,12 @@ from folium.plugins import MarkerCluster
 import webbrowser
 import os
 import unicodedata
+from pathlib import Path
 
 
 def buscar_municipio(administracion):
     # Ruta al archivo (ajusta si está en otra carpeta)
-    ruta = "assets/resources/municipios.csv"
+    ruta = Path(__file__).resolve().parent / "assets" / "resources" / "municipios.csv"
 
     # Leer el archivo CSV en un DataFrame separado por ';'
     df = pd.read_csv(ruta, sep=";")

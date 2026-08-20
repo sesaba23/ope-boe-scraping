@@ -22,6 +22,15 @@ def test_buscar_municipio(nombre, esperado):
     ), f"Esperado '{esperado}' en '{resultado['Municipio']}'"
 
 
+def test_buscar_municipio_desde_otro_directorio(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+
+    resultado = buscar_municipio("A Coruña")
+
+    assert resultado is not None
+    assert resultado["Municipio"] == "Coruña (A)"
+
+
 def test_generar_mapa_sin_columnas_de_coordenadas(monkeypatch, tmp_path):
     df = pd.DataFrame(
         [
