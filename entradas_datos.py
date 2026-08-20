@@ -67,7 +67,7 @@ def solicitar_fechas_y_validar(texto_busqueda, fecha_actual, fechas, modo_test=F
             # Calculo las direcciones necesarias en función de las fechas en las que se
             #   van a buscar las distintas oposiciones
             lista_fechas = fechas.generar_rango_fechas(fecha_inicio, fecha_fin)
-            print(f"\n{Fore.BLUE}✅ Fechas válidas.\n")
+            print(f"{Fore.BLUE}✅ Fechas válidas.\n")
             return texto_busqueda, fecha_inicio, fecha_fin, lista_fechas
 
         except ValueError as e:
