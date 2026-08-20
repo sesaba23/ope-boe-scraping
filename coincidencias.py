@@ -91,6 +91,7 @@ def buscar_coincidencias_local(
         fecha_publicacion = match_num_boe.group(1)
 
     # Buscamos el número de BOE. Texto entre el primer "«" y la siguiente ","
+    texto_publicacion = ""
     match_publicacion = re.search(r"(«)([^,]*,[^,]*),", texto_contenido)
     if match_publicacion:
         texto_publicacion = match_publicacion.group(2)

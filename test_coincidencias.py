@@ -87,3 +87,21 @@ def test_buscar_coincidencias_completo():
         "Provincia": "Salamanca",
     }, f"El texto esperado a partir del patrón: '{expresion}' no coincide con lo esperado"
     assert len(resultado) == 1, "El diccionario debería tener sólo un elemento"
+
+
+def test_buscar_coincidencias_sin_referencia_a_publicacion():
+    texto = (
+        "Una plaza de Auxiliar Administrativo, perteneciente a la escala de "
+        "Administración General, subescala Auxiliar, mediante el sistema de "
+        "oposición, en turno libre."
+    )
+
+    resultado = buscar_coincidencias_local(
+        "",
+        texto,
+        "Resolución, del Ayuntamiento de Ejemplo, referente a una convocatoria.",
+        "«BOE» núm. 1, de 2 de enero de 2025",
+        "https://www.boe.es/ejemplo",
+    )
+
+    assert resultado[0]["Publicación"] == "No disponible"
