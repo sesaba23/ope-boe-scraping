@@ -275,6 +275,116 @@ def test_fallo_total_del_indice_no_se_informa_como_ausencia_de_publicaciones(
     assert errores_guardados
 
 
+def test_404_en_indice_de_un_unico_dia_es_dia_sin_edicion(monkeypatch, capsys):
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        return _RespuestaHTTP("", 404)
+
+    _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2025/01/05"], "05/01/2025", "05/01/2025"
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 0
+    assert len(llamadas) == 1
+    assert "no se ha publicado ningún proceso selectivo" in capsys.readouterr().out
+
+
+def test_rango_valido_404_valido_continua_hasta_el_final(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=posterior-al-404"
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        if "2025/01/01" in url:
+            return _RespuestaHTTP("<html>Sin publicaciones</html>")
+        if "2025/01/02" in url:
+            return _RespuestaHTTP("", 404)
+        if "2025/01/03" in url:
+            return _RespuestaHTTP(
+                '<a href="/diario_boe/txt.php?id=posterior-al-404">Publicación</a>'
+            )
+        if url == enlace:
+            return _RespuestaHTTP(
+                '<div class="documento-tit">Documento</div>'
+                '<div class="metadatos">3 de enero de 2025</div>'
+                '<div id="textoxslt">Contenido</div>'
+            )
+        raise AssertionError(f"URL inesperada: {url}")
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2025/01/01", "2025/01/02", "2025/01/03"],
+        "01/01/2025",
+        "03/01/2025",
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert sum("2025/01/02" in url for url in llamadas) == 1
+    assert any("2025/01/03" in url for url in llamadas)
+    assert enlace in llamadas
+    assert errores_guardados == []
+
+
+def test_404_al_descargar_publicacion_sigue_siendo_error(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=documento-inexistente"
+    llamadas_publicacion = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(
+                '<a href="/diario_boe/txt.php?id=documento-inexistente">Publicación</a>'
+            )
+        if url == enlace:
+            llamadas_publicacion.append(url)
+            return _RespuestaHTTP("", 404)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2025/01/01"], "01/01/2025", "01/01/2025"
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert len(llamadas_publicacion) == 3
+    assert [error["Enlace Web"] for error in errores_guardados] == [enlace]
+
+
+def test_dias_validos_sin_publicaciones_y_404_terminan_sin_publicaciones(
+    monkeypatch, capsys
+):
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        if "2025/01/02" in url:
+            return _RespuestaHTTP("", 404)
+        return _RespuestaHTTP("<html>Sin publicaciones de la sección</html>")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2025/01/01", "2025/01/02", "2025/01/03"],
+        "01/01/2025",
+        "03/01/2025",
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    texto_salida = capsys.readouterr().out
+    assert salida.value.code == 0
+    assert len(llamadas) == 3
+    assert "no se ha publicado ningún proceso selectivo" in texto_salida
+    assert "No se pudo consultar el BOE" not in texto_salida
+
+
 def test_error_de_programacion_en_peticion_no_se_oculta(monkeypatch):
     errores_guardados = []
 
@@ -447,3 +557,76 @@ def _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados):
     monkeypatch.setattr(preparar_archivo_datos, "guardar_excel", guardar_excel)
     monkeypatch.setattr(requests, "get", obtener_url)
     monkeypatch.setattr("time.sleep", lambda *args: None)
+
+
+class _RespuestaHTTP:
+    def __init__(self, contenido, estado=200):
+        self.content = contenido.encode()
+        self.status_code = estado
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.exceptions.HTTPError(
+                f"{self.status_code} HTTP Error", response=self
+            )
+
+
+def _configurar_consulta_boe(
+    monkeypatch, obtener_url, lista_fechas, fecha_inicio, fecha_fin
+):
+    columnas = [
+        "Num_plazas",
+        "Puesto",
+        "Administración",
+        "Escala",
+        "Subescala",
+        "Clase",
+        "Sistema",
+        "Turno",
+        "Fecha_boe",
+        "Publicación",
+        "Enlace",
+    ]
+    oposiciones = pd.DataFrame(columns=columnas)
+    busquedas = pd.DataFrame({"Código": []})
+    log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
+    errores_guardados = []
+
+    def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
+        errores_guardados.extend(df_log_errores.to_dict(orient="records"))
+
+    monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: ("", fecha_inicio, fecha_fin, lista_fechas),
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "preparar_excel_y_dataframes",
+        lambda: {
+            "Búsquedas": busquedas,
+            "Oposiciones": oposiciones,
+            "Log-errores": log_errores,
+        },
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "combinar_dataframes",
+        lambda *args: (oposiciones, busquedas),
+    )
+    monkeypatch.setattr(preparar_archivo_datos, "guardar_excel", guardar_excel)
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "prepara_data_frame_mostrar_resultados",
+        lambda *args: oposiciones,
+    )
+    monkeypatch.setattr(requests, "get", obtener_url)
+    monkeypatch.setattr("time.sleep", lambda *args: None)
+    monkeypatch.setattr(coincidencias, "buscar_coincidencias_local", lambda *args: None)
+    monkeypatch.setattr(coincidencias, "buscar_coincidencias_estado", lambda *args: None)
+    monkeypatch.setattr(
+        impresiones, "imprimir_diccionario_puestos", lambda *args, **kwargs: None
+    )
+    monkeypatch.setattr(mapa_plazas, "generar_mapa_municipios", lambda *args: None)
+    return errores_guardados

@@ -87,6 +87,17 @@ def main():
                 page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
                 page.raise_for_status()
                 break  # ëxito, salir del bucle
+            except requests.exceptions.HTTPError as e:
+                page = None
+                if e.response is not None and e.response.status_code == 404:
+                    break
+                reintentos += 1
+                barra.set_description(
+                    f"Error al acceder a {url}: {e} (reintento {reintentos})"
+                )
+                if reintentos == MAX_REINTENTOS:
+                    lista_diccionario_errores.append({"Error al acceder": url})
+                time.sleep(RETRASO_SEGUNDOS)
             except requests.exceptions.Timeout:
                 page = None
                 reintentos += 1
