@@ -25,12 +25,12 @@ def main():
 
     # Un ejemplo cualquiera de la dirección de la sección 'oposiciones y concursos'
     # de la página del BOE
-    URL_base_oposiciones = "https://www.boe.es/boe/dias/2025/04/03/index.php?s=2B"
+    URL_BASE_OPOSICIONES = "https://www.boe.es/boe/dias/2025/04/03/index.php?s=2B"
     # Obtengo los componentes de la URL anterior
-    URL_componentes = urlparse(URL_base_oposiciones)
+    URL_COMPONENTES = urlparse(URL_BASE_OPOSICIONES)
     # URL base que da acceso al calendario del BOE
-    URL_base = "https://www.boe.es/boe/dias/"
-    URL_base_enlaces = "https://www.boe.es"
+    URL_BASE = "https://www.boe.es/boe/dias/"
+    URL_BASE_ENLACES = "https://www.boe.es"
 
     texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
 
@@ -63,7 +63,7 @@ def main():
        y buscar los enlaces a otros formatos (txt) """
     # Generar las URLs para cada día en el rango de fechas usando urljoin
     urls_dias = [
-        urljoin(URL_base, f"{fecha}/index.php?{URL_componentes.query}")
+        urljoin(URL_BASE, f"{fecha}/index.php?{URL_COMPONENTES.query}")
         for fecha in lista_fechas
     ]
 
@@ -82,7 +82,7 @@ def main():
     for url in barra:
         reintentos = 0
         page = None
-        while reintentos < 3:
+        while reintentos < MAX_REINTENTOS:
             try:
                 page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
                 page.raise_for_status()
@@ -93,7 +93,7 @@ def main():
                 barra.set_description(
                     f"Timeout al acceder a {url} (reintento {reintentos})"
                 )
-                if reintentos == 3:
+                if reintentos == MAX_REINTENTOS:
                     lista_diccionario_errores.append({"Timeout al acceder": url})
                 time.sleep(RETRASO_SEGUNDOS)
             except requests.exceptions.RequestException as e:
@@ -102,7 +102,7 @@ def main():
                 barra.set_description(
                     f"Error al acceder a {url}: {e} (reintento {reintentos})"
                 )
-                if reintentos == 3:
+                if reintentos == MAX_REINTENTOS:
                     lista_diccionario_errores.append({"Error al acceder": url})
                 time.sleep(RETRASO_SEGUNDOS)
         if page is not None:
@@ -118,7 +118,7 @@ def main():
 
             for enlace in enlaces:
                 if any(formato in enlace["href"] for formato in ["txt"]):
-                    enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
+                    enlaces_oposiciones.append(URL_BASE_ENLACES + enlace["href"])
 
     # Si no hay publicaciones y la consulta fue correcta, mostramos mensaje y paramos
     if not enlaces_oposiciones and not lista_diccionario_errores:

@@ -25,38 +25,77 @@ Está específicamente pensado para buscar plazas o convocatorias publicadas por
 | Sergio Sánchez Barahona | sesaba23@gmail.com     |
 | Ingeniero Industrial e Ingeniero en Electrónica | |
 
-## 🚀 Instalación rápida
+## 🚀 Instalación y ejecución
 
-### 1️⃣ Requisitos previos
+### Requisitos
 
-Puedes ejecutarlo directamente en el lenguaje de programación **Python** descargable de forma gratuita en los principales sistemas operativos como **Windows** o **macOS**. En las distintas distribuciones **Linux**, suele venir preinstalado.
-Una vez que hayas instalado Python, en la consola o terminal, debes asegúrate de tener instaladas todas las dependencias. 
-Puedes instalarlas fácilmente utilizando el archivo `requirements.txt`.
+La aplicación necesita Python y conexión a Internet para consultar `boe.es`. Sus dependencias están fijadas en `requirements.txt`: Beautiful Soup, Colorama, Folium, openpyxl, pandas, Requests, tqdm, `word2number_es` y pytest para ejecutar las pruebas.
 
-### 2️⃣ Instalación de dependencias
+### Crear el entorno virtual
 
-En un **terminal** ejecuta las siguientes acciones:
+Desde la raíz del proyecto:
 
-1. Crear un entorno virtual (opcional, pero recomendado): ```python -m venv .env ```
-   
-2. Para activar el entorno virtual:
-      - en Windows: ```.\venv\Scripts\activate ```
-      - en Linux o Macos: ```source .venv/bin/activate ```
+```bash
+python -m venv .venv
+```
 
-3. Para desactivar el entorno virtual: ```deactivate ```
+Actívalo en Linux o macOS:
 
-4. **Instala las librerías necesarias para la ejecución del programa:** ```pip install -r requirements.txt ```
- 
+```bash
+source .venv/bin/activate
+```
 
-#### 3️⃣ [opcional] Programa para generar el archivo de requerimientos del proyecto si añades funcionalidades
+En Windows PowerShell:
 
-Para generar el archivo de requerimientos se ha utilizado el programa: **pipreqs**:
-1. para instalar pipreqs: ```pip install pipreqs```
-2. Para generar el archivo de requerimientos: ```pipreqs /path/to/project --force``` o ```pipreqs . --force``` esto útimo, si nos situamos en la carpeta del proyecto.
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Instala las dependencias:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Para salir del entorno virtual:
+
+```bash
+deactivate
+```
+
+### Ejecutar la aplicación
+
+La ejecución principal es:
+
+```bash
+python plazasboe.py
+```
+
+También puede indicarse el puesto buscado como argumento:
+
+```bash
+python plazasboe.py ingeniero industrial
+```
+
+La aplicación solicita las fechas en formato `dd/mm/aaaa`. Si no se proporciona un puesto, también lo solicita de forma interactiva.
+
+### Archivos generados
+
+Los archivos de salida se crean en el directorio desde el que se ejecuta la aplicación:
+
+- `BOE-oposiciones.xlsx`: histórico de búsquedas, convocatorias y errores.
+- `mapa_municipios.html`: mapa de las convocatorias con coordenadas.
+- `puestos_sin_coordenadas.html`: convocatorias que no pudieron localizarse geográficamente.
+
+Para ejecutar las pruebas:
+
+```bash
+python -m pytest -q
+```
 
 ## 📄 LICENCIA
 
-Este proyecto está licenciado bajo la Licencia Pública General Affero de GNU, versión 3.0 (AGPL-3.0). Puedes consultar los términos completos de la licencia en el siguiente enlace:
+Este proyecto está licenciado bajo la Licencia Pública General Affero de GNU, versión 3.0 (AGPL-3.0). Puedes consultar sus términos en `licence.md` o en el siguiente enlace:
 
 https://www.gnu.org/licenses/agpl-3.0.html
 
@@ -89,9 +128,8 @@ La única manera de asegurarte de no te pierdes ninguna convocatiria al 100% es 
 ## 📚 Notas adicionales
 
 - El proyecto puede hacer uso de bibliotecas de terceros o acceder a servicios externos. El mantenimiento y responsabilidad de dichos servicios corresponde a sus respectivos autores o proveedores.
-- Para más detalles, consulta el archivo `LICENSE`.
+- Para más detalles, consulta el archivo `licence.md`.
 
 ---
 
 ¡Gracias por usar este proyecto! ⭐
-

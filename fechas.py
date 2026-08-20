@@ -5,14 +5,12 @@ def generar_rango_fechas(inicio, fin):
     """
     Genera una lista de fechas entre dos fechas dadas.
     Argumentos:
-        :param inicio: Fecha de inicio en formato "YYYY/MM/DD".
-        :param fin: Fecha de fin en formato "YYYY/MM/DD".
+        :param inicio: Fecha de inicio en formato "DD/MM/YYYY".
+        :param fin: Fecha de fin en formato "DD/MM/YYYY".
     Retorna:
         :return: Lista de fechas en formato "YYYY/MM/DD".
     """
     # Convertimos las cadenas de texto a objetos datetime
-    # fecha_inicio = datetime.strptime(inicio, "%Y/%m/%d")
-    # fecha_fin = datetime.strptime(fin, "%Y/%m/%d")
     fecha_inicio = datetime.strptime(inicio, "%d/%m/%Y")
     fecha_fin = datetime.strptime(fin, "%d/%m/%Y")
 
