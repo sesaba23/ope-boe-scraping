@@ -175,8 +175,6 @@ for enlace in barra:
 
     # Comprobar si el enlace ya ha sido procesado
     if codigo not in df_busquedas["Código"].values:
-        diccionario_busquedas["Código"].append(codigo)
-
         page = None
         reintentos = 0
         while reintentos < MAX_REINTENTOS:
@@ -218,6 +216,7 @@ for enlace in barra:
                 continue
 
             # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
+            analisis_correcto = True
             for contenido in contenidos:
                 try:
                     # La función devuelve una lista de diccionarios con las coincidencias y
@@ -243,6 +242,7 @@ for enlace in barra:
                             )
 
                 except Exception as e:
+                    analisis_correcto = False
                     barra.set_description(
                         f"Error buscando coincidencias en {enlace}: {e}"
                     )
@@ -250,6 +250,9 @@ for enlace in barra:
                         {"Error buscando coincidencias": enlace}
                     )
                     continue
+
+            if analisis_correcto:
+                diccionario_busquedas["Código"].append(codigo)
 
 """
     Convierte "lista_diccionarios_puestos" en un diccionario de listas si hay coincidencias

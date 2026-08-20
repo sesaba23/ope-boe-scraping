@@ -54,6 +54,16 @@ def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypat
     busquedas = pd.DataFrame({"Código": []})
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
     enlaces_analizados = []
+    codigos_guardados = []
+
+    def combinar_dataframes(
+        diccionario_puestos,
+        diccionario_busquedas,
+        df_opo_guardadas,
+        df_busquedas,
+    ):
+        codigos_guardados.extend(diccionario_busquedas["Código"])
+        return oposiciones, busquedas
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
     monkeypatch.setattr(
@@ -73,7 +83,7 @@ def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypat
     monkeypatch.setattr(
         preparar_archivo_datos,
         "combinar_dataframes",
-        lambda *args: (oposiciones, busquedas),
+        combinar_dataframes,
     )
     monkeypatch.setattr(preparar_archivo_datos, "guardar_excel", lambda *args: None)
     monkeypatch.setattr(
@@ -97,3 +107,4 @@ def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypat
     runpy.run_path("plazasboe.py", run_name="__main__")
 
     assert enlaces_analizados == [enlace_correcto]
+    assert codigos_guardados == [enlace_correcto]
