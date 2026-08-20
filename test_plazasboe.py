@@ -2,6 +2,7 @@ import runpy
 import sys
 
 import pandas as pd
+import pytest
 import requests
 
 import coincidencias
@@ -27,6 +28,9 @@ def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypat
     class Respuesta:
         def __init__(self, contenido):
             self.content = contenido.encode()
+
+        def raise_for_status(self):
+            pass
 
     def obtener_url(url, timeout):
         if "index.php" in url:
@@ -126,6 +130,9 @@ def test_procesa_dias_posteriores_si_el_primero_no_tiene_publicaciones(monkeypat
         def __init__(self, contenido):
             self.content = contenido.encode()
 
+        def raise_for_status(self):
+            pass
+
     def obtener_url(url, timeout):
         if "2025/01/01" in url:
             return Respuesta(html_indice_vacio)
@@ -199,3 +206,92 @@ def test_procesa_dias_posteriores_si_el_primero_no_tiene_publicaciones(monkeypat
     runpy.run_path("plazasboe.py", run_name="__main__")
 
     assert enlaces_analizados == [enlace_publicacion]
+
+
+def test_respuesta_http_no_exitosa_no_se_analiza_como_html(monkeypatch):
+    comprobaciones_estado = []
+    errores_guardados = []
+
+    class RespuestaError:
+        content = b'<a href="/diario_boe/txt.php?id=no-valido">No valido</a>'
+
+        def raise_for_status(self):
+            comprobaciones_estado.append(True)
+            raise requests.exceptions.HTTPError("500 Server Error")
+
+    _configurar_fallo_indice(
+        monkeypatch,
+        lambda *args, **kwargs: RespuestaError(),
+        errores_guardados,
+    )
+
+    with pytest.raises(SystemExit):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert len(comprobaciones_estado) == 3
+    assert errores_guardados
+
+
+def test_fallo_total_del_indice_no_se_informa_como_ausencia_de_publicaciones(
+    monkeypatch, capsys
+):
+    errores_guardados = []
+
+    def obtener_url(*args, **kwargs):
+        raise requests.exceptions.ConnectionError("BOE no disponible")
+
+    _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados)
+
+    with pytest.raises(SystemExit):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    salida = capsys.readouterr().out
+    assert "No se pudo consultar el BOE" in salida
+    assert "no se ha publicado ningún proceso selectivo" not in salida
+    assert errores_guardados
+
+
+def _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados):
+    columnas = [
+        "Num_plazas",
+        "Puesto",
+        "Administración",
+        "Escala",
+        "Subescala",
+        "Clase",
+        "Sistema",
+        "Turno",
+        "Fecha_boe",
+        "Publicación",
+        "Enlace",
+    ]
+    oposiciones = pd.DataFrame(columns=columnas)
+    busquedas = pd.DataFrame({"Código": []})
+    log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
+
+    def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
+        errores_guardados.extend(df_log_errores.to_dict(orient="records"))
+
+    monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: ("", "01/01/2025", "01/01/2025", ["2025/01/01"]),
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "preparar_excel_y_dataframes",
+        lambda: {
+            "Búsquedas": busquedas,
+            "Oposiciones": oposiciones,
+            "Log-errores": log_errores,
+        },
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "combinar_dataframes",
+        lambda *args: (oposiciones, busquedas),
+    )
+    monkeypatch.setattr(preparar_archivo_datos, "guardar_excel", guardar_excel)
+    monkeypatch.setattr(requests, "get", obtener_url)
+    monkeypatch.setattr("time.sleep", lambda *args: None)

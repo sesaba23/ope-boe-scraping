@@ -84,8 +84,10 @@ for url in barra:
     while reintentos < 3:
         try:
             page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
+            page.raise_for_status()
             break  # ëxito, salir del bucle
         except requests.exceptions.Timeout:
+            page = None
             reintentos += 1
             barra.set_description(
                 f"Timeout al acceder a {url} (reintento {reintentos})"
@@ -94,6 +96,7 @@ for url in barra:
                 lista_diccionario_errores.append({"Timeout al acceder": url})
             time.sleep(RETRASO_SEGUNDOS)
         except Exception as e:
+            page = None
             reintentos += 1
             barra.set_description(
                 f"Error al acceder a {url}: {e} (reintento {reintentos})"
@@ -116,8 +119,8 @@ for url in barra:
             if any(formato in enlace["href"] for formato in ["txt"]):
                 enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
 
-# Si no hay publicaciones en el BOE, mostramos mensaje y paramos la ejecución
-if not enlaces_oposiciones:
+# Si no hay publicaciones y la consulta fue correcta, mostramos mensaje y paramos
+if not enlaces_oposiciones and not lista_diccionario_errores:
     if fecha_fin == fecha_inicio:
         print(
             f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
@@ -181,8 +184,10 @@ for enlace in barra:
         while reintentos < MAX_REINTENTOS:
             try:
                 page = requests.get(enlace, timeout=5)
+                page.raise_for_status()
                 break  # Si la petición tiene éxito, salimos del bucle
             except requests.exceptions.Timeout:
+                page = None
                 reintentos += 1
                 barra.set_description(
                     f"Timeout al acceder a {enlace[-15:]} (reintento: {reintentos})"
@@ -192,6 +197,7 @@ for enlace in barra:
                     continue
                 time.sleep(RETRASO_SEGUNDOS)
             except Exception as e:
+                page = None
                 reintentos += 1
                 barra.set_description(
                     f"{Fore.RED}Error al acceder a {enlace[-15:]}: {e}{Fore.RESET}"
@@ -301,6 +307,10 @@ if lista_diccionario_errores:
 preparar_archivo_datos.guardar_excel(
     df_combinado, df_busquedas_combinado, df_log_errores
 )
+
+if not enlaces_oposiciones:
+    print(f"\n{Fore.RED}❌ No se pudo consultar el BOE para el periodo seleccionado.{Fore.RESET}")
+    sys.exit(1)
 
 # Filtrar el DataFrame por el texto de búsqueda introducido por el usuario y
 #  las fechas de inicio y fin
