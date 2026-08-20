@@ -116,6 +116,16 @@ def generar_mapa_municipios(df=None):
         dataframes_dict = preparar_excel_y_dataframes()
         df = dataframes_dict["Oposiciones"]
 
+    columnas_faltantes = [
+        columna
+        for columna in ["Latitud", "Longitud", "Habitantes"]
+        if columna not in df.columns
+    ]
+    if columnas_faltantes:
+        df = df.copy()
+        for columna in columnas_faltantes:
+            df[columna] = pd.NA
+
     # Crear el mapa centrado en España
     mapa = folium.Map(location=[40.0, -3.7], zoom_start=6)
 

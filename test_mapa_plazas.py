@@ -1,5 +1,8 @@
 import pytest
-from mapa_plazas import buscar_municipio
+import pandas as pd
+
+import mapa_plazas
+from mapa_plazas import buscar_municipio, generar_mapa_municipios
 
 
 @pytest.mark.parametrize(
@@ -17,3 +20,25 @@ def test_buscar_municipio(nombre, esperado):
     assert (
         esperado.lower() in resultado["Municipio"].lower()
     ), f"Esperado '{esperado}' en '{resultado['Municipio']}'"
+
+
+def test_generar_mapa_sin_columnas_de_coordenadas(monkeypatch, tmp_path):
+    df = pd.DataFrame(
+        [
+            {
+                "Puesto": "Auxiliar Administrativo",
+                "Num_plazas": 1,
+                "Administración": "Ayuntamiento de Ejemplo",
+                "Sistema": "Oposición",
+                "Fecha_boe": "2 de enero de 2025",
+                "Enlace": "https://www.boe.es/ejemplo",
+            }
+        ]
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(mapa_plazas.webbrowser, "open", lambda *args: None)
+
+    generar_mapa_municipios(df)
+
+    assert (tmp_path / "mapa_municipios.html").exists()
+    assert (tmp_path / "puestos_sin_coordenadas.html").exists()
