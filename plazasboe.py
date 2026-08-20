@@ -4,7 +4,7 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 from entradas_datos import solicitar_fechas_y_validar
-from mapa_plazas import generar_mapa_municipios
+from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipios
 
 from datetime import datetime
 import requests
@@ -384,6 +384,7 @@ def main():
     df_combinado, df_busquedas_combinado = preparar_archivo_datos.combinar_dataframes(
         diccionario_puestos, diccionario_busquedas, df_opo_guardadas, df_busquedas
     )
+    df_combinado = enriquecer_filas_sin_coordenadas(df_combinado)
 
     # Guardar los errores en el DataFrame de log de errores
     if lista_diccionario_errores:

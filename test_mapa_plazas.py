@@ -1,8 +1,14 @@
 import pytest
 import pandas as pd
+import requests
 
 import mapa_plazas
-from mapa_plazas import buscar_municipio, generar_mapa_municipios
+from mapa_plazas import (
+    buscar_municipio,
+    enriquecer_filas_sin_coordenadas,
+    generar_mapa_municipios,
+)
+from preparar_archivo_datos import combinar_dataframes
 
 
 @pytest.mark.parametrize(
@@ -20,6 +26,162 @@ def test_buscar_municipio(nombre, esperado):
     assert (
         esperado.lower() in resultado["Municipio"].lower()
     ), f"Esperado '{esperado}' en '{resultado['Municipio']}'"
+
+
+def test_buscar_municipio_prioriza_municipio_entre_parentesis():
+    resultado = buscar_municipio(
+        "Cabildo Insular de Tenerife (Santa Cruz de Tenerife)"
+    )
+
+    assert resultado == {
+        "Municipio": "Santa Cruz de Tenerife",
+        "Provincia": "Santa Cruz de Tenerife",
+        "Latitud": 28.46981,
+        "Longitud": -16.25486,
+        "Habitantes": 222417,
+    }
+
+
+def test_buscar_municipio_normal_mantiene_el_resultado():
+    assert buscar_municipio("A Coruña") == {
+        "Municipio": "Coruña (A)",
+        "Provincia": "A Coruña",
+        "Latitud": 43.37087,
+        "Longitud": -8.395835,
+        "Habitantes": 246056,
+    }
+
+
+def test_parentesis_sin_municipio_continua_con_la_busqueda_normal():
+    resultado = buscar_municipio("Ayuntamiento de Calp (convocatoria ordinaria)")
+
+    assert resultado["Municipio"] == "Calp/Calpe"
+
+
+def test_municipio_compuesto_con_preposiciones_entre_parentesis():
+    resultado = buscar_municipio(
+        "Diputación Provincial de Cádiz (Vejer de la Frontera)"
+    )
+
+    assert resultado["Municipio"] == "Vejer de la Frontera"
+
+
+def test_municipio_entre_parentesis_tiene_prioridad_sobre_el_resto_del_texto():
+    resultado = buscar_municipio("Entidad de Santa Cruz de Tenerife (Adeje)")
+
+    assert resultado["Municipio"] == "Adeje"
+
+
+def test_enriquece_fila_historica_sin_coordenadas():
+    df = pd.DataFrame(
+        [
+            {
+                "Administración": "Cabildo Insular de Tenerife "
+                "(Santa Cruz de Tenerife)",
+                "Municipio": pd.NA,
+                "Provincia": pd.NA,
+                "Latitud": pd.NA,
+                "Longitud": pd.NA,
+                "Habitantes": pd.NA,
+            }
+        ]
+    )
+
+    resultado = enriquecer_filas_sin_coordenadas(df)
+
+    assert resultado.loc[0, "Municipio"] == "Santa Cruz de Tenerife"
+    assert resultado.loc[0, "Provincia"] == "Santa Cruz de Tenerife"
+    assert resultado.loc[0, "Latitud"] == 28.46981
+    assert resultado.loc[0, "Longitud"] == -16.25486
+    assert resultado.loc[0, "Habitantes"] == 222417
+
+
+def test_enriquecimiento_no_modifica_fila_con_coordenadas_validas(monkeypatch):
+    df = pd.DataFrame(
+        [
+            {
+                "Administración": "Cabildo Insular de Tenerife "
+                "(Santa Cruz de Tenerife)",
+                "Municipio": "Municipio existente",
+                "Provincia": "Provincia existente",
+                "Latitud": 1.25,
+                "Longitud": 2.5,
+                "Habitantes": 100,
+            }
+        ]
+    )
+    monkeypatch.setattr(
+        mapa_plazas,
+        "buscar_municipio",
+        lambda *args: pytest.fail("No debe buscar una fila ya geolocalizada"),
+    )
+
+    resultado = enriquecer_filas_sin_coordenadas(df)
+
+    pd.testing.assert_frame_equal(resultado, df)
+
+
+def test_enriquecimiento_deja_igual_administracion_no_resoluble():
+    df = pd.DataFrame(
+        [
+            {
+                "Administración": "Entidad administrativa sin municipio",
+                "Municipio": pd.NA,
+                "Provincia": pd.NA,
+                "Latitud": pd.NA,
+                "Longitud": pd.NA,
+                "Habitantes": pd.NA,
+            }
+        ]
+    )
+
+    resultado = enriquecer_filas_sin_coordenadas(df)
+
+    pd.testing.assert_frame_equal(resultado, df)
+
+
+def test_enriquecimiento_no_realiza_peticiones_http(monkeypatch):
+    monkeypatch.setattr(
+        requests,
+        "get",
+        lambda *args, **kwargs: pytest.fail("No debe realizar peticiones HTTP"),
+    )
+    df = pd.DataFrame(
+        [
+            {
+                "Administración": "Ayuntamiento de Calp",
+                "Latitud": pd.NA,
+                "Longitud": pd.NA,
+            }
+        ]
+    )
+
+    resultado = enriquecer_filas_sin_coordenadas(df)
+
+    assert resultado.loc[0, "Municipio"] == "Calp/Calpe"
+
+
+def test_enriquecimiento_no_cambia_historico_de_busquedas():
+    oposiciones = pd.DataFrame(
+        [
+            {
+                "Puesto": "Ingeniero",
+                "Fecha_boe": "2 de enero de 2025",
+                "Administración": "Ayuntamiento de Calp",
+                "Enlace": "https://www.boe.es/ejemplo",
+                "Latitud": pd.NA,
+                "Longitud": pd.NA,
+            }
+        ]
+    )
+    busquedas = pd.DataFrame({"Código": ["codigo-historico"]})
+    df_combinado, df_busquedas_combinado = combinar_dataframes(
+        {}, {"Código": []}, oposiciones, busquedas
+    )
+
+    enriquecer_filas_sin_coordenadas(df_combinado)
+
+    pd.testing.assert_frame_equal(df_busquedas_combinado, busquedas)
 
 
 def test_buscar_municipio_desde_otro_directorio(monkeypatch, tmp_path):

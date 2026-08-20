@@ -48,12 +48,22 @@ def _cargar_catalogo_municipios():
 def buscar_municipio(administracion):
     df, municipios = _cargar_catalogo_municipios()
 
-    # Buscar coincidencias exactas (case-insensitive) en el texto de administración
+    # Priorizar los contenidos entre paréntesis que coincidan con el catálogo
+    candidatos_parentesis = re.findall(r"\(([^()]*)\)", administracion)
     municipios_encontrados = [
         municipio
+        for candidato in candidatos_parentesis
         for municipio in municipios
-        if municipio.lower() == administracion.lower()
+        if normaliza(municipio) == normaliza(candidato)
     ]
+
+    # Buscar coincidencias exactas (case-insensitive) en el texto de administración
+    if not municipios_encontrados:
+        municipios_encontrados = [
+            municipio
+            for municipio in municipios
+            if municipio.lower() == administracion.lower()
+        ]
     if not municipios_encontrados:
         # Si no hay coincidencia exacta, buscar si alguna variante está contenida como palabra completa
         municipios_encontrados = [
@@ -117,6 +127,43 @@ def buscar_municipio(administracion):
             }
         else:
             return None
+
+
+def enriquecer_filas_sin_coordenadas(df):
+    if df.empty or "Administración" not in df.columns:
+        return df
+
+    df_enriquecido = df.copy()
+    columnas_geograficas = [
+        "Municipio",
+        "Provincia",
+        "Latitud",
+        "Longitud",
+        "Habitantes",
+    ]
+    for columna in columnas_geograficas:
+        if columna not in df_enriquecido.columns:
+            df_enriquecido[columna] = pd.NA
+
+    administraciones = df_enriquecido["Administración"].astype(str).str.strip()
+    filas_sin_coordenadas = df_enriquecido[
+        df_enriquecido["Administración"].notna()
+        & ~administraciones.str.lower().isin(["", "--", "no disponible", "none", "nan"])
+        & (
+            df_enriquecido["Latitud"].isna()
+            | df_enriquecido["Longitud"].isna()
+        )
+    ]
+
+    for indice, fila in filas_sin_coordenadas.iterrows():
+        datos_municipio = buscar_municipio(str(fila["Administración"]).strip())
+        if datos_municipio:
+            for columna in columnas_geograficas:
+                valor_actual = df_enriquecido.at[indice, columna]
+                if pd.isna(valor_actual) or str(valor_actual).strip() == "":
+                    df_enriquecido.at[indice, columna] = datos_municipio[columna]
+
+    return df_enriquecido
 
 
 def generar_mapa_municipios(df=None):
