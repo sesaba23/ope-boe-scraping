@@ -1,6 +1,5 @@
 from datetime import datetime
 from colorama import Fore
-import sys
 
 
 def validar_fechas(fecha_inicio_dt, fecha_fin_dt, fecha_actual_dt):

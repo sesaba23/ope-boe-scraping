@@ -24,9 +24,9 @@ def preparar_excel_y_dataframes():
         ws1.title = "Búsquedas"
         # ws1["A1"] = "Código"
         # Crear la segunda hoja
-        ws2 = wb.create_sheet(title="Oposiciones")
+        wb.create_sheet(title="Oposiciones")
 
-        ws3 = wb.create_sheet(title="Log-errores")
+        wb.create_sheet(title="Log-errores")
         # Guardar el archivo
         wb.save("BOE-oposiciones.xlsx")
 
@@ -127,11 +127,6 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
             by="Fecha_dt", ascending=True
         )
 
-        # Eliminar la columna auxiliar "Fecha_dt" si no es necesaria
-        df_combinado_filtrado = df_combinado_filtrado_por_fecha.drop(
-            columns=["Fecha_dt"]
-        )
-
         palabras_busqueda = texto_busqueda.split()
         patron_regex = (
             rf"(?=.*"
@@ -195,7 +190,6 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
     # Formatear columna "Habitantes" como número sin decimales y con separador de miles
     for idx, cell in enumerate(ws[1], 1):
         if str(cell.value).strip().lower() == "habitantes":
-            col_letter = get_column_letter(idx)
             for row in ws.iter_rows(
                 min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row
             ):
@@ -204,7 +198,6 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
             break
     # Formatear la columna Enlace como hipervínculo
     if col_enlace:
-        col_letter = get_column_letter(col_enlace)
         for row in ws.iter_rows(
             min_row=2, min_col=col_enlace, max_col=col_enlace, max_row=ws.max_row
         ):

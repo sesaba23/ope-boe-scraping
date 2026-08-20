@@ -301,7 +301,6 @@ def convertir_en_numero(valor_raw):
 
 import requests
 from bs4 import BeautifulSoup
-import re
 
 
 def obtener_texto_boe(url):

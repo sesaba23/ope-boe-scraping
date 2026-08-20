@@ -10,11 +10,9 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, ParserRejectedMarkup
 from urllib.parse import urljoin, urlparse
-import re, warnings  # Importar módulos de expresiones regulares
 import sys  # Importar sys para manejar argumentos de línea de comandos
-from colorama import Fore, Style
+from colorama import Fore
 import pandas as pd
-from openpyxl import Workbook
 import time
 from tqdm import tqdm
 
@@ -151,7 +149,6 @@ def main():
     #   De esta manera el código es único para cada búsqueda.
     #         "Código": [enlace+texto_busqueda]
     diccionario_busquedas = {"Código": []}
-    codigo_busqueda = ""
 
     """ 
     Empezar a buscar contenido en los enlaces encontrados

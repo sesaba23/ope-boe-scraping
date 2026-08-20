@@ -74,21 +74,3 @@ def imprimir_diccionario_puestos(diccionario_puestos, f_inicio, f_fin, busqueda=
         )
 
     print("=" * ancho_terminal)
-
-
-# Ejemplo de uso
-diccionario_puestos = {
-    "Fecha": [],
-    "Puesto": [],
-    "Administración": [],
-    "Escala": [],
-    "Publicación": [],
-    "Enlace": [],
-}
-# Vamos almacenando los puestos encontrados en el diccionario
-diccionario_puestos["Fecha"].append("fecha_publicacion")
-diccionario_puestos["Puesto"].append("texto_extraido")
-diccionario_puestos["Administración"].append("texto_administracion")
-diccionario_puestos["Escala"].append("texto_escala")
-diccionario_puestos["Publicación"].append("texto_publicacion")
-diccionario_puestos["Enlace"].append("enlace")

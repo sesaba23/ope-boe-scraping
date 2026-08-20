@@ -6,24 +6,6 @@ from coincidencias import (
     convertir_en_numero,
 )
 
-texto = (
-    "Dos plazas de INGENIERO/A Técnico Industrial, "
-    "pertenecientes a la escala de Administración Especial, "
-    "subescala Técnica y clase Media, "
-    "mediante el sistema de concurso-oposición, en turno libre."
-)
-
-texto2 = """En el «Boletín Oficial de la Provincia de A Coruña» número 33, de 18 de febrero de 2025, 
-          se han publicado las bases que han de regir la convocatoria para proveer: 
-          Una plaza de Auxiliar técnico/a de biblioteca, perteneciente a la escala de Administración Especial, 
-          subescala Técnica y clase Auxiliar, por el sistema de concurso-oposición, en turno libre.
-          El plazo de presentación de solicitudes será de veinte días naturales a contar 
-          desde el siguiente al de la publicación de esta resolución en el «Boletín Oficial del Estado». 
-          Los sucesivos anuncios referentes a esta convocatoria, cuando procedan de conformidad 
-          con las bases, se harán públicos en la forma prevista en las propias bases.
-          A Coruña, 19 de febrero de 2025. El Diputado, José Ramón Riobóo Castro."""
-
-
 def test_buscar_coincidencias_completo():
     titulo = "Resolución de 16 de abril de 2025, de la Diputación Provincial de Salamanca, referente a la convocatoria para proveer varias plazas."
     fecha_boe = "«BOE» núm. 110, de 7 de mayo de 2025, páginas 60611 a 60611 (1 pág.)"
@@ -41,9 +23,6 @@ def test_buscar_coincidencias_completo():
         "Salamanca, 16 de abril de 2025.–El Diputado Delegado del Área de Organización y Recursos Humanos, Carlos García Sierra."
     )
     enlace = "https://www.boe.es/buscar/doc.php?id=BOE-A-2025-9009"
-
-    texto_singular = "Una plaza de Suboficial/a, perteneciente a la escala de Administración Especial, subescala Servicios especiales y clase Servicio de extinción de incendios, mediante el sistema de concurso-oposición, en turno libre."
-    texto_plural = "Dos plazas de Ingeniero/a Técnico Industrial, pertenecientes a la escala de Administración Especial, subescala Técnica y clase Media, mediante el sistema de concurso-oposición, en turno libre."
 
     expresion = ""
     resultado = buscar_coincidencias_local(expresion, texto, titulo, fecha_boe, enlace)
