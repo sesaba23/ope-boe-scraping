@@ -275,6 +275,20 @@ def test_fallo_total_del_indice_no_se_informa_como_ausencia_de_publicaciones(
     assert errores_guardados
 
 
+def test_error_de_programacion_en_peticion_no_se_oculta(monkeypatch):
+    errores_guardados = []
+
+    def obtener_url(*args, **kwargs):
+        raise KeyError("error de programación simulado")
+
+    _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados)
+
+    with pytest.raises(KeyError, match="error de programación simulado"):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert errores_guardados == []
+
+
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=repetido"
 

@@ -70,3 +70,33 @@ def test_generar_mapa_sin_columnas_de_coordenadas(monkeypatch, tmp_path):
 
     assert (tmp_path / "mapa_municipios.html").exists()
     assert (tmp_path / "puestos_sin_coordenadas.html").exists()
+
+
+def test_html_escapa_texto_y_no_hace_navegable_un_enlace_invalido(
+    monkeypatch, tmp_path
+):
+    df = pd.DataFrame(
+        [
+            {
+                "Puesto": '<script>alert("x")</script>',
+                "Num_plazas": "1 & 2",
+                "Administración": "Entidad <prueba>",
+                "Fecha_boe": '2 de enero de 2025 "especial"',
+                "Enlace": "javascript:alert(1)",
+                "Latitud": pd.NA,
+                "Longitud": pd.NA,
+            }
+        ]
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(mapa_plazas.webbrowser, "open", lambda *args: None)
+
+    mapa_plazas.mostrar_puestos_sin_coordenadas(df)
+
+    contenido = (tmp_path / "puestos_sin_coordenadas.html").read_text()
+    assert '&lt;script&gt;alert(&quot;' in contenido
+    assert "1 &amp; 2" in contenido
+    assert "Entidad &lt;prueba&gt;" in contenido
+    assert "&quot;especial&quot;" in contenido
+    assert "javascript:alert(1)" not in contenido
+    assert "<a href=" not in contenido

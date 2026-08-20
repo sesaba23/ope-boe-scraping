@@ -10,6 +10,8 @@ import os
 import unicodedata
 from pathlib import Path
 from functools import lru_cache
+from html import escape
+from urllib.parse import urlparse
 
 
 @lru_cache(maxsize=1)
@@ -150,15 +152,13 @@ def generar_mapa_municipios(df=None):
             and str(lat).strip() != ""
             and str(lon).strip() != ""
         ):
-            enlace_html = (
-                f'<a href="{row["Enlace"]}" target="_blank">Enlace al B.O.E.</a>'
-            )
+            enlace_html = crear_enlace_html(row["Enlace"])
             popup_html = f"""
-            <b>Puesto:</b> {row['Puesto']}<br>
-            <b>Nº Plazas:</b> {row['Num_plazas']}</br>
-            <b>Administración:</b> {row['Administración']}<br>
-            <b>Sistema:</b> {row['Sistema']}<br>
-            <b>Fecha:</b> {row['Fecha_boe']}, {enlace_html}<br>
+            <b>Puesto:</b> {escape(str(row['Puesto']), quote=True)}<br>
+            <b>Nº Plazas:</b> {escape(str(row['Num_plazas']), quote=True)}</br>
+            <b>Administración:</b> {escape(str(row['Administración']), quote=True)}<br>
+            <b>Sistema:</b> {escape(str(row['Sistema']), quote=True)}<br>
+            <b>Fecha:</b> {escape(str(row['Fecha_boe']), quote=True)}, {enlace_html}<br>
             {f"{int(row['Habitantes']):,}".replace(",", ".")} habitantes<br>
             """
             folium.Marker(
@@ -204,17 +204,13 @@ def mostrar_puestos_sin_coordenadas(df):
     """
 
     for _, row in sin_coordenadas.iterrows():
-        enlace_html = (
-            f'<a href="{row.get("Enlace", "#")}" target="_blank">Enlace al B.O.E.</a>'
-            if row.get("Enlace", "")
-            else ""
-        )
+        enlace_html = crear_enlace_html(row.get("Enlace", ""))
         html += f"""
         <div class="puesto">
-            <b>Puesto:</b> {row.get('Puesto', '')}<br>
-            <b>Nº Plazas:</b> {row.get('Num_plazas', '')}<br>
-            <b>Administración:</b> {row.get('Administración', '')}<br>
-            <b>Fecha:</b> {row['Fecha_boe']}, {enlace_html}<br>
+            <b>Puesto:</b> {escape(str(row.get('Puesto', '')), quote=True)}<br>
+            <b>Nº Plazas:</b> {escape(str(row.get('Num_plazas', '')), quote=True)}<br>
+            <b>Administración:</b> {escape(str(row.get('Administración', '')), quote=True)}<br>
+            <b>Fecha:</b> {escape(str(row['Fecha_boe']), quote=True)}, {enlace_html}<br>
         </div>
         """
 
@@ -229,6 +225,17 @@ def mostrar_puestos_sin_coordenadas(df):
         f.write(html)
 
     webbrowser.open("file://" + os.path.realpath(archivo))
+
+
+def crear_enlace_html(enlace):
+    enlace = str(enlace).strip()
+    try:
+        componentes = urlparse(enlace)
+    except ValueError:
+        return ""
+    if componentes.scheme not in ["http", "https"] or not componentes.netloc:
+        return ""
+    return f'<a href="{escape(enlace, quote=True)}" target="_blank">Enlace al B.O.E.</a>'
 
 
 # Quita tildes y compara en minúsculas

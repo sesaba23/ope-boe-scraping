@@ -8,7 +8,7 @@ from mapa_plazas import generar_mapa_municipios
 
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ParserRejectedMarkup
 from urllib.parse import urljoin, urlparse
 import re, warnings  # Importar módulos de expresiones regulares
 import sys  # Importar sys para manejar argumentos de línea de comandos
@@ -98,7 +98,7 @@ def main():
                 if reintentos == 3:
                     lista_diccionario_errores.append({"Timeout al acceder": url})
                 time.sleep(RETRASO_SEGUNDOS)
-            except Exception as e:
+            except requests.exceptions.RequestException as e:
                 page = None
                 reintentos += 1
                 barra.set_description(
@@ -114,7 +114,7 @@ def main():
                 # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
                 #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
                 enlaces = soup.find_all("a", href=True)
-            except Exception as e:
+            except ParserRejectedMarkup as e:
                 barra.set_description(f"Error procesando el HTML de {url}: {e}")
                 continue
 
@@ -199,7 +199,7 @@ def main():
                         lista_diccionario_errores.append({"Timeout al acceder": enlace})
                         continue
                     time.sleep(RETRASO_SEGUNDOS)
-                except Exception as e:
+                except requests.exceptions.RequestException as e:
                     page = None
                     reintentos += 1
                     barra.set_description(
@@ -216,9 +216,13 @@ def main():
                     # El texto que contiene la información de interés está dentro de un
                     #   div con el id "textoxslt" y en las clases "documento-tit" y "metadatos"
                     contenidos = soup.find_all("div", id="textoxslt")
-                    titulo = soup.find(class_="documento-tit").text.strip()
-                    fecha_boe = soup.find("div", class_="metadatos").text.strip()
-                except Exception as e:
+                    elemento_titulo = soup.find(class_="documento-tit")
+                    elemento_fecha = soup.find("div", class_="metadatos")
+                    if elemento_titulo is None or elemento_fecha is None:
+                        raise ValueError("Faltan elementos esperados en el HTML")
+                    titulo = elemento_titulo.text.strip()
+                    fecha_boe = elemento_fecha.text.strip()
+                except (ValueError, ParserRejectedMarkup) as e:
                     barra.set_description(
                         f"Error procesando el HTML de {enlace[-15:]}: {e}"
                     )
@@ -251,7 +255,7 @@ def main():
                                     f"Convocatoria del Estado encontrada: {diccionario_estado["Puesto"]}"
                                 )
 
-                    except Exception as e:
+                    except (TypeError, ValueError) as e:
                         analisis_correcto = False
                         barra.set_description(
                             f"Error buscando coincidencias en {enlace}: {e}"

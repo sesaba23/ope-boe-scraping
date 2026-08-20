@@ -184,7 +184,7 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
                 cell_length = len(str(cell.value))
                 if cell_length > max_length:
                     max_length = cell_length
-            except:
+            except (TypeError, ValueError):
                 pass
         # Limitar ancho para "Puesto" y "Administración"
         if header in ["puesto", "administración"]:
