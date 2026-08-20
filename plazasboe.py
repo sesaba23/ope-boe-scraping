@@ -177,6 +177,7 @@ for enlace in barra:
     if codigo not in df_busquedas["Código"].values:
         diccionario_busquedas["Código"].append(codigo)
 
+        page = None
         reintentos = 0
         while reintentos < MAX_REINTENTOS:
             try:
