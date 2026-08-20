@@ -56,17 +56,24 @@ def buscar_coincidencias_local(
     patron = r"""
             (?P<num_plazas>\d+|\w+)\s+
             (?:plazas|plaza|puestos|puesto|cuerpo)\s+de\s+
-            (?P<puesto>[\w/áéíóúñÁÉÍÓÚÑ\s\-]+?),\s+
-            perteneciente(?:s)?\s+a\s+la\s+escala\s+de\s+
-            (?P<escala>[\w\sáéíóúÁÉÍÓÚñÑ]+?),\s+
-            subescala\s+
-            (?P<subescala>[\w\sáéíóúÁÉÍÓÚñÑ]+?)
-            (?:\s+y\s+clase\s+
-            (?P<clase>[\w\sáéíóúÁÉÍÓÚñÑ]+?))?,\s+
+            (?P<puesto>[\w/áéíóúñÁÉÍÓÚÑ\s\-]+?)\s*[,;]\s*
+            (?:
+                perteneciente(?:s)?\s+a\s+la\s+escala\s+de\s+
+                (?P<escala>[\w\sáéíóúÁÉÍÓÚñÑ]+?)
+                (?:\s*[,;]\s*subescala\s+
+                    (?P<subescala>[\w\sáéíóúÁÉÍÓÚñÑ]+?)
+                    (?:\s+y\s+clase\s+
+                        (?P<clase>[\w\sáéíóúÁÉÍÓÚñÑ]+?))?
+                )?
+                \s*[,;]\s*
+            )?
             (?:mediante|por)\s+el\s+sistema\s+de\s+
-            (?P<sistema>[\w\s\-]+?),\s+
-            en\s+turno\s+
-            (?P<turno>[\w\s]+?)\.
+            (?P<sistema>[\w\s\-]+?)
+            (?:\s*[,;]\s*(?:
+                en\s+turno\s+(?P<turno>[\w\s]+?)
+                |(?:de\s+)?(?P<acceso_libre>acceso\s+libre)
+            ))?
+            \s*\.
     """
 
     # Usamos re.finditer para obtener los resultados
@@ -137,7 +144,11 @@ def buscar_coincidencias_local(
                 "Turno": (
                     datos["turno"].strip().title()
                     if datos["turno"]
-                    else texto_no_disponible
+                    else (
+                        datos["acceso_libre"].strip().title()
+                        if datos["acceso_libre"]
+                        else texto_no_disponible
+                    )
                 ),
                 "Fecha_boe": (
                     fecha_publicacion if fecha_publicacion else texto_no_disponible
@@ -281,8 +292,8 @@ def convertir_en_numero(valor_raw):
             if valor_raw in ["una", "un"]:
                 valor_raw = "uno"
             numero = w2n.word_to_num(valor_raw)
-    except:
-        numero = valor_raw  # Deja la palabra si no se puede convertir
+    except (TypeError, ValueError):
+        return valor_raw  # Deja la palabra si no se puede convertir
     return int(numero)
 
 

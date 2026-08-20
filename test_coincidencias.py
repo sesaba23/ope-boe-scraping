@@ -1,6 +1,10 @@
 import pytest
 
-from coincidencias import buscar_coincidencias_estado, buscar_coincidencias_local
+from coincidencias import (
+    buscar_coincidencias_estado,
+    buscar_coincidencias_local,
+    convertir_en_numero,
+)
 
 texto = (
     "Dos plazas de INGENIERO/A Técnico Industrial, "
@@ -119,3 +123,61 @@ def test_buscar_coincidencias_estado_con_datos_obligatorios_ausentes():
     assert resultado["Administración"] == "--"
     assert resultado["Sistema"] == "--"
     assert resultado["Fecha_boe"] == "--"
+
+
+@pytest.mark.parametrize(
+    "valor, esperado",
+    [("12", 12), ("veintiseis", 26), ("cantidad-desconocida", "cantidad-desconocida")],
+)
+def test_convertir_en_numero(valor, esperado):
+    assert convertir_en_numero(valor) == esperado
+
+
+@pytest.mark.parametrize(
+    "texto, campos_esperados",
+    [
+        (
+            "Una plaza de Técnico de Gestión, mediante el sistema de oposición.",
+            {
+                "Escala": "No disponible",
+                "Subescala": "No disponible",
+                "Turno": "No disponible",
+            },
+        ),
+        (
+            "Dos plazas de Administrativo; pertenecientes a la escala de "
+            "Administración General; por el sistema de concurso-oposición; "
+            "acceso libre.",
+            {
+                "Escala": "Administración General",
+                "Subescala": "No disponible",
+                "Turno": "Acceso Libre",
+            },
+        ),
+        (
+            "Tres plazas de Ingeniero/a Técnico,\n"
+            "pertenecientes a la escala de Administración Especial,\n"
+            "subescala Técnica y clase Media;\n"
+            "mediante el sistema de oposición.",
+            {
+                "Escala": "Administración Especial",
+                "Subescala": "Técnica",
+                "Turno": "No disponible",
+            },
+        ),
+    ],
+)
+def test_buscar_coincidencias_local_con_variaciones_habituales(
+    texto, campos_esperados
+):
+    resultado = buscar_coincidencias_local(
+        "",
+        texto,
+        "Resolución, del Ayuntamiento de Ejemplo, referente a una convocatoria.",
+        "«BOE» núm. 1, de 2 de enero de 2025",
+        "https://www.boe.es/ejemplo",
+    )
+
+    assert resultado is not None
+    for campo, esperado in campos_esperados.items():
+        assert resultado[0][campo] == esperado
