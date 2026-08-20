@@ -115,17 +115,18 @@ for url in barra:
         for enlace in enlaces:
             if any(formato in enlace["href"] for formato in ["txt"]):
                 enlaces_oposiciones.append(URL_base_enlaces + enlace["href"])
-        # Si no hay publicaciones en el BOE, mostramos mensaje y paramos la ejecución
-        if not enlaces_oposiciones:
-            if fecha_fin == fecha_inicio:
-                print(
-                    f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
-                )
-            else:
-                print(
-                    f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
-                )
-            sys.exit(0)
+
+# Si no hay publicaciones en el BOE, mostramos mensaje y paramos la ejecución
+if not enlaces_oposiciones:
+    if fecha_fin == fecha_inicio:
+        print(
+            f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
+        )
+    else:
+        print(
+            f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
+        )
+    sys.exit(0)
 
 # Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
 lista_diccionarios_puestos = []
