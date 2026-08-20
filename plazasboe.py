@@ -47,6 +47,7 @@ def main():
 
     if df_busquedas.empty:
         df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
+    codigos_procesados = set(df_busquedas["Código"].dropna())
 
     """ Código para solicitar al usuario la fecha de inicio y fin de la búsqueda
        y comprobar que son válidas """
@@ -180,7 +181,7 @@ def main():
             codigo = f"{enlace}_{codigo_busqueda}"
 
         # Comprobar si el enlace ya ha sido procesado
-        if codigo not in df_busquedas["Código"].values:
+        if codigo not in codigos_procesados:
             page = None
             reintentos = 0
             while reintentos < MAX_REINTENTOS:
@@ -262,6 +263,7 @@ def main():
 
                 if analisis_correcto:
                     diccionario_busquedas["Código"].append(codigo)
+                    codigos_procesados.add(codigo)
 
     """
         Convierte "lista_diccionarios_puestos" en un diccionario de listas si hay coincidencias

@@ -31,6 +31,25 @@ def test_buscar_municipio_desde_otro_directorio(monkeypatch, tmp_path):
     assert resultado["Municipio"] == "Coruña (A)"
 
 
+def test_catalogo_municipal_se_carga_una_sola_vez(monkeypatch):
+    lecturas = []
+    read_csv_original = mapa_plazas.pd.read_csv
+
+    def read_csv_contabilizado(*args, **kwargs):
+        lecturas.append(args[0])
+        return read_csv_original(*args, **kwargs)
+
+    mapa_plazas._cargar_catalogo_municipios.cache_clear()
+    monkeypatch.setattr(mapa_plazas.pd, "read_csv", read_csv_contabilizado)
+
+    resultado_coruna = buscar_municipio("A Coruña")
+    resultado_calp = buscar_municipio("Calp")
+
+    assert len(lecturas) == 1
+    assert resultado_coruna["Municipio"] == "Coruña (A)"
+    assert resultado_calp["Municipio"] == "Calp/Calpe"
+
+
 def test_generar_mapa_sin_columnas_de_coordenadas(monkeypatch, tmp_path):
     df = pd.DataFrame(
         [

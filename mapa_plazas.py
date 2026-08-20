@@ -9,9 +9,11 @@ import webbrowser
 import os
 import unicodedata
 from pathlib import Path
+from functools import lru_cache
 
 
-def buscar_municipio(administracion):
+@lru_cache(maxsize=1)
+def _cargar_catalogo_municipios():
     # Ruta al archivo (ajusta si está en otra carpeta)
     ruta = Path(__file__).resolve().parent / "assets" / "resources" / "municipios.csv"
 
@@ -37,6 +39,12 @@ def buscar_municipio(administracion):
             prep = municipio[municipio.index("(") + 1 : municipio.index(")")].strip()
             variante = f"{prep} {base}"
             municipios.append(variante)
+
+    return df, municipios
+
+
+def buscar_municipio(administracion):
+    df, municipios = _cargar_catalogo_municipios()
 
     # Buscar coincidencias exactas (case-insensitive) en el texto de administración
     municipios_encontrados = [
