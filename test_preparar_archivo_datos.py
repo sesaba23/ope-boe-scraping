@@ -5,6 +5,7 @@ import pytest
 from pandas.core.strings.accessor import StringMethods
 
 import preparar_archivo_datos
+from fechas import convertir_fecha
 from preparar_archivo_datos import prepara_data_frame_mostrar_resultados
 
 
@@ -36,6 +37,18 @@ def test_filtrado_no_modifica_dataframe_original_y_mantiene_resultado():
     )
 
     assert "Fecha_dt" not in df_original.columns
+    assert resultado["Puesto"].tolist() == ["Ingeniero Industrial"]
+
+
+def test_filtrado_con_objetos_datetime_reales(monkeypatch):
+    monkeypatch.setattr(preparar_archivo_datos, "convertir_fecha", convertir_fecha)
+    df_original = crear_dataframe()
+
+    resultado = prepara_data_frame_mostrar_resultados(
+        "ingeniero industrial", df_original, ["2025/01/01", "2025/01/03"]
+    )
+
+    assert pd.api.types.is_datetime64_any_dtype(resultado["Fecha_dt"])
     assert resultado["Puesto"].tolist() == ["Ingeniero Industrial"]
 
 

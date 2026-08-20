@@ -29,7 +29,7 @@ Está específicamente pensado para buscar plazas o convocatorias publicadas por
 
 ### Requisitos
 
-La aplicación necesita Python y conexión a Internet para consultar `boe.es`. Sus dependencias están fijadas en `requirements.txt`: Beautiful Soup, Colorama, Folium, openpyxl, pandas, Requests, tqdm, `word2number_es` y pytest para ejecutar las pruebas.
+La aplicación necesita Python 3.14 (versión probada) y conexión a Internet para consultar `boe.es`. Sus dependencias están fijadas en `requirements.txt`: Beautiful Soup, Colorama, Folium, openpyxl, pandas, Requests, tqdm, `word2number_es` y pytest para ejecutar las pruebas.
 
 ### Crear el entorno virtual
 
