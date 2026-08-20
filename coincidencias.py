@@ -200,6 +200,10 @@ def buscar_coincidencias_estado(
         # Sigue buscando si el puesto encontrado coincide con la búsqueda del usuario
         puesto = datos["Puesto"].strip().lower()
         if all(clave in puesto for clave in claves):
+            datos["Administración"] = texto_no_disponible
+            datos["Sistema"] = texto_no_disponible
+            datos["Fecha_boe"] = texto_no_disponible
+
             # Administración convocante es la suma de lo indicado en el título + fecha_boe
             admin_match = re.search(
                 r"\b\w*secretaría\w*\b",
@@ -215,7 +219,11 @@ def buscar_coincidencias_estado(
                 re.IGNORECASE,
             )
             if admin_match:
-                datos["Administración"] += f" ({admin_match.group(1).strip()})"
+                ministerio = admin_match.group(1).strip()
+                if datos["Administración"] == texto_no_disponible:
+                    datos["Administración"] = ministerio
+                else:
+                    datos["Administración"] += f" ({ministerio})"
 
             # Estos campos no aparecen en la Admon del Estado.
             datos["Escala"] = texto_no_disponible

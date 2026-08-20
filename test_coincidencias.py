@@ -1,6 +1,6 @@
 import pytest
 
-from coincidencias import buscar_coincidencias_local
+from coincidencias import buscar_coincidencias_estado, buscar_coincidencias_local
 
 texto = (
     "Dos plazas de INGENIERO/A Técnico Industrial, "
@@ -105,3 +105,17 @@ def test_buscar_coincidencias_sin_referencia_a_publicacion():
     )
 
     assert resultado[0]["Publicación"] == "No disponible"
+
+
+def test_buscar_coincidencias_estado_con_datos_obligatorios_ausentes():
+    resultado = buscar_coincidencias_estado(
+        "",
+        "Se convoca proceso selectivo para cubrir dos plazas.",
+        "Resolución, en el Cuerpo de Ingenieros, referente a una convocatoria.",
+        "Metadatos sin información adicional",
+        "https://www.boe.es/ejemplo-estado",
+    )
+
+    assert resultado["Administración"] == "--"
+    assert resultado["Sistema"] == "--"
+    assert resultado["Fecha_boe"] == "--"
