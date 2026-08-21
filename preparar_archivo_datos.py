@@ -56,9 +56,25 @@ def combinar_dataframes(
     )
 
     # Eliminar duplicados si es necesario, basándonos en columnas clave
-    #   (por ejemplo, "Puesto" y "Fecha")
+    columnas_convocatoria = [
+        "Puesto",
+        "Fecha_boe",
+        "Administración",
+        "Enlace",
+        "Num_plazas",
+        "Turno",
+        "Sistema",
+        "Escala",
+        "Subescala",
+        "Clase",
+    ]
     df_combinado = df_combinado.drop_duplicates(
-        subset=["Puesto", "Fecha_boe", "Administración", "Enlace"], keep="last"
+        subset=[
+            columna
+            for columna in columnas_convocatoria
+            if columna in df_combinado.columns
+        ],
+        keep="last",
     )
 
     # Ahora convierto el "diccionario_busquedas" en otro DataFrame
@@ -111,8 +127,14 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
         # Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
         #   "Fecha_dt" para facilitar la comparación de fechas
         #   Si cambiamos directamente el formato de la columna fecha, al ejecutar, da un warning
+        def convertir_fecha_tolerante(fecha):
+            try:
+                return convertir_fecha(fecha)
+            except (TypeError, ValueError):
+                return pd.NaT
+
         df_combinado.loc[:, "Fecha_dt"] = df_combinado["Fecha_boe"].apply(
-            convertir_fecha
+            convertir_fecha_tolerante
         )
 
         # Filtrar el DataFrame por el rango de fechas
