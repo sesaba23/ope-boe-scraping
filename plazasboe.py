@@ -204,6 +204,7 @@ def main():
                 enlaces = soup.find_all("a", href=True)
             except ParserRejectedMarkup as e:
                 barra.set_description(f"Error procesando el HTML de {url}: {e}")
+                lista_diccionario_errores.append({"Error de estructura": url})
                 continue
 
             for enlace in enlaces:
@@ -305,6 +306,15 @@ def main():
                     contenidos = soup.find_all("div", id="textoxslt")
                     elemento_titulo = soup.find(class_="documento-tit")
                     elemento_fecha = soup.find("div", class_="metadatos")
+                    if not contenidos:
+                        barra.set_description(
+                            f"Error procesando el HTML de {enlace[-15:]}: "
+                            "falta el contenido principal"
+                        )
+                        lista_diccionario_errores.append(
+                            {"Error de estructura": enlace}
+                        )
+                        continue
                     if elemento_titulo is None or elemento_fecha is None:
                         raise ValueError("Faltan elementos esperados en el HTML")
                     titulo = elemento_titulo.text.strip()

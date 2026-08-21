@@ -5,6 +5,8 @@ import sys
 import pandas as pd
 import pytest
 import requests
+import bs4
+from bs4 import ParserRejectedMarkup
 
 import coincidencias
 import entradas_datos
@@ -560,6 +562,81 @@ def test_error_de_programacion_en_peticion_no_se_oculta(monkeypatch):
         runpy.run_path("plazasboe.py", run_name="__main__")
 
     assert errores_guardados == []
+
+
+def test_publicacion_sin_contenido_principal_no_se_anade_al_historico(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=sin-contenido"
+    html_indice = '<a href="/diario_boe/txt.php?id=sin-contenido">Publicación</a>'
+    html_publicacion = (
+        '<div class="documento-tit">Documento sin contenido</div>'
+        '<div class="metadatos">9 de agosto de 2026</div>'
+    )
+    codigos_guardados = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP(html_publicacion)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+
+    def combinar_dataframes(
+        diccionario_puestos,
+        diccionario_busquedas,
+        df_opo_guardadas,
+        df_busquedas,
+    ):
+        codigos_guardados.extend(diccionario_busquedas["Código"])
+        return df_opo_guardadas, df_busquedas
+
+    monkeypatch.setattr(
+        preparar_archivo_datos, "combinar_dataframes", combinar_dataframes
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert codigos_guardados == []
+    assert errores_guardados[0]["Tipo de error"] == "Error de estructura"
+    assert errores_guardados[0]["Enlace Web"] == enlace
+
+
+def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
+    llamadas = []
+    beautiful_soup_real = bs4.BeautifulSoup
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        if "2026/08/09" in url:
+            return _RespuestaHTTP("indice rechazado")
+        if "2026/08/10" in url:
+            return _RespuestaHTTP("<html><body>Sin publicaciones</body></html>")
+        raise AssertionError(f"URL inesperada: {url}")
+
+    def crear_soup(contenido, parser):
+        if contenido == b"indice rechazado":
+            raise ParserRejectedMarkup("estructura no analizable")
+        return beautiful_soup_real(contenido, parser)
+
+    errores_guardados = _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09", "2026/08/10"],
+        "09/08/2026",
+        "10/08/2026",
+    )
+    monkeypatch.setattr(bs4, "BeautifulSoup", crear_soup)
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 1
+    assert len(llamadas) == 2
+    assert errores_guardados[0]["Tipo de error"] == "Error de estructura"
+    assert "2026/08/09" in errores_guardados[0]["Enlace Web"]
 
 
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):
