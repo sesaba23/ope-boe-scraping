@@ -66,7 +66,7 @@ def _buscar_enlaces_2b_en_indice_general(contenido):
     return enlaces
 
 
-def main():
+def _ejecutar_aplicacion():
     tiempo_inicio = time.time()
 
     # Un ejemplo cualquiera de la dirección de la sección 'oposiciones y concursos'
@@ -468,6 +468,15 @@ def main():
         print(
             f"\n{Fore.YELLOW}⌛🕒 Tiempo total de ejecución: {horas} h {minutos} min {segundos} s{Fore.RESET}"
         )
+
+
+def main():
+    try:
+        with preparar_archivo_datos.bloqueo_excel():
+            _ejecutar_aplicacion()
+    except preparar_archivo_datos.ExcelBloqueadoError as error:
+        print(f"\n{Fore.RED}❌ {error}{Fore.RESET}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

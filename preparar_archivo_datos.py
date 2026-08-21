@@ -1,5 +1,11 @@
 from fechas import convertir_fecha
 
+from contextlib import contextmanager
+import fcntl
+from pathlib import Path
+import shutil
+import tempfile
+
 import pandas as pd
 from openpyxl import Workbook
 import os, sys
@@ -11,6 +17,27 @@ import warnings
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 from openpyxl.utils import get_column_letter
+
+
+class ExcelBloqueadoError(RuntimeError):
+    pass
+
+
+@contextmanager
+def bloqueo_excel(nombre_archivo="BOE-oposiciones.xlsx"):
+    directorio = Path(nombre_archivo).resolve().parent
+    descriptor = os.open(directorio, os.O_RDONLY)
+    try:
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise ExcelBloqueadoError(
+                f"Ya hay otra ejecución trabajando con '{Path(nombre_archivo).name}'."
+            ) from error
+        yield
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
 
 
 def preparar_excel_y_dataframes():
@@ -95,10 +122,20 @@ def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
     """
     Código para guardar los resultados en un archivo Excel
     """
-    # Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
+    nombre_archivo = Path("BOE-oposiciones.xlsx")
+    archivo_temporal = None
     try:
+        descriptor, ruta_temporal = tempfile.mkstemp(
+            prefix=f".{nombre_archivo.stem}-",
+            suffix=".tmp.xlsx",
+            dir=nombre_archivo.resolve().parent,
+        )
+        os.close(descriptor)
+        archivo_temporal = Path(ruta_temporal)
+        shutil.copy2(nombre_archivo, archivo_temporal)
+
         with pd.ExcelWriter(
-            "BOE-oposiciones.xlsx",
+            archivo_temporal,
             mode="a",
             engine="openpyxl",
             if_sheet_exists="replace",
@@ -107,13 +144,23 @@ def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
             df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
             df_log_errores.to_excel(writer, sheet_name="Log-errores", index=False)
         # Da formato al Excel
-        formatear_hoja_oposiciones()
+        formatear_hoja_oposiciones(archivo_temporal)
+
+        if not archivo_temporal.exists():
+            raise FileNotFoundError("No se ha generado el archivo Excel temporal")
+        libro_validacion = load_workbook(archivo_temporal, read_only=True)
+        libro_validacion.close()
+        os.replace(archivo_temporal, nombre_archivo)
+        archivo_temporal = None
     except PermissionError:
         print(
             f"\n{Fore.RED}El archivo 'BOE-oposiciones.xlsx' está abierto. "
             f"Cierre el archivo y vuelva a intentarlo.{Fore.RESET}"
         )
         sys.exit(0)
+    finally:
+        if archivo_temporal is not None and archivo_temporal.exists():
+            archivo_temporal.unlink()
 
 
 def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fechas):

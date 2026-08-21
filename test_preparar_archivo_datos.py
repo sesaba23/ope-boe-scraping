@@ -2,6 +2,7 @@ import warnings
 
 import pandas as pd
 import pytest
+from openpyxl import Workbook, load_workbook
 from pandas.core.strings.accessor import StringMethods
 
 import preparar_archivo_datos
@@ -166,3 +167,140 @@ def test_warnings_se_restauran_si_el_filtrado_lanza_excepcion(monkeypatch):
         )
 
     assert warnings.filters == filtros_antes
+
+
+def _crear_excel_original(ruta):
+    libro = Workbook()
+    libro.active.title = "Búsquedas"
+    libro.create_sheet("Oposiciones")
+    libro.create_sheet("Log-errores")
+    libro["Oposiciones"]["A1"] = "contenido original"
+    libro.save(ruta)
+
+
+def _dataframes_excel():
+    return (
+        pd.DataFrame([crear_convocatoria()]),
+        pd.DataFrame({"Código": ["codigo-1"]}),
+        pd.DataFrame(
+            {
+                "Fecha": ["2025-01-01 12:00:00"],
+                "Tipo de error": ["Error de prueba"],
+                "Enlace Web": ["https://www.boe.es/error"],
+            }
+        ),
+    )
+
+
+def test_guardar_excel_escribe_temporal_y_sustituye_al_final(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel_original(original)
+    reemplazos = []
+    replace_real = preparar_archivo_datos.os.replace
+
+    def reemplazar(origen, destino):
+        reemplazos.append((origen, destino, preparar_archivo_datos.Path(origen).exists()))
+        replace_real(origen, destino)
+
+    monkeypatch.setattr(preparar_archivo_datos.os, "replace", reemplazar)
+
+    preparar_archivo_datos.guardar_excel(*_dataframes_excel())
+
+    assert len(reemplazos) == 1
+    origen, destino, temporal_existia = reemplazos[0]
+    assert preparar_archivo_datos.Path(origen).parent == tmp_path
+    assert preparar_archivo_datos.Path(destino).name == "BOE-oposiciones.xlsx"
+    assert temporal_existia
+    assert not list(tmp_path.glob(".BOE-oposiciones-*.tmp.xlsx"))
+
+
+def test_guardar_excel_conserva_hojas_y_contenido_esperados(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel_original(original)
+
+    preparar_archivo_datos.guardar_excel(*_dataframes_excel())
+
+    libro = load_workbook(original)
+    assert libro.sheetnames == ["Búsquedas", "Oposiciones", "Log-errores"]
+    assert libro["Búsquedas"].sheet_state == "hidden"
+    libro.close()
+    hojas = pd.read_excel(original, sheet_name=None)
+    assert hojas["Búsquedas"]["Código"].tolist() == ["codigo-1"]
+    assert hojas["Oposiciones"]["Puesto"].tolist() == ["Ingeniero"]
+    assert hojas["Log-errores"]["Tipo de error"].tolist() == ["Error de prueba"]
+
+
+def test_fallo_de_escritura_conserva_original_y_elimina_temporal(
+    monkeypatch, tmp_path
+):
+    monkeypatch.chdir(tmp_path)
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel_original(original)
+    contenido_original = original.read_bytes()
+
+    monkeypatch.setattr(
+        pd.DataFrame,
+        "to_excel",
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("fallo de escritura")),
+    )
+
+    with pytest.raises(RuntimeError, match="fallo de escritura"):
+        preparar_archivo_datos.guardar_excel(*_dataframes_excel())
+
+    assert original.read_bytes() == contenido_original
+    assert not list(tmp_path.glob(".BOE-oposiciones-*.tmp.xlsx"))
+
+
+def test_fallo_de_formateo_conserva_original_y_elimina_temporal(
+    monkeypatch, tmp_path
+):
+    monkeypatch.chdir(tmp_path)
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel_original(original)
+    contenido_original = original.read_bytes()
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "formatear_hoja_oposiciones",
+        lambda *args: (_ for _ in ()).throw(RuntimeError("fallo de formato")),
+    )
+
+    with pytest.raises(RuntimeError, match="fallo de formato"):
+        preparar_archivo_datos.guardar_excel(*_dataframes_excel())
+
+    assert original.read_bytes() == contenido_original
+    assert not list(tmp_path.glob(".BOE-oposiciones-*.tmp.xlsx"))
+
+
+def test_segunda_ejecucion_no_adquiere_el_mismo_bloqueo(tmp_path):
+    archivo = tmp_path / "BOE-oposiciones.xlsx"
+
+    with preparar_archivo_datos.bloqueo_excel(archivo):
+        with pytest.raises(
+            preparar_archivo_datos.ExcelBloqueadoError,
+            match="Ya hay otra ejecución",
+        ):
+            with preparar_archivo_datos.bloqueo_excel(archivo):
+                pass
+
+
+def test_bloqueo_se_libera_despues_de_ejecucion_normal(tmp_path):
+    archivo = tmp_path / "BOE-oposiciones.xlsx"
+
+    with preparar_archivo_datos.bloqueo_excel(archivo):
+        pass
+
+    with preparar_archivo_datos.bloqueo_excel(archivo):
+        pass
+
+
+def test_bloqueo_se_libera_despues_de_excepcion(tmp_path):
+    archivo = tmp_path / "BOE-oposiciones.xlsx"
+
+    with pytest.raises(RuntimeError, match="fallo durante la ejecución"):
+        with preparar_archivo_datos.bloqueo_excel(archivo):
+            raise RuntimeError("fallo durante la ejecución")
+
+    with preparar_archivo_datos.bloqueo_excel(archivo):
+        pass

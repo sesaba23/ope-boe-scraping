@@ -31,6 +31,29 @@ def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
     assert callable(modulo.main)
 
 
+def test_main_aborta_con_mensaje_si_excel_esta_bloqueado(monkeypatch, capsys):
+    import plazasboe
+
+    class ContextoBloqueado:
+        def __enter__(self):
+            raise preparar_archivo_datos.ExcelBloqueadoError(
+                "Ya hay otra ejecución trabajando con 'BOE-oposiciones.xlsx'."
+            )
+
+        def __exit__(self, *args):
+            return False
+
+    monkeypatch.setattr(
+        preparar_archivo_datos, "bloqueo_excel", lambda: ContextoBloqueado()
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        plazasboe.main()
+
+    assert salida.value.code == 1
+    assert "Ya hay otra ejecución" in capsys.readouterr().out
+
+
 def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypatch):
     enlace_correcto = "https://www.boe.es/diario_boe/txt.php?id=uno"
     enlace_fallido = "https://www.boe.es/diario_boe/txt.php?id=dos"
