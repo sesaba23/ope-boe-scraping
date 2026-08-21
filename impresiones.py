@@ -4,7 +4,14 @@ import time
 from colorama import Fore, Style
 
 
-def imprimir_diccionario_puestos(diccionario_puestos, f_inicio, f_fin, busqueda=""):
+def imprimir_diccionario_puestos(
+    diccionario_puestos,
+    f_inicio,
+    f_fin,
+    busqueda="",
+    publicaciones_analizadas=None,
+    publicaciones_fallidas=0,
+):
     """
     Imprime en pantalla cada elemento del diccionario_puestos de uno en uno.
     :param diccionario_puestos: Diccionario que contiene información de los puestos.
@@ -61,7 +68,19 @@ def imprimir_diccionario_puestos(diccionario_puestos, f_inicio, f_fin, busqueda=
         )
         print("=" * ancho_terminal)
 
-    if not any(diccionario_puestos[key] for key in diccionario_puestos):
+    hay_resultados = any(diccionario_puestos[key] for key in diccionario_puestos)
+    if publicaciones_fallidas and publicaciones_analizadas == 0:
+        print(
+            f"{Fore.RED}❌ No se pudo analizar ninguna publicación. "
+            f"Publicaciones fallidas: {publicaciones_fallidas}.{Fore.RESET}"
+        )
+    elif publicaciones_fallidas:
+        print(
+            f"{Fore.YELLOW}⚠️ Resultados incompletos: "
+            f"{publicaciones_fallidas} publicación/es no pudieron analizarse."
+            f"{Fore.RESET}"
+        )
+    elif not hay_resultados:
         print(
             f"{Fore.RED}❌ No se encontraron convocatorias para el periodo seleccionado{Fore.RESET}"
         )

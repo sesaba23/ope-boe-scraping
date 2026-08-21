@@ -50,19 +50,38 @@ def buscar_municipio(administracion):
 
     # Priorizar los contenidos entre paréntesis que coincidan con el catálogo
     candidatos_parentesis = re.findall(r"\(([^()]*)\)", administracion)
+    provincias = {normaliza(provincia) for provincia in df["Provincia"].dropna()}
+    administracion_sin_parentesis = administracion
     municipios_encontrados = [
         municipio
         for candidato in candidatos_parentesis
         for municipio in municipios
         if normaliza(municipio) == normaliza(candidato)
+        and (
+            normaliza(candidato) not in provincias
+            or set(re.findall(r"\w{3,}", normaliza(candidato)))
+            & set(
+                re.findall(
+                    r"\w{3,}", normaliza(administracion.split("(", 1)[0])
+                )
+            )
+        )
     ]
+    for candidato in candidatos_parentesis:
+        if normaliza(candidato) in provincias and not any(
+            normaliza(municipio) == normaliza(candidato)
+            for municipio in municipios_encontrados
+        ):
+            administracion_sin_parentesis = administracion_sin_parentesis.replace(
+                f"({candidato})", ""
+            )
 
     # Buscar coincidencias exactas (case-insensitive) en el texto de administración
     if not municipios_encontrados:
         municipios_encontrados = [
             municipio
             for municipio in municipios
-            if municipio.lower() == administracion.lower()
+            if municipio.lower() == administracion_sin_parentesis.strip().lower()
         ]
     if not municipios_encontrados:
         # Si no hay coincidencia exacta, buscar si alguna variante está contenida como palabra completa
@@ -71,7 +90,7 @@ def buscar_municipio(administracion):
             for municipio in municipios
             if re.search(
                 rf"(?<!\w){re.escape(municipio)}(?!\w)",
-                administracion,
+                administracion_sin_parentesis,
                 flags=re.IGNORECASE,
             )
         ]
@@ -79,7 +98,7 @@ def buscar_municipio(administracion):
         municipios_encontrados = [
             municipio
             for municipio in municipios
-            if normaliza(municipio) in normaliza(administracion)
+            if normaliza(municipio) in normaliza(administracion_sin_parentesis)
         ]
 
     if municipios_encontrados:

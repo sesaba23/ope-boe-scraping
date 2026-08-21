@@ -42,6 +42,20 @@ def test_buscar_municipio_prioriza_municipio_entre_parentesis():
     }
 
 
+def test_provincia_ambigua_no_asigna_su_capital_a_otro_territorio():
+    resultado = buscar_municipio(
+        "Cabildo Insular de La Gomera (Santa Cruz de Tenerife)"
+    )
+
+    assert resultado is None or resultado["Municipio"] != "Santa Cruz de Tenerife"
+
+
+def test_referencia_provincial_ambigua_no_asigna_lleida_capital():
+    resultado = buscar_municipio("Consejo General de Arán (Lleida)")
+
+    assert resultado is None or resultado["Municipio"] != "Lleida"
+
+
 def test_buscar_municipio_normal_mantiene_el_resultado():
     assert buscar_municipio("A Coruña") == {
         "Municipio": "Coruña (A)",

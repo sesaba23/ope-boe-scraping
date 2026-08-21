@@ -240,6 +240,8 @@ def main():
     #   De esta manera el código es único para cada búsqueda.
     #         "Código": [enlace+texto_busqueda]
     diccionario_busquedas = {"Código": []}
+    publicaciones_analizadas = 0
+    publicaciones_fallidas = set()
 
     """ 
     Empezar a buscar contenido en los enlaces encontrados
@@ -298,6 +300,9 @@ def main():
                         continue
                     time.sleep(RETRASO_SEGUNDOS)
 
+            if page is None:
+                publicaciones_fallidas.add(enlace)
+
             if page is not None:
                 try:
                     soup = BeautifulSoup(page.content, "html.parser")
@@ -314,6 +319,7 @@ def main():
                         lista_diccionario_errores.append(
                             {"Error de estructura": enlace}
                         )
+                        publicaciones_fallidas.add(enlace)
                         continue
                     if elemento_titulo is None or elemento_fecha is None:
                         raise ValueError("Faltan elementos esperados en el HTML")
@@ -324,6 +330,7 @@ def main():
                         f"Error procesando el HTML de {enlace[-15:]}: {e}"
                     )
                     lista_diccionario_errores.append({"Error procesando el HTML": enlace})
+                    publicaciones_fallidas.add(enlace)
                     continue
 
                 # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
@@ -365,6 +372,9 @@ def main():
                 if analisis_correcto:
                     diccionario_busquedas["Código"].append(codigo)
                     codigos_procesados.add(codigo)
+                    publicaciones_analizadas += 1
+                else:
+                    publicaciones_fallidas.add(enlace)
 
     """
         Convierte "lista_diccionarios_puestos" en un diccionario de listas si hay coincidencias
@@ -431,6 +441,8 @@ def main():
         f_inicio=fecha_inicio,
         f_fin=fecha_fin,
         busqueda=texto_busqueda,
+        publicaciones_analizadas=publicaciones_analizadas,
+        publicaciones_fallidas=len(publicaciones_fallidas),
     )
 
     # Mostramos en un mapa web los municipios encontrados en la búsqueda

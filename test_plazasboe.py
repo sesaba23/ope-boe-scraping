@@ -604,6 +604,39 @@ def test_publicacion_sin_contenido_principal_no_se_anade_al_historico(monkeypatc
     assert errores_guardados[0]["Enlace Web"] == enlace
 
 
+def test_flujo_principal_informa_cuantas_publicaciones_fallan(monkeypatch):
+    enlace_correcto = "https://www.boe.es/diario_boe/txt.php?id=correcto"
+    enlace_fallido = "https://www.boe.es/diario_boe/txt.php?id=fallido"
+    html_indice = (
+        '<a href="/diario_boe/txt.php?id=correcto">Correcta</a>'
+        '<a href="/diario_boe/txt.php?id=fallido">Fallida</a>'
+    )
+    estado_final = {}
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace_correcto:
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        if url == enlace_fallido:
+            return _RespuestaHTTP("", 500)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+    )
+    monkeypatch.setattr(
+        impresiones,
+        "imprimir_diccionario_puestos",
+        lambda *args, **kwargs: estado_final.update(kwargs),
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert estado_final["publicaciones_analizadas"] == 1
+    assert estado_final["publicaciones_fallidas"] == 1
+
+
 def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
     llamadas = []
     beautiful_soup_real = bs4.BeautifulSoup
