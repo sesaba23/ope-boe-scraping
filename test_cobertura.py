@@ -32,6 +32,43 @@ def test_crea_registro_con_columnas_en_orden_y_fecha_estable():
     }
 
 
+@pytest.mark.filterwarnings("error::FutureWarning")
+@pytest.mark.parametrize(
+    "inicial",
+    [
+        pd.DataFrame(),
+        pd.DataFrame(
+            [
+                {
+                    "Fecha": "2026-08-20",
+                    "Estado": "error",
+                    "Version_extractor": float("nan"),
+                    "Fecha_ultima_consulta": "2026-08-21 10:00:00",
+                    "Numero_publicaciones": float("nan"),
+                }
+            ]
+        ),
+    ],
+)
+def test_version_textual_no_emite_futurewarning_y_sigue_siendo_reutilizable(
+    inicial,
+):
+    resultado = registrar_cobertura(
+        inicial,
+        "2026-08-20",
+        "consultado",
+        0,
+        momento="2026-08-22 12:00:00",
+        version_actual="1",
+    )
+
+    assert resultado.loc[0, "Version_extractor"] == "1"
+    assert resultado["Version_extractor"].dtype == object
+    assert puede_reutilizar_cobertura(
+        "2026-08-20", resultado, pd.DataFrame(), pd.DataFrame()
+    )
+
+
 def test_actualiza_fecha_existente_sin_duplicarla_y_error_se_sustituye():
     inicial = registrar_cobertura(
         pd.DataFrame(), "2026-08-20", "error", momento="primer intento"

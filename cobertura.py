@@ -17,6 +17,12 @@ COLUMNAS_COBERTURA = [
     "Fecha_ultima_consulta",
     "Numero_publicaciones",
 ]
+COLUMNAS_TEXTO_COBERTURA = [
+    "Fecha",
+    "Estado",
+    "Version_extractor",
+    "Fecha_ultima_consulta",
+]
 ESTADOS_VALIDOS = {"consultado", "sin_edicion"}
 ESTADOS_COBERTURA = ESTADOS_VALIDOS | {"error"}
 
@@ -154,7 +160,7 @@ def registrar_cobertura(
 def normalizar_cobertura(df_cobertura):
     """Normaliza el esquema y deja una única fila por fecha sobre una copia."""
     if df_cobertura is None:
-        return pd.DataFrame(columns=COLUMNAS_COBERTURA)
+        return _ajustar_tipos_cobertura(pd.DataFrame(columns=COLUMNAS_COBERTURA))
     origen = df_cobertura.copy(deep=True)
     for columna in COLUMNAS_COBERTURA:
         if columna not in origen.columns:
@@ -180,7 +186,7 @@ def normalizar_cobertura(df_cobertura):
             resultado = resultado.drop(index=coincidencias).reset_index(drop=True)
         fila["Fecha"] = fecha
         resultado.loc[len(resultado)] = [fila[columna] for columna in COLUMNAS_COBERTURA]
-    return resultado[COLUMNAS_COBERTURA]
+    return _ajustar_tipos_cobertura(resultado[COLUMNAS_COBERTURA])
 
 
 def _normalizar_fecha(fecha):
@@ -242,3 +248,10 @@ def _id_valido(publicacion_id):
     return isinstance(publicacion_id, str) and bool(
         PATRON_PUBLICACION_ID.fullmatch(publicacion_id)
     )
+
+
+def _ajustar_tipos_cobertura(df_cobertura):
+    resultado = df_cobertura.copy(deep=True)
+    for columna in COLUMNAS_TEXTO_COBERTURA:
+        resultado[columna] = resultado[columna].astype("object")
+    return resultado
