@@ -3,6 +3,7 @@ import coincidencias
 import barraprogreso
 import impresiones
 import preparar_archivo_datos
+from trazabilidad import añadir_trazabilidad_convocatorias
 from entradas_datos import solicitar_fechas_y_validar
 from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipios
 
@@ -335,6 +336,7 @@ def _ejecutar_aplicacion():
 
                 # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
                 analisis_correcto = True
+                momento_analisis = datetime.now()
                 for contenido in contenidos:
                     try:
                         # La función devuelve una lista de diccionarios con las coincidencias y
@@ -344,6 +346,9 @@ def _ejecutar_aplicacion():
                         )
                         # Si se encuentra una coincidencia en LOCAL, se añade al diccionario
                         if lista_diccionarios_local:
+                            lista_diccionarios_local = añadir_trazabilidad_convocatorias(
+                                lista_diccionarios_local, enlace, momento_analisis
+                            )
                             lista_diccionarios_puestos.extend(lista_diccionarios_local)
                             for diccionario in lista_diccionarios_local:
                                 tqdm.write(
@@ -354,6 +359,9 @@ def _ejecutar_aplicacion():
                                 texto_busqueda, contenido.text, titulo, fecha_boe, enlace
                             )
                             if diccionario_estado:
+                                diccionario_estado = añadir_trazabilidad_convocatorias(
+                                    [diccionario_estado], enlace, momento_analisis
+                                )[0]
                                 lista_diccionarios_puestos.append(diccionario_estado)
                                 tqdm.write(
                                     f"Convocatoria del Estado encontrada: {diccionario_estado["Puesto"]}"

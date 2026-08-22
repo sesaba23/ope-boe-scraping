@@ -1,4 +1,5 @@
 from fechas import convertir_fecha
+from trazabilidad import enriquecer_historico_oposiciones
 
 from contextlib import contextmanager
 import fcntl
@@ -65,6 +66,9 @@ def preparar_excel_y_dataframes():
         sheet_name: excel_file.parse(sheet_name)
         for sheet_name in excel_file.sheet_names
     }
+    dataframes_dict["Oposiciones"] = enriquecer_historico_oposiciones(
+        dataframes_dict["Oposiciones"]
+    )
 
     return dataframes_dict
 

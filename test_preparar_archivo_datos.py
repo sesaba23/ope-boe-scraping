@@ -64,6 +64,25 @@ def test_combinar_dataframes_elimina_filas_identicas():
     assert len(resultado) == 1
 
 
+def test_trazabilidad_no_forma_parte_de_la_clave_de_deduplicacion():
+    historica = crear_convocatoria(
+        Publicacion_ID="BOE-A-2025-1",
+        Version_extractor="legacy",
+        Fecha_analisis=pd.NA,
+    )
+    nueva = crear_convocatoria(
+        Publicacion_ID="BOE-A-2025-2",
+        Version_extractor="1",
+        Fecha_analisis="2026-08-22 12:34:56",
+    )
+
+    resultado = combinar_convocatorias(historica, nueva)
+
+    assert len(resultado) == 1
+    assert resultado.iloc[0]["Version_extractor"] == "1"
+    assert resultado.iloc[0]["Fecha_analisis"] == "2026-08-22 12:34:56"
+
+
 def test_combinar_dataframes_conserva_convocatorias_con_distinto_turno():
     resultado = combinar_convocatorias(
         crear_convocatoria(), crear_convocatoria(Turno="Discapacidad")
