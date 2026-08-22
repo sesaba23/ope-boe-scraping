@@ -1,12 +1,14 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 from openpyxl import Workbook, load_workbook
 
 import preparar_archivo_datos
 from cobertura import (
     COLUMNAS_COBERTURA,
     normalizar_cobertura,
+    puede_reutilizar_cobertura,
     registrar_cobertura,
 )
 
@@ -124,3 +126,171 @@ def test_escritura_atomica_incluye_cobertura_y_mantiene_busquedas_oculta(
     guardada = pd.read_excel(ruta, sheet_name="Cobertura")
     assert guardada.columns.tolist() == COLUMNAS_COBERTURA
     assert guardada.loc[0, "Numero_publicaciones"] == 2
+
+
+def _cobertura(estado="consultado", version="1", numero=0, fecha="2026-08-10"):
+    return pd.DataFrame(
+        [
+            {
+                "Fecha": fecha,
+                "Estado": estado,
+                "Version_extractor": version,
+                "Fecha_ultima_consulta": "2026-08-22 12:00:00",
+                "Numero_publicaciones": numero,
+            }
+        ]
+    )
+
+
+def _publicaciones(cantidad, version="1", estado="sin_coincidencias"):
+    return pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": f"BOE-A-2026-{1000 + indice}",
+                "Fecha_BOE": "10 de agosto de 2026",
+                "Version_extractor": version,
+                "Estado_analisis": estado,
+                "Coincidencias": 0 if estado == "sin_coincidencias" else 1,
+            }
+            for indice in range(cantidad)
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    ("cobertura", "esperado"),
+    [
+        (pd.DataFrame(), False),
+        (_cobertura("error"), False),
+        (_cobertura(version="legacy"), False),
+        (_cobertura(version="1"), False),
+        (_cobertura("sin_edicion", "2", 0), True),
+        (_cobertura("consultado", "2", 0), True),
+        (_cobertura("sin_edicion", "1", 1), False),
+    ],
+)
+def test_decision_basica_de_reutilizacion(cobertura, esperado):
+    assert (
+        puede_reutilizar_cobertura(
+            "2026/08/10",
+            cobertura,
+            pd.DataFrame(),
+            pd.DataFrame(),
+            version_actual="2",
+        )
+        is esperado
+    )
+
+
+@pytest.mark.parametrize(("locales", "esperado"), [(8, True), (7, False), (9, False)])
+def test_numero_de_publicaciones_locales_debe_coincidir(locales, esperado):
+    assert (
+        puede_reutilizar_cobertura(
+            "2026-08-10",
+            _cobertura(numero=8),
+            _publicaciones(locales),
+            pd.DataFrame(),
+        )
+        is esperado
+    )
+
+
+@pytest.mark.parametrize("version", ["legacy", "0", ""])
+def test_publicacion_con_version_no_compatible_impide_reutilizar(version):
+    assert not puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura(numero=1),
+        _publicaciones(1, version=version),
+        pd.DataFrame(),
+    )
+
+
+def test_con_coincidencias_exige_fila_en_oposiciones():
+    publicaciones = _publicaciones(1, estado="con_coincidencias")
+
+    assert not puede_reutilizar_cobertura(
+        "2026-08-10", _cobertura(numero=1), publicaciones, pd.DataFrame()
+    )
+    assert puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura(numero=1),
+        publicaciones,
+        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-1000"]}),
+    )
+
+
+def test_sin_coincidencias_no_exige_fila_en_oposiciones():
+    assert puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura(numero=1),
+        _publicaciones(1),
+        pd.DataFrame(),
+    )
+
+
+@pytest.mark.parametrize("version", ["1", "2"])
+def test_publicacion_con_version_actual_o_posterior_es_compatible(version):
+    assert puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura(numero=1),
+        _publicaciones(1, version=version),
+        pd.DataFrame(),
+    )
+
+
+def test_publicacion_sin_identificador_valido_impide_reutilizar():
+    publicaciones = _publicaciones(1)
+    publicaciones.loc[0, "Publicacion_ID"] = "identificador-invalido"
+
+    assert not puede_reutilizar_cobertura(
+        "2026-08-10", _cobertura(numero=1), publicaciones, pd.DataFrame()
+    )
+
+
+def test_fechas_equivalentes_con_tipos_distintos_se_reutilizan():
+    cobertura = _cobertura(numero=1, fecha=pd.Timestamp("2026-08-10"))
+    publicaciones = _publicaciones(1)
+    publicaciones.loc[0, "Fecha_BOE"] = datetime(2026, 8, 10)
+
+    assert puede_reutilizar_cobertura(
+        "10/08/2026", cobertura, publicaciones, pd.DataFrame()
+    )
+
+
+def test_fecha_invalida_no_se_reutiliza():
+    assert not puede_reutilizar_cobertura(
+        "fecha inválida", _cobertura(), pd.DataFrame(), pd.DataFrame()
+    )
+
+
+def test_version_posterior_de_cobertura_es_compatible():
+    assert puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura("consultado", "2", 0),
+        pd.DataFrame(),
+        pd.DataFrame(),
+    )
+
+
+@pytest.mark.parametrize("numero", [pd.NA, "invalido", 1.5, -1])
+def test_numero_publicaciones_invalido_impide_reutilizar(numero):
+    assert not puede_reutilizar_cobertura(
+        "2026-08-10",
+        _cobertura("consultado", "1", numero),
+        pd.DataFrame(),
+        pd.DataFrame(),
+    )
+
+
+def test_reutilizacion_no_modifica_ningun_dataframe():
+    cobertura = _cobertura(numero=1)
+    publicaciones = _publicaciones(1)
+    oposiciones = pd.DataFrame()
+    copias = [dataframe.copy(deep=True) for dataframe in (cobertura, publicaciones, oposiciones)]
+
+    assert puede_reutilizar_cobertura(
+        "2026-08-10", cobertura, publicaciones, oposiciones
+    )
+
+    for dataframe, copia in zip((cobertura, publicaciones, oposiciones), copias):
+        pd.testing.assert_frame_equal(dataframe, copia)

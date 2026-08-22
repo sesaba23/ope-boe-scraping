@@ -3,7 +3,7 @@ import coincidencias
 import barraprogreso
 import impresiones
 import preparar_archivo_datos
-from cobertura import registrar_cobertura
+from cobertura import puede_reutilizar_cobertura, registrar_cobertura
 from trazabilidad import añadir_trazabilidad_convocatorias
 from trazabilidad import extraer_publicacion_id
 from publicaciones import (
@@ -143,8 +143,19 @@ def _ejecutar_aplicacion():
     """
     barra = tqdm(zip(lista_fechas, urls_dias), total=len(urls_dias), desc="", colour="blue")
     estados_indices = {"consultado": 0, "sin_edicion": 0, "error": 0}
+    indices_reutilizados = 0
+    indices_consultados_http = 0
     enlaces_vistos = set()
     for fecha_indice, url in barra:
+        if puede_reutilizar_cobertura(
+            fecha_indice,
+            df_cobertura,
+            df_publicaciones,
+            df_opo_guardadas,
+        ):
+            indices_reutilizados += 1
+            continue
+        indices_consultados_http += 1
         reintentos = 0
         page = None
         estado_indice = "error"
@@ -508,8 +519,10 @@ def _ejecutar_aplicacion():
     print(f"Índices consultados correctamente: {estados_indices['consultado']}")
     print(f"Días sin edición: {estados_indices['sin_edicion']}")
     print(f"Índices con error: {estados_indices['error']}")
+    print(f"Índices reutilizados localmente: {indices_reutilizados}")
+    print(f"Índices consultados por HTTP: {indices_consultados_http}")
 
-    if not enlaces_oposiciones:
+    if not enlaces_oposiciones and not indices_reutilizados:
         if not lista_diccionario_errores:
             if fecha_fin == fecha_inicio:
                 print(

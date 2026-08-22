@@ -1529,6 +1529,236 @@ def test_cobertura_existente_no_evital_peticion_y_fallo_no_la_destruye(monkeypat
     assert fila["Fecha_ultima_consulta"] != "2026-08-20 10:00:00"
 
 
+def test_integracion_cache_10_11_12_reutiliza_y_filtra_datos_locales(
+    monkeypatch, capsys
+):
+    cobertura_inicial = pd.DataFrame(
+        [
+            {
+                "Fecha": "2026-08-10",
+                "Estado": "consultado",
+                "Version_extractor": "1",
+                "Fecha_ultima_consulta": "2026-08-20 10:00:00",
+                "Numero_publicaciones": 2,
+            },
+            {
+                "Fecha": "2026-08-11",
+                "Estado": "sin_edicion",
+                "Version_extractor": "1",
+                "Fecha_ultima_consulta": "2026-08-20 10:00:00",
+                "Numero_publicaciones": 0,
+            },
+        ]
+    )
+    publicaciones = pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": "BOE-A-2026-1000",
+                "Fecha_BOE": "10 de agosto de 2026",
+                "Version_extractor": "1",
+                "Estado_analisis": "con_coincidencias",
+                "Coincidencias": 1,
+            },
+            {
+                "Publicacion_ID": "BOE-A-2026-1001",
+                "Fecha_BOE": pd.Timestamp("2026-08-10"),
+                "Version_extractor": "1",
+                "Estado_analisis": "sin_coincidencias",
+                "Coincidencias": 0,
+            },
+        ]
+    )
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1000"
+    oposiciones = pd.DataFrame(
+        [
+            {
+                "Num_plazas": 1,
+                "Puesto": "Arquitecto Técnico",
+                "Administración": "Ayuntamiento de Madrid",
+                "Fecha_boe": "10 de agosto de 2026",
+                "Enlace": enlace,
+                "Publicacion_ID": "BOE-A-2026-1000",
+                "Latitud": 40.4,
+                "Longitud": -3.7,
+                "Habitantes": 3000000,
+            },
+            {
+                "Num_plazas": 1,
+                "Puesto": "Arquitecto fuera del intervalo",
+                "Administración": "Ayuntamiento de Madrid",
+                "Fecha_boe": "9 de agosto de 2026",
+                "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-999",
+                "Publicacion_ID": "BOE-A-2026-999",
+                "Latitud": 40.4,
+                "Longitud": -3.7,
+                "Habitantes": 3000000,
+            },
+        ]
+    )
+    cobertura_guardada = []
+    busquedas_guardadas = []
+    resultados = {}
+    mapas = []
+    solicitudes = []
+    combinar_real = preparar_archivo_datos.combinar_dataframes
+    filtrar_real = preparar_archivo_datos.prepara_data_frame_mostrar_resultados
+
+    def obtener_url(url, timeout):
+        solicitudes.append(url)
+        assert "2026/08/12" in url, "Los índices 10 y 11 deben reutilizarse"
+        return _RespuestaHTTP("<html>Sin publicaciones</html>")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/10", "2026/08/11", "2026/08/12"],
+        "10/08/2026",
+        "12/08/2026",
+        publicaciones_iniciales=publicaciones,
+        oposiciones_iniciales=oposiciones,
+        busquedas_guardadas=busquedas_guardadas,
+        cobertura_guardada=cobertura_guardada,
+        cobertura_inicial=cobertura_inicial,
+    )
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: (
+            "arquitecto",
+            "10/08/2026",
+            "12/08/2026",
+            ["2026/08/10", "2026/08/11", "2026/08/12"],
+        ),
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos, "combinar_dataframes", combinar_real
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "prepara_data_frame_mostrar_resultados",
+        filtrar_real,
+    )
+    monkeypatch.setattr(
+        impresiones,
+        "imprimir_diccionario_puestos",
+        lambda diccionario, **kwargs: resultados.update(diccionario),
+    )
+    monkeypatch.setattr(
+        mapa_plazas,
+        "generar_mapa_municipios",
+        lambda dataframe: mapas.append(dataframe.copy(deep=True)),
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert solicitudes == [
+        "https://www.boe.es/boe/dias/2026/08/12/index.php?s=2B"
+    ]
+    assert resultados["Puesto"] == ["Arquitecto Técnico"]
+    assert mapas[-1]["Puesto"].tolist() == ["Arquitecto Técnico"]
+    assert busquedas_guardadas[-1].empty
+    cobertura_final = cobertura_guardada[-1].set_index("Fecha")
+    assert cobertura_final.loc["2026-08-10", "Fecha_ultima_consulta"] == "2026-08-20 10:00:00"
+    assert cobertura_final.loc["2026-08-11", "Fecha_ultima_consulta"] == "2026-08-20 10:00:00"
+    assert cobertura_final.loc["2026-08-12", "Estado"] == "consultado"
+    salida = capsys.readouterr().out
+    assert "Índices reutilizados localmente: 2" in salida
+    assert "Índices consultados por HTTP: 1" in salida
+
+
+def test_ejecucion_completamente_local_muestra_y_envia_resultados_al_mapa(
+    monkeypatch, capsys
+):
+    publicacion_id = "BOE-A-2026-1000"
+    enlace = f"https://www.boe.es/diario_boe/txt.php?id={publicacion_id}"
+    cobertura = pd.DataFrame(
+        [
+            {
+                "Fecha": "2026-08-10",
+                "Estado": "consultado",
+                "Version_extractor": "1",
+                "Fecha_ultima_consulta": "2026-08-20 10:00:00",
+                "Numero_publicaciones": 1,
+            }
+        ]
+    )
+    publicaciones = pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": publicacion_id,
+                "Fecha_BOE": "10 de agosto de 2026",
+                "Version_extractor": "1",
+                "Estado_analisis": "con_coincidencias",
+                "Coincidencias": 1,
+            }
+        ]
+    )
+    oposiciones = pd.DataFrame(
+        [
+            {
+                "Num_plazas": 1,
+                "Puesto": "Arquitecto Técnico",
+                "Administración": "Ayuntamiento de Madrid",
+                "Fecha_boe": "10 de agosto de 2026",
+                "Enlace": enlace,
+                "Publicacion_ID": publicacion_id,
+                "Latitud": 40.4,
+                "Longitud": -3.7,
+                "Habitantes": 3000000,
+            }
+        ]
+    )
+    resultados = {}
+    mapas = []
+    filtrar_real = preparar_archivo_datos.prepara_data_frame_mostrar_resultados
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("Una ejecución local no debe consultar el índice")
+        ),
+        ["2026/08/10"],
+        "10/08/2026",
+        "10/08/2026",
+        publicaciones_iniciales=publicaciones,
+        oposiciones_iniciales=oposiciones,
+        cobertura_inicial=cobertura,
+    )
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: (
+            "arquitecto",
+            "10/08/2026",
+            "10/08/2026",
+            ["2026/08/10"],
+        ),
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "prepara_data_frame_mostrar_resultados",
+        filtrar_real,
+    )
+    monkeypatch.setattr(
+        impresiones,
+        "imprimir_diccionario_puestos",
+        lambda diccionario, **kwargs: resultados.update(diccionario),
+    )
+    monkeypatch.setattr(
+        mapa_plazas,
+        "generar_mapa_municipios",
+        lambda dataframe: mapas.append(dataframe.copy(deep=True)),
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert resultados["Puesto"] == ["Arquitecto Técnico"]
+    assert mapas[-1]["Puesto"].tolist() == ["Arquitecto Técnico"]
+    salida = capsys.readouterr().out
+    assert "Índices reutilizados localmente: 1" in salida
+    assert "Índices consultados por HTTP: 0" in salida
+
+
 def _configurar_consulta_boe(
     monkeypatch,
     obtener_url,
