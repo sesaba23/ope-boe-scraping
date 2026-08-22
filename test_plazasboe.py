@@ -418,6 +418,7 @@ def test_400_en_filtro_y_indice_general_sin_2b_es_dia_sin_publicaciones(
     monkeypatch, capsys
 ):
     llamadas = []
+    cobertura_guardada = []
     html_indice_general = """
         <a href="index.php?s=1">I. Disposiciones generales</a>
         <h3>I. Disposiciones generales</h3>
@@ -430,7 +431,12 @@ def test_400_en_filtro_y_indice_general_sin_2b_es_dia_sin_publicaciones(
         return _RespuestaHTTP(html_indice_general)
 
     _configurar_consulta_boe(
-        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
 
     with pytest.raises(SystemExit) as salida:
@@ -442,6 +448,8 @@ def test_400_en_filtro_y_indice_general_sin_2b_es_dia_sin_publicaciones(
         "https://www.boe.es/boe/dias/2026/08/09/index.php",
     ]
     assert "no se ha publicado ningún proceso selectivo" in capsys.readouterr().out
+    assert cobertura_guardada[-1].iloc[0]["Estado"] == "consultado"
+    assert cobertura_guardada[-1].iloc[0]["Numero_publicaciones"] == 0
 
 
 def test_400_en_filtro_recupera_2b_desde_el_indice_general(monkeypatch):
@@ -450,6 +458,7 @@ def test_400_en_filtro_recupera_2b_desde_el_indice_general(monkeypatch):
         "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-2",
     ]
     publicaciones_consultadas = []
+    cobertura_guardada = []
     html_indice_general = """
         <a href="index.php?s=1">I. Disposiciones generales</a>
         <a href="index.php?s=2B">II. B. Oposiciones y concursos</a>
@@ -471,13 +480,20 @@ def test_400_en_filtro_recupera_2b_desde_el_indice_general(monkeypatch):
         raise AssertionError(f"URL inesperada: {url}")
 
     errores_guardados = _configurar_consulta_boe(
-        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
 
     runpy.run_path("plazasboe.py", run_name="__main__")
 
     assert publicaciones_consultadas == enlaces
     assert errores_guardados == []
+    assert cobertura_guardada[-1].iloc[0]["Estado"] == "consultado"
+    assert cobertura_guardada[-1].iloc[0]["Numero_publicaciones"] == 2
 
 
 @pytest.mark.parametrize("estado_fallback", [400, 500])
@@ -485,6 +501,7 @@ def test_error_http_en_indice_general_del_fallback_se_registra(
     monkeypatch, estado_fallback
 ):
     llamadas = []
+    cobertura_guardada = []
 
     def obtener_url(url, timeout):
         llamadas.append(url)
@@ -493,7 +510,12 @@ def test_error_http_en_indice_general_del_fallback_se_registra(
         return _RespuestaHTTP("", estado_fallback)
 
     errores_guardados = _configurar_consulta_boe(
-        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
 
     with pytest.raises(SystemExit) as salida:
@@ -503,16 +525,23 @@ def test_error_http_en_indice_general_del_fallback_se_registra(
     assert len(llamadas) == 2
     assert errores_guardados[0]["Tipo de error"] == "Error al acceder"
     assert errores_guardados[0]["Enlace Web"].endswith("/index.php")
+    assert cobertura_guardada[-1].iloc[0]["Estado"] == "error"
 
 
 def test_fallback_con_estructura_no_reconocible_registra_error(monkeypatch):
+    cobertura_guardada = []
     def obtener_url(url, timeout):
         if url.endswith("?s=2B"):
             return _RespuestaHTTP("", 400)
         return _RespuestaHTTP("<html><body>Contenido inesperado</body></html>")
 
     errores_guardados = _configurar_consulta_boe(
-        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
 
     with pytest.raises(SystemExit) as salida:
@@ -520,6 +549,7 @@ def test_fallback_con_estructura_no_reconocible_registra_error(monkeypatch):
 
     assert salida.value.code == 1
     assert errores_guardados[0]["Tipo de error"] == "Error de estructura"
+    assert cobertura_guardada[-1].iloc[0]["Estado"] == "error"
 
 
 @pytest.mark.parametrize("estado", [429, 500])
@@ -547,6 +577,7 @@ def test_429_y_5xx_del_indice_filtrado_conservan_los_reintentos(
 def test_fallback_no_duplica_publicaciones(monkeypatch):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-repetida"
     publicaciones_consultadas = []
+    cobertura_guardada = []
     html_indice_general = """
         <a href="index.php?s=2B">II. B. Oposiciones y concursos</a>
         <h3>II. Autoridades y personal. - B. Oposiciones y concursos</h3>
@@ -566,12 +597,18 @@ def test_fallback_no_duplica_publicaciones(monkeypatch):
         raise AssertionError(f"URL inesperada: {url}")
 
     _configurar_consulta_boe(
-        monkeypatch, obtener_url, ["2026/08/09"], "09/08/2026", "09/08/2026"
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
 
     runpy.run_path("plazasboe.py", run_name="__main__")
 
     assert publicaciones_consultadas == [enlace]
+    assert cobertura_guardada[-1].iloc[0]["Numero_publicaciones"] == 1
 
 
 def test_error_de_programacion_en_peticion_no_se_oculta(monkeypatch):
@@ -663,6 +700,7 @@ def test_flujo_principal_informa_cuantas_publicaciones_fallan(monkeypatch):
 
 def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
     llamadas = []
+    cobertura_guardada = []
     beautiful_soup_real = bs4.BeautifulSoup
 
     def obtener_url(url, timeout):
@@ -684,6 +722,7 @@ def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
         ["2026/08/09", "2026/08/10"],
         "09/08/2026",
         "10/08/2026",
+        cobertura_guardada=cobertura_guardada,
     )
     monkeypatch.setattr(bs4, "BeautifulSoup", crear_soup)
 
@@ -694,6 +733,7 @@ def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
     assert len(llamadas) == 2
     assert errores_guardados[0]["Tipo de error"] == "Error de estructura"
     assert "2026/08/09" in errores_guardados[0]["Enlace Web"]
+    assert cobertura_guardada[-1]["Estado"].tolist() == ["error", "consultado"]
 
 
 @pytest.mark.parametrize(
@@ -1138,7 +1178,11 @@ def _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados):
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
 
     def guardar_excel(
-        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones=None
+        df_combinado,
+        df_busquedas_combinado,
+        df_log_errores,
+        df_publicaciones=None,
+        df_cobertura=None,
     ):
         errores_guardados.extend(df_log_errores.to_dict(orient="records"))
 
@@ -1336,6 +1380,155 @@ def test_busqueda_nueva_reutiliza_publicacion_y_filtra_oposiciones_locales(
     assert "Publicaciones reutilizadas localmente: 1" in salida
 
 
+def test_cobertura_indice_200_cuenta_enlaces_unicos_y_no_cambia_por_error_documental(
+    monkeypatch
+):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = (
+        '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Primero</a>'
+        '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Duplicado</a>'
+    )
+    cobertura_guardada = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP("", 500)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    fila = cobertura_guardada[-1].iloc[0]
+    assert fila["Estado"] == "consultado"
+    assert fila["Numero_publicaciones"] == 1
+
+
+@pytest.mark.parametrize(
+    ("respuesta", "estado_esperado"),
+    [(_RespuestaHTTP("<html>Sin publicaciones</html>"), "consultado"),
+     (_RespuestaHTTP("", 404), "sin_edicion")],
+)
+def test_cobertura_dia_sin_publicaciones(monkeypatch, respuesta, estado_esperado):
+    cobertura_guardada = []
+    _configurar_consulta_boe(
+        monkeypatch,
+        lambda *args, **kwargs: respuesta,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
+    )
+
+    with pytest.raises(SystemExit) as salida:
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert salida.value.code == 0
+    fila = cobertura_guardada[-1].iloc[0]
+    assert fila["Estado"] == estado_esperado
+    assert fila["Numero_publicaciones"] == 0
+
+
+@pytest.mark.parametrize("estado_http", [429, 500])
+def test_cobertura_registra_error_http_del_indice(monkeypatch, estado_http):
+    cobertura_guardada = []
+    llamadas = []
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        return _RespuestaHTTP("", estado_http)
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
+    )
+
+    with pytest.raises(SystemExit):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert len(llamadas) == 3
+    fila = cobertura_guardada[-1].iloc[0]
+    assert fila["Estado"] == "error"
+    assert pd.isna(fila["Numero_publicaciones"])
+
+
+@pytest.mark.parametrize(
+    "error_red", [requests.exceptions.Timeout(), requests.exceptions.ConnectionError()]
+)
+def test_cobertura_registra_timeout_y_error_de_conexion(monkeypatch, error_red):
+    cobertura_guardada = []
+
+    def obtener_url(*args, **kwargs):
+        raise error_red
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
+    )
+
+    with pytest.raises(SystemExit):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert cobertura_guardada[-1].iloc[0]["Estado"] == "error"
+
+
+def test_cobertura_existente_no_evital_peticion_y_fallo_no_la_destruye(monkeypatch):
+    cobertura_guardada = []
+    llamadas = []
+    cobertura_inicial = pd.DataFrame(
+        [
+            {
+                "Fecha": "2026-08-09",
+                "Estado": "consultado",
+                "Version_extractor": "1",
+                "Fecha_ultima_consulta": "2026-08-20 10:00:00",
+                "Numero_publicaciones": 4,
+            }
+        ]
+    )
+
+    def obtener_url(url, timeout):
+        llamadas.append(url)
+        return _RespuestaHTTP("", 500)
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        cobertura_guardada=cobertura_guardada,
+        cobertura_inicial=cobertura_inicial,
+    )
+
+    with pytest.raises(SystemExit):
+        runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert len(llamadas) == 3
+    fila = cobertura_guardada[-1].iloc[0]
+    assert fila["Estado"] == "consultado"
+    assert fila["Version_extractor"] == "1"
+    assert fila["Numero_publicaciones"] == 4
+    assert fila["Fecha_ultima_consulta"] != "2026-08-20 10:00:00"
+
+
 def _configurar_consulta_boe(
     monkeypatch,
     obtener_url,
@@ -1348,6 +1541,8 @@ def _configurar_consulta_boe(
     oposiciones_iniciales=None,
     oposiciones_guardadas=None,
     busquedas_guardadas=None,
+    cobertura_guardada=None,
+    cobertura_inicial=None,
 ):
     columnas = [
         "Num_plazas",
@@ -1373,11 +1568,16 @@ def _configurar_consulta_boe(
         if publicaciones_iniciales is not None
         else pd.DataFrame()
     )
+    cobertura = cobertura_inicial if cobertura_inicial is not None else pd.DataFrame()
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
     errores_guardados = []
 
     def guardar_excel(
-        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones=None
+        df_combinado,
+        df_busquedas_combinado,
+        df_log_errores,
+        df_publicaciones=None,
+        df_cobertura=None,
     ):
         errores_guardados.extend(df_log_errores.to_dict(orient="records"))
         if publicaciones_guardadas is not None:
@@ -1386,6 +1586,8 @@ def _configurar_consulta_boe(
             oposiciones_guardadas.append(df_combinado.copy(deep=True))
         if busquedas_guardadas is not None:
             busquedas_guardadas.append(df_busquedas_combinado.copy(deep=True))
+        if cobertura_guardada is not None:
+            cobertura_guardada.append(df_cobertura.copy(deep=True))
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
     monkeypatch.setattr(
@@ -1401,6 +1603,7 @@ def _configurar_consulta_boe(
             "Oposiciones": oposiciones,
             "Log-errores": log_errores,
             "Publicaciones": publicaciones,
+            "Cobertura": cobertura,
         },
     )
     monkeypatch.setattr(

@@ -3,6 +3,7 @@ import coincidencias
 import barraprogreso
 import impresiones
 import preparar_archivo_datos
+from cobertura import registrar_cobertura
 from trazabilidad import añadir_trazabilidad_convocatorias
 from trazabilidad import extraer_publicacion_id
 from publicaciones import (
@@ -73,6 +74,13 @@ def _buscar_enlaces_2b_en_indice_general(contenido):
     return enlaces
 
 
+def _añadir_publicacion_unica(enlaces, claves_vistas, enlace):
+    clave = extraer_publicacion_id(enlace) or enlace
+    if clave not in claves_vistas:
+        enlaces.append(enlace)
+        claves_vistas.add(clave)
+
+
 def _ejecutar_aplicacion():
     tiempo_inicio = time.time()
 
@@ -96,6 +104,7 @@ def _ejecutar_aplicacion():
     df_opo_guardadas = dataframes_dict["Oposiciones"]
     df_log_errores = dataframes_dict["Log-errores"]
     df_publicaciones = dataframes_dict.get("Publicaciones", pd.DataFrame())
+    df_cobertura = dataframes_dict.get("Cobertura", pd.DataFrame())
 
     if df_busquedas.empty:
         df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
@@ -132,10 +141,15 @@ def _ejecutar_aplicacion():
         barraprogreso.barra_progreso_color(urls_dias, total=len(urls_dias))
     ):
     """
-    barra = tqdm(urls_dias, desc="", colour="blue")
-    for url in barra:
+    barra = tqdm(zip(lista_fechas, urls_dias), total=len(urls_dias), desc="", colour="blue")
+    estados_indices = {"consultado": 0, "sin_edicion": 0, "error": 0}
+    enlaces_vistos = set()
+    for fecha_indice, url in barra:
         reintentos = 0
         page = None
+        estado_indice = "error"
+        enlaces_dia = []
+        claves_dia = set()
         while reintentos < MAX_REINTENTOS:
             try:
                 page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
@@ -144,6 +158,7 @@ def _ejecutar_aplicacion():
             except requests.exceptions.HTTPError as e:
                 page = None
                 if e.response is not None and e.response.status_code == 404:
+                    estado_indice = "sin_edicion"
                     break
                 if e.response is not None and e.response.status_code == 400:
                     url_indice_general = url.split("?", 1)[0]
@@ -174,9 +189,11 @@ def _ejecutar_aplicacion():
                         )
                         break
                     for enlace in enlaces_fallback:
-                        enlaces_oposiciones.append(
-                            urljoin(URL_BASE_ENLACES, enlace["href"])
+                        enlace_completo = urljoin(URL_BASE_ENLACES, enlace["href"])
+                        _añadir_publicacion_unica(
+                            enlaces_dia, claves_dia, enlace_completo
                         )
+                    estado_indice = "consultado"
                     break
                 reintentos += 1
                 barra.set_description(
@@ -213,24 +230,33 @@ def _ejecutar_aplicacion():
             except ParserRejectedMarkup as e:
                 barra.set_description(f"Error procesando el HTML de {url}: {e}")
                 lista_diccionario_errores.append({"Error de estructura": url})
-                continue
+            else:
+                for enlace in enlaces:
+                    if any(formato in enlace["href"] for formato in ["txt"]):
+                        enlace_completo = urljoin(URL_BASE_ENLACES, enlace["href"])
+                        _añadir_publicacion_unica(
+                            enlaces_dia, claves_dia, enlace_completo
+                        )
+                estado_indice = "consultado"
 
-            for enlace in enlaces:
-                if any(formato in enlace["href"] for formato in ["txt"]):
-                    enlaces_oposiciones.append(URL_BASE_ENLACES + enlace["href"])
+        if estado_indice in {"consultado", "sin_edicion"}:
+            for enlace in enlaces_dia:
+                _añadir_publicacion_unica(
+                    enlaces_oposiciones, enlaces_vistos, enlace
+                )
+            numero_publicaciones = len(enlaces_dia)
+        else:
+            numero_publicaciones = None
+        df_cobertura = registrar_cobertura(
+            df_cobertura,
+            fecha_indice,
+            estado_indice,
+            numero_publicaciones,
+            momento=datetime.now(),
+        )
+        estados_indices[estado_indice] += 1
 
     # Si no hay publicaciones y la consulta fue correcta, mostramos mensaje y paramos
-    if not enlaces_oposiciones and not lista_diccionario_errores:
-        if fecha_fin == fecha_inicio:
-            print(
-                f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
-            )
-        else:
-            print(
-                f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
-            )
-        sys.exit(0)
-
     # Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
     lista_diccionarios_puestos = []
 
@@ -472,10 +498,28 @@ def _ejecutar_aplicacion():
 
     # Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
     preparar_archivo_datos.guardar_excel(
-        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones
+        df_combinado,
+        df_busquedas_combinado,
+        df_log_errores,
+        df_publicaciones,
+        df_cobertura,
     )
 
+    print(f"Índices consultados correctamente: {estados_indices['consultado']}")
+    print(f"Días sin edición: {estados_indices['sin_edicion']}")
+    print(f"Índices con error: {estados_indices['error']}")
+
     if not enlaces_oposiciones:
+        if not lista_diccionario_errores:
+            if fecha_fin == fecha_inicio:
+                print(
+                    f"\n\n{Fore.RED}❌ El {Fore.WHITE}{fecha_inicio} {Fore.RED}no se ha publicado ningún proceso selectivo\n"
+                )
+            else:
+                print(
+                    f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
+                )
+            sys.exit(0)
         print(f"\n{Fore.RED}❌ No se pudo consultar el BOE para el periodo seleccionado.{Fore.RESET}")
         sys.exit(1)
 

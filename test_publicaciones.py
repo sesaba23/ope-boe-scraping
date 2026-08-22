@@ -322,6 +322,7 @@ def test_guardado_atomico_incluye_publicaciones_y_conserva_hojas(monkeypatch, tm
         "Oposiciones",
         "Log-errores",
         "Publicaciones",
+        "Cobertura",
     ]
     assert comprobacion["Búsquedas"].sheet_state == "hidden"
     comprobacion.close()

@@ -5,6 +5,7 @@ from publicaciones import (
     normalizar_publicaciones,
     publicaciones_desde_oposiciones,
 )
+from cobertura import COLUMNAS_COBERTURA, normalizar_cobertura
 
 from contextlib import contextmanager
 import fcntl
@@ -60,6 +61,8 @@ def preparar_excel_y_dataframes():
         wb.create_sheet(title="Log-errores")
         ws_publicaciones = wb.create_sheet(title="Publicaciones")
         ws_publicaciones.append(COLUMNAS_PUBLICACIONES)
+        ws_cobertura = wb.create_sheet(title="Cobertura")
+        ws_cobertura.append(COLUMNAS_COBERTURA)
         # Guardar el archivo
         wb.save("BOE-oposiciones.xlsx")
 
@@ -81,6 +84,12 @@ def preparar_excel_y_dataframes():
     else:
         dataframes_dict["Publicaciones"] = normalizar_publicaciones(
             dataframes_dict["Publicaciones"]
+        )
+    if "Cobertura" not in dataframes_dict:
+        dataframes_dict["Cobertura"] = pd.DataFrame(columns=COLUMNAS_COBERTURA)
+    else:
+        dataframes_dict["Cobertura"] = normalizar_cobertura(
+            dataframes_dict["Cobertura"]
         )
 
     return dataframes_dict
@@ -140,6 +149,7 @@ def guardar_excel(
     df_busquedas_combinado,
     df_log_errores,
     df_publicaciones=None,
+    df_cobertura=None,
 ):
     """
     Código para guardar los resultados en un archivo Excel
@@ -157,6 +167,7 @@ def guardar_excel(
         shutil.copy2(nombre_archivo, archivo_temporal)
         libro_temporal = load_workbook(archivo_temporal, read_only=True)
         contiene_publicaciones = "Publicaciones" in libro_temporal.sheetnames
+        contiene_cobertura = "Cobertura" in libro_temporal.sheetnames
         libro_temporal.close()
 
         with pd.ExcelWriter(
@@ -175,6 +186,14 @@ def guardar_excel(
             elif not contiene_publicaciones:
                 pd.DataFrame(columns=COLUMNAS_PUBLICACIONES).to_excel(
                     writer, sheet_name="Publicaciones", index=False
+                )
+            if df_cobertura is not None:
+                normalizar_cobertura(df_cobertura).to_excel(
+                    writer, sheet_name="Cobertura", index=False
+                )
+            elif not contiene_cobertura:
+                pd.DataFrame(columns=COLUMNAS_COBERTURA).to_excel(
+                    writer, sheet_name="Cobertura", index=False
                 )
         # Da formato al Excel
         formatear_hoja_oposiciones(archivo_temporal)

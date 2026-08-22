@@ -249,6 +249,7 @@ def test_guardar_excel_conserva_hojas_y_contenido_esperados(monkeypatch, tmp_pat
         "Oposiciones",
         "Log-errores",
         "Publicaciones",
+        "Cobertura",
     ]
     assert libro["Búsquedas"].sheet_state == "hidden"
     libro.close()
