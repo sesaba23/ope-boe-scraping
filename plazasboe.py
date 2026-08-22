@@ -3,6 +3,7 @@ import coincidencias
 import barraprogreso
 import impresiones
 import preparar_archivo_datos
+from boe_api import ErrorAPIBOE, extraer_publicaciones_2b_api, obtener_sumario_api
 from cobertura import puede_reutilizar_cobertura, registrar_cobertura
 from trazabilidad import añadir_trazabilidad_convocatorias
 from trazabilidad import extraer_publicacion_id
@@ -82,6 +83,122 @@ def _añadir_publicacion_unica(enlaces, claves_vistas, enlace):
         claves_vistas.add(clave)
 
 
+def _descubrir_indice_html(url, obtener=None, dormir=None):
+    """Ejecuta el mecanismo HTML existente y devuelve un resultado común."""
+    obtener = obtener or requests.get
+    dormir = dormir or time.sleep
+    reintentos = 0
+    page = None
+    estado = "error"
+    enlaces_dia = []
+    claves_dia = set()
+    errores = []
+    mensaje = None
+    while reintentos < MAX_REINTENTOS:
+        try:
+            page = obtener(url, timeout=10)
+            page.raise_for_status()
+            break
+        except requests.exceptions.HTTPError as error:
+            page = None
+            if error.response is not None and error.response.status_code == 404:
+                estado = "sin_edicion"
+                break
+            if error.response is not None and error.response.status_code == 400:
+                url_general = url.split("?", 1)[0]
+                try:
+                    general = obtener(url_general, timeout=10)
+                    general.raise_for_status()
+                except requests.exceptions.RequestException as error_fallback:
+                    mensaje = f"Error al acceder a {url_general}: {error_fallback}"
+                    errores.append({"Error al acceder": url_general})
+                    break
+                try:
+                    enlaces = _buscar_enlaces_2b_en_indice_general(general.content)
+                except (ParserRejectedMarkup, ValueError) as error_estructura:
+                    mensaje = f"Error procesando el HTML de {url_general}: {error_estructura}"
+                    errores.append({"Error de estructura": url_general})
+                    break
+                for enlace in enlaces:
+                    _añadir_publicacion_unica(
+                        enlaces_dia,
+                        claves_dia,
+                        urljoin("https://www.boe.es", enlace["href"]),
+                    )
+                estado = "consultado"
+                break
+            reintentos += 1
+            mensaje = f"Error al acceder a {url}: {error} (reintento {reintentos})"
+            if reintentos == MAX_REINTENTOS:
+                errores.append({"Error al acceder": url})
+            dormir(RETRASO_SEGUNDOS)
+        except requests.exceptions.Timeout:
+            page = None
+            reintentos += 1
+            mensaje = f"Timeout al acceder a {url} (reintento {reintentos})"
+            if reintentos == MAX_REINTENTOS:
+                errores.append({"Timeout al acceder": url})
+            dormir(RETRASO_SEGUNDOS)
+        except requests.exceptions.RequestException as error:
+            page = None
+            reintentos += 1
+            mensaje = f"Error al acceder a {url}: {error} (reintento {reintentos})"
+            if reintentos == MAX_REINTENTOS:
+                errores.append({"Error al acceder": url})
+            dormir(RETRASO_SEGUNDOS)
+    if page is not None:
+        try:
+            soup = BeautifulSoup(page.content, "html.parser")
+            enlaces = soup.find_all("a", href=True)
+        except ParserRejectedMarkup as error:
+            mensaje = f"Error procesando el HTML de {url}: {error}"
+            errores.append({"Error de estructura": url})
+        else:
+            for enlace in enlaces:
+                if "txt" in enlace["href"]:
+                    _añadir_publicacion_unica(
+                        enlaces_dia,
+                        claves_dia,
+                        urljoin("https://www.boe.es", enlace["href"]),
+                    )
+            estado = "consultado"
+    return {
+        "estado": estado,
+        "enlaces": enlaces_dia,
+        "errores": errores,
+        "mensaje": mensaje,
+        "fuente": "html",
+    }
+
+
+def _descubrir_indice_api_con_fallback(
+    fecha, url_html, consultar_api=None, consultar_html=None
+):
+    """Usa la API como fuente principal y HTML solo ante error no fiable."""
+    consultar_api = consultar_api or obtener_sumario_api
+    consultar_html = consultar_html or _descubrir_indice_html
+    try:
+        resultado_api = extraer_publicaciones_2b_api(consultar_api(fecha))
+        estado_api = resultado_api["estado"]
+        if estado_api == "SIN_EDICION":
+            return {"estado": "sin_edicion", "enlaces": [], "errores": [], "mensaje": None, "fuente": "api"}
+        if estado_api == "SIN_SECCION_2B":
+            return {"estado": "consultado", "enlaces": [], "errores": [], "mensaje": None, "fuente": "api"}
+        if estado_api != "CON_PUBLICACIONES":
+            raise ErrorAPIBOE("ESTRUCTURA", f"Estado API no fiable: {estado_api}")
+        enlaces = []
+        vistos = set()
+        for publicacion in resultado_api["publicaciones"]:
+            publicacion_id = publicacion.get("Publicacion_ID")
+            enlace = publicacion.get("url_html")
+            if not publicacion_id or not enlace or extraer_publicacion_id(enlace) != publicacion_id:
+                raise ErrorAPIBOE("ESTRUCTURA", "Publicación API sin ID/enlace HTML coherente")
+            _añadir_publicacion_unica(enlaces, vistos, enlace)
+        return {"estado": "consultado", "enlaces": enlaces, "errores": [], "mensaje": None, "fuente": "api"}
+    except (ErrorAPIBOE, ValueError, KeyError, TypeError):
+        return consultar_html(url_html)
+
+
 def _ejecutar_aplicacion():
     tiempo_inicio = time.time()
 
@@ -92,8 +209,6 @@ def _ejecutar_aplicacion():
     URL_COMPONENTES = urlparse(URL_BASE_OPOSICIONES)
     # URL base que da acceso al calendario del BOE
     URL_BASE = "https://www.boe.es/boe/dias/"
-    URL_BASE_ENLACES = "https://www.boe.es"
-
     texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
 
     # Inicializo el archivo donde se va guardando la información para usar como BD
@@ -146,6 +261,8 @@ def _ejecutar_aplicacion():
     estados_indices = {"consultado": 0, "sin_edicion": 0, "error": 0}
     indices_reutilizados = 0
     indices_consultados_http = 0
+    indices_resueltos_api = 0
+    indices_resueltos_fallback = 0
     enlaces_vistos = set()
     for fecha_indice, url in barra:
         if puede_reutilizar_cobertura(
@@ -157,99 +274,16 @@ def _ejecutar_aplicacion():
             indices_reutilizados += 1
             continue
         indices_consultados_http += 1
-        reintentos = 0
-        page = None
-        estado_indice = "error"
-        enlaces_dia = []
-        claves_dia = set()
-        while reintentos < MAX_REINTENTOS:
-            try:
-                page = requests.get(url, timeout=10)  # 10 segundos de espera máximo
-                page.raise_for_status()
-                break  # ëxito, salir del bucle
-            except requests.exceptions.HTTPError as e:
-                page = None
-                if e.response is not None and e.response.status_code == 404:
-                    estado_indice = "sin_edicion"
-                    break
-                if e.response is not None and e.response.status_code == 400:
-                    url_indice_general = url.split("?", 1)[0]
-                    try:
-                        page_indice_general = requests.get(
-                            url_indice_general, timeout=10
-                        )
-                        page_indice_general.raise_for_status()
-                    except requests.exceptions.RequestException as error_fallback:
-                        barra.set_description(
-                            f"Error al acceder a {url_indice_general}: {error_fallback}"
-                        )
-                        lista_diccionario_errores.append(
-                            {"Error al acceder": url_indice_general}
-                        )
-                        break
-                    try:
-                        enlaces_fallback = _buscar_enlaces_2b_en_indice_general(
-                            page_indice_general.content
-                        )
-                    except (ParserRejectedMarkup, ValueError) as error_estructura:
-                        barra.set_description(
-                            f"Error procesando el HTML de {url_indice_general}: "
-                            f"{error_estructura}"
-                        )
-                        lista_diccionario_errores.append(
-                            {"Error de estructura": url_indice_general}
-                        )
-                        break
-                    for enlace in enlaces_fallback:
-                        enlace_completo = urljoin(URL_BASE_ENLACES, enlace["href"])
-                        _añadir_publicacion_unica(
-                            enlaces_dia, claves_dia, enlace_completo
-                        )
-                    estado_indice = "consultado"
-                    break
-                reintentos += 1
-                barra.set_description(
-                    f"Error al acceder a {url}: {e} (reintento {reintentos})"
-                )
-                if reintentos == MAX_REINTENTOS:
-                    lista_diccionario_errores.append({"Error al acceder": url})
-                time.sleep(RETRASO_SEGUNDOS)
-            except requests.exceptions.Timeout:
-                page = None
-                reintentos += 1
-                barra.set_description(
-                    f"Timeout al acceder a {url} (reintento {reintentos})"
-                )
-                if reintentos == MAX_REINTENTOS:
-                    lista_diccionario_errores.append({"Timeout al acceder": url})
-                time.sleep(RETRASO_SEGUNDOS)
-            except requests.exceptions.RequestException as e:
-                page = None
-                reintentos += 1
-                barra.set_description(
-                    f"Error al acceder a {url}: {e} (reintento {reintentos})"
-                )
-                if reintentos == MAX_REINTENTOS:
-                    lista_diccionario_errores.append({"Error al acceder": url})
-                time.sleep(RETRASO_SEGUNDOS)
-        if page is not None:
-            # Si no se pudo acceder tras los reintentos, pasar al siguiente
-            try:
-                soup = BeautifulSoup(page.content, "html.parser")
-                # Buscar todos los enlaces a "otros formatos" (txt, es decir, html)
-                #   suponiendo que los enlaces tienen un atributo 'href' que contiene la URL
-                enlaces = soup.find_all("a", href=True)
-            except ParserRejectedMarkup as e:
-                barra.set_description(f"Error procesando el HTML de {url}: {e}")
-                lista_diccionario_errores.append({"Error de estructura": url})
-            else:
-                for enlace in enlaces:
-                    if any(formato in enlace["href"] for formato in ["txt"]):
-                        enlace_completo = urljoin(URL_BASE_ENLACES, enlace["href"])
-                        _añadir_publicacion_unica(
-                            enlaces_dia, claves_dia, enlace_completo
-                        )
-                estado_indice = "consultado"
+        resultado_indice = _descubrir_indice_api_con_fallback(fecha_indice, url)
+        estado_indice = resultado_indice["estado"]
+        enlaces_dia = resultado_indice["enlaces"]
+        lista_diccionario_errores.extend(resultado_indice["errores"])
+        if resultado_indice["mensaje"]:
+            barra.set_description(resultado_indice["mensaje"])
+        if resultado_indice["fuente"] == "api":
+            indices_resueltos_api += 1
+        else:
+            indices_resueltos_fallback += 1
 
         if estado_indice in {"consultado", "sin_edicion"}:
             for enlace in enlaces_dia:
@@ -522,6 +556,8 @@ def _ejecutar_aplicacion():
     print(f"Índices con error: {estados_indices['error']}")
     print(f"Índices reutilizados localmente: {indices_reutilizados}")
     print(f"Índices consultados por HTTP: {indices_consultados_http}")
+    print(f"Índices resueltos por API: {indices_resueltos_api}")
+    print(f"Índices resueltos por fallback HTML: {indices_resueltos_fallback}")
 
     if not enlaces_oposiciones and not indices_reutilizados:
         if not lista_diccionario_errores:

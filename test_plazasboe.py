@@ -8,12 +8,25 @@ import requests
 import bs4
 from bs4 import ParserRejectedMarkup
 
+import boe_api
 import coincidencias
 import entradas_datos
 import impresiones
 import mapa_plazas
 import preparar_archivo_datos
 from publicaciones import debe_procesar_publicacion
+
+
+@pytest.fixture(autouse=True)
+def _mantener_html_en_pruebas_anteriores(monkeypatch):
+    def api_no_disponible(*args, **kwargs):
+        raise boe_api.ErrorAPIBOE("PRUEBA", "usar fallback HTML")
+
+    monkeypatch.setattr(boe_api, "obtener_sumario_api", api_no_disponible)
+    if "plazasboe" in sys.modules:
+        monkeypatch.setattr(
+            sys.modules["plazasboe"], "obtener_sumario_api", api_no_disponible
+        )
 
 
 def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
@@ -1356,12 +1369,15 @@ def test_busqueda_nueva_reutiliza_publicacion_y_filtra_oposiciones_locales(
         "generar_mapa_municipios",
         lambda dataframe: mapas.append(dataframe.copy(deep=True)),
     )
+    monkeypatch.setattr(
+        boe_api,
+        "obtener_sumario_api",
+        lambda fecha: _sumario_api([_item_api("BOE-A-2026-10463")]),
+    )
 
     runpy.run_path("plazasboe.py", run_name="__main__")
 
-    assert solicitudes == [
-        "https://www.boe.es/boe/dias/2026/08/09/index.php?s=2B"
-    ]
+    assert solicitudes == []
     assert resultados_mostrados["Puesto"] == ["Arquitecto Técnico"]
     assert mapas[-1]["Puesto"].tolist() == ["Arquitecto Técnico"]
     assert set(busquedas_guardadas[-1]["Código"]) == {
@@ -1749,6 +1765,13 @@ def test_ejecucion_completamente_local_muestra_y_envia_resultados_al_mapa(
         "generar_mapa_municipios",
         lambda dataframe: mapas.append(dataframe.copy(deep=True)),
     )
+    monkeypatch.setattr(
+        boe_api,
+        "obtener_sumario_api",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            AssertionError("La cobertura reutilizable debe preceder a la API")
+        ),
+    )
 
     runpy.run_path("plazasboe.py", run_name="__main__")
 
@@ -1856,3 +1879,181 @@ def _configurar_consulta_boe(
     )
     monkeypatch.setattr(mapa_plazas, "generar_mapa_municipios", lambda *args: None)
     return errores_guardados
+
+
+def _sumario_api(items=None, secciones=True):
+    seccion = []
+    if secciones:
+        seccion = [{
+            "codigo": "2B",
+            "nombre": "II. Autoridades y personal. - B. Oposiciones y concursos",
+            "departamento": [{
+                "nombre": "ADMINISTRACIÓN LOCAL",
+                "epigrafe": [{"item": items or []}],
+            }],
+        }]
+    return {"estado": "OK", "sumario": {"diario": [{"seccion": seccion}]}}
+
+
+def _item_api(publicacion_id="BOE-A-2026-1"):
+    return {
+        "identificador": publicacion_id,
+        "titulo": "Resolución de prueba",
+        "url_html": f"https://www.boe.es/diario_boe/txt.php?id={publicacion_id}",
+    }
+
+
+def test_api_con_publicaciones_no_consulta_html_y_normaliza_enlaces():
+    import plazasboe
+
+    llamadas_html = []
+    resultado = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/20",
+        "https://www.boe.es/boe/dias/2026/08/20/index.php?s=2B",
+        consultar_api=lambda fecha: _sumario_api([_item_api()]),
+        consultar_html=lambda url: llamadas_html.append(url),
+    )
+
+    assert resultado["fuente"] == "api"
+    assert resultado["estado"] == "consultado"
+    assert resultado["enlaces"] == [
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1"
+    ]
+    assert llamadas_html == []
+
+
+@pytest.mark.parametrize(
+    "respuesta,estado",
+    [
+        (_sumario_api(secciones=False), "consultado"),
+        ({"estado": "SIN_EDICION", "sumario": None}, "sin_edicion"),
+    ],
+)
+def test_api_sin_publicaciones_fiable_no_consulta_html(respuesta, estado):
+    import plazasboe
+
+    resultado = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/09",
+        "indice",
+        consultar_api=lambda fecha: respuesta,
+        consultar_html=lambda url: pytest.fail("No debe consultar HTML"),
+    )
+    assert resultado["estado"] == estado
+    assert resultado["enlaces"] == []
+    assert resultado["fuente"] == "api"
+
+
+def test_error_api_activa_fallback_html_sin_conservar_error_recuperado():
+    import plazasboe
+
+    esperado = {
+        "estado": "consultado",
+        "enlaces": ["https://www.boe.es/?id=BOE-A-2026-2"],
+        "errores": [],
+        "mensaje": None,
+        "fuente": "html",
+    }
+    resultado = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/20",
+        "indice",
+        consultar_api=lambda fecha: (_ for _ in ()).throw(
+            boe_api.ErrorAPIBOE("HTTP_500", "fallo")
+        ),
+        consultar_html=lambda url: esperado,
+    )
+    assert resultado == esperado
+
+
+def test_error_api_y_html_conserva_error_final_existente():
+    import plazasboe
+
+    esperado = {
+        "estado": "error",
+        "enlaces": [],
+        "errores": [{"Error al acceder": "indice"}],
+        "mensaje": "fallo HTML",
+        "fuente": "html",
+    }
+    resultado = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/20",
+        "indice",
+        consultar_api=lambda fecha: (_ for _ in ()).throw(
+            boe_api.ErrorAPIBOE("TIMEOUT", "fallo")
+        ),
+        consultar_html=lambda url: esperado,
+    )
+    assert resultado == esperado
+
+
+def test_api_deduplica_por_publicacion_id_sin_doble_procesamiento():
+    import plazasboe
+
+    resultado = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/20",
+        "indice",
+        consultar_api=lambda fecha: _sumario_api([_item_api(), _item_api()]),
+        consultar_html=lambda url: pytest.fail("No debe consultar HTML"),
+    )
+    assert len(resultado["enlaces"]) == 1
+
+
+def test_api_y_html_producen_la_misma_representacion_normalizada():
+    import plazasboe
+
+    class Respuesta:
+        content = b'<a href="/diario_boe/txt.php?id=BOE-A-2026-1">Documento</a>'
+        status_code = 200
+        def raise_for_status(self):
+            return None
+
+    api = plazasboe._descubrir_indice_api_con_fallback(
+        "2026/08/20", "indice",
+        consultar_api=lambda fecha: _sumario_api([_item_api()]),
+    )
+    html = plazasboe._descubrir_indice_html(
+        "indice", obtener=lambda *a, **k: Respuesta()
+    )
+    assert api["estado"] == html["estado"]
+    assert api["enlaces"] == html["enlaces"]
+
+
+def test_publicacion_api_se_descarga_y_registra_cobertura_correcta(
+    monkeypatch, capsys
+):
+    publicacion_id = "BOE-A-2026-20000"
+    enlace = f"https://www.boe.es/diario_boe/txt.php?id={publicacion_id}"
+    solicitudes = []
+    coberturas = []
+
+    def obtener_documento(url, timeout):
+        solicitudes.append(url)
+        assert url == enlace
+        return _RespuestaHTTP(
+            '<div class="documento-tit">Documento API</div>'
+            '<div class="metadatos">20 de agosto de 2026</div>'
+            '<div id="textoxslt">Contenido</div>'
+        )
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_documento,
+        ["2026/08/20"],
+        "20/08/2026",
+        "20/08/2026",
+        cobertura_guardada=coberturas,
+    )
+    monkeypatch.setattr(
+        boe_api,
+        "obtener_sumario_api",
+        lambda fecha: _sumario_api([_item_api(publicacion_id)]),
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert solicitudes == [enlace]
+    cobertura = coberturas[-1].iloc[-1]
+    assert cobertura["Estado"] == "consultado"
+    assert cobertura["Numero_publicaciones"] == 1
+    salida = capsys.readouterr().out
+    assert "Índices resueltos por API: 1" in salida
+    assert "Índices resueltos por fallback HTML: 0" in salida

@@ -314,6 +314,14 @@ def test_main_dry_run_no_entra_en_flujo_normal(monkeypatch):
     import plazasboe
 
     monkeypatch.setattr(
+        plazasboe,
+        "obtener_sumario_api",
+        lambda *args, **kwargs: pytest.fail(
+            "El reprocesamiento legacy no debe consultar la API"
+        ),
+    )
+
+    monkeypatch.setattr(
         reprocesamiento_legacy,
         "ejecutar_dry_run",
         lambda **kwargs: ([], {clave: 0 for clave in [
