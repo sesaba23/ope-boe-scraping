@@ -7,6 +7,7 @@ from io import BytesIO
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
 
 import pandas as pd
@@ -14,7 +15,11 @@ import requests
 from bs4 import BeautifulSoup, ParserRejectedMarkup
 
 import coincidencias
+import preparar_archivo_datos
 from fechas import convertir_fecha
+from mapa_plazas import enriquecer_filas_sin_coordenadas
+from publicaciones import normalizar_publicaciones
+from trazabilidad import enriquecer_historico_oposiciones
 from trazabilidad import VERSION_EXTRACTOR, necesita_reprocesamiento
 
 
@@ -38,6 +43,19 @@ CLASIFICACIONES = [
     "SIN_RESULTADOS_NUEVOS",
     "ERROR",
 ]
+CLASIFICACIONES_ESCRIBIBLES = {"SIN_CAMBIOS", "AMPLIADA"}
+
+
+class ReprocesamientoNoSeguroError(RuntimeError):
+    pass
+
+
+class BackupInvalidoError(RuntimeError):
+    pass
+
+
+class VerificacionAplicacionError(RuntimeError):
+    pass
 
 
 def leer_datos_legacy(ruta_excel="BOE-oposiciones.xlsx"):
@@ -219,6 +237,9 @@ def guardar_informe_auditoria(
     integridad_despues,
     directorio="logs/reprocesamiento_legacy",
     momento=None,
+    modo="dry-run",
+    datos_escritura=None,
+    destino=None,
 ):
     """Guarda atómicamente el informe completo del dry-run en JSON."""
     fecha_ejecucion = momento or datetime.now()
@@ -226,7 +247,7 @@ def guardar_informe_auditoria(
     informe = {
         "fecha_ejecucion": fecha_ejecucion.strftime("%Y-%m-%d %H:%M:%S"),
         "version_extractor": VERSION_EXTRACTOR,
-        "modo": "dry-run",
+        "modo": modo,
         "filtros_utilizados": filtros,
         "total_publicaciones": resumen["Publicaciones analizadas"],
         **{clave: resumen[clave] for clave in CLASIFICACIONES},
@@ -243,17 +264,22 @@ def guardar_informe_auditoria(
         "excel_modificado": not controles_iguales,
         "publicaciones": [_detalle_para_json(detalle) for detalle in detalles],
     }
-    if not controles_iguales:
+    if datos_escritura:
+        informe.update(datos_escritura)
+    if not controles_iguales and modo == "dry-run":
         informe["anomalia_integridad"] = (
             "El Excel cambió durante la ejecución del dry-run."
         )
 
     ruta_directorio = Path(directorio)
     ruta_directorio.mkdir(parents=True, exist_ok=True)
-    marca = fecha_ejecucion.strftime("%Y%m%d_%H%M%S")
-    destino = _ruta_informe_unica(
-        ruta_directorio / f"reprocesamiento_legacy_{marca}.json"
-    )
+    if destino is None:
+        marca = fecha_ejecucion.strftime("%Y%m%d_%H%M%S")
+        destino = _ruta_informe_unica(
+            ruta_directorio / f"reprocesamiento_legacy_{marca}.json"
+        )
+    else:
+        destino = Path(destino)
     temporal = None
     try:
         with tempfile.NamedTemporaryFile(
@@ -282,7 +308,194 @@ def guardar_informe_auditoria(
     return destino
 
 
-def imprimir_informe(detalles, resumen):
+def asignar_acciones(detalles):
+    """Asigna la única acción permitida para cada clasificación."""
+    acciones = {
+        "SIN_CAMBIOS": "ACTUALIZAR_TRAZABILIDAD",
+        "AMPLIADA": "AÑADIR_Y_ACTUALIZAR",
+    }
+    for detalle in detalles:
+        detalle["accion"] = acciones.get(detalle["clasificacion"], "NO_ESCRIBIR")
+    return bool(detalles) and all(
+        detalle["clasificacion"] in CLASIFICACIONES_ESCRIBIBLES
+        for detalle in detalles
+    )
+
+
+def crear_backup_verificado(
+    ruta_excel="BOE-oposiciones.xlsx",
+    directorio="backups/reprocesamiento_legacy",
+    momento=None,
+):
+    """Crea y verifica una copia del Excel antes de la escritura."""
+    origen = Path(ruta_excel)
+    instante = momento or datetime.now()
+    carpeta = Path(directorio)
+    carpeta.mkdir(parents=True, exist_ok=True)
+    destino = _ruta_informe_unica(
+        carpeta / f"BOE-oposiciones_{instante.strftime('%Y%m%d_%H%M%S')}.xlsx"
+    )
+    shutil.copy2(origen, destino)
+    original = calcular_integridad_excel(origen)
+    copia = calcular_integridad_excel(destino)
+    if original["sha256"] != copia["sha256"] or original["tamano"] != copia["tamano"]:
+        raise BackupInvalidoError("La copia de seguridad no coincide con el Excel original")
+    return destino, copia
+
+
+def preparar_aplicacion(detalles, hojas, momento=None):
+    """Prepara todo el lote en memoria sin eliminar ni sustituir datos funcionales."""
+    if not asignar_acciones(detalles):
+        raise ReprocesamientoNoSeguroError(
+            "El lote contiene resultados que no permiten escritura"
+        )
+    fecha_analisis = (momento or datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+    oposiciones = enriquecer_historico_oposiciones(
+        hojas["Oposiciones"]
+    ).copy(deep=True)
+    oposiciones["Version_extractor"] = oposiciones[
+        "Version_extractor"
+    ].astype("object")
+    oposiciones["Fecha_analisis"] = oposiciones["Fecha_analisis"].astype(
+        "object"
+    )
+    publicaciones = normalizar_publicaciones(hojas["Publicaciones"])
+    filas_actualizadas = 0
+    filas_nuevas = []
+
+    for detalle in detalles:
+        publicacion_id = detalle["Publicacion_ID"]
+        claves_actuales = Counter(
+            _tupla(fila) for fila in detalle["filas_nuevas_funcionales"]
+        )
+        indices = oposiciones.index[
+            oposiciones["Publicacion_ID"] == publicacion_id
+        ]
+        for indice in indices:
+            clave = _tupla(_fila_funcional(oposiciones.loc[indice].to_dict()))
+            if claves_actuales[clave] > 0:
+                oposiciones.at[indice, "Version_extractor"] = VERSION_EXTRACTOR
+                oposiciones.at[indice, "Fecha_analisis"] = fecha_analisis
+                filas_actualizadas += 1
+
+        for fila in detalle["filas_añadidas"]:
+            filas_nuevas.append(
+                {
+                    **fila,
+                    "Publicacion_ID": publicacion_id,
+                    "Version_extractor": VERSION_EXTRACTOR,
+                    "Fecha_analisis": fecha_analisis,
+                }
+            )
+
+        mascara_publicacion = publicaciones["Publicacion_ID"] == publicacion_id
+        if not mascara_publicacion.any():
+            raise ReprocesamientoNoSeguroError(
+                f"No existe {publicacion_id} en Publicaciones"
+            )
+        indice_publicacion = publicaciones.index[mascara_publicacion][-1]
+        publicaciones.at[indice_publicacion, "Version_extractor"] = VERSION_EXTRACTOR
+        publicaciones.at[indice_publicacion, "Fecha_ultimo_analisis"] = fecha_analisis
+        publicaciones.at[indice_publicacion, "Estado_analisis"] = "con_coincidencias"
+        publicaciones.at[indice_publicacion, "Coincidencias"] = detalle["filas_nuevas"]
+
+    if filas_nuevas:
+        nuevas = enriquecer_filas_sin_coordenadas(pd.DataFrame(filas_nuevas))
+        for columna in oposiciones.columns:
+            if columna not in nuevas.columns:
+                nuevas[columna] = pd.NA
+        for columna in nuevas.columns:
+            if columna not in oposiciones.columns:
+                oposiciones[columna] = pd.NA
+        oposiciones = pd.concat(
+            [
+                oposiciones.astype("object"),
+                nuevas[oposiciones.columns].astype("object"),
+            ],
+            ignore_index=True,
+        )
+
+    if oposiciones.duplicated(subset=CAMPOS_CONVOCATORIA, keep=False).any():
+        raise ReprocesamientoNoSeguroError(
+            "La aplicación produciría convocatorias funcionales duplicadas"
+        )
+    return {
+        "Oposiciones": oposiciones,
+        "Publicaciones": publicaciones,
+        "Búsquedas": hojas["Búsquedas"].copy(deep=True),
+        "Cobertura": hojas["Cobertura"].copy(deep=True),
+        "Log-errores": hojas["Log-errores"].copy(deep=True),
+    }, {
+        "filas_anadidas_realmente": len(filas_nuevas),
+        "filas_actualizadas_trazabilidad": filas_actualizadas,
+        "publicaciones_actualizadas": len(detalles),
+        "fecha_analisis": fecha_analisis,
+    }
+
+
+def aplicar_lote(detalles, ruta_excel="BOE-oposiciones.xlsx", momento=None):
+    """Prepara y guarda atómicamente un lote previamente comparado y seguro."""
+    hojas = _leer_todas_las_hojas(ruta_excel)
+    historicas_antes = hojas["Oposiciones"].copy(deep=True)
+    preparados, metricas = preparar_aplicacion(detalles, hojas, momento)
+    preparar_archivo_datos.guardar_excel(
+        preparados["Oposiciones"],
+        preparados["Búsquedas"],
+        preparados["Log-errores"],
+        preparados["Publicaciones"],
+        preparados["Cobertura"],
+    )
+    verificar_aplicacion(ruta_excel, detalles, historicas_antes)
+    return metricas
+
+
+def verificar_aplicacion(ruta_excel, detalles, historicas_antes):
+    """Reabre el Excel y valida trazabilidad, adiciones y conservación."""
+    hojas = _leer_todas_las_hojas(ruta_excel)
+    oposiciones = hojas["Oposiciones"]
+    publicaciones = hojas["Publicaciones"]
+    contador_despues = Counter(
+        _tupla(_fila_funcional(fila))
+        for fila in oposiciones.to_dict(orient="records")
+    )
+    contador_antes = Counter(
+        _tupla(_fila_funcional(fila))
+        for fila in historicas_antes.to_dict(orient="records")
+    )
+    if contador_antes - contador_despues:
+        raise VerificacionAplicacionError("Han desaparecido filas históricas")
+    if oposiciones.duplicated(subset=CAMPOS_CONVOCATORIA, keep=False).any():
+        raise VerificacionAplicacionError("Existen convocatorias duplicadas")
+    for detalle in detalles:
+        publicacion_id = detalle["Publicacion_ID"]
+        filas = oposiciones[oposiciones["Publicacion_ID"] == publicacion_id]
+        if filas.empty or not filas["Version_extractor"].astype(str).eq(
+            VERSION_EXTRACTOR
+        ).all():
+            raise VerificacionAplicacionError(
+                f"Trazabilidad incompleta para {publicacion_id}"
+            )
+        registro = publicaciones[
+            publicaciones["Publicacion_ID"] == publicacion_id
+        ]
+        if registro.empty or str(registro.iloc[-1]["Version_extractor"]) != VERSION_EXTRACTOR:
+            raise VerificacionAplicacionError(
+                f"Publicaciones no refleja la versión de {publicacion_id}"
+            )
+        for añadida in detalle["filas_añadidas"]:
+            if contador_despues[_tupla(añadida)] < 1:
+                raise VerificacionAplicacionError(
+                    f"Falta una fila nueva de {publicacion_id}"
+                )
+
+
+def _leer_todas_las_hojas(ruta_excel):
+    contenido = Path(ruta_excel).read_bytes()
+    libro = pd.ExcelFile(BytesIO(contenido))
+    return {nombre: pd.read_excel(libro, nombre) for nombre in libro.sheet_names}
+
+
+def imprimir_informe(detalles, resumen, modo="dry-run", datos_escritura=None):
     for detalle in detalles:
         print(
             f"{detalle['Publicacion_ID']} | {detalle['Fecha_BOE']} | "
@@ -298,7 +511,8 @@ def imprimir_informe(detalles, resumen):
                 print(f"  {nombre}: {detalle[clave]}")
         if detalle.get("error"):
             print(f"  Error: {detalle['error']}")
-    print("\nResumen del reprocesamiento legacy (simulación)")
+    titulo_modo = "APLICADO" if modo == "aplicar" else "simulación"
+    print(f"\nResumen del reprocesamiento legacy ({titulo_modo})")
     for clave in ["Publicaciones analizadas", *CLASIFICACIONES]:
         print(f"{clave}: {resumen[clave]}")
     for clave in (
@@ -308,6 +522,22 @@ def imprimir_informe(detalles, resumen):
         "filas ausentes",
     ):
         print(f"{clave}: {resumen[clave]}")
+    if modo == "aplicar" and datos_escritura:
+        print(f"Backup creado: {datos_escritura['backup']}")
+        print(
+            "Publicaciones actualizadas: "
+            f"{datos_escritura['publicaciones_actualizadas']}"
+        )
+        print(
+            "Filas añadidas realmente: "
+            f"{datos_escritura['filas_anadidas_realmente']}"
+        )
+        print(
+            "Filas con trazabilidad actualizada: "
+            f"{datos_escritura['filas_actualizadas_trazabilidad']}"
+        )
+        print("Escritura completada correctamente.")
+        print("Verificación posterior: correcta.")
 
 
 def _detalle_para_json(detalle):
@@ -325,6 +555,7 @@ def _detalle_para_json(detalle):
         "filas_anadidas": detalle["filas_añadidas"],
         "filas_ausentes": detalle["filas_ausentes"],
         "campos_modificados": detalle["campos_modificados"],
+        "accion": detalle.get("accion", "NO_ESCRIBIR"),
     }
     if detalle["clasificacion"] == "ERROR":
         resultado["tipo_error"] = detalle["tipo_error"]

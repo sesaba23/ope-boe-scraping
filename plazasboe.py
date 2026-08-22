@@ -601,7 +601,10 @@ def main():
 
 def _main_reprocesamiento_legacy(argumentos):
     from reprocesamiento_legacy import (
+        aplicar_lote,
+        asignar_acciones,
         calcular_integridad_excel,
+        crear_backup_verificado,
         ejecutar_dry_run,
         guardar_informe_auditoria,
         imprimir_informe,
@@ -609,44 +612,175 @@ def _main_reprocesamiento_legacy(argumentos):
 
     parser = argparse.ArgumentParser(description="Reprocesamiento controlado legacy")
     parser.add_argument("--reprocesar-legacy", action="store_true")
-    parser.add_argument("--dry-run", action="store_true")
+    modo = parser.add_mutually_exclusive_group()
+    modo.add_argument("--dry-run", action="store_true")
+    modo.add_argument("--aplicar", action="store_true")
     parser.add_argument("--limite", type=int)
     parser.add_argument("--desde")
     parser.add_argument("--hasta")
     parser.add_argument("--publicacion")
     opciones = parser.parse_args(argumentos)
-    if not opciones.dry_run:
-        parser.error(
-            "la escritura del reprocesamiento legacy todavía no está implementada; "
-            "use --dry-run"
-        )
+    if not opciones.dry_run and not opciones.aplicar:
+        parser.error("debe indicar --dry-run o --aplicar")
+    if opciones.aplicar and opciones.limite is None:
+        parser.error("--aplicar exige --limite")
+    if opciones.aplicar and opciones.limite > 25:
+        parser.error("--aplicar admite como máximo --limite 25")
     try:
-        integridad_antes = calcular_integridad_excel()
-        detalles, resumen = ejecutar_dry_run(
-            desde=opciones.desde,
-            hasta=opciones.hasta,
-            publicacion_id=opciones.publicacion,
-            limite=opciones.limite,
-        )
-        integridad_despues = calcular_integridad_excel()
-        ruta_informe = guardar_informe_auditoria(
-            detalles,
-            resumen,
-            {
-                "desde": opciones.desde,
-                "hasta": opciones.hasta,
-                "publicacion": opciones.publicacion,
-                "limite": opciones.limite,
-            },
-            integridad_antes,
-            integridad_despues,
-        )
+        if opciones.aplicar:
+            with preparar_archivo_datos.bloqueo_excel():
+                (
+                    detalles,
+                    resumen,
+                    ruta_informe,
+                    integridad_antes,
+                    integridad_despues,
+                    datos_escritura,
+                ) = (
+                    _ejecutar_aplicacion_legacy(
+                        opciones,
+                        calcular_integridad_excel,
+                        ejecutar_dry_run,
+                        guardar_informe_auditoria,
+                        asignar_acciones,
+                        crear_backup_verificado,
+                        aplicar_lote,
+                    )
+                )
+        else:
+            integridad_antes = calcular_integridad_excel()
+            detalles, resumen = ejecutar_dry_run(
+                desde=opciones.desde,
+                hasta=opciones.hasta,
+                publicacion_id=opciones.publicacion,
+                limite=opciones.limite,
+            )
+            integridad_despues = calcular_integridad_excel()
+            ruta_informe = guardar_informe_auditoria(
+                detalles,
+                resumen,
+                _filtros_reprocesamiento(opciones),
+                integridad_antes,
+                integridad_despues,
+            )
     except (FileNotFoundError, ValueError) as error:
         parser.error(str(error))
-    imprimir_informe(detalles, resumen)
-    if integridad_antes != integridad_despues:
+    except preparar_archivo_datos.ExcelBloqueadoError as error:
+        parser.error(str(error))
+    except RuntimeError as error:
+        print(f"{Fore.RED}❌ {error}{Fore.RESET}")
+        raise SystemExit(1) from error
+    imprimir_informe(
+        detalles,
+        resumen,
+        modo="aplicar" if opciones.aplicar else "dry-run",
+        datos_escritura=datos_escritura if opciones.aplicar else None,
+    )
+    if opciones.dry_run and integridad_antes != integridad_despues:
         print(f"{Fore.RED}⚠ El Excel cambió durante el dry-run.{Fore.RESET}")
     print(f"\nInforme de auditoría:\n{ruta_informe}")
+
+
+def _filtros_reprocesamiento(opciones):
+    return {
+        "desde": opciones.desde,
+        "hasta": opciones.hasta,
+        "publicacion": opciones.publicacion,
+        "limite": opciones.limite,
+    }
+
+
+def _ejecutar_aplicacion_legacy(
+    opciones,
+    calcular_integridad_excel,
+    ejecutar_dry_run,
+    guardar_informe_auditoria,
+    asignar_acciones,
+    crear_backup_verificado,
+    aplicar_lote,
+):
+    integridad_antes = calcular_integridad_excel()
+    detalles, resumen = ejecutar_dry_run(
+        desde=opciones.desde,
+        hasta=opciones.hasta,
+        publicacion_id=opciones.publicacion,
+        limite=opciones.limite,
+    )
+    integridad_tras_comparacion = calcular_integridad_excel()
+    escritura_autorizada = asignar_acciones(detalles)
+    datos_escritura = {
+        "escritura_autorizada": escritura_autorizada,
+        "backup": None,
+        "backup_sha256": None,
+        "filas_anadidas_realmente": 0,
+        "filas_actualizadas_trazabilidad": 0,
+        "publicaciones_actualizadas": 0,
+        "escritura_completada": False,
+    }
+    ruta_informe = guardar_informe_auditoria(
+        detalles,
+        resumen,
+        _filtros_reprocesamiento(opciones),
+        integridad_antes,
+        integridad_tras_comparacion,
+        modo="aplicar",
+        datos_escritura=datos_escritura,
+    )
+    if not escritura_autorizada:
+        print(
+            f"{Fore.RED}❌ Lote abortado: contiene clasificaciones no escribibles."
+            f"{Fore.RESET}"
+        )
+        print(f"{Fore.RED}ESCRITURA NO REALIZADA{Fore.RESET}")
+        raise SystemExit(1)
+
+    escritura_iniciada = False
+    try:
+        backup, integridad_backup = crear_backup_verificado()
+        datos_escritura.update(
+            backup=str(backup), backup_sha256=integridad_backup["sha256"]
+        )
+        escritura_iniciada = True
+        metricas = aplicar_lote(detalles)
+        datos_escritura.update(metricas)
+        datos_escritura["escritura_completada"] = True
+        datos_escritura["verificacion_posterior"] = True
+    except BaseException as error:
+        if not escritura_iniciada:
+            print(f"{Fore.RED}ESCRITURA NO REALIZADA{Fore.RESET}")
+        datos_escritura["error_escritura"] = str(error)
+        integridad_despues = calcular_integridad_excel()
+        guardar_informe_auditoria(
+            detalles,
+            resumen,
+            _filtros_reprocesamiento(opciones),
+            integridad_antes,
+            integridad_despues,
+            modo="aplicar",
+            datos_escritura=datos_escritura,
+            destino=ruta_informe,
+        )
+        raise
+
+    integridad_despues = calcular_integridad_excel()
+    guardar_informe_auditoria(
+        detalles,
+        resumen,
+        _filtros_reprocesamiento(opciones),
+        integridad_antes,
+        integridad_despues,
+        modo="aplicar",
+        datos_escritura=datos_escritura,
+        destino=ruta_informe,
+    )
+    return (
+        detalles,
+        resumen,
+        ruta_informe,
+        integridad_antes,
+        integridad_despues,
+        datos_escritura,
+    )
 
 
 if __name__ == "__main__":

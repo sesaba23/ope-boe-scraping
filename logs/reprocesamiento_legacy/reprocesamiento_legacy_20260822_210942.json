@@ -1,0 +1,2634 @@
+{
+  "fecha_ejecucion": "2026-08-22 21:10:01",
+  "version_extractor": "1",
+  "modo": "aplicar",
+  "filtros_utilizados": {
+    "desde": null,
+    "hasta": null,
+    "publicacion": null,
+    "limite": 25
+  },
+  "total_publicaciones": 25,
+  "SIN_CAMBIOS": 17,
+  "AMPLIADA": 8,
+  "REDUCIDA": 0,
+  "MODIFICADA": 0,
+  "SIN_RESULTADOS_NUEVOS": 0,
+  "ERROR": 0,
+  "filas_historicas": 27,
+  "filas_actuales": 89,
+  "filas_anadidas": 62,
+  "filas_ausentes": 0,
+  "excel_sha256_antes": "9fc5ef22511a919b73e9f46d044bdb3221de9071109c8a4ecc431d4801a30f52",
+  "excel_sha256_despues": "061a1fda225c63e7f6ed684162f95b16811f1dd5054c4bcd16d56c428a1925d3",
+  "excel_tamano_antes": 758700,
+  "excel_tamano_despues": 765454,
+  "excel_mtime_ns_antes": 1787425261247708130,
+  "excel_mtime_ns_despues": 1787425800022509219,
+  "excel_modificado": true,
+  "publicaciones": [
+    {
+      "Publicacion_ID": "BOE-A-2024-7442",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7442",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Logroño (La Rioja)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7442",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Ingeniero",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Logroño (La Rioja)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7442",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7443",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7443",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Torelló (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7443",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Torelló (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7443",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7445",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7445",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Arquitecto Técnico",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Santa Cruz de la Palma (Santa Cruz de Tenerife)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7445",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Arquitecto Técnico",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Santa Cruz de la Palma (Santa Cruz de Tenerife)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7445",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7447",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7447",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ronda (Málaga)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7447",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ronda (Málaga)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7447",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7449",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7449",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Oficial del Cuerpo de Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Tarazona de la Mancha (Albacete)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7449",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Oficial del Cuerpo de Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Tarazona de la Mancha (Albacete)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7449",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7450",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7450",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Graduado/a Social",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Las Cabezas de San Juan (Sevilla)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7450",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Graduado/a Social",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Las Cabezas de San Juan (Sevilla)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7450",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7451",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7451",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Las Cabezas de San Juan (Sevilla)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7451",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Las Cabezas de San Juan (Sevilla)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7451",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7453",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Oficial 1ª Albañilería",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Peón Especialista Instalaciones Deportivas",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Sepulturero",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Oficial 1ª Albañilería",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Peón Especialista Instalaciones Deportivas",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Sepulturero",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Guardamar del Segura (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7453",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "numero_historicas": 3,
+      "numero_actuales": 3,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7454",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7454",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Agente Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Almenara (Castellón/Castelló)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7454",
+          "Num_plazas": 2,
+          "Turno": "De Movilidad",
+          "Sistema": "Concurso",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Agente Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Almenara (Castellón/Castelló)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7454",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        },
+        {
+          "Puesto": "Agente Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Almenara (Castellón/Castelló)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7454",
+          "Num_plazas": 2,
+          "Turno": "De Movilidad",
+          "Sistema": "Concurso",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 2,
+      "filas_anadidas": [
+        {
+          "Puesto": "Agente Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Almenara (Castellón/Castelló)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7454",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-676",
+      "Fecha_BOE": "16 de enero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a técnico/a industrial",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Arquitecto/a técnico/a",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico/a agrícola",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico/a industrial",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico/a de obras públicas",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Mecánico/a",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Inspector/a de turismo",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Agente de Medio Ambiente",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Auxiliar"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 7,
+      "filas_anadidas": [
+        {
+          "Puesto": "Arquitecto/a técnico/a",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico/a agrícola",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico/a de obras públicas",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Mecánico/a",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Inspector/a de turismo",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Agente de Medio Ambiente",
+          "Fecha_boe": "16 de enero de 2025",
+          "Administración": "Consejo Insular de Ibiza (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-676",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Auxiliar"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-762",
+      "Fecha_BOE": "17 de enero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-762",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "17 de enero de 2025",
+          "Administración": "Ayuntamiento de Getxo (Bizkaia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-762",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "17 de enero de 2025",
+          "Administración": "Ayuntamiento de Getxo (Bizkaia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-762",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-1060",
+      "Fecha_BOE": "22 de enero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 17,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 5,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a Superior Deportes",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Organización",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 7,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Agrícola",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Agrícola",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Obras Públicas",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Arquitecto/a Técnico/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Biblioteconomía y Documentación",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 4,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 8,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 14,
+      "filas_anadidas": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 17,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 5,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico/a Superior Deportes",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Organización",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 7,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Agrícola",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Agrícola",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Obras Públicas",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Arquitecto/a Técnico/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Biblioteconomía y Documentación",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 4,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "22 de enero de 2025",
+          "Administración": "Diputación Foral de Álava",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1060",
+          "Num_plazas": 8,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-1529",
+      "Fecha_BOE": "28 de enero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingenieros/as Técnico Industriales",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Ingenieros/as Técnico Industriales",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Arquitectos/as Técnicos",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico de Obra Pública",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 3,
+      "filas_anadidas": [
+        {
+          "Puesto": "Arquitectos/as Técnicos",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico de Obra Pública",
+          "Fecha_boe": "28 de enero de 2025",
+          "Administración": "Ayuntamiento de Guadarrama (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-1529",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-2532",
+      "Fecha_BOE": "11 de febrero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Técnico/a Medio/a de Gestión Económica y Tributaria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico/a Medio/a de Gestión Económica y Tributaria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico/a Auxiliar de Gestión Tributaria y Recaudatoria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 4,
+      "filas_anadidas": [
+        {
+          "Puesto": "Técnico/a Medio/a de Gestión Económica y Tributaria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico/a Medio/a de Gestión Económica y Tributaria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico/a Auxiliar de Gestión Tributaria y Recaudatoria",
+          "Fecha_boe": "11 de febrero de 2025",
+          "Administración": "Diputación Provincial de Segovia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2532",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-2629",
+      "Fecha_BOE": "12 de febrero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2629",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero Técnico Industrial",
+          "Fecha_boe": "12 de febrero de 2025",
+          "Administración": "Ayuntamiento de Tres Cantos (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2629",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Ingeniero Técnico Industrial",
+          "Fecha_boe": "12 de febrero de 2025",
+          "Administración": "Ayuntamiento de Tres Cantos (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2629",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-2720",
+      "Fecha_BOE": "13 de febrero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a técnico industrial",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Analista programador",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Arquitecto",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Arquitecto/a técnico/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 7,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Auxiliar administrativo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 8,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Auxiliar administrativo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Delineante",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Auxiliar"
+        },
+        {
+          "Puesto": "Economista",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Educador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Enfermero/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico agrícola",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico de obras públicas",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico de topografía",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico industrial",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Inspector/a de obras",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Inspector/a urbanístico",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Médico/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Oficial de oficios",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Oficial de vía pública",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Programador base",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Psicólogo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico auxiliar actividades socioculturales",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico auxiliar empleo y desarrollo local",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico de administración general",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 18,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico de administración general",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico medio de empleo",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Técnico superior en educación física",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico superior gestión proyectos",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico superior medio ambiente",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico prevención riesgos laborales",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Vigilante de oficios",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Vigilante de tráfico y transportes",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 33,
+      "filas_anadidas": [
+        {
+          "Puesto": "Analista programador",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Arquitecto",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Arquitecto/a técnico/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 7,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Auxiliar administrativo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 8,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Auxiliar administrativo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Delineante",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Auxiliar"
+        },
+        {
+          "Puesto": "Economista",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Educador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Enfermero/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico agrícola",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico de obras públicas",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a técnico de topografía",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Inspector/a de obras",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Inspector/a urbanístico",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Médico/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Oficial de oficios",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Oficial de vía pública",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Programador base",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Psicólogo/a",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico auxiliar actividades socioculturales",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico auxiliar empleo y desarrollo local",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Cometidos especiales"
+        },
+        {
+          "Puesto": "Técnico de administración general",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 18,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico de administración general",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        },
+        {
+          "Puesto": "Técnico medio de empleo",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Técnico superior en educación física",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico superior gestión proyectos",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico superior medio ambiente",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        },
+        {
+          "Puesto": "Técnico prevención riesgos laborales",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a social",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 2,
+          "Turno": "Reservado A Personas Con Discapacidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Vigilante de oficios",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        },
+        {
+          "Puesto": "Vigilante de tráfico y transportes",
+          "Fecha_boe": "13 de febrero de 2025",
+          "Administración": "Ayuntamiento de Murcia",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-2720",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-3242",
+      "Fecha_BOE": "19 de febrero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a Técnico Industrial",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Educador/a Social",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 8,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a Social",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Arquitecto/a Técnico",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico Industrial",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 4,
+      "filas_anadidas": [
+        {
+          "Puesto": "Educador/a Social",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 8,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Trabajador/a Social",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Arquitecto/a Técnico",
+          "Fecha_boe": "19 de febrero de 2025",
+          "Administración": "Ayuntamiento de Eivissa (Illes Balears)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3242",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-3749",
+      "Fecha_BOE": "25 de febrero de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Auxiliar de Administración General",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 16,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "Auxiliar"
+        },
+        {
+          "Puesto": "Ingeniero/a Técnico/a Industrial",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 3,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        },
+        {
+          "Puesto": "Operario/a",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 3,
+      "filas_anadidas": [
+        {
+          "Puesto": "Auxiliar de Administración General",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 16,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "Auxiliar"
+        },
+        {
+          "Puesto": "Operario/a",
+          "Fecha_boe": "25 de febrero de 2025",
+          "Administración": "Ayuntamiento de Alcobendas (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3749",
+          "Num_plazas": 5,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Personal de oficios"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10345",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10345",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Arquitecto/a Ingeniero/a de Canales y Puertos",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Alacant/Alicante (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10345",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Arquitecto/a Ingeniero/a de Canales y Puertos",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Alacant/Alicante (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10345",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10346",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10346",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Conserje",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Ponferrada (León)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10346",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Subalterna",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Conserje",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Ponferrada (León)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10346",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Subalterna",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10347",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10347",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Arquitecto Técnico o Arquitecta Técnica",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Ponferrada (León)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10347",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Arquitecto Técnico o Arquitecta Técnica",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Ponferrada (León)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10347",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Media"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10348",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10348",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Conserje Edificio Público",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de El Campello (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10348",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Subalterna",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Conserje Edificio Público",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de El Campello (Alicante/Alacant)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10348",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Subalterna",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10349",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10349",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Policía Local",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Gibraleón (Huelva)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10349",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Policía Local",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Gibraleón (Huelva)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10349",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10350",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10350",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Agente de la Policía Local",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Archena (Murcia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10350",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Agente de la Policía Local",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Archena (Murcia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10350",
+          "Num_plazas": 4,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios especiales",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2025-10352",
+      "Fecha_BOE": "26 de mayo de 2025",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10352",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Barro (Pontevedra)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10352",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Administrativo/a",
+          "Fecha_boe": "26 de mayo de 2025",
+          "Administración": "Ayuntamiento de Barro (Pontevedra)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-10352",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    }
+  ],
+  "escritura_autorizada": true,
+  "backup": "backups/reprocesamiento_legacy/BOE-oposiciones_20260822_210942.xlsx",
+  "backup_sha256": "9fc5ef22511a919b73e9f46d044bdb3221de9071109c8a4ecc431d4801a30f52",
+  "filas_anadidas_realmente": 62,
+  "filas_actualizadas_trazabilidad": 27,
+  "publicaciones_actualizadas": 25,
+  "escritura_completada": true,
+  "fecha_analisis": "2026-08-22 21:09:43",
+  "verificacion_posterior": true
+}

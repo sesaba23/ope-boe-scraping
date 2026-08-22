@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import sys
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -13,10 +14,16 @@ import preparar_archivo_datos
 import reprocesamiento_legacy
 from reprocesamiento_legacy import (
     CAMPOS_CONVOCATORIA,
+    BackupInvalidoError,
+    ReprocesamientoNoSeguroError,
+    aplicar_lote,
+    asignar_acciones,
     calcular_integridad_excel,
     comparar_convocatorias,
+    crear_backup_verificado,
     ejecutar_dry_run,
     guardar_informe_auditoria,
+    preparar_aplicacion,
     seleccionar_publicaciones,
 )
 
@@ -77,6 +84,18 @@ def _crear_excel(ruta, publicaciones=None, oposiciones=None):
         pd.DataFrame({"Código": []}).to_excel(
             writer, sheet_name="Búsquedas", index=False
         )
+        pd.DataFrame(
+            columns=["Fecha", "Tipo de error", "Enlace Web"]
+        ).to_excel(writer, sheet_name="Log-errores", index=False)
+        pd.DataFrame(
+            {
+                "Fecha": ["2025-01-01"],
+                "Estado": ["consultado"],
+                "Version_extractor": ["1"],
+                "Fecha_ultima_consulta": ["2025-01-02 10:00:00"],
+                "Numero_publicaciones": [1],
+            }
+        ).to_excel(writer, sheet_name="Cobertura", index=False)
 
 
 def _detalle(clasificacion, historicas=None, actuales=None, error=None):
@@ -262,7 +281,33 @@ def test_main_legacy_sin_dry_run_es_rechazado(monkeypatch, capsys):
     with pytest.raises(SystemExit) as salida:
         plazasboe.main()
     assert salida.value.code == 2
-    assert "escritura" in capsys.readouterr().err
+    assert "--dry-run o --aplicar" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    "argumentos,mensaje",
+    [
+        (["--reprocesar-legacy", "--aplicar"], "--aplicar exige --limite"),
+        (
+            ["--reprocesar-legacy", "--aplicar", "--limite", "26"],
+            "máximo --limite 25",
+        ),
+        (
+            ["--reprocesar-legacy", "--dry-run", "--aplicar", "--limite", "1"],
+            "not allowed",
+        ),
+    ],
+)
+def test_argumentos_de_aplicacion_inseguros_se_rechazan(
+    monkeypatch, capsys, argumentos, mensaje
+):
+    import plazasboe
+
+    monkeypatch.setattr(sys, "argv", ["plazasboe.py", *argumentos])
+    with pytest.raises(SystemExit) as salida:
+        plazasboe.main()
+    assert salida.value.code == 2
+    assert mensaje in capsys.readouterr().err
 
 
 def test_main_dry_run_no_entra_en_flujo_normal(monkeypatch):
@@ -435,3 +480,380 @@ def test_resumen_de_consola_conserva_totales(capsys):
     assert "filas obtenidas actualmente: 1" in salida
     assert "filas añadidas: 0" in salida
     assert "filas ausentes: 0" in salida
+
+
+def test_resumen_dry_run_se_identifica_como_simulacion(capsys):
+    detalle = _detalle("SIN_CAMBIOS")
+
+    reprocesamiento_legacy.imprimir_informe(
+        [detalle], _resumen([detalle]), modo="dry-run"
+    )
+
+    salida = capsys.readouterr().out
+    assert "Resumen del reprocesamiento legacy (simulación)" in salida
+    assert "APLICADO" not in salida
+    assert "Escritura completada correctamente" not in salida
+
+
+def test_resumen_aplicado_muestra_metricas_y_verificacion(capsys):
+    detalle = _detalle("AMPLIADA", [_fila()], [_fila(), _fila(Puesto="Otro")])
+    datos_escritura = {
+        "backup": "backups/copia.xlsx",
+        "publicaciones_actualizadas": 1,
+        "filas_anadidas_realmente": 1,
+        "filas_actualizadas_trazabilidad": 1,
+    }
+
+    reprocesamiento_legacy.imprimir_informe(
+        [detalle],
+        _resumen([detalle]),
+        modo="aplicar",
+        datos_escritura=datos_escritura,
+    )
+
+    salida = capsys.readouterr().out
+    assert "Resumen del reprocesamiento legacy (APLICADO)" in salida
+    assert "Backup creado: backups/copia.xlsx" in salida
+    assert "Publicaciones actualizadas: 1" in salida
+    assert "Filas añadidas realmente: 1" in salida
+    assert "Filas con trazabilidad actualizada: 1" in salida
+    assert "Escritura completada correctamente." in salida
+    assert "Verificación posterior: correcta." in salida
+
+
+def _hojas_aplicacion():
+    return {
+        "Oposiciones": pd.DataFrame([_fila()]),
+        "Publicaciones": _publicaciones().iloc[[1]].copy(),
+        "Búsquedas": pd.DataFrame({"Código": ["codigo-original"]}),
+        "Cobertura": pd.DataFrame(
+            {
+                "Fecha": ["2025-01-01"],
+                "Estado": ["consultado"],
+                "Version_extractor": ["1"],
+                "Fecha_ultima_consulta": ["2025-01-02 10:00:00"],
+                "Numero_publicaciones": [1],
+            }
+        ),
+        "Log-errores": pd.DataFrame(
+            columns=["Fecha", "Tipo de error", "Enlace Web"]
+        ),
+    }
+
+
+def test_lote_sin_cambios_actualiza_unicamente_trazabilidad():
+    hojas = _hojas_aplicacion()
+    original = hojas["Oposiciones"].copy(deep=True)
+    detalle = _detalle("SIN_CAMBIOS")
+
+    preparados, metricas = preparar_aplicacion(
+        [detalle], hojas, reprocesamiento_legacy.datetime(2026, 8, 22, 15, 0, 0)
+    )
+
+    assert detalle["accion"] == "ACTUALIZAR_TRAZABILIDAD"
+    assert len(preparados["Oposiciones"]) == 1
+    for campo in CAMPOS_CONVOCATORIA:
+        assert preparados["Oposiciones"].loc[0, campo] == original.loc[0, campo]
+    assert preparados["Oposiciones"].loc[0, "Version_extractor"] == "1"
+    assert preparados["Oposiciones"].loc[0, "Fecha_analisis"] == "2026-08-22 15:00:00"
+    assert metricas == {
+        "filas_anadidas_realmente": 0,
+        "filas_actualizadas_trazabilidad": 1,
+        "publicaciones_actualizadas": 1,
+        "fecha_analisis": "2026-08-22 15:00:00",
+    }
+    publicacion = preparados["Publicaciones"].iloc[0]
+    assert str(publicacion["Version_extractor"]) == "1"
+    assert publicacion["Fecha_ultimo_analisis"] == "2026-08-22 15:00:00"
+    assert publicacion["Estado_analisis"] == "con_coincidencias"
+    assert publicacion["Coincidencias"] == 1
+
+
+def test_lote_ampliado_conserva_historico_geolocaliza_y_no_duplica(monkeypatch):
+    hojas = _hojas_aplicacion()
+    añadida = _fila(
+        Puesto="Administrativo",
+        Administración="Ayuntamiento de Prueba geográfica",
+    )
+    detalle = _detalle("AMPLIADA", [_fila()], [_fila(), añadida])
+    llamadas = []
+
+    def enriquecer(df):
+        llamadas.append(df.copy())
+        resultado = df.copy()
+        resultado["Municipio"] = "Prueba"
+        resultado["Provincia"] = "Provincia"
+        resultado["Latitud"] = 1.0
+        resultado["Longitud"] = 2.0
+        resultado["Habitantes"] = 3
+        return resultado
+
+    monkeypatch.setattr(
+        reprocesamiento_legacy, "enriquecer_filas_sin_coordenadas", enriquecer
+    )
+    preparados, metricas = preparar_aplicacion([detalle], hojas)
+
+    assert detalle["accion"] == "AÑADIR_Y_ACTUALIZAR"
+    assert len(preparados["Oposiciones"]) == 2
+    assert preparados["Oposiciones"].iloc[0]["Puesto"] == "Auxiliar"
+    nueva = preparados["Oposiciones"].iloc[1]
+    assert nueva["Puesto"] == "Administrativo"
+    assert nueva["Municipio"] == "Prueba"
+    assert nueva["Version_extractor"] == "1"
+    assert nueva["Fecha_analisis"] == preparados["Oposiciones"].iloc[0]["Fecha_analisis"]
+    assert metricas["filas_anadidas_realmente"] == 1
+    assert len(llamadas) == 1
+    assert not preparados["Oposiciones"].duplicated(CAMPOS_CONVOCATORIA).any()
+
+
+def test_geolocalizacion_fallida_no_aborta(monkeypatch):
+    añadida = _fila(Puesto="Administrativo")
+    detalle = _detalle("AMPLIADA", [_fila()], [_fila(), añadida])
+    monkeypatch.setattr(
+        reprocesamiento_legacy,
+        "enriquecer_filas_sin_coordenadas",
+        lambda df: df,
+    )
+
+    preparados, _ = preparar_aplicacion([detalle], _hojas_aplicacion())
+
+    assert len(preparados["Oposiciones"]) == 2
+    assert pd.isna(preparados["Oposiciones"].iloc[1].get("Latitud", pd.NA))
+
+
+def test_lote_mixto_comparte_fecha_por_publicacion():
+    hojas = _hojas_aplicacion()
+    segunda = _fila(
+        Publicacion_ID="BOE-A-2025-3",
+        Enlace="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-3",
+        Puesto="Técnico",
+    )
+    hojas["Oposiciones"] = pd.concat(
+        [hojas["Oposiciones"], pd.DataFrame([segunda])], ignore_index=True
+    )
+    hojas["Publicaciones"] = pd.concat(
+        [
+            hojas["Publicaciones"],
+            pd.DataFrame(
+                [
+                    {
+                        "Publicacion_ID": "BOE-A-2025-3",
+                        "Enlace": segunda["Enlace"],
+                        "Fecha_BOE": segunda["Fecha_boe"],
+                        "Version_extractor": "legacy",
+                    }
+                ]
+            ),
+        ],
+        ignore_index=True,
+    )
+    añadida = dict(segunda, Puesto="Arquitecto")
+    detalles = [
+        _detalle("SIN_CAMBIOS"),
+        {
+            **_detalle("AMPLIADA", [segunda], [segunda, añadida]),
+            "Publicacion_ID": "BOE-A-2025-3",
+            "Enlace": segunda["Enlace"],
+        },
+    ]
+
+    preparados, metricas = preparar_aplicacion(
+        detalles, hojas, reprocesamiento_legacy.datetime(2026, 8, 22, 16, 0, 0)
+    )
+
+    assert metricas["publicaciones_actualizadas"] == 2
+    for publicacion_id in ("BOE-A-2025-1", "BOE-A-2025-3"):
+        fechas = preparados["Oposiciones"].loc[
+            preparados["Oposiciones"]["Publicacion_ID"] == publicacion_id,
+            "Fecha_analisis",
+        ]
+        assert fechas.nunique() == 1
+        assert fechas.iloc[0] == "2026-08-22 16:00:00"
+
+
+@pytest.mark.parametrize(
+    "clasificacion",
+    ["REDUCIDA", "MODIFICADA", "SIN_RESULTADOS_NUEVOS", "ERROR"],
+)
+def test_clasificacion_no_segura_impide_preparar_cualquier_escritura(clasificacion):
+    detalle = _detalle(
+        clasificacion,
+        [_fila()],
+        [] if clasificacion in {"SIN_RESULTADOS_NUEVOS", "ERROR"} else [_fila(Num_plazas=3)],
+        "error" if clasificacion == "ERROR" else None,
+    )
+
+    assert asignar_acciones([detalle]) is False
+    assert detalle["accion"] == "NO_ESCRIBIR"
+    with pytest.raises(ReprocesamientoNoSeguroError):
+        preparar_aplicacion([detalle], _hojas_aplicacion())
+
+
+def test_backup_verificado_es_identico_y_tiene_nombre_unico(tmp_path):
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel(original, _publicaciones().iloc[[1]])
+    momento = reprocesamiento_legacy.datetime(2026, 8, 22, 17, 0, 0)
+
+    backup, integridad = crear_backup_verificado(
+        original, tmp_path / "backups", momento
+    )
+
+    assert backup.name == "BOE-oposiciones_20260822_170000.xlsx"
+    assert backup.read_bytes() == original.read_bytes()
+    assert integridad["sha256"] == calcular_integridad_excel(original)["sha256"]
+
+
+def test_backup_invalido_aborta_antes_de_aplicar(monkeypatch, tmp_path):
+    original = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel(original, _publicaciones().iloc[[1]])
+
+    def copia_corrupta(origen, destino):
+        Path(destino).write_bytes(b"corrupto")
+
+    monkeypatch.setattr(reprocesamiento_legacy.shutil, "copy2", copia_corrupta)
+    with pytest.raises(BackupInvalidoError):
+        crear_backup_verificado(original, tmp_path / "backups")
+    assert pd.read_excel(original, sheet_name="Oposiciones").iloc[0]["Puesto"] == "Auxiliar"
+
+
+def test_aplicar_lote_usa_un_solo_guardado_y_preserva_busquedas_cobertura(
+    monkeypatch, tmp_path
+):
+    monkeypatch.chdir(tmp_path)
+    ruta = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel(ruta, _publicaciones().iloc[[1]])
+    antes = pd.read_excel(ruta, sheet_name=None)
+    llamadas = []
+    guardar_real = preparar_archivo_datos.guardar_excel
+
+    def guardar_contado(*args):
+        llamadas.append(args)
+        guardar_real(*args)
+
+    monkeypatch.setattr(preparar_archivo_datos, "guardar_excel", guardar_contado)
+    metricas = aplicar_lote([_detalle("SIN_CAMBIOS")])
+    despues = pd.read_excel(ruta, sheet_name=None)
+
+    assert metricas["publicaciones_actualizadas"] == 1
+    assert len(llamadas) == 1
+    pd.testing.assert_frame_equal(despues["Búsquedas"], antes["Búsquedas"])
+    pd.testing.assert_frame_equal(despues["Cobertura"], antes["Cobertura"])
+    assert len(despues["Oposiciones"]) == len(antes["Oposiciones"])
+    assert seleccionar_publicaciones(despues["Publicaciones"]).empty
+
+
+def test_fallo_antes_de_replace_conserva_original_y_backup(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    ruta = tmp_path / "BOE-oposiciones.xlsx"
+    _crear_excel(ruta, _publicaciones().iloc[[1]])
+    original = ruta.read_bytes()
+    backup, _ = crear_backup_verificado(ruta, tmp_path / "backups")
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "formatear_hoja_oposiciones",
+        lambda *args: (_ for _ in ()).throw(RuntimeError("fallo previo a replace")),
+    )
+
+    with pytest.raises(RuntimeError, match="fallo previo a replace"):
+        aplicar_lote([_detalle("SIN_CAMBIOS")])
+
+    assert ruta.read_bytes() == original
+    assert backup.exists()
+
+
+def test_json_de_aplicacion_refleja_acciones_y_resultado(tmp_path):
+    detalle = _detalle("AMPLIADA", [_fila()], [_fila(), _fila(Puesto="Otro")])
+    assert asignar_acciones([detalle]) is True
+    integridad = {"sha256": "a", "tamano": 1, "mtime_ns": 2}
+    datos_escritura = {
+        "escritura_autorizada": True,
+        "backup": "backup.xlsx",
+        "backup_sha256": "a",
+        "filas_anadidas_realmente": 1,
+        "filas_actualizadas_trazabilidad": 1,
+        "publicaciones_actualizadas": 1,
+        "escritura_completada": True,
+    }
+
+    ruta = guardar_informe_auditoria(
+        [detalle],
+        _resumen([detalle]),
+        {},
+        integridad,
+        dict(integridad, sha256="b"),
+        tmp_path,
+        modo="aplicar",
+        datos_escritura=datos_escritura,
+    )
+    datos = json.loads(ruta.read_text(encoding="utf-8"))
+
+    assert datos["modo"] == "aplicar"
+    assert datos["escritura_completada"] is True
+    assert datos["publicaciones"][0]["accion"] == "AÑADIR_Y_ACTUALIZAR"
+
+
+def test_lote_inseguro_genera_json_y_no_crea_backup_ni_escribe(tmp_path, capsys):
+    import plazasboe
+
+    detalle = _detalle("REDUCIDA", [_fila(), _fila(Puesto="Otro")], [_fila()])
+    opciones = SimpleNamespace(
+        desde=None, hasta=None, publicacion=None, limite=1
+    )
+    integridad = {"sha256": "a", "tamano": 1, "mtime_ns": 2}
+    llamadas = {"backup": 0, "aplicar": 0}
+
+    def guardar(*args, **kwargs):
+        kwargs["directorio"] = tmp_path
+        return guardar_informe_auditoria(*args, **kwargs)
+
+    with pytest.raises(SystemExit) as salida:
+        plazasboe._ejecutar_aplicacion_legacy(
+            opciones,
+            lambda: integridad,
+            lambda **kwargs: ([detalle], _resumen([detalle])),
+            guardar,
+            asignar_acciones,
+            lambda: llamadas.__setitem__("backup", llamadas["backup"] + 1),
+            lambda detalles: llamadas.__setitem__("aplicar", llamadas["aplicar"] + 1),
+        )
+
+    assert salida.value.code == 1
+    assert llamadas == {"backup": 0, "aplicar": 0}
+    datos = json.loads(next(tmp_path.glob("*.json")).read_text(encoding="utf-8"))
+    assert datos["escritura_autorizada"] is False
+    assert datos["escritura_completada"] is False
+    assert datos["publicaciones"][0]["accion"] == "NO_ESCRIBIR"
+    assert "ESCRITURA NO REALIZADA" in capsys.readouterr().out
+
+
+def test_fallo_de_backup_actualiza_json_y_no_inicia_escritura(tmp_path, capsys):
+    import plazasboe
+
+    detalle = _detalle("SIN_CAMBIOS")
+    opciones = SimpleNamespace(
+        desde=None, hasta=None, publicacion=None, limite=1
+    )
+    integridad = {"sha256": "a", "tamano": 1, "mtime_ns": 2}
+    aplicaciones = []
+
+    def guardar(*args, **kwargs):
+        kwargs["directorio"] = tmp_path
+        return guardar_informe_auditoria(*args, **kwargs)
+
+    with pytest.raises(BackupInvalidoError):
+        plazasboe._ejecutar_aplicacion_legacy(
+            opciones,
+            lambda: integridad,
+            lambda **kwargs: ([detalle], _resumen([detalle])),
+            guardar,
+            asignar_acciones,
+            lambda: (_ for _ in ()).throw(BackupInvalidoError("backup inválido")),
+            lambda detalles: aplicaciones.append(detalles),
+        )
+
+    assert aplicaciones == []
+    datos = json.loads(next(tmp_path.glob("*.json")).read_text(encoding="utf-8"))
+    assert datos["escritura_autorizada"] is True
+    assert datos["escritura_completada"] is False
+    assert datos["error_escritura"] == "backup inválido"
+    assert "ESCRITURA NO REALIZADA" in capsys.readouterr().out

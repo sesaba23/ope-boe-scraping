@@ -1,0 +1,485 @@
+{
+  "fecha_ejecucion": "2026-08-22 20:59:15",
+  "version_extractor": "1",
+  "modo": "aplicar",
+  "filtros_utilizados": {
+    "desde": null,
+    "hasta": null,
+    "publicacion": null,
+    "limite": 10
+  },
+  "total_publicaciones": 10,
+  "SIN_CAMBIOS": 9,
+  "AMPLIADA": 1,
+  "REDUCIDA": 0,
+  "MODIFICADA": 0,
+  "SIN_RESULTADOS_NUEVOS": 0,
+  "ERROR": 0,
+  "filas_historicas": 10,
+  "filas_actuales": 11,
+  "filas_anadidas": 1,
+  "filas_ausentes": 0,
+  "excel_sha256_antes": "d167b1886ac47a8d8de30e542512014b7482405234a98bda0438310ce60a4def",
+  "excel_sha256_despues": "d79c47e03d543df40501c0f81fd82a870eeb414069f1ce3c9e082c56bf0c7940",
+  "excel_tamano_antes": 758385,
+  "excel_tamano_despues": 758603,
+  "excel_mtime_ns_antes": 1787417283031154696,
+  "excel_mtime_ns_despues": 1787425154283013212,
+  "excel_modificado": true,
+  "publicaciones": [
+    {
+      "Publicacion_ID": "BOE-A-2024-7339",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7339",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Cuerpo de Ingenieros Industriales del Estado",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Subsecretaría (Ministerio de Industria y Turismo)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7339",
+          "Num_plazas": 220,
+          "Turno": "--",
+          "Sistema": "General De Acceso Libre",
+          "Escala": "--",
+          "Subescala": "--",
+          "Clase": "--"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Cuerpo de Ingenieros Industriales del Estado",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Subsecretaría (Ministerio de Industria y Turismo)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7339",
+          "Num_plazas": 220,
+          "Turno": "--",
+          "Sistema": "General De Acceso Libre",
+          "Escala": "--",
+          "Subescala": "--",
+          "Clase": "--"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7356",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7356",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Escala de Personal Investigador Científico de los Organismos Públicos de Investigación",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Subsecretaría (Ministerio de Ciencia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7356",
+          "Num_plazas": 47,
+          "Turno": "turno general",
+          "Sistema": "General De Acceso Libre",
+          "Escala": "--",
+          "Subescala": "--",
+          "Clase": "--"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Escala de Personal Investigador Científico de los Organismos Públicos de Investigación",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Subsecretaría (Ministerio de Ciencia)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7356",
+          "Num_plazas": 47,
+          "Turno": "turno general",
+          "Sistema": "General De Acceso Libre",
+          "Escala": "--",
+          "Subescala": "--",
+          "Clase": "--"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7385",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7385",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ciudad Real",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7385",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ciudad Real",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7385",
+          "Num_plazas": 1,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "No disponible"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7386",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7386",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Técnico/a de Centro de Atención a la Infancia",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ciudad Real",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7386",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Cometidos especiales"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Técnico/a de Centro de Atención a la Infancia",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Ciudad Real",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7386",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Cometidos especiales"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7388",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7388",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Auxiliar Administrativo",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Comillas (Cantabria)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7388",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "Auxiliar"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Auxiliar Administrativo",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Comillas (Cantabria)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7388",
+          "Num_plazas": 1,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Auxiliar",
+          "Clase": "Auxiliar"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7393",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7393",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Oficial",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Valdemoro (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7393",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Oficial",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Valdemoro (Madrid)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7393",
+          "Num_plazas": 2,
+          "Turno": "De Promoción Interna",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7396",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7396",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de El Masnou (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7396",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Técnico/a de Administración General",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de El Masnou (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7396",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración General",
+          "Subescala": "Técnica",
+          "Clase": "Superior"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7406",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7406",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Fraga (Huesca)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7406",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Policía Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Fraga (Huesca)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7406",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7410",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7410",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "SIN_CAMBIOS",
+      "filas_historicas": [
+        {
+          "Puesto": "Vigilante municipal",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de La Pobla de Montornès (Tarragona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7410",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Vigilante municipal",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de La Pobla de Montornès (Tarragona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7410",
+          "Num_plazas": 2,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 1,
+      "filas_anadidas": [],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "ACTUALIZAR_TRAZABILIDAD"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2024-7412",
+      "Fecha_BOE": "15 de abril de 2024",
+      "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7412",
+      "Version_anterior": "legacy",
+      "Version_actual": "1",
+      "clasificacion": "AMPLIADA",
+      "filas_historicas": [
+        {
+          "Puesto": "Agente de la Policia Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Vilanova i la Geltrú (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7412",
+          "Num_plazas": 3,
+          "Turno": "De Movilidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_actuales": [
+        {
+          "Puesto": "Agente de la Policia Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Vilanova i la Geltrú (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7412",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        },
+        {
+          "Puesto": "Agente de la Policia Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Vilanova i la Geltrú (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7412",
+          "Num_plazas": 3,
+          "Turno": "De Movilidad",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "numero_historicas": 1,
+      "numero_actuales": 2,
+      "filas_anadidas": [
+        {
+          "Puesto": "Agente de la Policia Local",
+          "Fecha_boe": "15 de abril de 2024",
+          "Administración": "Ayuntamiento de Vilanova i la Geltrú (Barcelona)",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-7412",
+          "Num_plazas": 6,
+          "Turno": "Libre",
+          "Sistema": "Concurso-Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Especial",
+          "Clase": "Policía Local y sus auxiliares"
+        }
+      ],
+      "filas_ausentes": [],
+      "campos_modificados": [],
+      "accion": "AÑADIR_Y_ACTUALIZAR"
+    }
+  ],
+  "escritura_autorizada": true,
+  "backup": "backups/reprocesamiento_legacy/BOE-oposiciones_20260822_205904.xlsx",
+  "backup_sha256": "d167b1886ac47a8d8de30e542512014b7482405234a98bda0438310ce60a4def",
+  "filas_anadidas_realmente": 1,
+  "filas_actualizadas_trazabilidad": 10,
+  "publicaciones_actualizadas": 10,
+  "escritura_completada": true,
+  "fecha_analisis": "2026-08-22 20:59:05",
+  "verificacion_posterior": true
+}
