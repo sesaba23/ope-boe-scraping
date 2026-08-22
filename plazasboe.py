@@ -4,6 +4,7 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 from trazabilidad import añadir_trazabilidad_convocatorias
+from publicaciones import crear_registro_publicacion, registrar_publicacion
 from entradas_datos import solicitar_fechas_y_validar
 from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipios
 
@@ -89,6 +90,7 @@ def _ejecutar_aplicacion():
     df_busquedas = dataframes_dict["Búsquedas"]
     df_opo_guardadas = dataframes_dict["Oposiciones"]
     df_log_errores = dataframes_dict["Log-errores"]
+    df_publicaciones = dataframes_dict.get("Publicaciones", pd.DataFrame())
 
     if df_busquedas.empty:
         df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
@@ -337,6 +339,7 @@ def _ejecutar_aplicacion():
                 # Comienzo a buscar las coincidencias en el objeto Match devuelto por findall
                 analisis_correcto = True
                 momento_analisis = datetime.now()
+                coincidencias_publicacion = 0
                 for contenido in contenidos:
                     try:
                         # La función devuelve una lista de diccionarios con las coincidencias y
@@ -346,6 +349,7 @@ def _ejecutar_aplicacion():
                         )
                         # Si se encuentra una coincidencia en LOCAL, se añade al diccionario
                         if lista_diccionarios_local:
+                            coincidencias_publicacion += len(lista_diccionarios_local)
                             lista_diccionarios_local = añadir_trazabilidad_convocatorias(
                                 lista_diccionarios_local, enlace, momento_analisis
                             )
@@ -359,6 +363,7 @@ def _ejecutar_aplicacion():
                                 texto_busqueda, contenido.text, titulo, fecha_boe, enlace
                             )
                             if diccionario_estado:
+                                coincidencias_publicacion += 1
                                 diccionario_estado = añadir_trazabilidad_convocatorias(
                                     [diccionario_estado], enlace, momento_analisis
                                 )[0]
@@ -381,6 +386,16 @@ def _ejecutar_aplicacion():
                     diccionario_busquedas["Código"].append(codigo)
                     codigos_procesados.add(codigo)
                     publicaciones_analizadas += 1
+                    df_publicaciones = registrar_publicacion(
+                        df_publicaciones,
+                        crear_registro_publicacion(
+                            enlace,
+                            fecha_boe,
+                            titulo,
+                            coincidencias_publicacion,
+                            momento_analisis,
+                        ),
+                    )
                 else:
                     publicaciones_fallidas.add(enlace)
 
@@ -429,7 +444,7 @@ def _ejecutar_aplicacion():
 
     # Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
     preparar_archivo_datos.guardar_excel(
-        df_combinado, df_busquedas_combinado, df_log_errores
+        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones
     )
 
     if not enlaces_oposiciones:

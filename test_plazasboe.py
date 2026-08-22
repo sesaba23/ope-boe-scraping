@@ -695,6 +695,80 @@ def test_indice_rechazado_por_parser_registra_error_y_continua(monkeypatch):
     assert "2026/08/09" in errores_guardados[0]["Enlace Web"]
 
 
+@pytest.mark.parametrize(
+    ("resultados", "estado", "numero"),
+    [
+        (
+            [
+                {"Num_plazas": 2, "Puesto": "Ingeniero", "Administración": "Entidad"},
+                {"Num_plazas": 1, "Puesto": "Arquitecto", "Administración": "Entidad"},
+            ],
+            "con_coincidencias",
+            2,
+        ),
+        (None, "sin_coincidencias", 0),
+    ],
+)
+def test_analisis_correcto_registra_publicacion(
+    monkeypatch, resultados, estado, numero
+):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+    )
+    monkeypatch.setattr(
+        coincidencias, "buscar_coincidencias_local", lambda *args: resultados
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    publicacion = publicaciones_guardadas[-1].iloc[0]
+    assert publicacion["Publicacion_ID"] == "BOE-A-2026-10463"
+    assert publicacion["Estado_analisis"] == estado
+    assert publicacion["Coincidencias"] == numero
+
+
+def test_publicacion_con_fallo_no_se_registra(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP("", 500)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert publicaciones_guardadas[-1].empty
+
+
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=repetido"
 
@@ -827,7 +901,9 @@ def _configurar_fallo_indice(monkeypatch, obtener_url, errores_guardados):
     busquedas = pd.DataFrame({"Código": []})
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
 
-    def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
+    def guardar_excel(
+        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones=None
+    ):
         errores_guardados.extend(df_log_errores.to_dict(orient="records"))
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
@@ -876,7 +952,12 @@ def _html_publicacion_correcta():
 
 
 def _configurar_consulta_boe(
-    monkeypatch, obtener_url, lista_fechas, fecha_inicio, fecha_fin
+    monkeypatch,
+    obtener_url,
+    lista_fechas,
+    fecha_inicio,
+    fecha_fin,
+    publicaciones_guardadas=None,
 ):
     columnas = [
         "Num_plazas",
@@ -896,8 +977,12 @@ def _configurar_consulta_boe(
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
     errores_guardados = []
 
-    def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
+    def guardar_excel(
+        df_combinado, df_busquedas_combinado, df_log_errores, df_publicaciones=None
+    ):
         errores_guardados.extend(df_log_errores.to_dict(orient="records"))
+        if publicaciones_guardadas is not None:
+            publicaciones_guardadas.append(df_publicaciones.copy(deep=True))
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
     monkeypatch.setattr(

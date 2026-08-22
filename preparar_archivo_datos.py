@@ -1,5 +1,10 @@
 from fechas import convertir_fecha
 from trazabilidad import enriquecer_historico_oposiciones
+from publicaciones import (
+    COLUMNAS_PUBLICACIONES,
+    normalizar_publicaciones,
+    publicaciones_desde_oposiciones,
+)
 
 from contextlib import contextmanager
 import fcntl
@@ -55,6 +60,8 @@ def preparar_excel_y_dataframes():
         wb.create_sheet(title="Oposiciones")
 
         wb.create_sheet(title="Log-errores")
+        ws_publicaciones = wb.create_sheet(title="Publicaciones")
+        ws_publicaciones.append(COLUMNAS_PUBLICACIONES)
         # Guardar el archivo
         wb.save("BOE-oposiciones.xlsx")
 
@@ -69,6 +76,14 @@ def preparar_excel_y_dataframes():
     dataframes_dict["Oposiciones"] = enriquecer_historico_oposiciones(
         dataframes_dict["Oposiciones"]
     )
+    if "Publicaciones" not in dataframes_dict:
+        dataframes_dict["Publicaciones"] = publicaciones_desde_oposiciones(
+            dataframes_dict["Oposiciones"]
+        )
+    else:
+        dataframes_dict["Publicaciones"] = normalizar_publicaciones(
+            dataframes_dict["Publicaciones"]
+        )
 
     return dataframes_dict
 
@@ -122,7 +137,12 @@ def combinar_dataframes(
     return df_combinado, df_busquedas_combinado
 
 
-def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
+def guardar_excel(
+    df_combinado,
+    df_busquedas_combinado,
+    df_log_errores,
+    df_publicaciones=None,
+):
     """
     Código para guardar los resultados en un archivo Excel
     """
@@ -137,6 +157,9 @@ def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
         os.close(descriptor)
         archivo_temporal = Path(ruta_temporal)
         shutil.copy2(nombre_archivo, archivo_temporal)
+        libro_temporal = load_workbook(archivo_temporal, read_only=True)
+        contiene_publicaciones = "Publicaciones" in libro_temporal.sheetnames
+        libro_temporal.close()
 
         with pd.ExcelWriter(
             archivo_temporal,
@@ -147,6 +170,14 @@ def guardar_excel(df_combinado, df_busquedas_combinado, df_log_errores):
             df_busquedas_combinado.to_excel(writer, sheet_name="Búsquedas", index=False)
             df_combinado.to_excel(writer, sheet_name="Oposiciones", index=False)
             df_log_errores.to_excel(writer, sheet_name="Log-errores", index=False)
+            if df_publicaciones is not None:
+                df_publicaciones.to_excel(
+                    writer, sheet_name="Publicaciones", index=False
+                )
+            elif not contiene_publicaciones:
+                pd.DataFrame(columns=COLUMNAS_PUBLICACIONES).to_excel(
+                    writer, sheet_name="Publicaciones", index=False
+                )
         # Da formato al Excel
         formatear_hoja_oposiciones(archivo_temporal)
 

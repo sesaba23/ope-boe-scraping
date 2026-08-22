@@ -242,7 +242,12 @@ def test_guardar_excel_conserva_hojas_y_contenido_esperados(monkeypatch, tmp_pat
     preparar_archivo_datos.guardar_excel(*_dataframes_excel())
 
     libro = load_workbook(original)
-    assert libro.sheetnames == ["Búsquedas", "Oposiciones", "Log-errores"]
+    assert libro.sheetnames == [
+        "Búsquedas",
+        "Oposiciones",
+        "Log-errores",
+        "Publicaciones",
+    ]
     assert libro["Búsquedas"].sheet_state == "hidden"
     libro.close()
     hojas = pd.read_excel(original, sheet_name=None)
