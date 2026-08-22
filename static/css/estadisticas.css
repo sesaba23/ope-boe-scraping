@@ -78,7 +78,7 @@ input:focus, select:focus { border-color: var(--primario); outline: 3px solid rg
 .contenedor-grafico { position: relative; height: 310px; }
 .ranking { display: grid; gap: 18px; }
 .ranking-fila { min-width: 0; }
-.ranking-nombre { margin-bottom: 7px; color: var(--texto); font-size: .9rem; font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; }
+.ranking-nombre { margin-bottom: 7px; color: var(--texto); font-size: .84rem; font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; }
 .ranking-medida { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
 .ranking-pista { height: 13px; overflow: hidden; border-radius: 999px; background: #e8edf5; }
 .ranking-barra { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2457d6, #5b82dc); }

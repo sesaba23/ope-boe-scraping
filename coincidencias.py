@@ -160,11 +160,8 @@ def buscar_coincidencias_local(
                 ),
                 "Enlace": enlace if enlace else "Enlace " + texto_no_disponible,
             }
-            # Quito el texto que está entre paréntesis, es decir, la provincia
-            # Se usa para buscar los datos geográficos del municipio
-            municipio = quitar_parentesis(administracion)
             # Busco el municipio al que pertenece la administración y su información
-            diccionario_municipio = buscar_municipio(municipio)
+            diccionario_municipio = buscar_municipio(administracion)
             # Unir con el diccionario del municipio si existe
             if diccionario_municipio:
                 resultado = {**resultado, **diccionario_municipio}

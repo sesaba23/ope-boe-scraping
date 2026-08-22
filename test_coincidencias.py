@@ -90,6 +90,21 @@ def test_buscar_coincidencias_sin_referencia_a_publicacion():
     assert resultado[0]["Publicación"] == "No disponible"
 
 
+def test_buscar_coincidencias_con_municipio_entre_parentesis():
+    resultado = buscar_coincidencias_local(
+        "",
+        "Una plaza de Ingeniero Industrial, mediante el sistema de oposición.",
+        "Resolución, del Cabildo Insular de Tenerife (Santa Cruz de Tenerife), "
+        "referente a una convocatoria.",
+        "«BOE» núm. 1, de 2 de enero de 2025",
+        "https://www.boe.es/ejemplo-tenerife",
+    )
+
+    assert resultado[0]["Municipio"] == "Santa Cruz de Tenerife"
+    assert resultado[0]["Latitud"] == 28.46981
+    assert resultado[0]["Longitud"] == -16.25486
+
+
 def test_buscar_coincidencias_estado_con_datos_obligatorios_ausentes():
     resultado = buscar_coincidencias_estado(
         "",
