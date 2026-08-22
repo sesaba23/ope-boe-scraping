@@ -1187,6 +1187,155 @@ def _html_publicacion_correcta():
     )
 
 
+def test_busqueda_nueva_reutiliza_publicacion_y_filtra_oposiciones_locales(
+    monkeypatch, capsys
+):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    fecha_analisis = "2026-08-20 10:11:12"
+    fecha_ultimo_analisis = "2026-08-20 10:11:12"
+    publicaciones_iniciales = pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Enlace": enlace,
+                "Fecha_BOE": "9 de agosto de 2026",
+                "Titulo_original": "Convocatoria múltiple",
+                "Fecha_ultimo_analisis": fecha_ultimo_analisis,
+                "Version_extractor": "1",
+                "Estado_analisis": "con_coincidencias",
+                "Coincidencias": 2,
+            }
+        ]
+    )
+    oposiciones_iniciales = pd.DataFrame(
+        [
+            {
+                "Num_plazas": 2,
+                "Puesto": "Ingeniero Industrial",
+                "Administración": "Ayuntamiento de Madrid",
+                "Escala": "--",
+                "Subescala": "--",
+                "Clase": "--",
+                "Sistema": "Oposición",
+                "Turno": "Libre",
+                "Fecha_boe": "9 de agosto de 2026",
+                "Publicación": "Convocatoria múltiple",
+                "Enlace": enlace,
+                "Municipio": "Madrid",
+                "Provincia": "Madrid",
+                "Latitud": 40.4168,
+                "Longitud": -3.7038,
+                "Habitantes": 3000000,
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Version_extractor": "1",
+                "Fecha_analisis": fecha_analisis,
+            },
+            {
+                "Num_plazas": 1,
+                "Puesto": "Arquitecto Técnico",
+                "Administración": "Ayuntamiento de Madrid",
+                "Escala": "--",
+                "Subescala": "--",
+                "Clase": "--",
+                "Sistema": "Oposición",
+                "Turno": "Libre",
+                "Fecha_boe": "9 de agosto de 2026",
+                "Publicación": "Convocatoria múltiple",
+                "Enlace": enlace,
+                "Municipio": "Madrid",
+                "Provincia": "Madrid",
+                "Latitud": 40.4168,
+                "Longitud": -3.7038,
+                "Habitantes": 3000000,
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Version_extractor": "1",
+                "Fecha_analisis": fecha_analisis,
+            },
+        ]
+    )
+    publicaciones_guardadas = []
+    oposiciones_guardadas = []
+    busquedas_guardadas = []
+    resultados_mostrados = {}
+    mapas = []
+    solicitudes = []
+    codigo_anterior = f"{enlace}_ingeniero"
+    codigo_nuevo = f"{enlace}_arquitecto"
+    combinar_real = preparar_archivo_datos.combinar_dataframes
+    filtrar_real = preparar_archivo_datos.prepara_data_frame_mostrar_resultados
+
+    def obtener_url(url, timeout):
+        solicitudes.append(url)
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        raise AssertionError("Una publicación reutilizable no debe descargarse")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+        publicaciones_iniciales,
+        [codigo_anterior],
+        oposiciones_iniciales,
+        oposiciones_guardadas,
+        busquedas_guardadas,
+    )
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: (
+            "arquitecto",
+            "09/08/2026",
+            "09/08/2026",
+            ["2026/08/09"],
+        ),
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos, "combinar_dataframes", combinar_real
+    )
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "prepara_data_frame_mostrar_resultados",
+        filtrar_real,
+    )
+    monkeypatch.setattr(
+        impresiones,
+        "imprimir_diccionario_puestos",
+        lambda diccionario, **kwargs: resultados_mostrados.update(diccionario),
+    )
+    monkeypatch.setattr(
+        mapa_plazas,
+        "generar_mapa_municipios",
+        lambda dataframe: mapas.append(dataframe.copy(deep=True)),
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert solicitudes == [
+        "https://www.boe.es/boe/dias/2026/08/09/index.php?s=2B"
+    ]
+    assert resultados_mostrados["Puesto"] == ["Arquitecto Técnico"]
+    assert mapas[-1]["Puesto"].tolist() == ["Arquitecto Técnico"]
+    assert set(busquedas_guardadas[-1]["Código"]) == {
+        codigo_anterior,
+        codigo_nuevo,
+    }
+    pd.testing.assert_frame_equal(
+        oposiciones_guardadas[-1].reset_index(drop=True),
+        oposiciones_iniciales.reset_index(drop=True),
+    )
+    pd.testing.assert_frame_equal(
+        publicaciones_guardadas[-1], publicaciones_iniciales
+    )
+    salida = capsys.readouterr().out
+    assert "Publicaciones descargadas: 0" in salida
+    assert "Publicaciones reutilizadas localmente: 1" in salida
+
+
 def _configurar_consulta_boe(
     monkeypatch,
     obtener_url,
@@ -1198,6 +1347,7 @@ def _configurar_consulta_boe(
     codigos_iniciales=None,
     oposiciones_iniciales=None,
     oposiciones_guardadas=None,
+    busquedas_guardadas=None,
 ):
     columnas = [
         "Num_plazas",
@@ -1234,6 +1384,8 @@ def _configurar_consulta_boe(
             publicaciones_guardadas.append(df_publicaciones.copy(deep=True))
         if oposiciones_guardadas is not None:
             oposiciones_guardadas.append(df_combinado.copy(deep=True))
+        if busquedas_guardadas is not None:
+            busquedas_guardadas.append(df_busquedas_combinado.copy(deep=True))
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
     monkeypatch.setattr(

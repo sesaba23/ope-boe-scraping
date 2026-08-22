@@ -12,6 +12,7 @@ from publicaciones import (
     crear_registro_publicacion,
     debe_procesar_publicacion,
     normalizar_publicaciones,
+    puede_reutilizar_publicacion,
     publicaciones_desde_oposiciones,
     registrar_publicacion,
 )
@@ -67,6 +68,95 @@ def test_publicacion_sin_id_valido_mantiene_exclusion_de_busquedas():
     enlace = "https://www.boe.es/diario_boe/txt.php?id=no-valido"
 
     assert not debe_procesar_publicacion(enlace, {enlace}, enlace, pd.DataFrame())
+
+
+def _registro_reutilizable(version="1", estado="con_coincidencias", numero=1):
+    return pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Version_extractor": version,
+                "Estado_analisis": estado,
+                "Coincidencias": numero,
+            }
+        ]
+    )
+
+
+@pytest.mark.parametrize("version", [None, "", "legacy", "invalida"])
+def test_publicacion_con_version_desconocida_no_se_reutiliza(version):
+    assert not puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable(version),
+        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-10463"]}),
+    )
+
+
+def test_publicacion_desconocida_o_sin_id_no_se_reutiliza():
+    oposiciones = pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-10463"]})
+
+    assert not puede_reutilizar_publicacion(
+        "BOE-A-2026-10463", pd.DataFrame(), oposiciones
+    )
+    assert not puede_reutilizar_publicacion(
+        None, _registro_reutilizable(), oposiciones
+    )
+
+
+def test_publicacion_con_version_anterior_no_se_reutiliza():
+    assert not puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable("1"),
+        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-10463"]}),
+        version_actual="2",
+    )
+
+
+@pytest.mark.parametrize("version", ["1", "2"])
+def test_publicacion_con_coincidencias_y_datos_locales_se_reutiliza(version):
+    assert puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable(version),
+        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-10463"]}),
+    )
+
+
+def test_version_posterior_se_protege_aunque_no_haya_filas_locales():
+    assert puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable("2"),
+        pd.DataFrame(),
+    )
+
+
+def test_publicacion_sin_coincidencias_se_reutiliza_sin_filas_locales():
+    assert puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable("1", "sin_coincidencias", 0),
+        pd.DataFrame(),
+    )
+
+
+def test_publicacion_inconsistente_no_se_reutiliza():
+    assert not puede_reutilizar_publicacion(
+        "BOE-A-2026-10463",
+        _registro_reutilizable("1", "con_coincidencias", 2),
+        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-otra"]}),
+    )
+
+
+def test_comprobar_reutilizacion_no_modifica_los_dataframes():
+    publicaciones_df = _registro_reutilizable()
+    oposiciones = pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-10463"]})
+    copia_publicaciones = publicaciones_df.copy(deep=True)
+    copia_oposiciones = oposiciones.copy(deep=True)
+
+    puede_reutilizar_publicacion(
+        "BOE-A-2026-10463", publicaciones_df, oposiciones
+    )
+
+    pd.testing.assert_frame_equal(publicaciones_df, copia_publicaciones)
+    pd.testing.assert_frame_equal(oposiciones, copia_oposiciones)
 
 
 def test_crea_registros_con_y_sin_coincidencias():

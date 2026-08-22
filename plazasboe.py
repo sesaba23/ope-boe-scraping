@@ -4,9 +4,10 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 from trazabilidad import añadir_trazabilidad_convocatorias
+from trazabilidad import extraer_publicacion_id
 from publicaciones import (
     crear_registro_publicacion,
-    debe_procesar_publicacion,
+    puede_reutilizar_publicacion,
     registrar_publicacion,
 )
 from entradas_datos import solicitar_fechas_y_validar
@@ -248,6 +249,8 @@ def _ejecutar_aplicacion():
     #         "Código": [enlace+texto_busqueda]
     diccionario_busquedas = {"Código": []}
     publicaciones_analizadas = 0
+    publicaciones_descargadas = 0
+    publicaciones_reutilizadas = 0
     publicaciones_fallidas = set()
 
     """ 
@@ -277,10 +280,26 @@ def _ejecutar_aplicacion():
             codigo_busqueda = texto_busqueda.replace(" ", "+")
             codigo = f"{enlace}_{codigo_busqueda}"
 
-        # Comprobar si el enlace ya ha sido procesado
-        if debe_procesar_publicacion(
-            codigo, codigos_procesados, enlace, df_publicaciones
-        ):
+        publicacion_id = extraer_publicacion_id(enlace)
+        reutilizable = puede_reutilizar_publicacion(
+            publicacion_id,
+            df_publicaciones,
+            df_opo_guardadas,
+        )
+        if reutilizable:
+            publicaciones_reutilizadas += 1
+            if codigo not in codigos_procesados:
+                diccionario_busquedas["Código"].append(codigo)
+                codigos_procesados.add(codigo)
+            continue
+
+        # Sin identificador válido se conserva la exclusión heredada de Búsquedas.
+        debe_descargar = (
+            codigo not in codigos_procesados
+            if publicacion_id is None
+            else True
+        )
+        if debe_descargar:
             page = None
             reintentos = 0
             while reintentos < MAX_REINTENTOS:
@@ -313,6 +332,7 @@ def _ejecutar_aplicacion():
                 publicaciones_fallidas.add(enlace)
 
             if page is not None:
+                publicaciones_descargadas += 1
                 try:
                     soup = BeautifulSoup(page.content, "html.parser")
                     # El texto que contiene la información de interés está dentro de un
@@ -472,13 +492,21 @@ def _ejecutar_aplicacion():
         f_inicio=fecha_inicio,
         f_fin=fecha_fin,
         busqueda=texto_busqueda,
-        publicaciones_analizadas=publicaciones_analizadas,
+        publicaciones_analizadas=(
+            publicaciones_analizadas + publicaciones_reutilizadas
+        ),
         publicaciones_fallidas=len(publicaciones_fallidas),
     )
 
     # Mostramos en un mapa web los municipios encontrados en la búsqueda
     if not df_filtrado_por_patron.empty:
         generar_mapa_municipios(df_filtrado_por_patron)
+
+    print(f"Publicaciones descargadas: {publicaciones_descargadas}")
+    print(
+        "Publicaciones reutilizadas localmente: "
+        f"{publicaciones_reutilizadas}"
+    )
 
     tiempo_fin = time.time()
     duracion = tiempo_fin - tiempo_inicio

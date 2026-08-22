@@ -5,6 +5,7 @@ import pandas as pd
 
 from trazabilidad import (
     VERSION_EXTRACTOR,
+    comparar_versiones,
     enriquecer_historico_oposiciones,
     extraer_publicacion_id,
     necesita_reprocesamiento,
@@ -129,6 +130,45 @@ def debe_procesar_publicacion(codigo, codigos_procesados, enlace, df_publicacion
         else None
     )
     return necesita_reprocesamiento(version)
+
+
+def puede_reutilizar_publicacion(
+    publicacion_id,
+    df_publicaciones,
+    df_oposiciones,
+    version_actual=VERSION_EXTRACTOR,
+):
+    """Comprueba si el último análisis permite reutilizar los datos locales."""
+    if publicacion_id is None:
+        return False
+    publicaciones = _normalizar_columnas(df_publicaciones)
+    coincidencias = publicaciones[
+        publicaciones["Publicacion_ID"] == publicacion_id
+    ]
+    if coincidencias.empty:
+        return False
+
+    publicacion = coincidencias.iloc[-1]
+    comparacion = comparar_versiones(
+        publicacion["Version_extractor"], version_actual
+    )
+    if comparacion is None or comparacion < 0:
+        return False
+
+    estado = publicacion["Estado_analisis"]
+    try:
+        numero_coincidencias = int(publicacion["Coincidencias"])
+    except (TypeError, ValueError):
+        return False
+    if estado == "sin_coincidencias":
+        return numero_coincidencias == 0
+    if estado != "con_coincidencias" or numero_coincidencias <= 0:
+        return False
+    if comparacion > 0:
+        return True
+    if "Publicacion_ID" not in df_oposiciones.columns:
+        return False
+    return bool((df_oposiciones["Publicacion_ID"] == publicacion_id).any())
 
 
 def _normalizar_columnas(df):

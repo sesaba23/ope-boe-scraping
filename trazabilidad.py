@@ -19,6 +19,17 @@ def necesita_reprocesamiento(version_publicacion, version_actual=VERSION_EXTRACT
     return version_guardada < version_objetivo
 
 
+def comparar_versiones(version_publicacion, version_actual=VERSION_EXTRACTOR):
+    """Compara versiones enteras: -1 anterior, 0 igual, 1 posterior o None inválida."""
+    version_guardada = _convertir_version(version_publicacion)
+    version_objetivo = _convertir_version(version_actual)
+    if version_guardada is None or version_objetivo is None:
+        return None
+    return (version_guardada > version_objetivo) - (
+        version_guardada < version_objetivo
+    )
+
+
 def extraer_publicacion_id(enlace):
     """Extrae un identificador oficial del parámetro id de un enlace BOE."""
     if not isinstance(enlace, str):
