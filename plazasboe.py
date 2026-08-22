@@ -350,32 +350,34 @@ def _ejecutar_aplicacion():
                     try:
                         # La función devuelve una lista de diccionarios con las coincidencias y
                         # None si no se encuentra nada
-                        lista_diccionarios_local = coincidencias.buscar_coincidencias_local(
-                            texto_busqueda, contenido.text, titulo, fecha_boe, enlace
+                        convocatorias_extraidas = coincidencias.extraer_convocatorias_local(
+                            contenido.text, titulo, fecha_boe, enlace
                         )
-                        # Si se encuentra una coincidencia en LOCAL, se añade al diccionario
-                        if lista_diccionarios_local:
-                            coincidencias_publicacion += len(lista_diccionarios_local)
-                            lista_diccionarios_local = añadir_trazabilidad_convocatorias(
-                                lista_diccionarios_local, enlace, momento_analisis
+                        # Si no se encuentra ninguna convocatoria LOCAL, buscar en ESTADO
+                        if not convocatorias_extraidas:
+                            convocatorias_extraidas = (
+                                coincidencias.extraer_convocatorias_estatal(
+                                    contenido.text, titulo, fecha_boe, enlace
+                                )
                             )
-                            lista_diccionarios_puestos.extend(lista_diccionarios_local)
-                            for diccionario in lista_diccionarios_local:
+                        coincidencias_publicacion += len(convocatorias_extraidas)
+                        convocatorias_extraidas = añadir_trazabilidad_convocatorias(
+                            convocatorias_extraidas, enlace, momento_analisis
+                        )
+                        convocatorias_filtradas = (
+                            coincidencias.filtrar_convocatorias_por_texto(
+                                convocatorias_extraidas, texto_busqueda
+                            )
+                        )
+                        lista_diccionarios_puestos.extend(convocatorias_filtradas)
+                        for diccionario in convocatorias_filtradas:
+                            if diccionario.get("Administración") == "--":
+                                tqdm.write(
+                                    f"Convocatoria del Estado encontrada: {diccionario["Puesto"]}"
+                                )
+                            else:
                                 tqdm.write(
                                     f"{diccionario["Num_plazas"]} x {diccionario["Puesto"]} en {diccionario["Administración"]}"
-                                )
-                        else:  # Si no, busca en ESTADO
-                            diccionario_estado = coincidencias.buscar_coincidencias_estado(
-                                texto_busqueda, contenido.text, titulo, fecha_boe, enlace
-                            )
-                            if diccionario_estado:
-                                coincidencias_publicacion += 1
-                                diccionario_estado = añadir_trazabilidad_convocatorias(
-                                    [diccionario_estado], enlace, momento_analisis
-                                )[0]
-                                lista_diccionarios_puestos.append(diccionario_estado)
-                                tqdm.write(
-                                    f"Convocatoria del Estado encontrada: {diccionario_estado["Puesto"]}"
                                 )
 
                     except (TypeError, ValueError) as e:

@@ -4,6 +4,9 @@ from coincidencias import (
     buscar_coincidencias_estado,
     buscar_coincidencias_local,
     convertir_en_numero,
+    extraer_convocatorias_estatal,
+    extraer_convocatorias_local,
+    filtrar_convocatorias_por_texto,
 )
 
 def test_buscar_coincidencias_completo():
@@ -160,3 +163,73 @@ def test_buscar_coincidencias_local_con_variaciones_habituales(
     assert resultado is not None
     for campo, esperado in campos_esperados.items():
         assert resultado[0][campo] == esperado
+
+
+def test_extraer_convocatorias_local_devuelve_todas_sin_texto_de_busqueda():
+    texto = (
+        "Dos plazas de Ingeniero Industrial, mediante el sistema de oposición. "
+        "Una plaza de Arquitecto Técnico, mediante el sistema de oposición. "
+        "Tres plazas de Administrativo, mediante el sistema de oposición."
+    )
+
+    resultado = extraer_convocatorias_local(
+        texto,
+        "Resolución, del Ayuntamiento de Ejemplo, referente a una convocatoria.",
+        "«BOE» núm. 1, de 2 de enero de 2025",
+        "https://www.boe.es/ejemplo",
+    )
+
+    assert [fila["Puesto"] for fila in resultado] == [
+        "Ingeniero Industrial",
+        "Arquitecto Técnico",
+        "Administrativo",
+    ]
+
+
+def test_extractor_estatal_devuelve_una_lista_homogenea():
+    encontrado = extraer_convocatorias_estatal(
+        "Se convoca proceso selectivo para cubrir dos plazas.",
+        "Resolución, en el Cuerpo de Ingenieros, referente a una convocatoria.",
+        "Metadatos sin información adicional",
+        "https://www.boe.es/ejemplo-estado",
+    )
+    vacio = extraer_convocatorias_estatal(
+        "Texto sin convocatoria", "Título sin cuerpo"
+    )
+
+    assert len(encontrado) == 1
+    assert encontrado[0]["Puesto"] == "Cuerpo de Ingenieros"
+    assert vacio == []
+
+
+def test_filtro_vacio_devuelve_copia_de_todas_las_convocatorias():
+    originales = [{"Puesto": "Ingeniero"}, {"Puesto": "Arquitecto"}]
+
+    resultado = filtrar_convocatorias_por_texto(originales, "")
+    resultado[0]["Puesto"] = "Modificado"
+
+    assert len(resultado) == 2
+    assert originales[0]["Puesto"] == "Ingeniero"
+
+
+@pytest.mark.parametrize(
+    ("busqueda", "esperados"),
+    [
+        ("ingeniero", ["Ingeniero Técnico Industrial"]),
+        ("industrial ingeniero", ["Ingeniero Técnico Industrial"]),
+        ("TECNICO", ["Ingeniero Técnico Industrial", "Arquitecto Técnico"]),
+        ("arquitecto tecnico", ["Arquitecto Técnico"]),
+    ],
+)
+def test_filtrar_convocatorias_por_palabras_mayusculas_y_tildes(
+    busqueda, esperados
+):
+    convocatorias = [
+        {"Puesto": "Ingeniero Técnico Industrial"},
+        {"Puesto": "Arquitecto Técnico"},
+        {"Puesto": "Administrativo"},
+    ]
+
+    resultado = filtrar_convocatorias_por_texto(convocatorias, busqueda)
+
+    assert [fila["Puesto"] for fila in resultado] == esperados

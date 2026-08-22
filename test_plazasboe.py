@@ -903,6 +903,66 @@ def test_reprocesamiento_sin_coincidencias_no_elimina_oposiciones(monkeypatch):
     assert publicaciones_guardadas[-1].loc[0, "Coincidencias"] == 0
 
 
+@pytest.mark.parametrize(
+    ("texto_busqueda", "puestos_esperados"),
+    [("ingeniero", ["Ingeniero Industrial"]), ("abogado", [])],
+)
+def test_publicaciones_cuenta_extraccion_completa_y_oposiciones_recibe_filtrado(
+    monkeypatch, texto_busqueda, puestos_esperados
+):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+    puestos_guardados = []
+    extraidas = [
+        {"Num_plazas": 2, "Puesto": "Ingeniero Industrial", "Administración": "Entidad"},
+        {"Num_plazas": 1, "Puesto": "Arquitecto Técnico", "Administración": "Entidad"},
+        {"Num_plazas": 3, "Puesto": "Administrativo", "Administración": "Entidad"},
+    ]
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+    )
+    monkeypatch.setattr(
+        entradas_datos,
+        "solicitar_fechas_y_validar",
+        lambda *args: (
+            texto_busqueda,
+            "09/08/2026",
+            "09/08/2026",
+            ["2026/08/09"],
+        ),
+    )
+    monkeypatch.setattr(
+        coincidencias, "buscar_coincidencias_local", lambda *args: extraidas
+    )
+
+    def combinar(diccionario_puestos, *args):
+        puestos_guardados.extend(diccionario_puestos.get("Puesto", []))
+        return pd.DataFrame(diccionario_puestos), pd.DataFrame({"Código": []})
+
+    monkeypatch.setattr(preparar_archivo_datos, "combinar_dataframes", combinar)
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    publicacion = publicaciones_guardadas[-1].iloc[0]
+    assert publicacion["Estado_analisis"] == "con_coincidencias"
+    assert publicacion["Coincidencias"] == 3
+    assert puestos_guardados == puestos_esperados
+
+
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=repetido"
 

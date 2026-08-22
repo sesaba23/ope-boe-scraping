@@ -1,6 +1,8 @@
 from mapa_plazas import buscar_municipio
 
+from copy import deepcopy
 import re
+import unicodedata
 from word2number_es import w2n
 
 
@@ -295,6 +297,55 @@ def convertir_en_numero(valor_raw):
     except (TypeError, ValueError):
         return valor_raw  # Deja la palabra si no se puede convertir
     return int(numero)
+
+
+def extraer_convocatorias_local(
+    texto_contenido, texto_titulo="", texto_fecha_boe="", enlace=""
+):
+    """Extrae todas las convocatorias locales reconocibles, sin aplicar búsquedas."""
+    return (
+        buscar_coincidencias_local(
+            "", texto_contenido, texto_titulo, texto_fecha_boe, enlace
+        )
+        or []
+    )
+
+
+def extraer_convocatorias_estatal(
+    texto_contenido, texto_titulo="", texto_fecha_boe="", enlace=""
+):
+    """Extrae una convocatoria estatal como lista homogénea, o una lista vacía."""
+    resultado = buscar_coincidencias_estado(
+        "", texto_contenido, texto_titulo, texto_fecha_boe, enlace
+    )
+    return [resultado] if resultado else []
+
+
+def filtrar_convocatorias_por_texto(convocatorias, texto_busqueda):
+    """Filtra por todas las palabras del puesto, sin alterar los resultados recibidos."""
+    resultados = deepcopy(list(convocatorias or []))
+    palabras = _normalizar_para_busqueda(texto_busqueda).split()
+    if not palabras:
+        return resultados
+    return [
+        convocatoria
+        for convocatoria in resultados
+        if all(
+            palabra
+            in _normalizar_para_busqueda(convocatoria.get("Puesto", ""))
+            for palabra in palabras
+        )
+    ]
+
+
+def _normalizar_para_busqueda(texto):
+    if texto is None:
+        return ""
+    return "".join(
+        caracter
+        for caracter in unicodedata.normalize("NFD", str(texto).casefold())
+        if unicodedata.category(caracter) != "Mn"
+    )
 
 
 """Para Pruebas de test """
