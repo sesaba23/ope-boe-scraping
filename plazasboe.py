@@ -4,7 +4,11 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 from trazabilidad import añadir_trazabilidad_convocatorias
-from publicaciones import crear_registro_publicacion, registrar_publicacion
+from publicaciones import (
+    crear_registro_publicacion,
+    debe_procesar_publicacion,
+    registrar_publicacion,
+)
 from entradas_datos import solicitar_fechas_y_validar
 from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipios
 
@@ -274,7 +278,9 @@ def _ejecutar_aplicacion():
             codigo = f"{enlace}_{codigo_busqueda}"
 
         # Comprobar si el enlace ya ha sido procesado
-        if codigo not in codigos_procesados:
+        if debe_procesar_publicacion(
+            codigo, codigos_procesados, enlace, df_publicaciones
+        ):
             page = None
             reintentos = 0
             while reintentos < MAX_REINTENTOS:

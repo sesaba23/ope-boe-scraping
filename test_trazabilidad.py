@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 
 import preparar_archivo_datos
 from trazabilidad import (
@@ -8,6 +9,7 @@ from trazabilidad import (
     añadir_trazabilidad_convocatorias,
     enriquecer_historico_oposiciones,
     extraer_publicacion_id,
+    necesita_reprocesamiento,
 )
 
 
@@ -31,6 +33,24 @@ def test_id_invalido_devuelve_nulo():
     enlace = "https://www.boe.es/diario_boe/txt.php?id=10463"
 
     assert extraer_publicacion_id(enlace) is None
+
+
+@pytest.mark.parametrize(
+    "version",
+    ["legacy", None, "", "desconocida", "0", "1.5"],
+)
+def test_version_legacy_vacia_o_invalida_necesita_reprocesamiento(version):
+    assert necesita_reprocesamiento(version, "1")
+
+
+def test_version_actual_no_necesita_reprocesamiento():
+    assert not necesita_reprocesamiento("1", "1")
+
+
+def test_version_anterior_necesita_reprocesamiento_con_comparacion_numerica():
+    assert necesita_reprocesamiento("1", "2")
+    assert necesita_reprocesamiento("2", "10")
+    assert not necesita_reprocesamiento("10", "2")
 
 
 def test_enriquece_historico_sin_modificar_columnas_ni_dataframe_original():

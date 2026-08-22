@@ -3,7 +3,12 @@ import re
 
 import pandas as pd
 
-from trazabilidad import VERSION_EXTRACTOR, enriquecer_historico_oposiciones, extraer_publicacion_id
+from trazabilidad import (
+    VERSION_EXTRACTOR,
+    enriquecer_historico_oposiciones,
+    extraer_publicacion_id,
+    necesita_reprocesamiento,
+)
 
 
 COLUMNAS_PUBLICACIONES = [
@@ -104,6 +109,26 @@ def normalizar_publicaciones(df_publicaciones):
     for registro in _normalizar_columnas(df_publicaciones).to_dict(orient="records"):
         resultado = registrar_publicacion(resultado, registro)
     return resultado
+
+
+def debe_procesar_publicacion(codigo, codigos_procesados, enlace, df_publicaciones):
+    """Combina la exclusión histórica con la versión conocida de la publicación."""
+    if codigo not in codigos_procesados:
+        return True
+    publicacion_id = extraer_publicacion_id(enlace)
+    if publicacion_id is None:
+        return False
+
+    publicaciones = _normalizar_columnas(df_publicaciones)
+    coincidencias = publicaciones[
+        publicaciones["Publicacion_ID"] == publicacion_id
+    ]
+    version = (
+        coincidencias.iloc[-1]["Version_extractor"]
+        if not coincidencias.empty
+        else None
+    )
+    return necesita_reprocesamiento(version)
 
 
 def _normalizar_columnas(df):

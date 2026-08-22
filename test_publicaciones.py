@@ -1,12 +1,16 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 from openpyxl import Workbook, load_workbook
 
 import preparar_archivo_datos
+import publicaciones
+from trazabilidad import necesita_reprocesamiento
 from publicaciones import (
     COLUMNAS_PUBLICACIONES,
     crear_registro_publicacion,
+    debe_procesar_publicacion,
     normalizar_publicaciones,
     publicaciones_desde_oposiciones,
     registrar_publicacion,
@@ -15,6 +19,54 @@ from publicaciones import (
 
 def _enlace(publicacion_id="BOE-A-2026-10463"):
     return f"https://www.boe.es/diario_boe/txt.php?id={publicacion_id}"
+
+
+def _publicaciones_con_version(version):
+    return pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Version_extractor": version,
+            }
+        ]
+    )
+
+
+def test_publicacion_no_presente_en_busquedas_se_procesa_normalmente():
+    assert debe_procesar_publicacion(
+        _enlace(), set(), _enlace(), _publicaciones_con_version("1")
+    )
+
+
+@pytest.mark.parametrize(("version", "esperado"), [("1", False), ("legacy", True)])
+def test_publicacion_procesada_depende_de_su_version(version, esperado):
+    codigo = _enlace()
+
+    assert (
+        debe_procesar_publicacion(
+            codigo, {codigo}, _enlace(), _publicaciones_con_version(version)
+        )
+        is esperado
+    )
+
+
+def test_publicacion_con_version_anterior_se_reprocesa(monkeypatch):
+    codigo = _enlace()
+    monkeypatch.setattr(
+        publicaciones,
+        "necesita_reprocesamiento",
+        lambda version: necesita_reprocesamiento(version, "2"),
+    )
+
+    assert debe_procesar_publicacion(
+        codigo, {codigo}, _enlace(), _publicaciones_con_version("1")
+    )
+
+
+def test_publicacion_sin_id_valido_mantiene_exclusion_de_busquedas():
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=no-valido"
+
+    assert not debe_procesar_publicacion(enlace, {enlace}, enlace, pd.DataFrame())
 
 
 def test_crea_registros_con_y_sin_coincidencias():

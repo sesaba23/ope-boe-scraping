@@ -10,6 +10,15 @@ COLUMNAS_TRAZABILIDAD = ["Publicacion_ID", "Version_extractor", "Fecha_analisis"
 PATRON_PUBLICACION_ID = re.compile(r"BOE-[A-Z]-\d{4}-\d+")
 
 
+def necesita_reprocesamiento(version_publicacion, version_actual=VERSION_EXTRACTOR):
+    """Indica si una publicación requiere una versión más reciente del extractor."""
+    version_guardada = _convertir_version(version_publicacion)
+    version_objetivo = _convertir_version(version_actual)
+    if version_guardada is None or version_objetivo is None:
+        return True
+    return version_guardada < version_objetivo
+
+
 def extraer_publicacion_id(enlace):
     """Extrae un identificador oficial del parámetro id de un enlace BOE."""
     if not isinstance(enlace, str):
@@ -60,3 +69,12 @@ def enriquecer_historico_oposiciones(df):
         resultado["Fecha_analisis"] = pd.Series(pd.NA, index=resultado.index, dtype="object")
 
     return resultado[columnas_originales + COLUMNAS_TRAZABILIDAD]
+
+
+def _convertir_version(version):
+    if version is None or pd.isna(version):
+        return None
+    texto = str(version).strip()
+    if re.fullmatch(r"[1-9]\d*", texto) is None:
+        return None
+    return int(texto)

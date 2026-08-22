@@ -13,6 +13,7 @@ import entradas_datos
 import impresiones
 import mapa_plazas
 import preparar_archivo_datos
+from publicaciones import debe_procesar_publicacion
 
 
 def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
@@ -769,6 +770,139 @@ def test_publicacion_con_fallo_no_se_registra(monkeypatch):
     assert publicaciones_guardadas[-1].empty
 
 
+def _publicacion_historica(version="legacy"):
+    return pd.DataFrame(
+        [
+            {
+                "Publicacion_ID": "BOE-A-2026-10463",
+                "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463",
+                "Fecha_BOE": "9 de agosto de 2026",
+                "Titulo_original": "Título histórico",
+                "Fecha_ultimo_analisis": pd.NA,
+                "Version_extractor": version,
+                "Estado_analisis": "con_coincidencias",
+                "Coincidencias": 1,
+            }
+        ]
+    )
+
+
+def test_reprocesamiento_correcto_actualiza_version_y_deja_de_ser_candidato(
+    monkeypatch,
+):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+        _publicacion_historica(),
+        [enlace],
+    )
+    monkeypatch.setattr(
+        coincidencias,
+        "buscar_coincidencias_local",
+        lambda *args: [
+            {"Num_plazas": 2, "Puesto": "Ingeniero", "Administración": "Entidad"}
+        ],
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    actualizada = publicaciones_guardadas[-1]
+    assert actualizada.loc[0, "Version_extractor"] == "1"
+    assert actualizada.loc[0, "Coincidencias"] == 1
+    assert not debe_procesar_publicacion(enlace, {enlace}, enlace, actualizada)
+
+
+def test_fallo_en_reprocesamiento_conserva_publicacion_anterior(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+    historica = _publicacion_historica()
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP("", 500)
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+        historica,
+        [enlace],
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    pd.testing.assert_frame_equal(publicaciones_guardadas[-1], historica)
+
+
+def test_reprocesamiento_sin_coincidencias_no_elimina_oposiciones(monkeypatch):
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-10463"
+    html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
+    publicaciones_guardadas = []
+    oposiciones_guardadas = []
+    oposicion_historica = pd.DataFrame(
+        [
+            {
+                "Puesto": "Ingeniero histórico",
+                "Administración": "Entidad histórica",
+                "Enlace": enlace,
+                "Latitud": 40.0,
+                "Longitud": -3.0,
+            }
+        ]
+    )
+
+    def obtener_url(url, timeout):
+        if "index.php" in url:
+            return _RespuestaHTTP(html_indice)
+        if url == enlace:
+            return _RespuestaHTTP(_html_publicacion_correcta())
+        raise AssertionError(f"URL inesperada: {url}")
+
+    _configurar_consulta_boe(
+        monkeypatch,
+        obtener_url,
+        ["2026/08/09"],
+        "09/08/2026",
+        "09/08/2026",
+        publicaciones_guardadas,
+        _publicacion_historica(),
+        [enlace],
+        oposicion_historica,
+        oposiciones_guardadas,
+    )
+
+    runpy.run_path("plazasboe.py", run_name="__main__")
+
+    assert len(oposiciones_guardadas[-1]) == 1
+    pd.testing.assert_frame_equal(
+        oposiciones_guardadas[-1][oposicion_historica.columns], oposicion_historica
+    )
+    assert publicaciones_guardadas[-1].loc[0, "Estado_analisis"] == "sin_coincidencias"
+    assert publicaciones_guardadas[-1].loc[0, "Coincidencias"] == 0
+
+
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):
     enlace = "https://www.boe.es/diario_boe/txt.php?id=repetido"
 
@@ -958,6 +1092,10 @@ def _configurar_consulta_boe(
     fecha_inicio,
     fecha_fin,
     publicaciones_guardadas=None,
+    publicaciones_iniciales=None,
+    codigos_iniciales=None,
+    oposiciones_iniciales=None,
+    oposiciones_guardadas=None,
 ):
     columnas = [
         "Num_plazas",
@@ -972,8 +1110,17 @@ def _configurar_consulta_boe(
         "Publicación",
         "Enlace",
     ]
-    oposiciones = pd.DataFrame(columns=columnas)
-    busquedas = pd.DataFrame({"Código": []})
+    oposiciones = (
+        oposiciones_iniciales
+        if oposiciones_iniciales is not None
+        else pd.DataFrame(columns=columnas)
+    )
+    busquedas = pd.DataFrame({"Código": codigos_iniciales or []})
+    publicaciones = (
+        publicaciones_iniciales
+        if publicaciones_iniciales is not None
+        else pd.DataFrame()
+    )
     log_errores = pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"])
     errores_guardados = []
 
@@ -983,6 +1130,8 @@ def _configurar_consulta_boe(
         errores_guardados.extend(df_log_errores.to_dict(orient="records"))
         if publicaciones_guardadas is not None:
             publicaciones_guardadas.append(df_publicaciones.copy(deep=True))
+        if oposiciones_guardadas is not None:
+            oposiciones_guardadas.append(df_combinado.copy(deep=True))
 
     monkeypatch.setattr(sys, "argv", ["plazasboe.py"])
     monkeypatch.setattr(
@@ -997,6 +1146,7 @@ def _configurar_consulta_boe(
             "Búsquedas": busquedas,
             "Oposiciones": oposiciones,
             "Log-errores": log_errores,
+            "Publicaciones": publicaciones,
         },
     )
     monkeypatch.setattr(
