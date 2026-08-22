@@ -7,6 +7,7 @@ from mapa_plazas import (
     buscar_municipio,
     enriquecer_filas_sin_coordenadas,
     generar_mapa_municipios,
+    normalizar_nombre_municipal,
 )
 from preparar_archivo_datos import combinar_dataframes
 
@@ -64,6 +65,96 @@ def test_buscar_municipio_normal_mantiene_el_resultado():
         "Longitud": -8.395835,
         "Habitantes": 246056,
     }
+
+
+@pytest.mark.parametrize(
+    "administracion, municipio, provincia, latitud, longitud, habitantes",
+    [
+        (
+            "Ayuntamiento de Castell d'Aro (Girona)",
+            "Castell-Platja d'Aro",
+            "Girona",
+            41.818,
+            3.067004,
+            10376,
+        ),
+        (
+            "Ayuntamiento de L'Alcora (Castellón/Castelló)",
+            "Alcora (l')",
+            "Castellón/Castelló",
+            40.07278,
+            -0.2130235,
+            11150,
+        ),
+        (
+            "Ayuntamiento de L'Eliana (Valencia/València)",
+            "Eliana (l')",
+            "Valencia/València",
+            39.56632,
+            -0.5302467,
+            16552,
+        ),
+        (
+            "Ayuntamiento de L'Espluga de Francolí (Tarragona)",
+            "Espluga de Francolí (L')",
+            "Tarragona",
+            41.39481,
+            1.09851,
+            3982,
+        ),
+        (
+            "Ayuntamiento de L'Olleria (Valencia/València)",
+            "Olleria (l')",
+            "Valencia/València",
+            38.91419,
+            -0.5494962,
+            8692,
+        ),
+        (
+            "Ayuntamiento de La Ràpita (Tarragona)",
+            "Sant Carles de la Ràpita",
+            "Tarragona",
+            40.6202,
+            0.5928925,
+            15511,
+        ),
+        (
+            "Ayuntamiento de Medina Sidonia (Cádiz)",
+            "Medina-Sidonia",
+            "Cádiz",
+            36.46768,
+            -5.927894,
+            11683,
+        ),
+    ],
+)
+def test_ayuntamientos_auditados_resuelven_con_su_provincia(
+    administracion, municipio, provincia, latitud, longitud, habitantes
+):
+    assert buscar_municipio(administracion) == {
+        "Municipio": municipio,
+        "Provincia": provincia,
+        "Latitud": latitud,
+        "Longitud": longitud,
+        "Habitantes": habitantes,
+    }
+
+
+def test_normalizacion_municipal_unifica_apostrofos_espacios_tildes_y_guiones():
+    assert normalizar_nombre_municipal("L'Alcora") == normalizar_nombre_municipal(
+        "  l’ alcóra  "
+    )
+    assert normalizar_nombre_municipal(
+        "Medina-Sidonia"
+    ) == normalizar_nombre_municipal("Medina Sidonia")
+
+
+def test_ayuntamiento_con_provincia_incompatible_no_se_geolocaliza():
+    assert buscar_municipio("Ayuntamiento de L'Alcora (Valencia/València)") is None
+
+
+def test_alias_no_se_aplica_por_coincidencia_parcial():
+    assert buscar_municipio("Ayuntamiento de Castell XYZ (Girona)") is None
 
 
 def test_parentesis_sin_municipio_continua_con_la_busqueda_normal():

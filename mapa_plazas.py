@@ -13,6 +13,8 @@ from functools import lru_cache
 from html import escape
 from urllib.parse import urlparse
 
+from alias_municipios import ALIAS_MUNICIPIOS
+
 
 @lru_cache(maxsize=1)
 def _cargar_catalogo_municipios():
@@ -76,6 +78,31 @@ def buscar_municipio(administracion):
                 f"({candidato})", ""
             )
 
+    if not municipios_encontrados:
+        nombre_ayuntamiento = extraer_nombre_municipal(
+            administracion_sin_parentesis
+        )
+        if nombre_ayuntamiento:
+            provincia_parentetica = next(
+                (
+                    candidato
+                    for candidato in candidatos_parentesis
+                    if normaliza(candidato) in provincias
+                ),
+                None,
+            )
+            fila_ayuntamiento = _buscar_fila_municipal_exacta(
+                df, nombre_ayuntamiento, provincia_parentetica
+            )
+            if fila_ayuntamiento is not None:
+                return _datos_municipio(fila_ayuntamiento)
+            if (
+                provincia_parentetica is not None
+                and _buscar_fila_municipal_exacta(df, nombre_ayuntamiento)
+                is not None
+            ):
+                return None
+
     # Buscar coincidencias exactas (case-insensitive) en el texto de administración
     if not municipios_encontrados:
         municipios_encontrados = [
@@ -136,16 +163,100 @@ def buscar_municipio(administracion):
             )
             fila = df[mask]
         if not fila.empty:
-            fila = fila.iloc[0]
-            return {
-                "Municipio": fila["Población"],
-                "Provincia": fila["Provincia"],
-                "Latitud": float(fila["Latitud"].replace(",", ".")),
-                "Longitud": float(fila["Longitud"].replace(",", ".")),
-                "Habitantes": int(fila["Habitantes"]),
-            }
+            return _datos_municipio(fila.iloc[0])
         else:
             return None
+
+
+def extraer_nombre_municipal(administracion):
+    """Extrae de forma controlada el nombre tras un prefijo municipal conocido."""
+    texto = re.sub(r"\s*\([^()]*\)\s*$", "", str(administracion)).strip()
+    patrones = [
+        (r"^ayuntamiento\s+de\s+la\s+", "La "),
+        (r"^ayuntamiento\s+del\s+", "El "),
+        (r"^ayuntamiento\s+de\s+", ""),
+        (r"^ajuntament\s+de\s+la\s+", "La "),
+        (r"^ajuntament\s+del\s+", "El "),
+        (r"^ajuntament\s+de\s+", ""),
+        (r"^ajuntament\s+d\s*['’‘`´]\s*", ""),
+    ]
+    for patron, articulo in patrones:
+        if re.search(patron, texto, flags=re.IGNORECASE):
+            nombre = re.sub(
+                patron, "", texto, count=1, flags=re.IGNORECASE
+            ).strip()
+            return f"{articulo}{nombre}"
+    return None
+
+
+def normalizar_nombre_municipal(texto):
+    """Genera una clave ortográfica exacta sin alterar el nombre almacenado."""
+    texto = unicodedata.normalize("NFKC", str(texto))
+    texto = re.sub(r"[’‘`´]", "'", texto)
+    texto = "".join(
+        caracter
+        for caracter in unicodedata.normalize("NFD", texto)
+        if unicodedata.category(caracter) != "Mn"
+    ).casefold()
+    texto = re.sub(r"\s*'\s*", "'", texto)
+    texto = re.sub(r"[-‐‑‒–—]+", " ", texto)
+    return re.sub(r"\s+", " ", texto).strip()
+
+
+def _variantes_nombre_catalogo(nombre):
+    nombre = str(nombre).strip()
+    variantes = [nombre]
+    if "/" in nombre:
+        izquierda, derecha = nombre.split("/", 1)
+        variantes.extend(
+            [
+                f"{derecha.strip()}/{izquierda.strip()}",
+                izquierda.strip(),
+                derecha.strip(),
+            ]
+        )
+    if "(" in nombre and ")" in nombre:
+        base = nombre[: nombre.index("(")].strip()
+        articulo = nombre[nombre.index("(") + 1 : nombre.index(")")].strip()
+        separador = "" if articulo.endswith(("'", "’")) else " "
+        variantes.append(f"{articulo}{separador}{base}")
+    return variantes
+
+
+def _buscar_fila_municipal_exacta(df, nombre, provincia=None):
+    clave = normalizar_nombre_municipal(nombre)
+    alias_normalizados = {
+        normalizar_nombre_municipal(origen): destino
+        for origen, destino in ALIAS_MUNICIPIOS.items()
+    }
+    destino_alias = alias_normalizados.get(clave)
+    clave_buscada = normalizar_nombre_municipal(destino_alias or nombre)
+    coincidencias = df[
+        df["Población"].map(
+            lambda poblacion: clave_buscada
+            in {
+                normalizar_nombre_municipal(variante)
+                for variante in _variantes_nombre_catalogo(poblacion)
+            }
+        )
+    ]
+    if provincia is not None:
+        clave_provincia = normalizar_nombre_municipal(provincia)
+        coincidencias = coincidencias[
+            coincidencias["Provincia"].map(normalizar_nombre_municipal)
+            == clave_provincia
+        ]
+    return coincidencias.iloc[0] if not coincidencias.empty else None
+
+
+def _datos_municipio(fila):
+    return {
+        "Municipio": fila["Población"],
+        "Provincia": fila["Provincia"],
+        "Latitud": float(str(fila["Latitud"]).replace(",", ".")),
+        "Longitud": float(str(fila["Longitud"]).replace(",", ".")),
+        "Habitantes": int(fila["Habitantes"]),
+    }
 
 
 def enriquecer_filas_sin_coordenadas(df):
