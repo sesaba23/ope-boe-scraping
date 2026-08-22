@@ -19,6 +19,7 @@ import requests
 from bs4 import BeautifulSoup, ParserRejectedMarkup
 from urllib.parse import parse_qs, urljoin, urlparse
 import sys  # Importar sys para manejar argumentos de línea de comandos
+import argparse
 from colorama import Fore
 import pandas as pd
 import time
@@ -587,12 +588,65 @@ def _ejecutar_aplicacion():
 
 
 def main():
+    if "--reprocesar-legacy" in sys.argv[1:]:
+        _main_reprocesamiento_legacy(sys.argv[1:])
+        return
     try:
         with preparar_archivo_datos.bloqueo_excel():
             _ejecutar_aplicacion()
     except preparar_archivo_datos.ExcelBloqueadoError as error:
         print(f"\n{Fore.RED}❌ {error}{Fore.RESET}")
         sys.exit(1)
+
+
+def _main_reprocesamiento_legacy(argumentos):
+    from reprocesamiento_legacy import (
+        calcular_integridad_excel,
+        ejecutar_dry_run,
+        guardar_informe_auditoria,
+        imprimir_informe,
+    )
+
+    parser = argparse.ArgumentParser(description="Reprocesamiento controlado legacy")
+    parser.add_argument("--reprocesar-legacy", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--limite", type=int)
+    parser.add_argument("--desde")
+    parser.add_argument("--hasta")
+    parser.add_argument("--publicacion")
+    opciones = parser.parse_args(argumentos)
+    if not opciones.dry_run:
+        parser.error(
+            "la escritura del reprocesamiento legacy todavía no está implementada; "
+            "use --dry-run"
+        )
+    try:
+        integridad_antes = calcular_integridad_excel()
+        detalles, resumen = ejecutar_dry_run(
+            desde=opciones.desde,
+            hasta=opciones.hasta,
+            publicacion_id=opciones.publicacion,
+            limite=opciones.limite,
+        )
+        integridad_despues = calcular_integridad_excel()
+        ruta_informe = guardar_informe_auditoria(
+            detalles,
+            resumen,
+            {
+                "desde": opciones.desde,
+                "hasta": opciones.hasta,
+                "publicacion": opciones.publicacion,
+                "limite": opciones.limite,
+            },
+            integridad_antes,
+            integridad_despues,
+        )
+    except (FileNotFoundError, ValueError) as error:
+        parser.error(str(error))
+    imprimir_informe(detalles, resumen)
+    if integridad_antes != integridad_despues:
+        print(f"{Fore.RED}⚠ El Excel cambió durante el dry-run.{Fore.RESET}")
+    print(f"\nInforme de auditoría:\n{ruta_informe}")
 
 
 if __name__ == "__main__":
