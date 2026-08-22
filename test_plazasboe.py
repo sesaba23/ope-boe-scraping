@@ -905,7 +905,11 @@ def test_reprocesamiento_sin_coincidencias_no_elimina_oposiciones(monkeypatch):
 
 @pytest.mark.parametrize(
     ("texto_busqueda", "puestos_esperados"),
-    [("ingeniero", ["Ingeniero Industrial"]), ("abogado", [])],
+    [
+        ("ingeniero", ["Ingeniero Industrial"]),
+        ("abogado", []),
+        ("", ["Ingeniero Industrial", "Arquitecto Técnico", "Administrativo"]),
+    ],
 )
 def test_publicaciones_cuenta_extraccion_completa_y_oposiciones_recibe_filtrado(
     monkeypatch, texto_busqueda, puestos_esperados
@@ -914,10 +918,14 @@ def test_publicaciones_cuenta_extraccion_completa_y_oposiciones_recibe_filtrado(
     html_indice = '<a href="/diario_boe/txt.php?id=BOE-A-2026-10463">Publicación</a>'
     publicaciones_guardadas = []
     puestos_guardados = []
+    trazabilidad_guardada = []
+    resultados_mostrados = {}
+    resultados_mapa = []
+    filtrado_real = preparar_archivo_datos.prepara_data_frame_mostrar_resultados
     extraidas = [
-        {"Num_plazas": 2, "Puesto": "Ingeniero Industrial", "Administración": "Entidad"},
-        {"Num_plazas": 1, "Puesto": "Arquitecto Técnico", "Administración": "Entidad"},
-        {"Num_plazas": 3, "Puesto": "Administrativo", "Administración": "Entidad"},
+        {"Num_plazas": 2, "Puesto": "Ingeniero Industrial", "Administración": "Entidad", "Fecha_boe": "9 de agosto de 2026"},
+        {"Num_plazas": 1, "Puesto": "Arquitecto Técnico", "Administración": "Entidad", "Fecha_boe": "9 de agosto de 2026"},
+        {"Num_plazas": 3, "Puesto": "Administrativo", "Administración": "Entidad", "Fecha_boe": "9 de agosto de 2026"},
     ]
 
     def obtener_url(url, timeout):
@@ -951,16 +959,50 @@ def test_publicaciones_cuenta_extraccion_completa_y_oposiciones_recibe_filtrado(
 
     def combinar(diccionario_puestos, *args):
         puestos_guardados.extend(diccionario_puestos.get("Puesto", []))
+        trazabilidad_guardada.extend(
+            zip(
+                diccionario_puestos.get("Publicacion_ID", []),
+                diccionario_puestos.get("Version_extractor", []),
+                diccionario_puestos.get("Fecha_analisis", []),
+            )
+        )
         return pd.DataFrame(diccionario_puestos), pd.DataFrame({"Código": []})
 
     monkeypatch.setattr(preparar_archivo_datos, "combinar_dataframes", combinar)
+    monkeypatch.setattr(
+        preparar_archivo_datos,
+        "prepara_data_frame_mostrar_resultados",
+        filtrado_real,
+    )
+    monkeypatch.setattr(
+        impresiones,
+        "imprimir_diccionario_puestos",
+        lambda diccionario, **kwargs: resultados_mostrados.update(diccionario),
+    )
+    monkeypatch.setattr(
+        mapa_plazas,
+        "generar_mapa_municipios",
+        lambda dataframe: resultados_mapa.append(dataframe.copy(deep=True)),
+    )
 
     runpy.run_path("plazasboe.py", run_name="__main__")
 
     publicacion = publicaciones_guardadas[-1].iloc[0]
     assert publicacion["Estado_analisis"] == "con_coincidencias"
     assert publicacion["Coincidencias"] == 3
-    assert puestos_guardados == puestos_esperados
+    assert puestos_guardados == [
+        "Ingeniero Industrial",
+        "Arquitecto Técnico",
+        "Administrativo",
+    ]
+    assert {fila[0] for fila in trazabilidad_guardada} == {"BOE-A-2026-10463"}
+    assert {fila[1] for fila in trazabilidad_guardada} == {"1"}
+    assert len({fila[2] for fila in trazabilidad_guardada}) == 1
+    assert resultados_mostrados.get("Puesto", []) == puestos_esperados
+    if puestos_esperados:
+        assert resultados_mapa[-1]["Puesto"].tolist() == puestos_esperados
+    else:
+        assert resultados_mapa == []
 
 
 def test_codigo_del_historico_se_reconoce_como_procesado(monkeypatch):

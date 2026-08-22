@@ -15,9 +15,7 @@ import tempfile
 import pandas as pd
 from openpyxl import Workbook
 import os, sys
-import re
 from colorama import Fore
-import warnings
 
 # Para formatear el Excel
 from openpyxl import load_workbook
@@ -204,6 +202,8 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
     Dataframe, incluidas las fechas de inicio y fin
     """
     if not df_combinado.empty:
+        from coincidencias import filtrar_convocatorias_por_texto
+
         df_combinado = df_combinado.copy()
 
         # Convertir la columna "Fecha" del DataFrame al formato datetime en una nueva columna
@@ -231,23 +231,14 @@ def prepara_data_frame_mostrar_resultados(texto_busqueda, df_combinado, lista_fe
             by="Fecha_dt", ascending=True
         )
 
-        palabras_busqueda = texto_busqueda.split()
-        patron_regex = (
-            rf"(?=.*"
-            + r")(?=.*".join([re.escape(clave) for clave in palabras_busqueda])
-            + r")"
-        )
-
-        with warnings.catch_warnings():
-            # Desactivar warnings relacionados con expresiones regulares
-            warnings.filterwarnings("ignore", message="This pattern is interpreted")
-
-            # Filtrar el DataFrame por coincidencias en la columna "Puesto"
-            df_filtrado_por_patron = df_combinado_filtrado_por_fecha[
-                df_combinado_filtrado_por_fecha["Puesto"].str.contains(
-                    patron_regex, flags=re.IGNORECASE, na=False
+        mascara = df_combinado_filtrado_por_fecha["Puesto"].map(
+            lambda puesto: bool(
+                filtrar_convocatorias_por_texto(
+                    [{"Puesto": puesto}], texto_busqueda
                 )
-            ]
+            )
+        )
+        df_filtrado_por_patron = df_combinado_filtrado_por_fecha[mascara]
 
         return df_filtrado_por_patron
     else:

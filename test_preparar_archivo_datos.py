@@ -3,9 +3,9 @@ import warnings
 import pandas as pd
 import pytest
 from openpyxl import Workbook, load_workbook
-from pandas.core.strings.accessor import StringMethods
 
 import preparar_archivo_datos
+import coincidencias
 from fechas import convertir_fecha
 from preparar_archivo_datos import combinar_dataframes, prepara_data_frame_mostrar_resultados
 
@@ -178,7 +178,9 @@ def test_warnings_se_restauran_si_el_filtrado_lanza_excepcion(monkeypatch):
     def lanzar_error(*args, **kwargs):
         raise RuntimeError("Error simulado durante el filtrado")
 
-    monkeypatch.setattr(StringMethods, "contains", lanzar_error)
+    monkeypatch.setattr(
+        coincidencias, "filtrar_convocatorias_por_texto", lanzar_error
+    )
 
     with pytest.raises(RuntimeError, match="Error simulado durante el filtrado"):
         prepara_data_frame_mostrar_resultados(

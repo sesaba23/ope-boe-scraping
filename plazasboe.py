@@ -369,7 +369,7 @@ def _ejecutar_aplicacion():
                                 convocatorias_extraidas, texto_busqueda
                             )
                         )
-                        lista_diccionarios_puestos.extend(convocatorias_filtradas)
+                        lista_diccionarios_puestos.extend(convocatorias_extraidas)
                         for diccionario in convocatorias_filtradas:
                             if diccionario.get("Administración") == "--":
                                 tqdm.write(
