@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Estadísticas de convocatorias BOE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estadisticas.css') }}">
+</head>
+<body>
+    <header class="cabecera">
+        <div class="contenedor">
+            <p class="etiqueta">Histórico local del BOE</p>
+            <h1>Estadísticas de convocatorias BOE</h1>
+            <p class="introduccion">Consulta plazas publicadas, puestos y administraciones a partir del histórico local.</p>
+        </div>
+    </header>
+
+    <main class="contenedor contenido-principal">
+        <section class="panel panel-filtros" aria-labelledby="titulo-filtros">
+            <div class="encabezado-panel">
+                <div>
+                    <p class="etiqueta">Consulta</p>
+                    <h2 id="titulo-filtros">Filtros</h2>
+                </div>
+                <p class="ayuda-filtros">Todos los campos son opcionales</p>
+            </div>
+
+            <form id="formulario-filtros">
+                <div class="campo">
+                    <label for="fecha_inicio">Fecha inicial</label>
+                    <input id="fecha_inicio" name="fecha_inicio" type="date">
+                </div>
+                <div class="campo">
+                    <label for="fecha_final">Fecha final</label>
+                    <input id="fecha_final" name="fecha_final" type="date">
+                </div>
+                <div class="campo campo-puesto">
+                    <label for="puesto">Puesto</label>
+                    <input id="puesto" name="puesto" type="search" placeholder="Ej. ingeniero industrial">
+                </div>
+                <div class="campo">
+                    <label for="provincia">Provincia</label>
+                    <select id="provincia" name="provincia">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="sistema">Sistema selectivo</label>
+                    <select id="sistema" name="sistema">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="turno">Turno</label>
+                    <select id="turno" name="turno">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="acciones">
+                    <button id="aplicar-filtros" class="boton boton-principal" type="submit">Aplicar filtros</button>
+                    <button id="limpiar-filtros" class="boton boton-secundario" type="button">Limpiar filtros</button>
+                </div>
+            </form>
+        </section>
+
+        <div id="estado-consulta" class="estado estado-cargando" role="status" aria-live="polite">Cargando datos...</div>
+        <div id="aviso-calidad" class="aviso-calidad" role="status" hidden></div>
+
+        <section id="dashboard" aria-label="Resultados estadísticos" hidden>
+            <div class="metadatos-consulta">
+                <span id="ultima-actualizacion">Última actualización: —</span>
+                <span id="filtros-activos">Sin filtros aplicados</span>
+            </div>
+
+            <div class="rejilla-indicadores">
+                <article class="panel indicador">
+                    <p>Plazas publicadas</p>
+                    <strong id="total-plazas">0</strong>
+                </article>
+                <article class="panel indicador">
+                    <p>Registros encontrados</p>
+                    <strong id="total-registros">0</strong>
+                </article>
+                <article class="panel indicador">
+                    <p>Provincias</p>
+                    <strong id="total-provincias">0</strong>
+                </article>
+                <article class="panel indicador">
+                    <p>Administraciones</p>
+                    <strong id="total-administraciones">0</strong>
+                </article>
+            </div>
+
+            <div id="sin-resultados" class="estado estado-vacio" role="status" hidden>
+                La consulta no contiene resultados para los filtros seleccionados.
+            </div>
+
+            <div id="graficos" class="rejilla-graficos">
+                <article class="panel panel-grafico">
+                    <h2>Top 5 administraciones con más plazas</h2>
+                    <div id="ranking-administraciones" class="ranking" aria-live="polite"></div>
+                </article>
+                <article class="panel panel-grafico">
+                    <h2>Top 10 puestos con más plazas</h2>
+                    <div id="ranking-puestos" class="ranking" aria-live="polite"></div>
+                </article>
+                <article class="panel panel-grafico panel-ancho panel-provincias">
+                    <h2>Plazas por provincia</h2>
+                    <div class="desplazamiento-grafico">
+                        <div class="contenedor-grafico grafico-provincias">
+                            <canvas id="grafico-provincias"></canvas>
+                        </div>
+                    </div>
+                </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Evolución mensual de plazas</h2>
+                    <div class="contenedor-grafico grafico-evolucion">
+                        <canvas id="grafico-evolucion"></canvas>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+</body>
+</html>
