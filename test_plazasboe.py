@@ -28,6 +28,20 @@ def _mantener_html_en_pruebas_anteriores(monkeypatch):
         monkeypatch.setattr(
             sys.modules["plazasboe"], "obtener_sumario_api", api_no_disponible
         )
+    # Los fixtures históricos expresan su estado inicial como DataFrames. Este
+    # adaptador conserva esa interfaz sin que producción vuelva a abrir Excel.
+    monkeypatch.setattr(plazasboe.base_datos, "validar_base_principal", lambda *a, **k: {})
+    monkeypatch.setattr(
+        plazasboe.base_datos, "cargar_para_lectura",
+        lambda *a, **k: preparar_archivo_datos.preparar_excel_y_dataframes(),
+    )
+    def persistir_simulado(_, lote, *args, **kwargs):
+        preparar_archivo_datos.guardar_excel(
+            lote["Oposiciones"], lote["Búsquedas"], lote["Log-errores"],
+            lote["Publicaciones"], lote["Cobertura"],
+        )
+        return {"cambios": False, "backup": None, "data_version": 1}
+    monkeypatch.setattr(plazasboe.base_datos, "persistir_lote_principal", persistir_simulado)
 
 
 def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
@@ -91,7 +105,7 @@ def test_cancelar_fechas_no_prepara_excel(monkeypatch):
         plazasboe._ejecutar_aplicacion()
 
 
-def test_main_aborta_con_mensaje_si_excel_esta_bloqueado(monkeypatch, capsys):
+def test_main_no_usa_bloqueo_excel(monkeypatch):
     class ContextoBloqueado:
         def __enter__(self):
             raise preparar_archivo_datos.ExcelBloqueadoError(
@@ -105,11 +119,41 @@ def test_main_aborta_con_mensaje_si_excel_esta_bloqueado(monkeypatch, capsys):
         preparar_archivo_datos, "bloqueo_excel", lambda: ContextoBloqueado()
     )
 
-    with pytest.raises(SystemExit) as salida:
-        plazasboe.main()
+    llamadas = []
+    monkeypatch.setattr(plazasboe, "_ejecutar_aplicacion", lambda: llamadas.append(True))
+    plazasboe.main()
+    assert llamadas == [True]
 
-    assert salida.value.code == 1
-    assert "Ya hay otra ejecución" in capsys.readouterr().out
+
+def test_opcion_sqlite_espejo_es_explicita_y_no_forma_parte_del_texto(monkeypatch):
+    llamadas = []
+
+    class Bloqueo:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    monkeypatch.setattr(sys, "argv", ["plazasboe.py", "--sqlite-espejo", "auxiliar"])
+    monkeypatch.setattr(preparar_archivo_datos, "bloqueo_excel", lambda: Bloqueo())
+    monkeypatch.setattr(plazasboe, "_ejecutar_aplicacion", lambda **kw: llamadas.append((kw, sys.argv[:])))
+    plazasboe.main()
+    assert llamadas == [({}, ["plazasboe.py", "auxiliar"])]
+
+
+def test_flags_sqlite_se_combinan_y_no_forman_parte_del_texto(monkeypatch):
+    llamadas = []
+
+    class Bloqueo:
+        def __enter__(self): return self
+        def __exit__(self, *args): return False
+
+    monkeypatch.setattr(sys, "argv", ["plazasboe.py", "--sqlite-espejo", "--sqlite-lectura", "auxiliar"])
+    monkeypatch.setattr(preparar_archivo_datos, "bloqueo_excel", lambda: Bloqueo())
+    monkeypatch.setattr(plazasboe, "_ejecutar_aplicacion", lambda **kw: llamadas.append((kw, sys.argv[:])))
+    plazasboe.main()
+    assert llamadas == [({}, ["plazasboe.py", "auxiliar"])]
 
 
 def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypatch):

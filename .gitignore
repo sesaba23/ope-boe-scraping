@@ -1,5 +1,27 @@
+
+# Python
 __pycache__/
 *.pyc
+
+# Entornos
 .env
 .venv/
+
+# Archivos locales
 todo.md
+
+# Base de datos operativa
+datos/*.db
+datos/*.db-shm
+datos/*.db-wal
+
+# Backups generados
+backups/sqlite/
+backups/exportacion_excel/
+
+# Exportaciones generadas
+BOE-oposiciones_exportado.xlsx
+
+# Informes generados por SQLite/exportación
+informes/exportacion_excel/
+informes/migracion_sqlite/

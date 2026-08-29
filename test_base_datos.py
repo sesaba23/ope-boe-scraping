@@ -1,0 +1,177 @@
+import sqlite3
+
+import pandas as pd
+import pytest
+
+import base_datos
+
+
+def test_crear_esquema_activa_claves_foraneas_y_indices(tmp_path):
+    conexion = base_datos.conectar(tmp_path / "boe.db")
+    base_datos.crear_esquema(conexion)
+    base_datos.crear_indices(conexion)
+    assert conexion.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+    tablas = {fila[0] for fila in conexion.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    assert {"publicaciones", "oposiciones", "busquedas", "cobertura", "log_errores"} <= tablas
+    indices = {fila[0] for fila in conexion.execute("SELECT name FROM sqlite_master WHERE type='index'")}
+    assert "ix_oposiciones_clave_deduplicacion" in indices
+    assert base_datos.integrity_check(conexion) == ["ok"]
+
+
+def test_fk_y_rollback_preservan_null_y_num_plazas_textual(tmp_path):
+    conexion = base_datos.conectar(tmp_path / "boe.db")
+    base_datos.crear_esquema(conexion)
+    with base_datos.transaccion(conexion):
+        conexion.execute("INSERT INTO publicaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+            "BOE-A-1", "https://x", "2026-01-01", "1 de enero de 2026", None,
+            None, "1", "con_coincidencias", 1, None, None, None, None, None, None, None,
+        ))
+        conexion.execute("""INSERT INTO oposiciones(
+            num_plazas,puesto,administracion,escala,subescala,clase,sistema,turno,
+            fecha_boe,fecha_boe_original,enlace,publicacion_id,version_extractor
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""", (
+            "la", "Auxiliar", None, "--", "--", "--", "--", "--",
+            "2026-01-01", "1 de enero de 2026", "https://x", "BOE-A-1", "1",
+        ))
+    fila = conexion.execute("SELECT num_plazas, administracion FROM oposiciones").fetchone()
+    assert fila == ("la", None)
+    with pytest.raises(sqlite3.IntegrityError):
+        with base_datos.transaccion(conexion):
+            conexion.execute("""INSERT INTO oposiciones(
+                puesto,administracion,escala,subescala,clase,sistema,turno,fecha_boe,
+                fecha_boe_original,enlace,publicacion_id,version_extractor
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""", (
+                "X", None, "--", "--", "--", "--", "--", "2026-01-01",
+                "1 de enero de 2026", "x", "inexistente", "1",
+            ))
+    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
+    assert base_datos.foreign_key_check(conexion) == []
+
+
+def _lote(publicacion_id="BOE-A-1"):
+    return {
+        "Publicaciones": pd.DataFrame([{
+            "Publicacion_ID": publicacion_id, "Enlace": "https://x", "Fecha_BOE": "2026-01-01",
+            "Titulo_original": None, "Fecha_ultimo_analisis": None, "Version_extractor": "1",
+            "Estado_analisis": "con_coincidencias", "Coincidencias": 1,
+        }]),
+        "Oposiciones": pd.DataFrame([{
+            "Num_plazas": "la", "Puesto": "Auxiliar", "Administración": None, "Escala": "--",
+            "Subescala": "--", "Clase": "--", "Sistema": "--", "Turno": "--",
+            "Fecha_boe": "20260101", "Publicación": None, "Enlace": "https://x",
+            "Municipio": None, "Provincia": None, "Latitud": None, "Longitud": None,
+            "Habitantes": None, "Publicacion_ID": publicacion_id, "Version_extractor": "1",
+            "Fecha_analisis": None,
+        }]),
+        "Búsquedas": pd.DataFrame({"Código": ["codigo"]}),
+        "Cobertura": pd.DataFrame([{"Fecha": "2026-01-01", "Estado": "consultado", "Version_extractor": "1", "Fecha_ultima_consulta": "2026-01-01 00:00:00", "Numero_publicaciones": 1}]),
+        "Log-errores": pd.DataFrame([{"Fecha": "2026-01-01 00:00:00", "Tipo de error": "x", "Enlace Web": "https://x"}]),
+    }
+
+
+def _base_con_lote(tmp_path):
+    ruta = tmp_path / "boe.db"
+    conexion = base_datos.conectar(ruta)
+    base_datos.crear_esquema(conexion)
+    base_datos.crear_indices(conexion)
+    base_datos.aplicar_lote_espejo(conexion, _lote())
+    conexion.close()
+    return ruta
+
+
+def test_espejo_es_idempotente_y_crea_backup_verificado(tmp_path):
+    ruta = _base_con_lote(tmp_path)
+    backup = base_datos.preparar_espejo(_lote(), ruta, tmp_path / "backups")
+    assert backup.exists()
+    informe = base_datos.sincronizar_espejo(_lote(), ruta)
+    assert informe["correcta"]
+    conexion = base_datos.conectar(ruta, readonly=True)
+    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
+    assert base_datos.integrity_check(conexion) == ["ok"]
+
+
+def test_espejo_hace_rollback_ante_fk_invalida_o_error_de_insercion(tmp_path, monkeypatch):
+    ruta = _base_con_lote(tmp_path)
+    lote_invalido = _lote("BOE-A-inexistente")
+    lote_invalido["Publicaciones"] = _lote()["Publicaciones"]
+    conexion = base_datos.conectar(ruta)
+    with pytest.raises(sqlite3.IntegrityError):
+        base_datos.aplicar_lote_espejo(conexion, lote_invalido)
+    assert conexion.execute("SELECT publicacion_id FROM publicaciones").fetchone()[0] == "BOE-A-1"
+    monkeypatch.setattr(base_datos, "insertar_publicaciones", lambda *args: (_ for _ in ()).throw(RuntimeError("fallo")))
+    with pytest.raises(RuntimeError):
+        base_datos.aplicar_lote_espejo(conexion, _lote())
+    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
+
+
+def test_espejo_revierte_si_falla_integrity_check_antes_del_commit(tmp_path, monkeypatch):
+    ruta = _base_con_lote(tmp_path)
+    conexion = base_datos.conectar(ruta)
+    monkeypatch.setattr(base_datos, "integrity_check", lambda _: ["error deliberado"])
+    with pytest.raises(base_datos.EspejoSQLiteError, match="invariantes"):
+        base_datos.aplicar_lote_espejo(conexion, _lote())
+    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
+
+
+def test_espejo_aborta_si_estado_previo_desincronizado_o_bloqueado(tmp_path):
+    ruta = _base_con_lote(tmp_path)
+    desincronizado = _lote()
+    desincronizado["Búsquedas"] = pd.DataFrame({"Código": ["otro"]})
+    with pytest.raises(base_datos.EspejoSQLiteError, match="resincronizar"):
+        base_datos.preparar_espejo(desincronizado, ruta, tmp_path / "backups")
+    bloqueo = base_datos.conectar(ruta)
+    bloqueo.execute("BEGIN EXCLUSIVE")
+    try:
+        otra = base_datos.conectar(ruta)
+        with pytest.raises(sqlite3.OperationalError):
+            base_datos.aplicar_lote_espejo(otra, _lote())
+    finally:
+        bloqueo.rollback()
+
+
+def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
+    ruta = _base_con_lote(tmp_path)
+    conexion = base_datos.conectar(ruta)
+    base_datos.guardar_metadata(conexion, source_excel_hash="x")
+    conexion.commit()
+    with base_datos.transaccion(conexion):
+        conexion.execute("UPDATE oposiciones SET fecha_boe='2025-01-01' WHERE oposicion_id=1")
+        conexion.execute("UPDATE publicaciones SET fecha_boe='2025-01-01' WHERE publicacion_id='BOE-A-1'")
+    datos = base_datos.cargar_para_lectura(ruta, "2026/01/01", "2026/01/01")
+    assert datos["Oposiciones"].empty
+    assert len(datos["Búsquedas"]) == len(datos["Log-errores"]) == 1
+    datos = base_datos.cargar_para_lectura(ruta, "2025-01-01", "2025-01-01")
+    fila = datos["Oposiciones"].iloc[0]
+    assert fila["Num_plazas"] == "la"
+    assert pd.isna(fila["Administración"])
+    assert fila["Fecha_boe"] == "20260101"
+
+
+def test_comprobacion_ligera_de_origen(tmp_path):
+    excel = tmp_path / "origen.xlsx"
+    excel.write_bytes(b"excel")
+    ruta = _base_con_lote(tmp_path)
+    conexion = base_datos.conectar(ruta)
+    base_datos.guardar_metadata(conexion, source_excel_hash=base_datos.hash_archivo(excel))
+    conexion.commit(); conexion.close()
+    base_datos.comprobar_origen_sqlite(ruta, excel)
+    excel.write_bytes(b"otro")
+    with pytest.raises(base_datos.EspejoSQLiteError, match="desincronizada"):
+        base_datos.comprobar_origen_sqlite(ruta, excel)
+
+
+def test_lote_historico_ignora_timestamps_de_auditoria(tmp_path):
+    ruta = _base_con_lote(tmp_path)
+    conexion = base_datos.conectar(ruta)
+    base_datos.guardar_metadata(conexion, data_version=1)
+    conexion.commit(); conexion.close()
+    datos = base_datos.cargar_historico_para_aplicar(ruta, "2026-01-01", "2026-01-01")
+    publicaciones = datos["Publicaciones"].copy()
+    cobertura = datos["Cobertura"].copy()
+    publicaciones.loc[:, "Fecha_ultimo_analisis"] = "2026-02-01 00:00:00"
+    cobertura.loc[:, "Fecha_ultima_consulta"] = "2026-02-01 00:00:00"
+    resultado = base_datos.persistir_lote_historico(
+        ruta, datos["Oposiciones"].iloc[0:0], publicaciones, cobertura,
+        "2026-01-01", "2026-01-01", tmp_path / "backups")
+    assert resultado == {"cambios": False, "backup": None, "data_version": 1}
+    assert not (tmp_path / "backups").exists()

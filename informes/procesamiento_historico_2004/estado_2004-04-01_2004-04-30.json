@@ -6,7 +6,7 @@
   "fecha_fin": "2004-04-30",
   "version_extractor_historico": "historico-experimental-2004",
   "fecha_creacion": "2026-08-24T17:03:57",
-  "fecha_ultima_actualizacion": "2026-08-24T17:27:23",
+  "fecha_ultima_actualizacion": "2026-08-29T18:15:17",
   "indices_diarios": [
     {
       "fecha": "2004/04/01",
@@ -11321,11 +11321,13 @@
   "publicaciones_pendientes": 0,
   "publicaciones_error": 0,
   "publicaciones_indeterminadas": 144,
-  "fecha_escritura": "2026-08-24T17:27:23",
-  "backup": "backups/procesamiento_historico/BOE-oposiciones_pre_commit_2004-04_20260824_172710.xlsx",
+  "fecha_escritura": "2026-08-29T18:15:17",
+  "backup": "backups/sqlite/boe_20260829_181515_009853.db",
   "sha256_excel_antes": "16c89d96cb49a836f5b0d1c96f1dcbf63c7d9633fb26ac0108747f34e36b7eda",
   "sha256_excel_despues": "129feef64476cf1b9b03fa8201456b1f44a39b7c8887ec16545630e0a81609d4",
-  "filas_oposiciones_anadidas": 247,
+  "filas_oposiciones_anadidas": 115,
   "publicaciones_actualizadas": 601,
-  "indeterminadas_registradas": 144
+  "indeterminadas_registradas": 415,
+  "sqlite_escrito": true,
+  "data_version": 3
 }

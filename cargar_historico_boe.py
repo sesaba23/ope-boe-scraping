@@ -1,10 +1,8 @@
-"""Cargador histórico reanudable: BOE -> JSON y commit explícito al Excel."""
+"""Cargador histórico reanudable: BOE -> JSON y commit explícito a SQLite."""
 import argparse
 from datetime import datetime, timedelta
-import hashlib
 import json
 from pathlib import Path
-import shutil
 import sys
 import time
 
@@ -20,8 +18,9 @@ from mapa_plazas import enriquecer_filas_sin_coordenadas
 from resolucion_administraciones import VERSION_RESOLUCION, resolver_administracion
 from resolucion_administraciones import enriquecer_convocatorias
 import pandas as pd
-import preparar_archivo_datos
 from tqdm import tqdm
+
+import base_datos
 
 
 VERSION_EXTRACTOR_HISTORICO = "historico-experimental-2004"
@@ -140,11 +139,6 @@ def ejecutar(desde,hasta,limite=None,reintentar=False,directorio="informes/proce
         progreso.actualizar()
     progreso.cerrar()
     return estado,ruta
-
-
-def _firma(ruta):
-    ruta = Path(ruta)
-    return {"sha256": hashlib.sha256(ruta.read_bytes()).hexdigest(), "tamano": ruta.stat().st_size}
 
 
 def _validar_estado_aplicable(estado, desde, hasta):
@@ -267,9 +261,9 @@ def _semantica_publicacion_historica(ficha):
     raise ValueError(f"No se puede migrar clasificación {clasificacion!r}")
 
 
-def plan_correccion_publicaciones_2004(excel="BOE-oposiciones.xlsx", directorio="informes/procesamiento_historico_2004"):
-    """Calcula, sin escribir, la migración semántica de Publicaciones de 2004."""
-    datos = preparar_archivo_datos.preparar_excel_y_dataframes(excel)
+def plan_correccion_publicaciones_2004(ruta_bd="datos/boe.db", directorio="informes/procesamiento_historico_2004"):
+    """Calcula, sin escribir, la corrección semántica SQLite de 2004."""
+    datos = base_datos.cargar_historico_para_aplicar(ruta_bd, "2004-01-01", "2004-12-31")
     publicaciones = datos["Publicaciones"].copy(deep=True)
     oposiciones = datos["Oposiciones"]
     estados = _estados_historicos_2004(directorio)
@@ -299,34 +293,28 @@ def plan_correccion_publicaciones_2004(excel="BOE-oposiciones.xlsx", directorio=
     for cambio in cambios:
         clave = f"{cambio['desde_estado']} → {cambio['a_estado']}"
         transiciones[clave] = transiciones.get(clave, 0) + 1
-    return {"datos": datos, "cambios": cambios, "origenes": origenes,
+    return {"datos": datos, "publicaciones": publicaciones, "cambios": cambios, "origenes": origenes,
             "transiciones": transiciones, "diferencias": diferencias}
 
 
-def corregir_publicaciones_2004(*, excel="BOE-oposiciones.xlsx", directorio="informes/procesamiento_historico_2004",
-                                dry_run=True, backup_directorio="backups/procesamiento_historico"):
-    """Migra solo Publicaciones 2004; el modo por defecto nunca escribe."""
-    plan = plan_correccion_publicaciones_2004(excel, directorio)
+def corregir_publicaciones_2004(*, ruta_bd="datos/boe.db", directorio="informes/procesamiento_historico_2004",
+                                dry_run=True, backup_directorio="backups/sqlite"):
+    """Corrige solo Publicaciones 2004; el modo por defecto nunca escribe."""
+    plan = plan_correccion_publicaciones_2004(ruta_bd, directorio)
     resumen = {"dry_run": dry_run, "cambios": len(plan["cambios"]), "transiciones": plan["transiciones"],
                "origenes": plan["origenes"], "diferencias": plan["diferencias"],
                "deduplicacion_legitima": sum(x["tipo"] == "DIFERENCIA_POR_DEDUPLICACION" for x in plan["diferencias"]),
                "inconsistencias_reales": sum(x["tipo"] == "INCONSISTENCIA_REAL" for x in plan["diferencias"])}
     if dry_run:
         return resumen
-    datos = plan["datos"]
-    publicaciones = datos["Publicaciones"].copy(deep=True)
+    publicaciones = plan["publicaciones"]
     for cambio in plan["cambios"]:
         publicaciones.at[cambio["indice"], "Estado_analisis"] = cambio["a_estado"]
         publicaciones.at[cambio["indice"], "Coincidencias"] = cambio["a_coincidencias"]
-    firma_antes = _firma(excel)
-    marca = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup = Path(backup_directorio) / f"BOE-oposiciones_pre_correccion_publicaciones_2004_{marca}.xlsx"
-    backup.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(excel, backup)
-    if _firma(backup) != firma_antes:
-        raise RuntimeError("El backup de corrección no coincide con el Excel origen")
-    preparar_archivo_datos.guardar_excel(datos["Oposiciones"], datos["Búsquedas"], datos["Log-errores"],
-                                         publicaciones, datos["Cobertura"], nombre_archivo=excel)
-    resumen.update({"dry_run": False, "backup": str(backup)})
+    escritura = base_datos.persistir_lote_historico(
+        ruta_bd, pd.DataFrame(columns=datos["Oposiciones"].columns), publicaciones,
+        datos["Cobertura"], "2004-01-01", "2004-12-31", backup_directorio)
+    resumen.update({"dry_run": False, **escritura})
     return resumen
 
 
@@ -355,6 +343,20 @@ def _combinar_oposiciones(df_existentes, filas):
     return combinado, antes - len(combinado)
 
 
+def _oposiciones_nuevas(df_existentes, oposiciones_finales):
+    """Obtiene del resultado deduplicado únicamente las claves no presentes."""
+    clave = [campo for campo in CLAVE_DEDUPLICACION if campo in oposiciones_finales.columns]
+    existentes = {
+        tuple("" if pd.isna(valor) else str(valor) for valor in fila)
+        for fila in df_existentes.loc[:, clave].itertuples(index=False, name=None)
+    }
+    mascara = [
+        tuple("" if pd.isna(valor) else str(valor) for valor in fila) not in existentes
+        for fila in oposiciones_finales.loc[:, clave].itertuples(index=False, name=None)
+    ]
+    return oposiciones_finales.loc[mascara].copy(deep=True)
+
+
 def _geolocalizar_nuevas(filas):
     """Reutiliza el geolocalizador existente una vez por administración idéntica."""
     nuevas = pd.DataFrame(filas)
@@ -371,9 +373,9 @@ def _geolocalizar_nuevas(filas):
     return nuevas
 
 
-def _preparar_aplicacion(estado, excel):
-    dataframes = preparar_archivo_datos.preparar_excel_y_dataframes(excel)
-    busquedas_original = dataframes["Búsquedas"].copy(deep=True)
+def _preparar_aplicacion(estado, ruta_bd):
+    dataframes = base_datos.cargar_historico_para_aplicar(
+        ruta_bd, estado["fecha_inicio"], estado["fecha_fin"])
     filas = _filas_historicas(estado)
     # La geolocalización existente se aplica solo a las filas nuevas; volver a
     # recorrer todo el histórico sería innecesario y alteraría datos previos.
@@ -388,60 +390,40 @@ def _preparar_aplicacion(estado, excel):
                "no_convocatoria": sum(x["estado"] == "NO_CONVOCATORIA" for x in estado["resultados"].values()),
                "indeterminado": indeterminadas, "cobertura": len(cobertura) - len(dataframes["Cobertura"]),
                "sin_geolocalizacion": int(sin_geo)}
-    return dataframes, oposiciones, publicaciones, cobertura, busquedas_original, resumen
+    return dataframes, oposiciones, publicaciones, cobertura, resumen
 
 
-def _nombre_backup(fecha_inicio, ahora=None):
-    """Nombra el backup con el mes de inicio del intervalo aplicado."""
-    mes = datetime.fromisoformat(fecha_inicio).strftime("%Y-%m")
-    marca = (ahora or datetime.now()).strftime("%Y%m%d_%H%M%S")
-    return f"BOE-oposiciones_pre_commit_{mes}_{marca}.xlsx"
-
-
-def _backup_excel(excel, fecha_inicio, directorio="backups/procesamiento_historico"):
-    excel = Path(excel); destino = Path(directorio) / _nombre_backup(fecha_inicio)
-    destino.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(excel, destino)
-    if _firma(destino) != _firma(excel):
-        raise RuntimeError("El backup del Excel no coincide con el origen")
-    return destino
-
-
-def aplicar(desde, hasta, *, excel="BOE-oposiciones.xlsx", directorio="informes/procesamiento_historico_2004", dry_run=False, backup_directorio="backups/procesamiento_historico"):
+def aplicar(desde, hasta, *, ruta_bd="datos/boe.db", directorio="informes/procesamiento_historico_2004", dry_run=False, backup_directorio="backups/sqlite"):
     ruta = ruta_estado(desde, hasta, directorio)
     estado = cargar_estado(ruta, desde, hasta)
-    if estado.get("estado") == "COMPLETADO":
-        return {"ya_aplicado": True, "ruta_estado": ruta}
     _validar_estado_aplicable(estado, desde, hasta)
-    dataframes, oposiciones, publicaciones, cobertura, busquedas_original, resumen = _preparar_aplicacion(estado, excel)
+    dataframes, oposiciones, publicaciones, cobertura, resumen = _preparar_aplicacion(estado, ruta_bd)
     if dry_run:
         return {"dry_run": True, "ruta_estado": ruta, **resumen}
-    firma_antes = _firma(excel); backup = _backup_excel(excel, desde, backup_directorio)
-    preparar_archivo_datos.guardar_excel(oposiciones, dataframes["Búsquedas"], dataframes["Log-errores"],
-                                         publicaciones, cobertura, nombre_archivo=excel)
-    comprobacion = preparar_archivo_datos.preparar_excel_y_dataframes(excel)
-    if not comprobacion["Búsquedas"].equals(busquedas_original):
-        raise RuntimeError("La hoja Búsquedas cambió durante el commit histórico")
-    if len(comprobacion["Publicaciones"].drop_duplicates("Publicacion_ID")) != len(comprobacion["Publicaciones"]):
-        raise RuntimeError("Publicaciones contiene identificadores duplicados")
-    estado.update({"estado": "COMPLETADO", "excel_escrito": True,
-                   "fecha_escritura": datetime.now().isoformat(timespec="seconds"), "backup": str(backup),
-                   "sha256_excel_antes": firma_antes["sha256"], "sha256_excel_despues": _firma(excel)["sha256"],
+    nuevas = _oposiciones_nuevas(dataframes["Oposiciones"], oposiciones)
+    escritura = base_datos.persistir_lote_historico(
+        ruta_bd, nuevas, publicaciones, cobertura, desde, hasta, backup_directorio)
+    if not escritura["cambios"]:
+        return {"dry_run": False, "ruta_estado": ruta, **escritura, **resumen}
+    estado.update({"estado": "COMPLETADO", "sqlite_escrito": escritura["cambios"],
+                   "fecha_escritura": datetime.now().isoformat(timespec="seconds"),
+                   "backup": escritura["backup"], "data_version": escritura["data_version"],
                    "filas_oposiciones_anadidas": resumen["filas_anadir"],
                    "publicaciones_actualizadas": len(estado["resultados"]),
                    "indeterminadas_registradas": resumen["indeterminado"]})
     guardar_estado(ruta, estado)
-    return {"dry_run": False, "ruta_estado": ruta, "backup": str(backup), **resumen}
+    return {"dry_run": False, "ruta_estado": ruta, **escritura, **resumen}
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__); p.add_argument("--desde",required=True); p.add_argument("--hasta",required=True); p.add_argument("--limite-publicaciones",type=int); p.add_argument("--reintentar-errores",action="store_true"); p.add_argument("--aplicar", action="store_true"); p.add_argument("--dry-run", action="store_true"); p.add_argument("--corregir-publicaciones-2004", action="store_true")
+    p=argparse.ArgumentParser(description=__doc__); p.add_argument("--desde",required=True); p.add_argument("--hasta",required=True); p.add_argument("--limite-publicaciones",type=int); p.add_argument("--reintentar-errores",action="store_true"); p.add_argument("--aplicar", action="store_true"); p.add_argument("--dry-run", action="store_true"); p.add_argument("--corregir-publicaciones-2004", action="store_true"); p.add_argument("--base-datos", default="datos/boe.db")
     a=p.parse_args(argv)
     if a.dry_run and not (a.aplicar or a.corregir_publicaciones_2004): p.error("--dry-run requiere --aplicar o --corregir-publicaciones-2004")
     if a.corregir_publicaciones_2004:
-        resultado = corregir_publicaciones_2004(dry_run=not a.aplicar or a.dry_run)
+        resultado = corregir_publicaciones_2004(ruta_bd=a.base_datos, dry_run=not a.aplicar or a.dry_run)
         print(json.dumps(resultado, ensure_ascii=False, indent=2, default=str)); return
     if a.aplicar:
-        resultado = aplicar(a.desde, a.hasta, dry_run=a.dry_run)
+        resultado = aplicar(a.desde, a.hasta, ruta_bd=a.base_datos, dry_run=a.dry_run)
         print(json.dumps(resultado, ensure_ascii=False, indent=2, default=str)); return
     estado,ruta=ejecutar(a.desde, a.hasta, a.limite_publicaciones, a.reintentar_errores)
     print(f"Estado: {ruta}; procesadas={estado['publicaciones_procesadas']}/{estado['publicaciones_totales']}; pendientes={estado['publicaciones_pendientes']}; errores={estado['publicaciones_error']}; indeterminadas={estado['publicaciones_indeterminadas']}")

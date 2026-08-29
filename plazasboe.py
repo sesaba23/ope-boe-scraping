@@ -3,8 +3,9 @@ import coincidencias
 import barraprogreso
 import impresiones
 import preparar_archivo_datos
+import base_datos
 from boe_api import ErrorAPIBOE, extraer_publicaciones_2b_api, obtener_sumario_api
-from cobertura import puede_reutilizar_cobertura, registrar_cobertura
+from cobertura import puede_reutilizar_cobertura, registrar_cobertura, normalizar_cobertura
 from trazabilidad import añadir_trazabilidad_convocatorias
 from trazabilidad import extraer_publicacion_id
 from publicaciones import (
@@ -272,9 +273,11 @@ def _ejecutar_aplicacion():
         texto_busqueda, fecha_actual, fechas
     )
 
-    # Inicializo el archivo donde se va guardando la información para usar como BD.
-    # Se difiere hasta validar las fechas para no abrir el Excel si la ejecución termina antes.
-    dataframes_dict = preparar_archivo_datos.preparar_excel_y_dataframes()
+    # SQLite es la fuente de verdad. La validación es ligera y no depende del XLSX.
+    base_datos.validar_base_principal("datos/boe.db")
+    dataframes_dict = base_datos.cargar_para_lectura(
+        "datos/boe.db", lista_fechas[0], lista_fechas[-1]
+    )
 
     """df_busquedas almacena el histórico de búsquedas para evitar volver a buscar en el BOE
        df_opo_guardadas almacena el histórico de oposiciones buscadas para futuras consultas"""
@@ -610,13 +613,18 @@ def _ejecutar_aplicacion():
             [df_log_errores, pd.DataFrame(errores_formateados)], ignore_index=True
         )
 
-    # Guardar los DataFrame en el archivo Excel creado al principio si está cerrado
-    preparar_archivo_datos.guardar_excel(
-        df_combinado,
-        df_busquedas_combinado,
-        df_log_errores,
-        df_publicaciones,
-        df_cobertura,
+    lote_definitivo = {
+        "Búsquedas": df_busquedas_combinado, "Oposiciones": df_combinado,
+        "Log-errores": df_log_errores, "Publicaciones": df_publicaciones,
+        "Cobertura": df_cobertura,
+    }
+    resultado_persistencia = base_datos.persistir_lote_principal(
+        "datos/boe.db", lote_definitivo, lista_fechas[0], lista_fechas[-1]
+    )
+    print(
+        "SQLITE: sin cambios" if not resultado_persistencia["cambios"] else
+        f"SQLITE: COMMIT OK (backup: {resultado_persistencia['backup']}; "
+        f"data_version: {resultado_persistencia['data_version']})"
     )
 
     print(f"Índices consultados correctamente: {estados_indices['consultado']}")
@@ -695,10 +703,13 @@ def main():
     if "--reprocesar-legacy" in sys.argv[1:]:
         _main_reprocesamiento_legacy(sys.argv[1:])
         return
+    legacy = {"--sqlite-espejo", "--sqlite-lectura"} & set(sys.argv[1:])
+    if legacy:
+        print("Aviso: --sqlite-lectura/--sqlite-espejo están deprecados; SQLite ya es el flujo normal.")
+        sys.argv = [sys.argv[0]] + [arg for arg in sys.argv[1:] if arg not in legacy]
     try:
-        with preparar_archivo_datos.bloqueo_excel():
-            _ejecutar_aplicacion()
-    except preparar_archivo_datos.ExcelBloqueadoError as error:
+        _ejecutar_aplicacion()
+    except base_datos.EspejoSQLiteError as error:
         print(f"\n{Fore.RED}❌ {error}{Fore.RESET}")
         sys.exit(1)
 

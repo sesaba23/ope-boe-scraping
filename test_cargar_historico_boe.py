@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 
 import cargar_historico_boe as cargador
+import base_datos
 from procesamiento_historico import cargar_estado, ruta_estado
 
 
@@ -200,25 +201,20 @@ def test_estado_incompatible_y_guardado_atomico_validado(tmp_path, monkeypatch):
 
 def test_cargador_no_tiene_ruta_de_escritura_excel():
     codigo = Path(cargador.__file__).read_text(encoding="utf-8")
-    for prohibido in ("ExcelWriter", "openpyxl"):
+    for prohibido in ("ExcelWriter", "openpyxl", "guardar_excel", "preparar_excel_y_dataframes"):
         assert prohibido not in codigo
-    assert "guardar_excel(" in codigo
 
 
-def _excel_temporal(tmp_path):
-    destino = tmp_path / "prueba.xlsx"
-    from publicaciones import COLUMNAS_PUBLICACIONES
-    from cobertura import COLUMNAS_COBERTURA
-    columnas_oposiciones = ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase",
-                            "Sistema", "Turno", "Fecha_boe", "Enlace", "Municipio", "Provincia",
-                            "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"]
-    with pd.ExcelWriter(destino, engine="openpyxl") as escritor:
-        pd.DataFrame(columns=["Código"]).to_excel(escritor, sheet_name="Búsquedas", index=False)
-        pd.DataFrame(columns=columnas_oposiciones).to_excel(escritor, sheet_name="Oposiciones", index=False)
-        pd.DataFrame(columns=["Fecha", "Tipo de error", "Enlace Web"]).to_excel(escritor, sheet_name="Log-errores", index=False)
-        pd.DataFrame(columns=COLUMNAS_PUBLICACIONES).to_excel(escritor, sheet_name="Publicaciones", index=False)
-        pd.DataFrame(columns=COLUMNAS_COBERTURA).to_excel(escritor, sheet_name="Cobertura", index=False)
-    return destino
+def _base_temporal(tmp_path):
+    import base_datos
+    ruta = tmp_path / "boe.db"
+    conexion = base_datos.conectar(ruta)
+    try:
+        base_datos.crear_esquema(conexion); base_datos.crear_indices(conexion)
+        base_datos.guardar_metadata(conexion, data_version=1); conexion.commit()
+    finally:
+        conexion.close()
+    return ruta
 
 
 def _estado_aplicable(tmp_path, *, indeterminado=False, error=False, pendiente=False):
@@ -250,7 +246,7 @@ def _estado_aplicable(tmp_path, *, indeterminado=False, error=False, pendiente=F
 def test_aplicar_rechaza_estado_no_final(tmp_path, opcion):
     _estado_aplicable(tmp_path, **{opcion: True})
     with pytest.raises((RuntimeError, ValueError)):
-        cargador.aplicar("2004-01-01", "2004-01-01", excel=_excel_temporal(tmp_path), directorio=tmp_path)
+        cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=_base_temporal(tmp_path), directorio=tmp_path)
 
 
 def test_validar_estado_pendiente_informa_que_esta_incompleto():
@@ -272,34 +268,50 @@ def test_validar_estado_error_bloquea_y_completo_es_valido():
 def test_dry_run_admite_indeterminado_y_no_escribe(tmp_path, monkeypatch):
     _estado_aplicable(tmp_path, indeterminado=True)
     monkeypatch.setattr(cargador, "enriquecer_filas_sin_coordenadas", lambda df: df)
-    excel = _excel_temporal(tmp_path); antes = excel.read_bytes()
-    resultado = cargador.aplicar("2004-01-01", "2004-01-01", excel=excel, directorio=tmp_path, dry_run=True)
+    ruta_bd = _base_temporal(tmp_path); antes = ruta_bd.read_bytes()
+    resultado = cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=ruta_bd, directorio=tmp_path, dry_run=True)
     assert resultado["dry_run"] and resultado["indeterminado"] == 1
-    assert resultado["convocatorias_validas"] == 1 and excel.read_bytes() == antes
+    assert resultado["convocatorias_validas"] == 1 and ruta_bd.read_bytes() == antes
     assert cargar_estado(ruta_estado("2004-01-01", "2004-01-01", tmp_path), "2004-01-01", "2004-01-01")["estado"] == "EN_PROGRESO"
 
 
-def test_aplicar_actualiza_hojas_hace_backup_e_idempotente(tmp_path, monkeypatch):
+def test_aplicar_escribe_sqlite_hace_backup_e_idempotente(tmp_path, monkeypatch):
     _estado_aplicable(tmp_path, indeterminado=True)
     monkeypatch.setattr(cargador, "enriquecer_filas_sin_coordenadas", lambda df: df)
-    excel = _excel_temporal(tmp_path); llamadas = []
-    original = preparar = cargador.preparar_archivo_datos.guardar_excel
-    monkeypatch.setattr(cargador.preparar_archivo_datos, "guardar_excel", lambda *a, **k: (llamadas.append(1), original(*a, **k))[1])
-    resultado = cargador.aplicar("2004-01-01", "2004-01-01", excel=excel, directorio=tmp_path,
+    ruta_bd = _base_temporal(tmp_path)
+    resultado = cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=ruta_bd, directorio=tmp_path,
                                  backup_directorio=tmp_path / "backups")
-    assert len(llamadas) == 1 and Path(resultado["backup"]).exists()
-    hojas = cargador.preparar_archivo_datos.preparar_excel_y_dataframes(excel)
+    assert Path(resultado["backup"]).exists() and resultado["data_version"] == 2
+    hojas = base_datos.cargar_historico_para_aplicar(ruta_bd, "2004-01-01", "2004-01-01")
     publicacion = hojas["Publicaciones"].set_index("Publicacion_ID")
     assert publicacion.loc["BOE-A-2004-1", "Estado_analisis"] == "con_coincidencias"
     assert publicacion.loc["BOE-A-2004-2", "Estado_analisis"] == "indeterminado"
     assert len(hojas["Oposiciones"][hojas["Oposiciones"]["Publicacion_ID"] == "BOE-A-2004-1"]) == 1
     assert len(hojas["Cobertura"][hojas["Cobertura"]["Fecha"] == "2004-01-01"]) == 1
-    assert cargador.aplicar("2004-01-01", "2004-01-01", excel=excel, directorio=tmp_path,
-                            backup_directorio=tmp_path / "backups")["ya_aplicado"]
-    assert len(llamadas) == 1
+    version_antes = base_datos.validar_base_principal(ruta_bd)["data_version"]
+    segundo = cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=ruta_bd, directorio=tmp_path,
+                               backup_directorio=tmp_path / "backups")
+    assert segundo["cambios"] is False and segundo["backup"] is None
+    assert base_datos.validar_base_principal(ruta_bd)["data_version"] == version_antes
 
 
-def test_aplicar_descarta_fila_parcial_y_no_completa_si_falla_guardado(tmp_path, monkeypatch):
+def test_estado_completado_legacy_se_compara_en_dry_run_sin_modificarlo(tmp_path, monkeypatch):
+    ruta = _estado_aplicable(tmp_path)
+    estado_original = cargar_estado(ruta, "2004-01-01", "2004-01-01")
+    estado_original.update({"estado": "COMPLETADO", "excel_escrito": True,
+                            "backup": "historico.xlsx", "sha256_excel_antes": "antes"})
+    from procesamiento_historico import guardar_estado
+    guardar_estado(ruta, estado_original)
+    monkeypatch.setattr(cargador, "enriquecer_filas_sin_coordenadas", lambda df: df)
+    ruta_bd = _base_temporal(tmp_path)
+    resultado = cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=ruta_bd,
+                                 directorio=tmp_path, dry_run=True)
+    assert resultado["dry_run"] is True
+    assert (resultado["convocatorias_validas"], resultado["filas_anadir"], resultado["duplicados"]) == (1, 1, 0)
+    assert cargar_estado(ruta, "2004-01-01", "2004-01-01") == estado_original
+
+
+def test_aplicar_no_completa_el_estado_si_falla_la_transaccion(tmp_path, monkeypatch):
     _estado_aplicable(tmp_path)
     monkeypatch.setattr(cargador, "enriquecer_filas_sin_coordenadas", lambda df: df)
     ruta = ruta_estado("2004-01-01", "2004-01-01", tmp_path)
@@ -307,9 +319,9 @@ def test_aplicar_descarta_fila_parcial_y_no_completa_si_falla_guardado(tmp_path,
     estado["resultados"]["BOE-A-2004-1"]["convocatorias"].append({"Puesto": "Incompleto"})
     from procesamiento_historico import guardar_estado
     guardar_estado(ruta, estado)
-    monkeypatch.setattr(cargador.preparar_archivo_datos, "guardar_excel", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("fallo")))
+    monkeypatch.setattr(cargador.base_datos, "persistir_lote_historico", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("fallo")))
     with pytest.raises(RuntimeError, match="fallo"):
-        cargador.aplicar("2004-01-01", "2004-01-01", excel=_excel_temporal(tmp_path), directorio=tmp_path,
+        cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=_base_temporal(tmp_path), directorio=tmp_path,
                          backup_directorio=tmp_path / "backups")
     assert cargar_estado(ruta, "2004-01-01", "2004-01-01")["estado"] == "EN_PROGRESO"
 
@@ -329,16 +341,6 @@ def test_geolocalizacion_reutiliza_la_funcion_existente_por_administracion(monke
     assert llamadas == [1] and filas["Latitud"].tolist() == [1.0, 1.0]
 
 
-@pytest.mark.parametrize(("inicio", "mes"), [
-    ("2004-01-01", "2004-01"),
-    ("2004-02-01", "2004-02"),
-    ("2004-03-01", "2004-03"),
-])
-def test_nombre_backup_deriva_el_mes_de_inicio_del_intervalo(inicio, mes):
-    nombre = cargador._nombre_backup(inicio)
-    assert f"pre_commit_{mes}_" in nombre
-
-
 @pytest.mark.parametrize(("clasificacion", "convocatorias", "esperado"), [
     ("CONVOCATORIA", [{"Puesto": "Auxiliar", "Num_plazas": 1}], ("con_coincidencias", 1)),
     ("CONVOCATORIA", [], ("indeterminado", 0)),
@@ -352,32 +354,27 @@ def test_semantica_historica_se_basa_en_filas_validas(clasificacion, convocatori
 
 
 def test_plan_distingue_deduplicacion_legitima_de_inconsistencia(tmp_path, monkeypatch):
-    excel = _excel_temporal(tmp_path)
-    datos = cargador.preparar_archivo_datos.preparar_excel_y_dataframes(excel)
-    datos["Publicaciones"] = pd.DataFrame([
-        {"Publicacion_ID": "BOE-A-2004-1", "Enlace": "u1", "Fecha_BOE": "2004-01-01", "Titulo_original": "",
-         "Fecha_ultimo_analisis": "", "Version_extractor": "historico-experimental-2004", "Estado_analisis": "con_coincidencias", "Coincidencias": 2},
-        {"Publicacion_ID": "BOE-A-2004-2", "Enlace": "u2", "Fecha_BOE": "2004-01-01", "Titulo_original": "",
-         "Fecha_ultimo_analisis": "", "Version_extractor": "historico-experimental-2004", "Estado_analisis": "con_coincidencias", "Coincidencias": 3},
-    ])
-    datos["Oposiciones"] = pd.DataFrame([{"Publicacion_ID": "BOE-A-2004-1"}, {"Publicacion_ID": "BOE-A-2004-2"}])
-    monkeypatch.setattr(cargador.preparar_archivo_datos, "preparar_excel_y_dataframes", lambda _: datos)
+    datos = {"Publicaciones": pd.DataFrame([
+        {"Publicacion_ID": "BOE-A-2004-1", "Enlace": "u1", "Fecha_BOE": "2004-01-01", "Titulo_original": "", "Fecha_ultimo_analisis": "", "Version_extractor": "historico-experimental-2004", "Estado_analisis": "con_coincidencias", "Coincidencias": 2},
+        {"Publicacion_ID": "BOE-A-2004-2", "Enlace": "u2", "Fecha_BOE": "2004-01-01", "Titulo_original": "", "Fecha_ultimo_analisis": "", "Version_extractor": "historico-experimental-2004", "Estado_analisis": "con_coincidencias", "Coincidencias": 3},
+    ]), "Oposiciones": pd.DataFrame([{"Publicacion_ID": "BOE-A-2004-1"}, {"Publicacion_ID": "BOE-A-2004-2"}]), "Cobertura": pd.DataFrame()}
+    monkeypatch.setattr(cargador.base_datos, "cargar_historico_para_aplicar", lambda *a: datos)
     monkeypatch.setattr(cargador, "_estados_historicos_2004", lambda _: {
         "BOE-A-2004-1": {"estado": "CONVOCATORIA", "convocatorias": [{"Puesto": "A", "Num_plazas": 1}, {"Puesto": "B", "Num_plazas": 1}]},
         "BOE-A-2004-2": {"estado": "CONVOCATORIA", "convocatorias": [{"Puesto": "A", "Num_plazas": 1}]},
     })
-    plan = cargador.plan_correccion_publicaciones_2004(excel, tmp_path)
+    plan = cargador.plan_correccion_publicaciones_2004("irrelevante", tmp_path)
     assert [x["tipo"] for x in plan["diferencias"]] == ["DIFERENCIA_POR_DEDUPLICACION", "INCONSISTENCIA_REAL"]
 
 
-def test_migracion_dry_run_no_escribe_y_no_toca_hojas(tmp_path, monkeypatch):
-    excel = _excel_temporal(tmp_path); antes = excel.read_bytes()
-    plan = {"datos": {}, "cambios": [{"desde_estado": "con_coincidencias", "a_estado": "indeterminado"}],
+def test_migracion_dry_run_no_escribe_sqlite(tmp_path, monkeypatch):
+    ruta_bd = _base_temporal(tmp_path); antes = ruta_bd.read_bytes()
+    plan = {"datos": {}, "publicaciones": pd.DataFrame(), "cambios": [{"desde_estado": "con_coincidencias", "a_estado": "indeterminado"}],
             "origenes": {"CONVOCATORIA_SIN_VALIDAS": 1}, "transiciones": {"con_coincidencias → indeterminado": 1},
             "diferencias": []}
     monkeypatch.setattr(cargador, "plan_correccion_publicaciones_2004", lambda *a, **k: plan)
-    resultado = cargador.corregir_publicaciones_2004(excel=excel, directorio=tmp_path, dry_run=True)
-    assert resultado["cambios"] == 1 and excel.read_bytes() == antes
+    resultado = cargador.corregir_publicaciones_2004(ruta_bd=ruta_bd, directorio=tmp_path, dry_run=True)
+    assert resultado["cambios"] == 1 and ruta_bd.read_bytes() == antes
 
 
 class _ProgresoPrueba:
