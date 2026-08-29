@@ -260,7 +260,20 @@ def _ejecutar_aplicacion():
     URL_BASE = "https://www.boe.es/boe/dias/"
     texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
 
-    # Inicializo el archivo donde se va guardando la información para usar como BD
+    """ Código para solicitar al usuario la fecha de inicio y fin de la búsqueda
+       y comprobar que son válidas """
+    fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
+
+    if len(sys.argv) >= 2:
+        texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
+
+    # Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
+    texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
+        texto_busqueda, fecha_actual, fechas
+    )
+
+    # Inicializo el archivo donde se va guardando la información para usar como BD.
+    # Se difiere hasta validar las fechas para no abrir el Excel si la ejecución termina antes.
     dataframes_dict = preparar_archivo_datos.preparar_excel_y_dataframes()
 
     """df_busquedas almacena el histórico de búsquedas para evitar volver a buscar en el BOE
@@ -274,18 +287,6 @@ def _ejecutar_aplicacion():
     if df_busquedas.empty:
         df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
     codigos_procesados = set(df_busquedas["Código"].dropna())
-
-    """ Código para solicitar al usuario la fecha de inicio y fin de la búsqueda
-       y comprobar que son válidas """
-    fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
-
-    if len(sys.argv) >= 2:
-        texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
-
-    # Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
-    texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
-        texto_busqueda, fecha_actual, fechas
-    )
 
     """ Código para generar la lista de URLs de los días seleccionados
        y buscar los enlaces a otros formatos (txt) """

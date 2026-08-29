@@ -46,6 +46,51 @@ def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
     assert callable(modulo.main)
 
 
+def test_solicita_fechas_antes_de_preparar_excel(monkeypatch):
+    llamadas = []
+
+    class DetenerFlujo(Exception):
+        pass
+
+    def solicitar_fechas(*args):
+        llamadas.append("solicitar_fechas")
+        return "", "01/01/2025", "01/01/2025", ["2025/01/01"]
+
+    def preparar_excel():
+        llamadas.append("preparar_excel")
+        raise DetenerFlujo
+
+    monkeypatch.setattr(plazasboe, "solicitar_fechas_y_validar", solicitar_fechas)
+    monkeypatch.setattr(
+        plazasboe.preparar_archivo_datos,
+        "preparar_excel_y_dataframes",
+        preparar_excel,
+    )
+
+    with pytest.raises(DetenerFlujo):
+        plazasboe._ejecutar_aplicacion()
+
+    assert llamadas == ["solicitar_fechas", "preparar_excel"]
+
+
+def test_cancelar_fechas_no_prepara_excel(monkeypatch):
+    def cancelar_fechas(*args):
+        raise SystemExit(0)
+
+    def preparar_excel():
+        raise AssertionError("No debe abrirse el Excel tras cancelar las fechas")
+
+    monkeypatch.setattr(plazasboe, "solicitar_fechas_y_validar", cancelar_fechas)
+    monkeypatch.setattr(
+        plazasboe.preparar_archivo_datos,
+        "preparar_excel_y_dataframes",
+        preparar_excel,
+    )
+
+    with pytest.raises(SystemExit):
+        plazasboe._ejecutar_aplicacion()
+
+
 def test_main_aborta_con_mensaje_si_excel_esta_bloqueado(monkeypatch, capsys):
     class ContextoBloqueado:
         def __enter__(self):
