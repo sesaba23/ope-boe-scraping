@@ -342,6 +342,21 @@ def test_generar_mapa_sin_columnas_de_coordenadas(monkeypatch, tmp_path):
     assert (tmp_path / "puestos_sin_coordenadas.html").exists()
 
 
+def test_generar_mapa_por_defecto_consulta_sqlite_y_no_excel(monkeypatch, tmp_path):
+    datos = pd.DataFrame([{
+        "Puesto": "Auxiliar", "Num_plazas": "la", "Administración": None,
+        "Sistema": "--", "Fecha_boe": "2025-01-01", "Enlace": "https://x",
+        "Latitud": pd.NA, "Longitud": pd.NA, "Habitantes": pd.NA,
+        "Municipio": None, "Provincia": None,
+    }])
+    llamadas = []
+    monkeypatch.setattr(mapa_plazas, "oposiciones", lambda *a, **k: llamadas.append((a, k)) or datos)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(mapa_plazas.webbrowser, "open", lambda *args: None)
+    generar_mapa_municipios()
+    assert llamadas and (tmp_path / "mapa_municipios.html").exists()
+
+
 def test_html_escapa_texto_y_no_hace_navegable_un_enlace_invalido(
     monkeypatch, tmp_path
 ):

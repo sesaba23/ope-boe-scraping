@@ -5,20 +5,14 @@ import re
 
 from flask import Flask, jsonify, render_template, request
 
-from estadisticas import (
-    ErrorLecturaOposiciones,
-    calcular_estadisticas,
-    filtrar_datos,
-    leer_oposiciones,
-    normalizar_datos,
-    obtener_opciones_filtros,
-)
+from consultas_boe import ErrorConsultaSQLite, metadata, opciones_filtros
+from estadisticas import calcular_estadisticas_sqlite
 
 
-def crear_app(ruta_excel=None):
+def crear_app(ruta_bd=None):
     app = Flask(__name__)
-    ruta_fijada = Path(ruta_excel or Path.cwd() / "BOE-oposiciones.xlsx").expanduser()
-    app.config["RUTA_EXCEL"] = ruta_fijada.resolve()
+    ruta_fijada = Path(ruta_bd or Path.cwd() / "datos/boe.db").expanduser()
+    app.config["RUTA_BD"] = ruta_fijada.resolve()
 
     @app.get("/")
     def pagina_estadisticas():
@@ -44,31 +38,15 @@ def crear_app(ruta_excel=None):
                 400,
             )
 
-        ruta = app.config["RUTA_EXCEL"]
+        ruta = app.config["RUTA_BD"]
         try:
-            datos = leer_oposiciones(ruta)
-            datos = normalizar_datos(datos)
-            opciones = obtener_opciones_filtros(datos)
-            datos_filtrados = filtrar_datos(
-                datos,
-                fecha_inicio,
-                fecha_final,
-                puesto,
-                provincia,
-                sistema,
-                turno,
-            )
-            estadisticas = calcular_estadisticas(datos_filtrados)
-        except (FileNotFoundError, ErrorLecturaOposiciones, OSError, ValueError) as error:
+            opciones = opciones_filtros(ruta)
+            estadisticas = calcular_estadisticas_sqlite(
+                ruta, desde=fecha_inicio, hasta=fecha_final, puesto=puesto,
+                provincia=provincia, sistema=sistema, turno=turno)
+            datos_metadata = metadata(ruta)
+        except (ErrorConsultaSQLite, OSError, ValueError) as error:
             return jsonify({"error": f"No se pudieron cargar las estadísticas: {error}"}), 503
-
-        ultima_modificacion = None
-        try:
-            ultima_modificacion = datetime.fromtimestamp(
-                ruta.stat().st_mtime
-            ).astimezone().isoformat(timespec="seconds")
-        except OSError:
-            pass
 
         return jsonify(
             {
@@ -96,7 +74,7 @@ def crear_app(ruta_excel=None):
                 "calidad_datos": estadisticas["calidad_datos"],
                 "archivo": {
                     "nombre": ruta.name,
-                    "ultima_modificacion": ultima_modificacion,
+                    "ultima_modificacion": datos_metadata.get("updated_at"),
                 },
             }
         )
@@ -118,9 +96,9 @@ def _validar_fecha(valor, nombre):
 def _analizar_argumentos():
     parser = argparse.ArgumentParser(description="Dashboard estadístico del BOE")
     parser.add_argument(
-        "--excel",
-        default=Path.cwd() / "BOE-oposiciones.xlsx",
-        help="Ruta al archivo BOE-oposiciones.xlsx",
+        "--bd",
+        default=Path.cwd() / "datos/boe.db",
+        help="Ruta a datos/boe.db",
     )
     return parser.parse_args()
 
@@ -130,4 +108,4 @@ app = crear_app()
 
 if __name__ == "__main__":
     argumentos = _analizar_argumentos()
-    crear_app(argumentos.excel).run(host="127.0.0.1", port=5000, debug=False)
+    crear_app(argumentos.bd).run(host="127.0.0.1", port=5000, debug=False)

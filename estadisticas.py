@@ -7,6 +7,8 @@ import unicodedata
 import pandas as pd
 from openpyxl.utils.exceptions import InvalidFileException
 
+from consultas_boe import oposiciones
+
 
 class ErrorLecturaOposiciones(Exception):
     """Error al leer la hoja de datos estadísticos."""
@@ -56,6 +58,12 @@ def leer_oposiciones(ruta_excel):
         raise ExcelCorruptoError(
             f"No se puede leer el archivo Excel '{ruta}': archivo corrupto o no válido."
         ) from error
+
+
+def calcular_estadisticas_sqlite(ruta_bd="datos/boe.db", **filtros):
+    """Flujo productivo: obtiene la selección desde SQLite, nunca desde Excel."""
+    datos = oposiciones(ruta_bd, **filtros)
+    return calcular_estadisticas(datos)
 
 
 def normalizar_datos(df):

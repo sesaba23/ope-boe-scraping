@@ -6,14 +6,14 @@ import subprocess
 
 import pandas as pd
 import pytest
-from openpyxl import Workbook
+import base_datos
 
 import web_estadisticas
 
 
 @pytest.fixture
-def ruta_excel(tmp_path):
-    ruta = tmp_path / "estadisticas-prueba.xlsx"
+def ruta_bd(tmp_path):
+    ruta = tmp_path / "estadisticas-prueba.db"
     datos = pd.DataFrame(
         [
             {
@@ -36,14 +36,21 @@ def ruta_excel(tmp_path):
             },
         ]
     )
-    with pd.ExcelWriter(ruta, engine="openpyxl") as writer:
-        datos.to_excel(writer, sheet_name="Oposiciones", index=False)
+    conexion = base_datos.conectar(ruta)
+    base_datos.crear_esquema(conexion); base_datos.crear_indices(conexion)
+    with base_datos.transaccion(conexion):
+        for indice, fila in datos.iterrows():
+            publicacion_id = f"BOE-A-2025-{indice}"
+            fecha = f"2025-0{indice + 1}-01"
+            conexion.execute("INSERT INTO publicaciones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (publicacion_id, "https://x", fecha, fila["Fecha_boe"], "", "", "test", "con_coincidencias", 1, None, None, None, None, None, None, None))
+            conexion.execute("INSERT INTO oposiciones(num_plazas,puesto,administracion,escala,subescala,clase,sistema,turno,fecha_boe,fecha_boe_original,enlace,provincia,publicacion_id,version_extractor) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (fila["Num_plazas"], fila["Puesto"], fila["Administración"], "--", "--", "--", fila["Sistema"], fila["Turno"], fecha, fila["Fecha_boe"], "https://x", fila["Provincia"], publicacion_id, "test"))
+    base_datos.guardar_metadata(conexion, data_version=1); conexion.commit(); conexion.close()
     return ruta
 
 
 @pytest.fixture
-def cliente(ruta_excel):
-    app = web_estadisticas.crear_app(ruta_excel)
+def cliente(ruta_bd):
+    app = web_estadisticas.crear_app(ruta_bd)
     app.config["TESTING"] = True
     return app.test_client()
 
@@ -395,17 +402,15 @@ def test_api_devuelve_503_si_el_excel_esta_corrupto(tmp_path):
     assert "corrupto" in respuesta.get_json()["error"]
 
 
-def test_api_devuelve_503_si_falta_la_hoja_oposiciones(tmp_path):
-    ruta = tmp_path / "sin-oposiciones.xlsx"
-    libro = Workbook()
-    libro.active.title = "Búsquedas"
-    libro.save(ruta)
+def test_api_devuelve_503_si_la_base_es_incompatible(tmp_path):
+    ruta = tmp_path / "incompatible.db"
+    ruta.write_bytes(b"no es sqlite")
     cliente = web_estadisticas.crear_app(ruta).test_client()
 
     respuesta = cliente.get("/api/estadisticas")
 
     assert respuesta.status_code == 503
-    assert "Oposiciones" in respuesta.get_json()["error"]
+    assert "SQLite" in respuesta.get_json()["error"]
 
 
 def test_api_devuelve_cero_y_listas_vacias_si_no_hay_resultados(cliente):
@@ -425,13 +430,13 @@ def test_api_devuelve_cero_y_listas_vacias_si_no_hay_resultados(cliente):
     assert datos["evolucion_mensual"] == []
 
 
-def test_api_no_modifica_el_excel(cliente, ruta_excel):
-    contenido_antes = ruta_excel.read_bytes()
+def test_api_no_modifica_sqlite(cliente, ruta_bd):
+    contenido_antes = ruta_bd.read_bytes()
 
     respuesta = cliente.get("/api/estadisticas")
 
     assert respuesta.status_code == 200
-    assert ruta_excel.read_bytes() == contenido_antes
+    assert ruta_bd.read_bytes() == contenido_antes
 
 
 def test_importar_modulo_no_arranca_servidor(monkeypatch):

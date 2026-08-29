@@ -1,4 +1,4 @@
-from preparar_archivo_datos import preparar_excel_y_dataframes
+from consultas_boe import COLUMNAS_MAPA, oposiciones
 
 import pandas as pd
 import re
@@ -324,13 +324,11 @@ def enriquecer_filas_sin_coordenadas(df):
     return df_enriquecido
 
 
-def generar_mapa_municipios(df=None):
+def generar_mapa_municipios(df=None, ruta_bd="datos/boe.db", **filtros):
 
-    # Si no pasa un Dataframe, por defecto carga el histórico de plazas guardadas
-    # en el archivo Excel
+    # Si no pasa un DataFrame, consulta SQLite en modo explícitamente read-only.
     if df is None:
-        dataframes_dict = preparar_excel_y_dataframes()
-        df = dataframes_dict["Oposiciones"]
+        df = oposiciones(ruta_bd, columnas=COLUMNAS_MAPA, **filtros)
 
     columnas_faltantes = [
         columna
