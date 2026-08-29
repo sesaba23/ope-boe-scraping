@@ -4,7 +4,7 @@ Solo construye un catálogo JSON y calcula una propuesta en memoria. No escribe
 el libro Excel, no descarga XML y no modifica los estados del cargador.
 """
 import argparse
-from collections import Counter, defaultdict
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 import hashlib
@@ -16,7 +16,6 @@ import shutil
 import sys
 import tempfile
 import time
-from urllib.parse import urlparse
 
 import pandas as pd
 from openpyxl import load_workbook
@@ -27,12 +26,12 @@ from boe_api import extraer_publicaciones_2b_api, obtener_sumario_api
 from diagnostico_administraciones_historicas import cargar_historicos
 from diagnostico_administraciones_historicas import cargar_catalogo, crear_indice_municipios, resolver_entidad
 from resolucion_administraciones import (
-    RUTA_ALIAS_MUNICIPIOS, RUTA_PROVINCIAS, RUTA_SEDES_ADMINISTRACIONES,
     _variantes_provincia,
     cargar_alias_municipios, cargar_capitales_provinciales,
     cargar_sedes_administraciones, es_generica, extraer_administraciones_titulo,
     resolver_sedes,
 )
+from mapa_plazas import normalizar_nombre_municipal
 from fechas import convertir_fecha
 from preparar_archivo_datos import bloqueo_excel
 
@@ -252,219 +251,6 @@ def propuesta_dry_run(publicaciones, oposiciones, catalogo, stream=None):
             "propuestas_sede": sedes["propuestas"],
             "sedes": sedes["sedes"], "no_resueltas_sedes": sedes["no_resueltas"],
             "administraciones_mas_frecuentes": Counter(x["administracion_detectada"] for x in propuestas if x["confianza"] == "ALTA").most_common(30)}
-
-
-def _legacy_variantes_provincia(nombre):
-    """Variantes textuales explícitas de una provincia, sin aproximación."""
-    texto = str(nombre).strip()
-    return ({normalizar_nombre_municipal(texto), normalizar_nombre_municipal(texto.replace("/", " "))}
-            | {normalizar_nombre_municipal(x.strip()) for x in texto.split("/") if x.strip()})
-
-
-def _legacy_cargar_capitales_provinciales(ruta=RUTA_PROVINCIAS):
-    """Índice de provincias/capitales mantenido como dato, no como código."""
-    datos = pd.read_csv(ruta, sep=";", dtype=str).fillna("")
-    obligatorias = {"Provincia", "Provincia_normalizada", "Capital", "Municipio_catalogo"}
-    if not obligatorias.issubset(datos.columns):
-        raise ValueError("provincias.csv no contiene el esquema requerido")
-    indice = defaultdict(list)
-    for fila in datos.to_dict(orient="records"):
-        variantes = _legacy_variantes_provincia(fila["Provincia"]) | _legacy_variantes_provincia(fila["Provincia_normalizada"])
-        for variante in variantes:
-            indice[variante].append(fila)
-    return indice
-
-
-def _legacy_cargar_sedes_administraciones(ruta=RUTA_SEDES_ADMINISTRACIONES):
-    """Carga el catálogo explícito de sedes y lo indexa por clave exacta."""
-    datos = pd.read_csv(ruta, sep=";", dtype=str).fillna("")
-    obligatorias = {"Administracion", "Familia", "Municipio", "Provincia", "Fuente", "Confianza"}
-    if not obligatorias.issubset(datos.columns):
-        raise ValueError("sedes_administraciones.csv no contiene el esquema requerido")
-    indice = {}
-    for fila in datos.to_dict(orient="records"):
-        fuente = urlparse(fila["Fuente"])
-        if fila["Confianza"] not in {"ALTA", "MEDIA"} or fuente.scheme != "https" or not fuente.netloc:
-            raise ValueError("Cada sede requiere confianza ALTA/MEDIA y URL institucional HTTPS")
-        clave = (_clave_administracion_sede(fila["Administracion"], fila["Familia"]), fila["Familia"])
-        if clave in indice:
-            raise ValueError("sedes_administraciones.csv contiene una sede normalizada duplicada")
-        indice[clave] = fila
-    return indice
-
-
-def _legacy_cargar_alias_municipios(ruta=RUTA_ALIAS_MUNICIPIOS):
-    """Carga alias explícitos, verificables y referidos al catálogo INE."""
-    ruta = Path(ruta)
-    if not ruta.exists():
-        return {}
-    datos = pd.read_csv(ruta, sep=";", dtype=str).fillna("")
-    obligatorias = {"Alias", "Provincia", "Municipio_oficial", "Codigo_INE", "Fuente", "Confianza"}
-    if not obligatorias.issubset(datos.columns):
-        raise ValueError("alias_municipios.csv no contiene el esquema requerido")
-    catalogo = cargar_catalogo()
-    por_codigo = {str(x["Codigo_INE"]).zfill(5): x for x in catalogo.to_dict(orient="records")}
-    indice = defaultdict(list)
-    for fila in datos.to_dict(orient="records"):
-        fuente = urlparse(fila["Fuente"])
-        codigo = str(fila["Codigo_INE"]).zfill(5)
-        oficial = por_codigo.get(codigo)
-        if fila["Confianza"] != "ALTA" or fuente.scheme != "https" or not fuente.netloc:
-            raise ValueError("Cada alias requiere confianza ALTA y URL oficial HTTPS")
-        if not oficial or fila["Municipio_oficial"] != oficial["Población"]:
-            raise ValueError("Cada alias debe referir un Codigo_INE y municipio oficial válidos")
-        if fila["Provincia"] and not (_variantes_provincia(fila["Provincia"]) & _variantes_provincia(oficial["Provincia"])):
-            raise ValueError("La provincia del alias no coincide con municipios_oficial.csv")
-        indice[normalizar_nombre_municipal(fila["Alias"])].append({**fila, "_oficial": oficial})
-    return indice
-
-
-def _legacy_clave_administracion_sede(administracion, familia):
-    """Normaliza solo sufijos documentales seguros para buscar una sede."""
-    texto = re.sub(r"\s*\([^()]+\)\s*$", "", str(administracion)).strip()
-    if familia in {"CABILDO", "CONSEJO_INSULAR"}:
-        texto = texto.split(",", 1)[0].strip()
-    return normalizar_nombre_municipal(texto)
-
-
-def _legacy_resolver_sedes(propuestas, stream=None, ruta_provincias=RUTA_PROVINCIAS,
-                   ruta_sedes=RUTA_SEDES_ADMINISTRACIONES, ruta_alias=RUTA_ALIAS_MUNICIPIOS):
-    """Aplica la jerarquía municipio → capital provincial → sede catalogada."""
-    indice = crear_indice_municipios(cargar_catalogo())
-    capitales = cargar_capitales_provinciales(ruta_provincias)
-    catalogo_sedes = cargar_sedes_administraciones(ruta_sedes)
-    alias_municipios = cargar_alias_municipios(ruta_alias)
-    unicas = {(x["administracion_detectada"], x["familia"]): x for x in propuestas if x["confianza"] == "ALTA"}
-    barra = tqdm(total=len(unicas), desc="Resolviendo sedes", dynamic_ncols=True, file=stream or sys.stdout,
-                  disable=not bool(getattr(stream or sys.stdout, "isatty", lambda: False)()))
-    sedes = {}
-    def resolver_con_articulos(entidad):
-        """Solo prueba artículo inicial si la coincidencia exacta es única."""
-        municipio, provincia, metodo, confianza = resolver_entidad(entidad, indice)
-        if confianza == "ALTA":
-            return municipio, provincia, metodo, confianza
-        if confianza == "AMBIGUA":
-            # Un nombre ya ambiguo no puede resolverse añadiendo un artículo:
-            # sería una inferencia no justificada hacia otro municipio.
-            return municipio, provincia, metodo, confianza
-        candidatos = [entidad]
-        base = entidad.strip()
-        if not re.match(r"^(La|El|Los|Las)\s+", base, re.I):
-            candidatos.extend([f"La {base}", f"El {base}", f"Los {base}", f"Las {base}"])
-        resultados = [(nombre, *resolver_entidad(nombre, indice)) for nombre in candidatos]
-        validos = [x for x in resultados if x[4] == "ALTA"]
-        if len(validos) == 1:
-            nombre, municipio, provincia, metodo, confianza = validos[0]
-            return municipio, provincia, f"VARIANTE_ARTICULO_{metodo}" if nombre != entidad else metodo, confianza
-        # Los alias se consultan después de toda coincidencia oficial y sus
-        # normalizaciones exactas; nunca corrigen coincidencias ambiguas.
-        nombre, provincia_indicada = _entidad_y_provincia(entidad)
-        candidatos_alias = alias_municipios.get(normalizar_nombre_municipal(nombre), [])
-        if provincia_indicada:
-            provincias = _variantes_provincia(provincia_indicada)
-            candidatos_alias = [x for x in candidatos_alias
-                                 if _variantes_provincia(x["Provincia"]) & provincias]
-        if len(candidatos_alias) == 1:
-            alias = candidatos_alias[0]
-            oficial = alias["_oficial"]
-            return (oficial["Población"], oficial["Provincia"],
-                    f"CATALOGO_ALIAS_MUNICIPIOS_{alias['Codigo_INE']}", "ALTA")
-        return "", "", "CATALOGO_MUNICIPIOS_SIN_COINCIDENCIA", "NO_RESUELTA"
-
-    def resolver_capital_provincial(entidad):
-        provincia = entidad.split("(", 1)[0].strip()
-        candidatas = capitales.get(normalizar_nombre_municipal(provincia), [])
-        if len(candidatas) != 1:
-            return "", "", "CATALOGO_CAPITALES_PROVINCIA_SIN_COINCIDENCIA", "NO_RESUELTA"
-        capital = candidatas[0]
-        municipio, provincia_resuelta, metodo, confianza = resolver_con_articulos(
-            f"{capital['Municipio_catalogo']} ({capital['Provincia']})")
-        if confianza != "ALTA":
-            return "", "", "CATALOGO_CAPITALES_MUNICIPIO_NO_VALIDADO", "NO_RESUELTA"
-        return municipio, provincia_resuelta, f"CATALOGO_CAPITALES_PROVINCIA_{metodo}", "ALTA"
-
-    def resolver_sede_catalogada(administracion, familia):
-        clave = _clave_administracion_sede(administracion, familia)
-        sede = catalogo_sedes.get((clave, familia))
-        if not sede or sede.get("Confianza") != "ALTA":
-            return "", "", "SEDE_NO_DEDUCIDA_SIN_CATALOGO", "NO_RESUELTA"
-        municipio, provincia, metodo, confianza = resolver_con_articulos(
-            f"{sede['Municipio']} ({sede['Provincia']})")
-        if confianza != "ALTA":
-            return "", "", "CATALOGO_SEDES_MUNICIPIO_NO_VALIDADO", "NO_RESUELTA"
-        return municipio, provincia, f"CATALOGO_SEDES_VALIDADO_{metodo}", "ALTA"
-
-    for (administracion, familia), ejemplo in unicas.items():
-        entidad = re.sub(r"^(Ayuntamiento|Diputación Provincial|Diputación) de\s+", "", administracion, flags=re.I)
-        # Un organismo subordinado tras coma no altera la administración
-        # convocante explícita; conserva la provincia entre paréntesis previa.
-        if familia in {"AYUNTAMIENTO", "DIPUTACION", "DIPUTACION_PROVINCIAL"} and "," in entidad:
-            entidad = entidad.split(",", 1)[0].strip()
-        if familia in {"DIPUTACION", "DIPUTACION_PROVINCIAL"}:
-            # Delimitadores documentales explícitos, no una aproximación del
-            # topónimo: conservan exclusivamente la provincia convocante.
-            entidad = re.split(r"\s+referente\s+a\s+la\s+convocatoria\b", entidad, maxsplit=1, flags=re.I)[0]
-            entidad = re.split(r"-(?=[A-ZÁÉÍÓÚÜÑ])", entidad, maxsplit=1)[0].strip()
-        if familia == "AYUNTAMIENTO":
-            municipio, provincia, metodo, confianza = resolver_con_articulos(entidad)
-            metodo = f"{familia}_{metodo}"
-        elif familia in {"DIPUTACION", "DIPUTACION_PROVINCIAL"}:
-            municipio, provincia, metodo, confianza = resolver_capital_provincial(entidad)
-            # Conserva una resolución exacta previamente segura si el catálogo
-            # de capitales aún no contiene una variante provincial histórica.
-            if confianza != "ALTA":
-                municipio, provincia, metodo, confianza = resolver_con_articulos(entidad)
-                metodo = f"CATALOGO_CAPITALES_FALLBACK_{metodo}"
-            metodo = f"{familia}_{metodo}"
-        else:
-            municipio, provincia, metodo, confianza = resolver_sede_catalogada(administracion, familia)
-        sedes[(administracion, familia)] = {"Administracion": administracion, "familia": familia,
-            "Municipio": municipio, "Provincia": provincia, "metodo_resolucion": metodo, "confianza": confianza,
-            "ejemplo_titulo": ejemplo["titulo"]}
-        barra.update(1)
-    barra.close()
-    enriquecidas, no_resueltas = [], Counter()
-    for propuesta in propuestas:
-        sede = sedes.get((propuesta["administracion_detectada"], propuesta["familia"]), {})
-        resultado = {**propuesta, **{k: sede.get(k, "") for k in ("Municipio", "Provincia", "metodo_resolucion")},
-                     "confianza_sede": sede.get("confianza", "NO_RESUELTA")}
-        enriquecidas.append(resultado)
-        if resultado["confianza_sede"] != "ALTA":
-            clave = (resultado["administracion_detectada"] or "SIN_ADMINISTRACION", resultado["familia"] or "SIN_FAMILIA")
-            no_resueltas[clave] += resultado["filas_oposiciones"]
-    filas_geo = sum(x["filas_oposiciones"] for x in enriquecidas if x["confianza_sede"] == "ALTA")
-    por_metodo = Counter()
-    filas_por_metodo = Counter()
-    causas_sin_sede = Counter()
-    for propuesta in enriquecidas:
-        if propuesta["confianza_sede"] != "ALTA":
-            if not propuesta["administracion_detectada"]:
-                causa = "AMBIGUA" if propuesta["familia"] == "AMBIGUA" else "SIN_ADMINISTRACION"
-            elif "CATALOGO_CAPITALES" in propuesta["metodo_resolucion"]:
-                causa = "CAPITAL_PROVINCIAL_NO_VALIDADA"
-            elif propuesta["familia"] == "AYUNTAMIENTO":
-                causa = "MUNICIPIO_NO_RESUELTO"
-            else:
-                causa = "REQUIERE_SEDE_ADMINISTRATIVA"
-            causas_sin_sede[causa] += propuesta["filas_oposiciones"]
-            continue
-        metodo = propuesta["metodo_resolucion"]
-        clave = ("capital_provincial" if "CATALOGO_CAPITALES" in metodo else
-                 "catalogo_sedes" if "CATALOGO_SEDES" in metodo else "municipio")
-        por_metodo[clave] += 1
-        filas_por_metodo[clave] += propuesta["filas_oposiciones"]
-    return {"propuestas": enriquecidas, "sedes": list(sedes.values()), "no_resueltas": [
-        {"Administracion": a, "familia": f, "filas_oposiciones": n} for (a, f), n in no_resueltas.most_common(100)],
-        "resumen": {"administraciones_concretas_analizadas": len(unicas), "sedes_resueltas": sum(x["confianza"] == "ALTA" for x in sedes.values()),
-        "filas_completamente_geolocalizables": filas_geo, "administraciones_sin_sede": sum(x["confianza"] != "ALTA" for x in sedes.values()),
-        "filas_sin_sede": sum(no_resueltas.values()),
-        "sedes_resueltas_por_municipio": por_metodo["municipio"],
-        "sedes_resueltas_por_capital_provincial": por_metodo["capital_provincial"],
-        "sedes_resueltas_por_catalogo_sedes": por_metodo["catalogo_sedes"],
-        "filas_resueltas_por_municipio": filas_por_metodo["municipio"],
-        "filas_resueltas_por_capital_provincial": filas_por_metodo["capital_provincial"],
-        "filas_resueltas_por_catalogo_sedes": filas_por_metodo["catalogo_sedes"],
-        "filas_sin_sede_por_causa": dict(causas_sin_sede)}}
 
 
 def analizar_alias_municipios(propuestas, total_base=1467):
