@@ -74,59 +74,15 @@ def _base_con_lote(tmp_path):
     conexion = base_datos.conectar(ruta)
     base_datos.crear_esquema(conexion)
     base_datos.crear_indices(conexion)
-    base_datos.aplicar_lote_espejo(conexion, _lote())
+    lote = _lote()
+    with base_datos.transaccion(conexion):
+        base_datos.insertar_publicaciones(conexion, lote["Publicaciones"])
+        base_datos.insertar_oposiciones(conexion, lote["Oposiciones"])
+        base_datos.actualizar_busquedas(conexion, lote["Búsquedas"])
+        base_datos.actualizar_cobertura(conexion, lote["Cobertura"])
+        base_datos.insertar_log_errores(conexion, lote["Log-errores"])
     conexion.close()
     return ruta
-
-
-def test_espejo_es_idempotente_y_crea_backup_verificado(tmp_path):
-    ruta = _base_con_lote(tmp_path)
-    backup = base_datos.preparar_espejo(_lote(), ruta, tmp_path / "backups")
-    assert backup.exists()
-    informe = base_datos.sincronizar_espejo(_lote(), ruta)
-    assert informe["correcta"]
-    conexion = base_datos.conectar(ruta, readonly=True)
-    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
-    assert base_datos.integrity_check(conexion) == ["ok"]
-
-
-def test_espejo_hace_rollback_ante_fk_invalida_o_error_de_insercion(tmp_path, monkeypatch):
-    ruta = _base_con_lote(tmp_path)
-    lote_invalido = _lote("BOE-A-inexistente")
-    lote_invalido["Publicaciones"] = _lote()["Publicaciones"]
-    conexion = base_datos.conectar(ruta)
-    with pytest.raises(sqlite3.IntegrityError):
-        base_datos.aplicar_lote_espejo(conexion, lote_invalido)
-    assert conexion.execute("SELECT publicacion_id FROM publicaciones").fetchone()[0] == "BOE-A-1"
-    monkeypatch.setattr(base_datos, "insertar_publicaciones", lambda *args: (_ for _ in ()).throw(RuntimeError("fallo")))
-    with pytest.raises(RuntimeError):
-        base_datos.aplicar_lote_espejo(conexion, _lote())
-    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
-
-
-def test_espejo_revierte_si_falla_integrity_check_antes_del_commit(tmp_path, monkeypatch):
-    ruta = _base_con_lote(tmp_path)
-    conexion = base_datos.conectar(ruta)
-    monkeypatch.setattr(base_datos, "integrity_check", lambda _: ["error deliberado"])
-    with pytest.raises(base_datos.EspejoSQLiteError, match="invariantes"):
-        base_datos.aplicar_lote_espejo(conexion, _lote())
-    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 1
-
-
-def test_espejo_aborta_si_estado_previo_desincronizado_o_bloqueado(tmp_path):
-    ruta = _base_con_lote(tmp_path)
-    desincronizado = _lote()
-    desincronizado["Búsquedas"] = pd.DataFrame({"Código": ["otro"]})
-    with pytest.raises(base_datos.EspejoSQLiteError, match="resincronizar"):
-        base_datos.preparar_espejo(desincronizado, ruta, tmp_path / "backups")
-    bloqueo = base_datos.conectar(ruta)
-    bloqueo.execute("BEGIN EXCLUSIVE")
-    try:
-        otra = base_datos.conectar(ruta)
-        with pytest.raises(sqlite3.OperationalError):
-            base_datos.aplicar_lote_espejo(otra, _lote())
-    finally:
-        bloqueo.rollback()
 
 
 def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
@@ -145,19 +101,6 @@ def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
     assert fila["Num_plazas"] == "la"
     assert pd.isna(fila["Administración"])
     assert fila["Fecha_boe"] == "20260101"
-
-
-def test_comprobacion_ligera_de_origen(tmp_path):
-    excel = tmp_path / "origen.xlsx"
-    excel.write_bytes(b"excel")
-    ruta = _base_con_lote(tmp_path)
-    conexion = base_datos.conectar(ruta)
-    base_datos.guardar_metadata(conexion, source_excel_hash=base_datos.hash_archivo(excel))
-    conexion.commit(); conexion.close()
-    base_datos.comprobar_origen_sqlite(ruta, excel)
-    excel.write_bytes(b"otro")
-    with pytest.raises(base_datos.EspejoSQLiteError, match="desincronizada"):
-        base_datos.comprobar_origen_sqlite(ruta, excel)
 
 
 def test_lote_historico_ignora_timestamps_de_auditoria(tmp_path):

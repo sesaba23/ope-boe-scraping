@@ -1,13 +1,9 @@
 import pandas as pd
 import pytest
-from openpyxl import Workbook
 
 from estadisticas import (
-    ExcelCorruptoError,
-    HojaOposicionesAusenteError,
     calcular_estadisticas,
     filtrar_datos,
-    leer_oposiciones,
     normalizar_datos,
     obtener_opciones_filtros,
 )
@@ -46,49 +42,6 @@ def _datos():
             },
         ]
     )
-
-
-def test_leer_oposiciones_lee_exclusivamente_la_hoja_requerida(tmp_path):
-    ruta = tmp_path / "datos.xlsx"
-    esperado = pd.DataFrame({"Puesto": ["Ingeniero"], "Num_plazas": [4]})
-    with pd.ExcelWriter(ruta, engine="openpyxl") as writer:
-        esperado.to_excel(writer, sheet_name="Oposiciones", index=False)
-        pd.DataFrame({"Código": ["secreto"]}).to_excel(
-            writer, sheet_name="Búsquedas", index=False
-        )
-    contenido_antes = ruta.read_bytes()
-
-    resultado = leer_oposiciones(ruta)
-
-    pd.testing.assert_frame_equal(resultado, esperado)
-    assert ruta.read_bytes() == contenido_antes
-
-
-def test_leer_oposiciones_no_crea_archivo_inexistente(tmp_path):
-    ruta = tmp_path / "inexistente.xlsx"
-
-    with pytest.raises(FileNotFoundError, match="No existe el archivo Excel"):
-        leer_oposiciones(ruta)
-
-    assert not ruta.exists()
-
-
-def test_leer_oposiciones_detecta_excel_corrupto(tmp_path):
-    ruta = tmp_path / "corrupto.xlsx"
-    ruta.write_bytes(b"esto no es un archivo Excel")
-
-    with pytest.raises(ExcelCorruptoError, match="corrupto o no válido"):
-        leer_oposiciones(ruta)
-
-
-def test_leer_oposiciones_detecta_hoja_ausente(tmp_path):
-    ruta = tmp_path / "sin-oposiciones.xlsx"
-    libro = Workbook()
-    libro.active.title = "Búsquedas"
-    libro.save(ruta)
-
-    with pytest.raises(HojaOposicionesAusenteError, match="no contiene la hoja"):
-        leer_oposiciones(ruta)
 
 
 def test_normalizar_datos_convierte_fechas_y_plazas_sin_modificar_original():

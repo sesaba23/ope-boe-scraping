@@ -1,25 +1,9 @@
-from io import BytesIO
-from pathlib import Path
-from zipfile import BadZipFile
 import re
 import unicodedata
 
 import pandas as pd
-from openpyxl.utils.exceptions import InvalidFileException
 
 from consultas_boe import oposiciones
-
-
-class ErrorLecturaOposiciones(Exception):
-    """Error al leer la hoja de datos estadísticos."""
-
-
-class ExcelCorruptoError(ErrorLecturaOposiciones):
-    """El archivo indicado no es un libro Excel válido."""
-
-
-class HojaOposicionesAusenteError(ErrorLecturaOposiciones):
-    """El libro no contiene la hoja Oposiciones."""
 
 
 MESES = {
@@ -36,28 +20,6 @@ MESES = {
     "noviembre": "11",
     "diciembre": "12",
 }
-
-
-def leer_oposiciones(ruta_excel):
-    """Lee una instantánea en memoria de la hoja Oposiciones."""
-    ruta = Path(ruta_excel)
-    if not ruta.is_file():
-        raise FileNotFoundError(f"No existe el archivo Excel: {ruta}")
-
-    contenido = ruta.read_bytes()
-    try:
-        with pd.ExcelFile(BytesIO(contenido), engine="openpyxl") as libro:
-            if "Oposiciones" not in libro.sheet_names:
-                raise HojaOposicionesAusenteError(
-                    "El archivo Excel no contiene la hoja 'Oposiciones'."
-                )
-            return libro.parse("Oposiciones")
-    except HojaOposicionesAusenteError:
-        raise
-    except (BadZipFile, InvalidFileException, OSError, ValueError) as error:
-        raise ExcelCorruptoError(
-            f"No se puede leer el archivo Excel '{ruta}': archivo corrupto o no válido."
-        ) from error
 
 
 def calcular_estadisticas_sqlite(ruta_bd="datos/boe.db", **filtros):

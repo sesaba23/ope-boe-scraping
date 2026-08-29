@@ -125,37 +125,6 @@ def test_main_no_usa_bloqueo_excel(monkeypatch):
     assert llamadas == [True]
 
 
-def test_opcion_sqlite_espejo_es_explicita_y_no_forma_parte_del_texto(monkeypatch):
-    llamadas = []
-
-    class Bloqueo:
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *args):
-            return False
-
-    monkeypatch.setattr(sys, "argv", ["plazasboe.py", "--sqlite-espejo", "auxiliar"])
-    monkeypatch.setattr(preparar_archivo_datos, "bloqueo_excel", lambda: Bloqueo())
-    monkeypatch.setattr(plazasboe, "_ejecutar_aplicacion", lambda **kw: llamadas.append((kw, sys.argv[:])))
-    plazasboe.main()
-    assert llamadas == [({}, ["plazasboe.py", "auxiliar"])]
-
-
-def test_flags_sqlite_se_combinan_y_no_forman_parte_del_texto(monkeypatch):
-    llamadas = []
-
-    class Bloqueo:
-        def __enter__(self): return self
-        def __exit__(self, *args): return False
-
-    monkeypatch.setattr(sys, "argv", ["plazasboe.py", "--sqlite-espejo", "--sqlite-lectura", "auxiliar"])
-    monkeypatch.setattr(preparar_archivo_datos, "bloqueo_excel", lambda: Bloqueo())
-    monkeypatch.setattr(plazasboe, "_ejecutar_aplicacion", lambda **kw: llamadas.append((kw, sys.argv[:])))
-    plazasboe.main()
-    assert llamadas == [({}, ["plazasboe.py", "auxiliar"])]
-
-
 def test_no_reutiliza_respuesta_anterior_si_un_enlace_agota_reintentos(monkeypatch):
     enlace_correcto = "https://www.boe.es/diario_boe/txt.php?id=uno"
     enlace_fallido = "https://www.boe.es/diario_boe/txt.php?id=dos"

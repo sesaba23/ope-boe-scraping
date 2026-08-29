@@ -1,6 +1,6 @@
 # 📰 Web Scraping del BOE para Oposiciones Públicas
 
-Este proyecto realiza **web scraping** del Boletín Oficial del Estado (BOE) para extraer información sobre oposiciones y otros datos relevantes. Los resultados se almacenan en un archivo Excel y se pueden filtrar por fechas y patrones de búsqueda.
+Este proyecto realiza **web scraping** del Boletín Oficial del Estado (BOE) para extraer información sobre oposiciones y otros datos relevantes. SQLite (`datos/boe.db`) es la fuente de verdad; los resultados se pueden filtrar por fechas y patrones de búsqueda.
 ---
 
 ## 🎯 ¿Para quién es útil este proyecto?
@@ -79,13 +79,19 @@ python plazasboe.py ingeniero industrial
 
 La aplicación solicita las fechas en formato `dd/mm/aaaa`. Si no se proporciona un puesto, también lo solicita de forma interactiva.
 
-### Archivos generados
+### Persistencia y archivos generados
 
-Los archivos de salida se crean en el directorio desde el que se ejecuta la aplicación:
+El scraper y el cargador histórico escriben en `datos/boe.db`. Las estadísticas,
+el servidor web y el mapa leen esa base en modo solo lectura.
 
-- `BOE-oposiciones.xlsx`: histórico de búsquedas, convocatorias y errores.
+- `datos/boe.db`: fuente de verdad SQLite.
 - `mapa_municipios.html`: mapa de las convocatorias con coordenadas.
 - `puestos_sin_coordenadas.html`: convocatorias que no pudieron localizarse geográficamente.
+
+Excel queda limitado a dos operaciones explícitas:
+
+- `python migrar_excel_sqlite.py --excel BOE-oposiciones.xlsx`: importa un Excel histórico a SQLite.
+- `python exportar_excel.py --bd datos/boe.db --salida BOE-oposiciones_exportado.xlsx`: exporta SQLite a XLSX.
 
 Para ejecutar las pruebas:
 

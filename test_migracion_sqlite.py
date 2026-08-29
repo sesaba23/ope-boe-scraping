@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 import base_datos
+import exportar_excel
 import migrar_excel_sqlite as migracion
 
 
@@ -82,3 +83,40 @@ def test_fingerprint_detecta_diferencia(tmp_path):
 def test_normalizar_fechas():
     assert migracion.normalizar_fecha("20260102") == "2026-01-02"
     assert migracion.normalizar_fecha("2 de enero de 2026") == "2026-01-02"
+
+
+def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    origen = tmp_path / "historico.xlsx"
+    destino = tmp_path / "datos" / "boe.db"
+    salida = tmp_path / "exportado.xlsx"
+    _crear_excel(origen)
+
+    migracion.migrar(origen, destino, progreso=False)
+    conexion = base_datos.conectar(destino, readonly=True)
+    try:
+        metadata = dict(conexion.execute("SELECT clave, valor FROM metadata"))
+        tablas = {
+            fila[0]
+            for fila in conexion.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        }
+        assert metadata["schema_version"] == "2"
+        assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
+        assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas
+        assert base_datos.integrity_check(conexion) == ["ok"]
+        assert base_datos.foreign_key_check(conexion) == []
+    finally:
+        conexion.close()
+
+    informe = exportar_excel.exportar(destino, salida)
+    hojas = pd.read_excel(salida, sheet_name=None, dtype={"Num_plazas": str})
+    assert informe["correcta"]
+    assert list(hojas) == list(exportar_excel.CONTRATOS)
+    assert hojas["Oposiciones"].columns.tolist() == list(
+        exportar_excel.CONTRATOS["Oposiciones"][1]
+    )
+    assert hojas["Oposiciones"].loc[0, "Num_plazas"] == "la"
+    assert pd.isna(hojas["Oposiciones"].loc[0, "Administración"])
+    assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "20260101"

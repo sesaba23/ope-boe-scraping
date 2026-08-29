@@ -364,14 +364,12 @@ def _ejecutar_aplicacion():
     # Lista para almacenar los Diccionarios de los puestos encontrados temporalmente
     lista_diccionarios_puestos = []
 
-    # Diccionario de listas donde se van almacenando los puestos encontrados hasta
-    #   que se crea el DataFrame con el que se trabaja para guardar los resultados
-    #   en el archivo Excel
+    # Diccionario de listas donde se almacenan los puestos encontrados hasta
+    # crear el DataFrame que se persistirá en SQLite.
     diccionario_puestos = {}
 
-    # Diccionario de listas donde se guarda un código único para cada búsqueda
-    #   para evitar volver a buscar en el BOE
-    #   y así evitar duplicados en el archivo Excel
+    # Diccionario de listas donde se guarda un código único para cada búsqueda,
+    # para evitar volver a buscar en el BOE y duplicar registros en SQLite.
     #   El código está formado por:
     # el enlace de cada boe a las opososiciones si la búsqueda es sin argumentos, y
     # el enlace+textobusqueda si se pasa un argumento.
@@ -593,8 +591,7 @@ def _ejecutar_aplicacion():
         }
         # print(diccionario_puestos)
 
-    # Tratar los diccionarios que hemos creado para mezclarlos con los dataframes
-    #   obtenidos del archivo Excel
+    # Mezclar los resultados con los DataFrames cargados desde SQLite.
     df_combinado, df_busquedas_combinado = preparar_archivo_datos.combinar_dataframes(
         diccionario_puestos, diccionario_busquedas, df_opo_guardadas, df_busquedas
     )
@@ -703,10 +700,6 @@ def main():
     if "--reprocesar-legacy" in sys.argv[1:]:
         _main_reprocesamiento_legacy(sys.argv[1:])
         return
-    legacy = {"--sqlite-espejo", "--sqlite-lectura"} & set(sys.argv[1:])
-    if legacy:
-        print("Aviso: --sqlite-lectura/--sqlite-espejo están deprecados; SQLite ya es el flujo normal.")
-        sys.argv = [sys.argv[0]] + [arg for arg in sys.argv[1:] if arg not in legacy]
     try:
         _ejecutar_aplicacion()
     except base_datos.EspejoSQLiteError as error:

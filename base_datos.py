@@ -1,8 +1,4 @@
-"""Primitivas SQLite para la migración inicial de BOE-oposiciones.
-
-Este módulo no es usado todavía por plazasboe.py.  Centraliza el esquema y
-las comprobaciones para que la importación desde Excel sea transaccional.
-"""
+"""Persistencia SQLite productiva y soporte para la migración inicial."""
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -190,14 +186,6 @@ def validar_base_principal(ruta_bd):
     return filas
 
 
-def comprobar_origen_sqlite(ruta_bd, ruta_excel):
-    """Compatibilidad del Paso 4: valida explícitamente la procedencia Excel."""
-    filas = validar_base_principal(ruta_bd)
-    origen = filas.get("migration_source_hash")
-    if origen and origen != hash_archivo(ruta_excel):
-        raise EspejoSQLiteError("SQLite está desincronizada. Ejecute migrar_excel_sqlite.py.")
-
-
 def _iso_rango(fecha):
     texto = str(fecha).replace("/", "-")
     if len(texto) == 10 and texto[4] == "-":
@@ -317,79 +305,6 @@ def insertar_log_errores(conexion, df):
         "INSERT INTO log_errores(fecha,tipo_error,enlace_web) VALUES (?,?,?)",
         filas(df, ["Fecha", "Tipo de error", "Enlace Web"]),
     )
-
-
-def _vaciar_espejo(conexion):
-    # Las filas de entrada son el lote final ya calculado por Excel. Reemplazar
-    # cada tabla dentro de la misma transacción garantiza equivalencia exacta;
-    # oposicion_id/error_id son identificadores técnicos no exportados.
-    for tabla in ("oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"):
-        conexion.execute(f"DELETE FROM {tabla}")
-
-
-def aplicar_lote_espejo(conexion, dataframes, *, source_excel_hash=None):
-    """Refleja el lote Excel definitivo en una única transacción SQLite."""
-    with transaccion(conexion):
-        _vaciar_espejo(conexion)
-        insertar_publicaciones(conexion, dataframes["Publicaciones"])
-        insertar_oposiciones(conexion, dataframes["Oposiciones"])
-        actualizar_busquedas(conexion, dataframes["Búsquedas"])
-        actualizar_cobertura(conexion, dataframes["Cobertura"])
-        insertar_log_errores(conexion, dataframes["Log-errores"])
-        if source_excel_hash is not None:
-            guardar_metadata(conexion, source_excel_hash=source_excel_hash)
-        if integrity_check(conexion) != ["ok"] or foreign_key_check(conexion):
-            raise EspejoSQLiteError("Las invariantes SQLite fallaron antes de COMMIT")
-
-
-def auditar_espejo(dataframes, ruta_bd):
-    """Audita DataFrames Excel contra SQLite con los fingerprints del Paso 2."""
-    from migrar_excel_sqlite import auditar
-    conexion = conectar(ruta_bd, readonly=True)
-    try:
-        return auditar(dataframes, conexion)
-    finally:
-        conexion.close()
-
-
-def preparar_espejo(dataframes, ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
-    """Exige equivalencia previa y genera un backup antes del commit Excel."""
-    try:
-        informe = auditar_espejo(dataframes, ruta_bd)
-    except Exception as error:
-        raise EspejoSQLiteError(
-            "SINCRONIZACIÓN SQLITE: ERROR al comprobar el estado previo. "
-            "Ejecute migrar_excel_sqlite.py para resincronizar."
-        ) from error
-    if not informe["correcta"] or informe["integrity_check"] != ["ok"] or informe["foreign_key_check"]:
-        raise EspejoSQLiteError(
-            "SINCRONIZACIÓN SQLITE: ERROR (estado previo distinto). "
-            "Ejecute migrar_excel_sqlite.py para resincronizar."
-        )
-    try:
-        return crear_backup(ruta_bd, directorio_backup)
-    except Exception as error:
-        raise EspejoSQLiteError("SINCRONIZACIÓN SQLITE: ERROR al crear el backup") from error
-
-
-def sincronizar_espejo(dataframes, ruta_bd="datos/boe.db", ruta_excel="BOE-oposiciones.xlsx"):
-    """Aplica y verifica el reflejo posterior al guardado exitoso de Excel."""
-    try:
-        conexion = conectar(ruta_bd)
-        try:
-            aplicar_lote_espejo(
-                conexion, dataframes, source_excel_hash=hash_archivo(ruta_excel)
-            )
-        finally:
-            conexion.close()
-        informe = auditar_espejo(dataframes, ruta_bd)
-    except EspejoSQLiteError:
-        raise
-    except Exception as error:
-        raise EspejoSQLiteError("SINCRONIZACIÓN SQLITE: ERROR durante la transacción") from error
-    if not informe["correcta"] or informe["integrity_check"] != ["ok"] or informe["foreign_key_check"]:
-        raise EspejoSQLiteError("SINCRONIZACIÓN SQLITE: ERROR (auditoría posterior fallida)")
-    return informe
 
 
 def _fingerprint_df(df, hoja):

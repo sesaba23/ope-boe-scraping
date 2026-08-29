@@ -1,8 +1,4 @@
-"""Migra BOE-oposiciones.xlsx a SQLite y audita la equivalencia.
-
-La base resultante no forma parte todavía del flujo productivo: Excel sigue
-siendo la fuente de verdad hasta una fase posterior de la migración.
-"""
+"""Importa un Excel histórico a la fuente de verdad SQLite y audita equivalencia."""
 import argparse
 from collections import Counter
 from datetime import datetime
