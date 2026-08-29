@@ -1,0 +1,181 @@
+{
+  "fecha_ejecucion": "2026-08-23 12:37:01",
+  "muestra": [
+    "BOE-A-2004-10041",
+    "BOE-A-2004-10218",
+    "BOE-A-2004-11125",
+    "BOE-A-2004-8501",
+    "BOE-A-2004-17768",
+    "BOE-A-2004-8225",
+    "BOE-A-2004-14618",
+    "BOE-A-2004-4911",
+    "BOE-A-2004-6777",
+    "BOE-A-2004-16964",
+    "BOE-A-2004-599",
+    "BOE-A-2004-6695",
+    "BOE-A-2004-10220",
+    "BOE-A-2004-603",
+    "BOE-A-2004-1938",
+    "BOE-A-2004-2476",
+    "BOE-A-2004-3113",
+    "BOE-A-2004-3826",
+    "BOE-A-2004-3891",
+    "BOE-A-2004-6696",
+    "BOE-A-2004-12789",
+    "BOE-A-2004-12790",
+    "BOE-A-2004-14961",
+    "BOE-A-2004-16452",
+    "BOE-A-2004-20342",
+    "BOE-A-2004-21227",
+    "BOE-A-2004-78",
+    "BOE-A-2004-12319",
+    "BOE-A-2004-14746",
+    "BOE-A-2004-15716"
+  ],
+  "diseno": "Herencia exclusivamente desde un candidato único del mismo grupo estructural; nunca por distancia textual, entre tablas o tras un encabezado nuevo.",
+  "metricas": {
+    "extractor_anterior": {
+      "VALIDA": 19,
+      "VALIDA_PARCIAL": 27,
+      "NO_UTILIZABLE": 3,
+      "filas_con_puesto": 23,
+      "filas_con_num_plazas": 42,
+      "filas_con_ambos": 19,
+      "publicaciones_con_alguna_valida": 16,
+      "opcionales": {
+        "Turno": 14,
+        "Sistema": 15,
+        "Escala": 10,
+        "Subescala": 9,
+        "Clase": 0
+      }
+    },
+    "segmentador": {
+      "VALIDA": 18,
+      "VALIDA_PARCIAL": 44,
+      "NO_UTILIZABLE": 6,
+      "filas_con_puesto": 22,
+      "filas_con_num_plazas": 58,
+      "filas_con_ambos": 18,
+      "publicaciones_con_alguna_valida": 9,
+      "opcionales": {
+        "Turno": 9,
+        "Sistema": 3,
+        "Escala": 8,
+        "Subescala": 6,
+        "Clase": 0
+      }
+    },
+    "segmentador_composicion": {
+      "VALIDA": 18,
+      "VALIDA_PARCIAL": 44,
+      "NO_UTILIZABLE": 6,
+      "filas_con_puesto": 22,
+      "filas_con_num_plazas": 58,
+      "filas_con_ambos": 18,
+      "publicaciones_con_alguna_valida": 9,
+      "opcionales": {
+        "Turno": 9,
+        "Sistema": 3,
+        "Escala": 8,
+        "Subescala": 6,
+        "Clase": 0
+      }
+    }
+  },
+  "procedencia": {
+    "PARRAFO": 51,
+    "TABLA": 11
+  },
+  "herencias_aceptadas": [],
+  "contextos_ambiguos_rechazados": [
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "texto": "a) Sector público: 5196 plazas de formación, pertenecientes",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "texto": "b) Sector privado: 58 plazas de formación en hospitales y",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "texto": "a) Sector público: 184 plazas de formación, que corresponden",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "texto": "a) Sector público: 31 plazas de formación, pertenecientes a",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "texto": "a) Sector público: 79 plazas de formación que corresponden",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "texto": "Armada. | General. | 31",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "texto": "Aire. | General. | 43",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "texto": "Guardia Civil. |  | 32",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "texto": "Total. | Total. | 237",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "texto": "1 | Estratigrafía y sedimentología. Investigación estratigráfica y sedimentología en cuencas cenozoicas continentales. Trabajos de cartografía geológica y síntesis cartográfica en cuencas cenozoicas continentales. | IGME (Geología y Geofísica. Tres Cantos).",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "texto": "1 | Análisis de cuencas. Estratigrafía y sedimentología de sedimentos continentales cenozoicos. Estratigrafía y sedimentología de sedimentos litorales holocenos. | IGME (Geología y Geofísica. Tres Cantos).",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "texto": "1 | Delimitación de perímetros de protección de captaciones de aguas subterráneas y caracterización hidrogeológica de medios de baja permeabilidad. | IGME (Hidrogeología y Aguas Subterráneas, Madrid).",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "texto": "1 | Evaluación y gestión de recursos hídricos. | IGME (Hidrogeología y Aguas Subterráneas, Madrid).",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "texto": "1 | Hidrogeología y geoestadística. | IGME (Secretaría General. Granada).",
+      "diagnostico": "CONTEXTO_AMBIGUO"
+    }
+  ],
+  "revision_manual_nuevas_validas": [],
+  "resultado_revision": "No se aceptó ninguna conversión parcial a válida: las candidatas fueron narrativas, reservas o jerarquías tabulares sin asociación demostrada.",
+  "reconciliador": {
+    "anterior": {
+      "TOTAL_DESGLOSADO": 1,
+      "SIN_RECONCILIACION": 29
+    },
+    "segmentado": {
+      "TOTAL_DESGLOSADO": 1,
+      "SIN_RECONCILIACION": 29
+    },
+    "compuesto": {
+      "TOTAL_DESGLOSADO": 1,
+      "SIN_RECONCILIACION": 29
+    }
+  },
+  "efecto_relaciones": "Sin mejora: no se cambiaron reglas de reconciliación y las herencias dudosas se rechazaron.",
+  "recomendacion": "Mantener como diagnóstico experimental. Antes de integrar, representar estructura de columnas/celdas y límites de sección XML."
+}

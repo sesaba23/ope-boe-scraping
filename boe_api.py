@@ -2,6 +2,7 @@
 
 from datetime import date, datetime
 import re
+import time
 from xml.etree import ElementTree
 
 import requests
@@ -9,6 +10,8 @@ import requests
 
 URL_SUMARIO = "https://www.boe.es/datosabiertos/api/boe/sumario/{fecha}"
 TIMEOUT = 10
+MAX_REINTENTOS_API = 5
+BACKOFF_API = (2, 5, 10, 20)
 ESTADOS = {"SIN_EDICION", "SIN_SECCION_2B", "CON_PUBLICACIONES", "ERROR"}
 PATRON_ID = re.compile(r"^BOE-[A-Z]-\d{4}-\d+$")
 
@@ -22,9 +25,8 @@ class ErrorAPIBOE(RuntimeError):
         self.status_http = status_http
 
 
-def obtener_sumario_api(fecha, obtener=requests.get, timeout=TIMEOUT):
-    """Obtiene y valida el sumario oficial para una fecha."""
-    fecha_api = _normalizar_fecha(fecha)
+def _obtener_sumario_api_una_vez(fecha_api, obtener, timeout):
+    """Una petición validada, sin política de reintentos."""
     url = URL_SUMARIO.format(fecha=fecha_api)
     try:
         respuesta = obtener(
@@ -80,6 +82,30 @@ def obtener_sumario_api(fecha, obtener=requests.get, timeout=TIMEOUT):
     if not isinstance(sumario, dict) or not isinstance(sumario.get("diario"), list):
         raise ErrorAPIBOE("ESTRUCTURA", "data.sumario.diario no es una lista")
     return {"estado": "OK", "fecha": fecha_api, "sumario": sumario}
+
+
+def _es_error_transitorio(error):
+    return error.tipo in {"TIMEOUT", "CONEXION", "HTTP_429"} or (
+        error.tipo == "HTTP_5XX" and error.status_http in {500, 502, 503, 504}
+    )
+
+
+def obtener_sumario_api(fecha, obtener=requests.get, timeout=TIMEOUT, *,
+                        dormir=time.sleep, informar=print):
+    """Obtiene el sumario con reintentos solo ante fallos transitorios."""
+    fecha_api = _normalizar_fecha(fecha)
+    for intento in range(1, MAX_REINTENTOS_API + 1):
+        try:
+            return _obtener_sumario_api_una_vez(fecha_api, obtener, timeout)
+        except ErrorAPIBOE as error:
+            if not _es_error_transitorio(error) or intento == MAX_REINTENTOS_API:
+                raise
+            espera = BACKOFF_API[intento - 1]
+            informar(
+                f"Error temporal API BOE ({error.tipo}). "
+                f"Reintento {intento + 1}/{MAX_REINTENTOS_API} en {espera} s..."
+            )
+            dormir(espera)
 
 
 def extraer_publicaciones_2b_api(resultado_sumario):
@@ -182,6 +208,13 @@ def _es_seccion_2b(seccion):
 def _items_departamento(departamento):
     if not isinstance(departamento, dict):
         raise ErrorAPIBOE("ESTRUCTURA", "Un departamento no es un objeto")
+    if "item" in departamento:
+        items = departamento["item"]
+        if isinstance(items, dict):
+            items = [items]
+        if not isinstance(items, list):
+            raise ErrorAPIBOE("ESTRUCTURA", "item no es objeto ni lista")
+        yield from items
     epigrafes = departamento.get("epigrafe", [])
     if isinstance(epigrafes, dict):
         epigrafes = [epigrafes]

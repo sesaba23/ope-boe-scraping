@@ -14,6 +14,7 @@ import entradas_datos
 import impresiones
 import mapa_plazas
 import preparar_archivo_datos
+import plazasboe
 from publicaciones import debe_procesar_publicacion
 
 
@@ -46,8 +47,6 @@ def test_importar_plazasboe_no_ejecuta_el_flujo_principal(monkeypatch):
 
 
 def test_main_aborta_con_mensaje_si_excel_esta_bloqueado(monkeypatch, capsys):
-    import plazasboe
-
     class ContextoBloqueado:
         def __enter__(self):
             raise preparar_archivo_datos.ExcelBloqueadoError(
@@ -2057,3 +2056,9 @@ def test_publicacion_api_se_descarga_y_registra_cobertura_correcta(
     salida = capsys.readouterr().out
     assert "Índices resueltos por API: 1" in salida
     assert "Índices resueltos por fallback HTML: 0" in salida
+
+
+def test_seleccionar_extractor_centraliza_el_rango_historico():
+    import plazasboe
+    assert plazasboe.seleccionar_extractor("2004-01-02") == "historico"
+    assert plazasboe.seleccionar_extractor("2005-01-02") == "actual"

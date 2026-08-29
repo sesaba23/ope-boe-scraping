@@ -1,0 +1,5 @@
+# Fuentes geográficas estructuradas
+
+- `provincias.csv`: tabla 2919 del INE, *Variación anual de población por capitales de provincia*. La tabla oficial identifica los municipios capitales; el catálogo conserva además la denominación compatible con `municipios.csv`. Fuente: <https://www.ine.es/jaxiT3/files/t/csv_bdsc/2919.csv>.
+- `municipios.csv`: catálogo heredado del proyecto, con población, provincia y coordenadas. No contiene metadatos de procedencia o versión, por lo que no puede acreditarse como fuente oficial completa. Para una actualización reproducible se debe conservar el esquema y regenerarlo a partir de la relación anual de municipios/códigos del INE, complementada por una fuente oficial de coordenadas (CNIG), con control de versión y validación de las filas existentes.
+- `sedes_administraciones.csv`: catálogo explícito de sedes que no se deducen por municipio o por capital provincial. Cada fila debe indicar fuente y confianza, y el programa valida su municipio/provincia contra `municipios.csv` antes de usarla.

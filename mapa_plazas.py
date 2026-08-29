@@ -191,8 +191,10 @@ def extraer_nombre_municipal(administracion):
 
 def normalizar_nombre_municipal(texto):
     """Genera una clave ortográfica exacta sin alterar el nombre almacenado."""
-    texto = unicodedata.normalize("NFKC", str(texto))
-    texto = re.sub(r"[’‘`´]", "'", texto)
+    # Sustituir antes de NFKC: el acento agudo espaciado (´) puede convertirse
+    # en espacio durante la normalización Unicode y romper un apóstrofo real.
+    texto = re.sub(r"[’‘`´]", "'", str(texto))
+    texto = unicodedata.normalize("NFKC", texto)
     texto = "".join(
         caracter
         for caracter in unicodedata.normalize("NFD", texto)
@@ -220,7 +222,33 @@ def _variantes_nombre_catalogo(nombre):
         articulo = nombre[nombre.index("(") + 1 : nombre.index(")")].strip()
         separador = "" if articulo.endswith(("'", "’")) else " "
         variantes.append(f"{articulo}{separador}{base}")
+    # Denominación oficial con artículo pospuesto: «Puig de Santa Maria, el».
+    # Se conserva la grafía del catálogo y se expone exclusivamente la variante
+    # equivalente con el artículo antepuesto, sin aproximaciones léxicas.
+    variantes.extend(_variantes_articulo_pospuesto(nombre))
     return variantes
+
+
+def _variantes_articulo_pospuesto(nombre):
+    partes = [x.strip() for x in str(nombre).split("/")]
+    alternativas = []
+    for indice, parte in enumerate(partes):
+        coincidencia = re.fullmatch(r"(.+?),\s*(la|el|los|las|a|o|l['’])", parte, flags=re.IGNORECASE)
+        if not coincidencia:
+            continue
+        nuevas = partes.copy()
+        articulo = coincidencia.group(2)
+        separador = "" if articulo.endswith(("'", "’")) else " "
+        nuevas[indice] = f"{articulo.title()}{separador}{coincidencia.group(1).strip()}"
+        alternativas.append("/".join(nuevas))
+        # En una denominación bilingüe con '/', la otra grafía puede omitir
+        # el artículo; exponerla es seguro. En una denominación única no se
+        # elimina el artículo, para no confundir «Granada» y «La Granada».
+        if len(partes) > 1:
+            nuevas_sin_articulo = partes.copy()
+            nuevas_sin_articulo[indice] = coincidencia.group(1).strip()
+            alternativas.append("/".join(nuevas_sin_articulo))
+    return alternativas
 
 
 def _buscar_fila_municipal_exacta(df, nombre, provincia=None):

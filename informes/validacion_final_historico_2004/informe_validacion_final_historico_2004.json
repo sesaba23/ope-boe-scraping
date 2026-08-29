@@ -1,0 +1,1637 @@
+{
+  "fecha_validacion": "2026-08-23 12:12:35",
+  "muestra": {
+    "tamano": 30,
+    "control_obligatorio": "BOE-A-2004-10041",
+    "criterio": "puntuación determinista de evidencia estructural y selección codiciosa con máximo de tres documentos por mes y cuatro por departamento; se preservó diversidad de fecha, órgano y formato."
+  },
+  "reglas_anadidas": [],
+  "comparacion_antes_despues": "No aplica: no se añadió ninguna regla.",
+  "resumen": {
+    "clasificacion_documental": {
+      "RELACION_TOTAL_DESGLOSE": 6,
+      "CANTIDADES_INDEPENDIENTES": 6,
+      "NO_HAY_RELACION_RELEVANTE": 11,
+      "VARIAS_DISTRIBUCIONES": 2,
+      "AMBIGUO": 3,
+      "SUBCUPO": 2
+    },
+    "resultado_reconciliador": {
+      "CORRECTO": 18,
+      "FALSO_NEGATIVO": 9,
+      "AMBIGUO_CORRECTAMENTE": 3
+    },
+    "relaciones_reales": 10,
+    "relaciones_detectadas_correctamente": 1,
+    "falsos_negativos": 9,
+    "falsos_positivos": 0,
+    "precision": 1.0,
+    "recall": 0.1,
+    "subcupos_reales": 2,
+    "subcupos_detectados_correctamente": 0,
+    "posibles_dobles_conteos": 0,
+    "posibles_perdidas": 9,
+    "filas": {
+      "parciales": 40,
+      "sin_filas": 3
+    },
+    "campos_faltantes": {
+      "Sistema": 24,
+      "Escala": 30,
+      "Clase": 40,
+      "Puesto": 19,
+      "Turno": 26,
+      "Subescala": 32,
+      "Num_plazas": 6
+    }
+  },
+  "falsos_negativos_por_familia": {
+    "distribuciones_en_tabla_o_filas": [
+      "BOE-A-2004-3826",
+      "BOE-A-2004-3891",
+      "BOE-A-2004-12790"
+    ],
+    "totales_y_componentes_en_palabras_o_miles": [
+      "BOE-A-2004-10218",
+      "BOE-A-2004-6777"
+    ],
+    "varias_distribuciones_en_un_documento": [
+      "BOE-A-2004-17768",
+      "BOE-A-2004-16964"
+    ],
+    "subcupos_no_vinculados": [
+      "BOE-A-2004-2476",
+      "BOE-A-2004-14746"
+    ]
+  },
+  "publicaciones": [
+    {
+      "Publicacion_ID": "BOE-A-2004-10041",
+      "Fecha": "20040529",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "TOTAL_DESGLOSADO",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 100,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "100 plazas"
+        },
+        {
+          "valor": 100,
+          "tipo": "TOTAL",
+          "fragmento": "100 plazas"
+        },
+        {
+          "valor": 50,
+          "tipo": "COMPONENTE",
+          "fragmento": "Cincuenta plazas"
+        },
+        {
+          "valor": 50,
+          "tipo": "COMPONENTE",
+          "fragmento": "Cincuenta plazas"
+        },
+        {
+          "valor": 5,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "5 plazas"
+        }
+      ],
+      "total": [
+        100
+      ],
+      "componentes": [
+        50,
+        50
+      ],
+      "subcupos": [],
+      "filas_antes": 3,
+      "filas_despues": 2,
+      "decision": "TOTAL_DESGLOSADO",
+      "convocatorias": [
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 50,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10041"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 50,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10041"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10218",
+      "Fecha": "20040602",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "AMBIGUO",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 75,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "75 plazas"
+        },
+        {
+          "valor": 5,
+          "tipo": "TOTAL",
+          "fragmento": "cinco plazas"
+        },
+        {
+          "valor": 8,
+          "tipo": "COMPONENTE",
+          "fragmento": "ocho plazas"
+        },
+        {
+          "valor": 7,
+          "tipo": "COMPONENTE",
+          "fragmento": "siete plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "4 plazas"
+        }
+      ],
+      "total": [
+        5
+      ],
+      "componentes": [
+        8,
+        7
+      ],
+      "subcupos": [],
+      "filas_antes": 3,
+      "filas_despues": 3,
+      "decision": "AMBIGUO",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 75,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 5,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 4,
+          "Turno": "Turno libre",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        }
+      ],
+      "motivo_falso_negativo": "La distribución 38/37 se expresa en palabras y la detección recuperó cantidades ajenas (5, 8 y 7), por lo que no pudo validar la suma."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-11125",
+      "Fecha": "20040615",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 5,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "cinco plazas"
+        },
+        {
+          "valor": 5,
+          "tipo": "TOTAL",
+          "fragmento": "cinco plazas"
+        }
+      ],
+      "total": [
+        5
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": "Concurso de méritos",
+          "Escala": null,
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040615",
+          "Publicacion_ID": "BOE-A-2004-11125",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-11125"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8501",
+      "Fecha": "20040507",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 8,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "8 plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "COMPONENTE",
+          "fragmento": "4 plazas"
+        }
+      ],
+      "total": [],
+      "componentes": [
+        4
+      ],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 8,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Economía y Hacienda",
+          "Fecha_boe": "20040507",
+          "Publicacion_ID": "BOE-A-2004-8501",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8501"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-17768",
+      "Fecha": "20041015",
+      "clasificacion_documental_referencia": "VARIAS_DISTRIBUCIONES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 28,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "28 plazas"
+        },
+        {
+          "valor": 24,
+          "tipo": "COMPONENTE",
+          "fragmento": "24 plazas"
+        },
+        {
+          "valor": 3,
+          "tipo": "COMPONENTE",
+          "fragmento": "3 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        },
+        {
+          "valor": 24,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "24 plazas"
+        },
+        {
+          "valor": 21,
+          "tipo": "COMPONENTE",
+          "fragmento": "21 plazas"
+        },
+        {
+          "valor": 2,
+          "tipo": "COMPONENTE",
+          "fragmento": "2 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [],
+      "componentes": [
+        24,
+        3,
+        21,
+        2
+      ],
+      "subcupos": [],
+      "filas_antes": 3,
+      "filas_despues": 3,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Auxiliar de Administración General",
+          "Num_plazas": null,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "auxiliar",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        },
+        {
+          "Puesto": "Subalterno/a",
+          "Num_plazas": 3,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "subalterna",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        },
+        {
+          "Puesto": "Subalterno/a",
+          "Num_plazas": 2,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "subalterna",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        }
+      ],
+      "motivo_falso_negativo": "Dos distribuciones consecutivas 28=24+3+1 y 24=21+2+1; el agrupamiento no delimita ambas series."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8225",
+      "Fecha": "20040504",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 4346,
+          "tipo": "COMPONENTE",
+          "fragmento": "4346 plazas"
+        },
+        {
+          "valor": 15,
+          "tipo": "TOTAL",
+          "fragmento": "15 plazas"
+        },
+        {
+          "valor": 13,
+          "tipo": "TOTAL",
+          "fragmento": "13 plazas"
+        }
+      ],
+      "total": [
+        15,
+        13
+      ],
+      "componentes": [
+        4346
+      ],
+      "subcupos": [],
+      "filas_antes": 3,
+      "filas_despues": 3,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Cuerpo Superior de Técnicos de la Administración de la Seguridad Social, con dos modalidades de acce",
+          "Num_plazas": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 15,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 13,
+          "Turno": "Promoción interna",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14618",
+      "Fecha": "20040806",
+      "clasificacion_documental_referencia": "AMBIGUO",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "AMBIGUO_CORRECTAMENTE",
+      "cantidades_detectadas": [
+        {
+          "valor": 32,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "32 plazas"
+        },
+        {
+          "valor": 5,
+          "tipo": "COMPONENTE",
+          "fragmento": "5 plazas"
+        },
+        {
+          "valor": 9,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "9 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        },
+        {
+          "valor": 14,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "14 plazas"
+        },
+        {
+          "valor": 3,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "3 plazas"
+        },
+        {
+          "valor": 9,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "9 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "TOTAL",
+          "fragmento": "1 plaza"
+        },
+        {
+          "valor": 1,
+          "tipo": "TOTAL",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [
+        1,
+        1
+      ],
+      "componentes": [
+        5
+      ],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Auxiliares de Archivos",
+          "Num_plazas": 32,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Auxiliares de Archivos",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040806",
+          "Publicacion_ID": "BOE-A-2004-14618",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14618"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-4911",
+      "Fecha": "20040317",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 10,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "10 plazas"
+        },
+        {
+          "valor": 7,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "7 plazas"
+        },
+        {
+          "valor": 3,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "3 plazas"
+        }
+      ],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Agentes Medioambientales de Parques Nacionales",
+          "Num_plazas": 10,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Agentes Medioambientales de Parques Nacionales",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Medio Ambiente",
+          "Fecha_boe": "20040317",
+          "Publicacion_ID": "BOE-A-2004-4911",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-4911"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6777",
+      "Fecha": "20040416",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 0,
+      "filas_despues": 0,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [],
+      "motivo_falso_negativo": "El total y los componentes usan miles en palabras y cifra entre paréntesis (3.028), formato no convertido a cantidades conciliables."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "Fecha": "20041001",
+      "clasificacion_documental_referencia": "VARIAS_DISTRIBUCIONES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 5406,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "5406 plazas"
+        },
+        {
+          "valor": 5254,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "5254 plazas"
+        },
+        {
+          "valor": 5196,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "5196 plazas"
+        },
+        {
+          "valor": 58,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "58 plazas"
+        },
+        {
+          "valor": 152,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "152 plazas"
+        },
+        {
+          "valor": 209,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "209 plazas"
+        },
+        {
+          "valor": 188,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "188 plazas"
+        },
+        {
+          "valor": 184,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "184 plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "Cuatro plazas"
+        },
+        {
+          "valor": 21,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "21 plazas"
+        },
+        {
+          "valor": 29,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "29 plazas"
+        },
+        {
+          "valor": 33,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "33 plazas"
+        },
+        {
+          "valor": 31,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "31 plazas"
+        },
+        {
+          "valor": 2,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "Dos plazas"
+        },
+        {
+          "valor": 81,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "81 plazas"
+        },
+        {
+          "valor": 79,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "79 plazas"
+        },
+        {
+          "valor": 2,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "Dos plazas"
+        },
+        {
+          "valor": 28,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "28 plazas"
+        },
+        {
+          "valor": 520,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "520 plazas"
+        },
+        {
+          "valor": 9,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "nueve plazas"
+        }
+      ],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Radiofísicos hospitalarios en formación",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20041001",
+          "Publicacion_ID": "BOE-A-2004-16964",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-16964"
+        }
+      ],
+      "motivo_falso_negativo": "Varias distribuciones anidadas de plazas de formación; faltan límites de grupo y asociación estable de cada total."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-599",
+      "Fecha": "20040112",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 1,
+          "tipo": "TOTAL",
+          "fragmento": "una plaza"
+        },
+        {
+          "valor": 1,
+          "tipo": "TOTAL",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [
+        1,
+        1
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 2,
+      "filas_despues": 2,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Ciencia y Tecnología",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-599",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-599"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Ciencia y Tecnología",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-599",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-599"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6695",
+      "Fecha": "20040415",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 35,
+          "tipo": "TOTAL",
+          "fragmento": "35 plazas"
+        },
+        {
+          "valor": 2,
+          "tipo": "TOTAL",
+          "fragmento": "dos plazas"
+        },
+        {
+          "valor": 654,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "654 Plazas"
+        }
+      ],
+      "total": [
+        35,
+        2
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Gestión de la Administración de la Seguridad Social",
+          "Num_plazas": 35,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040415",
+          "Publicacion_ID": "BOE-A-2004-6695",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6695"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10220",
+      "Fecha": "20040602",
+      "clasificacion_documental_referencia": "AMBIGUO",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "AMBIGUO_CORRECTAMENTE",
+      "cantidades_detectadas": [
+        {
+          "valor": 41,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "41 plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "COMPONENTE",
+          "fragmento": "4 plazas"
+        },
+        {
+          "valor": 7,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "7 plazas"
+        },
+        {
+          "valor": 21,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "21 plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "4 plazas"
+        },
+        {
+          "valor": 13,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "13 plazas"
+        },
+        {
+          "valor": 2,
+          "tipo": "TOTAL",
+          "fragmento": "2 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [
+        2
+      ],
+      "componentes": [
+        4
+      ],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Ayudantes de Archivos",
+          "Num_plazas": 41,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Cultura",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10220",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10220"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-603",
+      "Fecha": "20040112",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 60,
+          "tipo": "TOTAL",
+          "fragmento": "60 plazas"
+        }
+      ],
+      "total": [
+        60
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "la Escala Administrativa de la Universidad Pablo de Olavide",
+          "Num_plazas": 60,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Administrativa de la Universidad Pablo de Olavide",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-603",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-603"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-1938",
+      "Fecha": "20040202",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 9,
+          "tipo": "TOTAL",
+          "fragmento": "nueve plazas"
+        }
+      ],
+      "total": [
+        9
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "la categoría de Técnico Auxiliar de Servicios de Conserjerías",
+          "Num_plazas": 9,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040202",
+          "Publicacion_ID": "BOE-A-2004-1938",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-1938"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-2476",
+      "Fecha": "20040210",
+      "clasificacion_documental_referencia": "SUBCUPO",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 6,
+          "tipo": "TOTAL",
+          "fragmento": "6 plazas"
+        },
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [
+        6
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 6,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040210",
+          "Publicacion_ID": "BOE-A-2004-2476",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-2476"
+        }
+      ],
+      "motivo_falso_negativo": "La plaza de reserva es un subcupo del total, pero no queda vinculada estructuralmente al total detectado."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3113",
+      "Fecha": "20040219",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        },
+        {
+          "valor": 1,
+          "tipo": "TOTAL",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [
+        1
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 2,
+      "filas_despues": 2,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Personal Laboral fijo",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040219",
+          "Publicacion_ID": "BOE-A-2004-3113",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3113"
+        },
+        {
+          "Puesto": "Personal Laboral con la categoría de Titulado de Grado Medio de Servicios Técnicos de Apoyo a la Doce",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040219",
+          "Publicacion_ID": "BOE-A-2004-3113",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3113"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3826",
+      "Fecha": "20040302",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 39,
+          "tipo": "TOTAL",
+          "fragmento": "39 plazas"
+        }
+      ],
+      "total": [
+        39
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "primera a convocar y 24 de segunda",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Justicia",
+          "Fecha_boe": "20040302",
+          "Publicacion_ID": "BOE-A-2004-3826",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3826"
+        }
+      ],
+      "motivo_falso_negativo": "El desglose por clases aparece en tabla y el lector textual no recupera sus componentes."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "Fecha": "20040303",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 237,
+          "tipo": "TOTAL",
+          "fragmento": "237 plazas"
+        }
+      ],
+      "total": [
+        237
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 237,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": "Superior de Oficiales de la Guardia Civil",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        }
+      ],
+      "motivo_falso_negativo": "El total precede a un desglose tabular por Ejército/Cuerpo; los componentes de tabla no llegan al reconciliador."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6696",
+      "Fecha": "20040415",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 612,
+          "tipo": "TOTAL",
+          "fragmento": "612 plazas"
+        }
+      ],
+      "total": [
+        612
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 612,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040415",
+          "Publicacion_ID": "BOE-A-2004-6696",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6696"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12789",
+      "Fecha": "20040708",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 2,
+          "tipo": "TOTAL",
+          "fragmento": "dos plazas"
+        }
+      ],
+      "total": [
+        2
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 2,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Fomento",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12789",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12789"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "Fecha": "20040708",
+      "clasificacion_documental_referencia": "RELACION_TOTAL_DESGLOSE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 5,
+          "tipo": "TOTAL",
+          "fragmento": "5 plazas"
+        }
+      ],
+      "total": [
+        5
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 5,
+      "filas_despues": 5,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        }
+      ],
+      "motivo_falso_negativo": "El total de cinco plazas se materializa en cinco filas/tablas unitarias sin una relación textual explícita."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14961",
+      "Fecha": "20040812",
+      "clasificacion_documental_referencia": "AMBIGUO",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "AMBIGUO_CORRECTAMENTE",
+      "cantidades_detectadas": [
+        {
+          "valor": 4,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "cuatro plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "cuatro plazas"
+        },
+        {
+          "valor": 4,
+          "tipo": "TOTAL",
+          "fragmento": "4 plazas"
+        }
+      ],
+      "total": [
+        4
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "la categoría de Facultativo Especialista en Dermatología en los Centros de Destino y con las condicio",
+          "Num_plazas": 4,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040812",
+          "Publicacion_ID": "BOE-A-2004-14961",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14961"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16452",
+      "Fecha": "20040922",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 75,
+          "tipo": "TOTAL",
+          "fragmento": "75 plazas"
+        }
+      ],
+      "total": [
+        75
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "alumnos del Centro de Formación",
+          "Num_plazas": 75,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": "Ejecutiva",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio del Interior",
+          "Fecha_boe": "20040922",
+          "Publicacion_ID": "BOE-A-2004-16452",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-16452"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-20342",
+      "Fecha": "20041201",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 20,
+          "tipo": "TOTAL",
+          "fragmento": "20 plazas"
+        }
+      ],
+      "total": [
+        20
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Abogados del Estado",
+          "Num_plazas": 20,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Justicia",
+          "Fecha_boe": "20041201",
+          "Publicacion_ID": "BOE-A-2004-20342",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-20342"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-21227",
+      "Fecha": "20041217",
+      "clasificacion_documental_referencia": "CANTIDADES_INDEPENDIENTES",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [
+        {
+          "valor": 16,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "16 plazas"
+        },
+        {
+          "valor": 9,
+          "tipo": "TOTAL",
+          "fragmento": "9 plazas"
+        }
+      ],
+      "total": [
+        9
+      ],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 16,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Especialista Técnico de Organismos Autónomos",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20041217",
+          "Publicacion_ID": "BOE-A-2004-21227",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-21227"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-78",
+      "Fecha": "20040102",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 0,
+      "filas_despues": 0,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12319",
+      "Fecha": "20040701",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": "Facultativos Especialistas de Área de Reumatología",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20040701",
+          "Publicacion_ID": "BOE-A-2004-12319",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12319"
+        }
+      ],
+      "motivo_falso_negativo": null
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14746",
+      "Fecha": "20040809",
+      "clasificacion_documental_referencia": "SUBCUPO",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "FALSO_NEGATIVO",
+      "cantidades_detectadas": [
+        {
+          "valor": 1,
+          "tipo": "DESCONOCIDO",
+          "fragmento": "1 plaza"
+        }
+      ],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 1,
+      "filas_despues": 1,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 7,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040809",
+          "Publicacion_ID": "BOE-A-2004-14746",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14746"
+        }
+      ],
+      "motivo_falso_negativo": "La reserva de una plaza se reconoce como cantidad, pero no se etiqueta ni vincula explícitamente como subcupo."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-15716",
+      "Fecha": "20040902",
+      "clasificacion_documental_referencia": "NO_HAY_RELACION_RELEVANTE",
+      "clasificacion_automatica": "SIN_RECONCILIACION",
+      "resultado_automatico": "CORRECTO",
+      "cantidades_detectadas": [],
+      "total": [],
+      "componentes": [],
+      "subcupos": [],
+      "filas_antes": 0,
+      "filas_despues": 0,
+      "decision": "SIN_RECONCILIACION",
+      "convocatorias": [],
+      "motivo_falso_negativo": null
+    }
+  ],
+  "recomendacion": {
+    "integracion_extractor_historico": "SOLO_CON_REVISION",
+    "validacion_masiva_2004": "PARCIALMENTE",
+    "integracion_en_plazasboe": "NO TODAVIA"
+  }
+}

@@ -3,7 +3,8 @@ from datetime import date, datetime
 import pytest
 import requests
 
-from boe_api import ErrorAPIBOE, extraer_publicaciones_2b_api, obtener_sumario_api
+from boe_api import (BACKOFF_API, MAX_REINTENTOS_API, ErrorAPIBOE,
+                     extraer_publicaciones_2b_api, obtener_sumario_api)
 
 
 class Respuesta:
@@ -130,6 +131,21 @@ def test_seccion_puede_ser_objeto_en_lugar_de_lista():
     assert resultado["publicaciones"][0]["Publicacion_ID"] == "BOE-A-2025-1"
 
 
+def test_estructura_historica_con_item_directo_en_departamento():
+    seccion = {
+        "codigo": "2B",
+        "nombre": "II. Autoridades y personal. - B. Oposiciones y concursos",
+        "departamento": {
+            "nombre": "ADMINISTRACIÓN LOCAL",
+            "item": [_item("BOE-A-2004-1")],
+        },
+    }
+    resultado = extraer_publicaciones_2b_api({
+        "estado": "OK", "sumario": {"diario": [{"seccion": seccion}]}
+    })
+    assert resultado["publicaciones"][0]["Publicacion_ID"] == "BOE-A-2004-1"
+
+
 def test_deduplica_por_id_y_por_url_si_falta_id():
     sin_id = _item("invalido")
     resultado = extraer_publicaciones_2b_api({"estado": "OK", "sumario": {"diario": [{"seccion": [_seccion([_item(), _item(), sin_id, dict(sin_id)])]}]}})
@@ -140,7 +156,7 @@ def test_deduplica_por_id_y_por_url_si_falta_id():
 @pytest.mark.parametrize("codigo,tipo", [(400, "HTTP_400"), (429, "HTTP_429"), (500, "HTTP_5XX")])
 def test_estados_http_son_errores(codigo, tipo):
     with pytest.raises(ErrorAPIBOE) as capturado:
-        obtener_sumario_api("2025-01-02", obtener=lambda *a, **k: Respuesta({}, codigo))
+        obtener_sumario_api("2025-01-02", obtener=lambda *a, **k: Respuesta({}, codigo), dormir=lambda _: None, informar=lambda _: None)
     assert capturado.value.tipo == tipo
 
 
@@ -158,7 +174,7 @@ def test_errores_de_red(error, tipo):
     def obtener(*args, **kwargs):
         raise error
     with pytest.raises(ErrorAPIBOE) as capturado:
-        obtener_sumario_api("2025-01-02", obtener=obtener)
+        obtener_sumario_api("2025-01-02", obtener=obtener, dormir=lambda _: None, informar=lambda _: None)
     assert capturado.value.tipo == tipo
 
 
@@ -182,3 +198,44 @@ def test_status_interno_no_exitoso():
     with pytest.raises(ErrorAPIBOE) as capturado:
         obtener_sumario_api("2025-01-02", obtener=lambda *a, **k: Respuesta({"status": {"code": "500", "text": "error"}}))
     assert capturado.value.tipo == "STATUS_500"
+
+
+@pytest.mark.parametrize("error", [requests.Timeout("t"), requests.ConnectionError("DNS temporal")])
+def test_error_transitorio_reintenta_y_luego_tiene_exito(error):
+    llamadas, esperas, avisos = [], [], []
+    def obtener(*args, **kwargs):
+        llamadas.append(1)
+        if len(llamadas) == 1:
+            raise error
+        return Respuesta(_json())
+    assert obtener_sumario_api("2025-01-02", obtener=obtener, dormir=esperas.append, informar=avisos.append)["estado"] == "OK"
+    assert len(llamadas) == 2 and esperas == [BACKOFF_API[0]] and "Reintento 2/5" in avisos[0]
+
+
+@pytest.mark.parametrize("codigo", [429, 502])
+def test_http_transitorio_reintenta_y_luego_tiene_exito(codigo):
+    respuestas = [Respuesta({}, codigo), Respuesta(_json())]
+    esperas = []
+    resultado = obtener_sumario_api("2025-01-02", obtener=lambda *a, **k: respuestas.pop(0), dormir=esperas.append, informar=lambda _: None)
+    assert resultado["estado"] == "OK" and esperas == [BACKOFF_API[0]]
+
+
+def test_agotamiento_de_reintentos_propaga_ultimo_error():
+    llamadas, esperas = [], []
+    def obtener(*args, **kwargs):
+        llamadas.append(1); raise requests.Timeout("agotado")
+    with pytest.raises(ErrorAPIBOE) as capturado:
+        obtener_sumario_api("2025-01-02", obtener=obtener, dormir=esperas.append, informar=lambda _: None)
+    assert capturado.value.tipo == "TIMEOUT"
+    assert len(llamadas) == MAX_REINTENTOS_API and esperas == list(BACKOFF_API)
+
+
+def test_400_404_semantico_y_json_invalido_no_reintentan():
+    for respuesta, tipo in ((Respuesta({}, 400), "HTTP_400"), (Respuesta({}, 404), "HTTP_404"),
+                            (Respuesta(error_json=ValueError()), "JSON_INVALIDO")):
+        llamadas = []
+        def obtener(*args, _respuesta=respuesta, **kwargs):
+            llamadas.append(1); return _respuesta
+        with pytest.raises(ErrorAPIBOE) as capturado:
+            obtener_sumario_api("2025-01-02", obtener=obtener, dormir=lambda _: pytest.fail("no reintentar"), informar=lambda _: None)
+        assert capturado.value.tipo == tipo and len(llamadas) == 1

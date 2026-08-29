@@ -14,6 +14,9 @@ from publicaciones import (
 )
 from entradas_datos import solicitar_fechas_y_validar
 from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipios
+from extractor_historico_boe import extraer_desde_contenido
+from procesamiento_historico import procesar_intervalo_historico
+from resolucion_administraciones import enriquecer_convocatorias
 
 from datetime import datetime
 import requests
@@ -28,6 +31,44 @@ from tqdm import tqdm
 
 MAX_REINTENTOS = 3
 RETRASO_SEGUNDOS = 2
+VERSION_EXTRACTOR_HISTORICO = "historico-experimental-2004"
+
+
+def seleccionar_extractor(fecha_boe):
+    """Centraliza la selección temporal; ampliable por rangos futuros."""
+    texto = str(fecha_boe)
+    return "historico" if "2004" in texto else "actual"
+
+
+def _convocatorias_historicas_validas(publicacion_id, contenido_xml, enlace, momento):
+    resultado = extraer_desde_contenido(
+        publicacion_id, contenido_xml, enlace.replace("txt.php", "xml.php"), enlace)
+    if resultado["clasificacion_documento"] == "INDETERMINADO":
+        return resultado, []
+    filas = []
+    for fila in resultado["convocatorias"]:
+        if not fila.get("Puesto") or not isinstance(fila.get("Num_plazas"), int):
+            continue
+        fila = dict(fila)
+        for campo in ("Turno", "Sistema", "Escala", "Subescala", "Clase"):
+            fila.setdefault(campo, "--")
+            if fila[campo] is None: fila[campo] = "--"
+        fila.update({"Version_extractor": VERSION_EXTRACTOR_HISTORICO,
+                     "Fecha_analisis": momento.strftime("%Y-%m-%d %H:%M:%S")})
+        filas.append(fila)
+    return resultado, filas
+
+
+def ejecutar_flujo_historico(fecha_inicio, fecha_fin, *, limite_publicaciones=None,
+                             reintentar_errores=False, descubrir=None, procesar=None,
+                             commit=None):
+    """Única entrada histórica; el orquestador decide estado y commit."""
+    if descubrir is None or procesar is None or commit is None:
+        raise RuntimeError("El flujo histórico requiere callbacks transaccionales explícitos")
+    return procesar_intervalo_historico(
+        fecha_inicio, fecha_fin, descubrir=descubrir, procesar_publicacion=procesar,
+        commit_final=commit, limite_publicaciones=limite_publicaciones,
+        reintentar_errores=reintentar_errores)
 
 
 def _buscar_enlaces_2b_en_indice_general(contenido):
@@ -162,9 +203,13 @@ def _descubrir_indice_html(url, obtener=None, dormir=None):
                         urljoin("https://www.boe.es", enlace["href"]),
                     )
             estado = "consultado"
+    fichas = [{"Publicacion_ID": extraer_publicacion_id(enlace), "titulo": "",
+               "departamento": "", "url_html": enlace, "url_xml": ""}
+              for enlace in enlaces_dia]
     return {
         "estado": estado,
         "enlaces": enlaces_dia,
+        "fichas": fichas,
         "errores": errores,
         "mensaje": mensaje,
         "fuente": "html",
@@ -181,20 +226,24 @@ def _descubrir_indice_api_con_fallback(
         resultado_api = extraer_publicaciones_2b_api(consultar_api(fecha))
         estado_api = resultado_api["estado"]
         if estado_api == "SIN_EDICION":
-            return {"estado": "sin_edicion", "enlaces": [], "errores": [], "mensaje": None, "fuente": "api"}
+            return {"estado": "sin_edicion", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
         if estado_api == "SIN_SECCION_2B":
-            return {"estado": "consultado", "enlaces": [], "errores": [], "mensaje": None, "fuente": "api"}
+            return {"estado": "consultado", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
         if estado_api != "CON_PUBLICACIONES":
             raise ErrorAPIBOE("ESTRUCTURA", f"Estado API no fiable: {estado_api}")
-        enlaces = []
+        enlaces, fichas = [], []
         vistos = set()
         for publicacion in resultado_api["publicaciones"]:
             publicacion_id = publicacion.get("Publicacion_ID")
             enlace = publicacion.get("url_html")
             if not publicacion_id or not enlace or extraer_publicacion_id(enlace) != publicacion_id:
                 raise ErrorAPIBOE("ESTRUCTURA", "Publicación API sin ID/enlace HTML coherente")
-            _añadir_publicacion_unica(enlaces, vistos, enlace)
-        return {"estado": "consultado", "enlaces": enlaces, "errores": [], "mensaje": None, "fuente": "api"}
+            if publicacion_id not in vistos:
+                _añadir_publicacion_unica(enlaces, vistos, enlace)
+                fichas.append({"Publicacion_ID": publicacion_id, "titulo": publicacion.get("titulo", ""),
+                               "departamento": publicacion.get("departamento", ""), "url_html": enlace,
+                               "url_xml": publicacion.get("url_xml", "")})
+        return {"estado": "consultado", "enlaces": enlaces, "fichas": fichas, "errores": [], "mensaje": None, "fuente": "api"}
     except (ErrorAPIBOE, ValueError, KeyError, TypeError):
         return consultar_html(url_html)
 
@@ -264,6 +313,7 @@ def _ejecutar_aplicacion():
     indices_resueltos_api = 0
     indices_resueltos_fallback = 0
     enlaces_vistos = set()
+    fichas_oposiciones = {}
     for fecha_indice, url in barra:
         if puede_reutilizar_cobertura(
             fecha_indice,
@@ -277,6 +327,7 @@ def _ejecutar_aplicacion():
         resultado_indice = _descubrir_indice_api_con_fallback(fecha_indice, url)
         estado_indice = resultado_indice["estado"]
         enlaces_dia = resultado_indice["enlaces"]
+        fichas_dia = resultado_indice.get("fichas", [])
         lista_diccionario_errores.extend(resultado_indice["errores"])
         if resultado_indice["mensaje"]:
             barra.set_description(resultado_indice["mensaje"])
@@ -290,6 +341,9 @@ def _ejecutar_aplicacion():
                 _añadir_publicacion_unica(
                     enlaces_oposiciones, enlaces_vistos, enlace
                 )
+            for ficha in fichas_dia:
+                if ficha.get("url_html"):
+                    fichas_oposiciones.setdefault(ficha["url_html"], ficha)
             numero_publicaciones = len(enlaces_dia)
         else:
             numero_publicaciones = None
@@ -344,6 +398,9 @@ def _ejecutar_aplicacion():
         dynamic_ncols=True,
     )
     for enlace in barra:
+        # Metadatos del sumario disponibles para pasos posteriores; el Paso 2
+        # no altera aún extracción, administración ni persistencia final.
+        metadatos_sumario = fichas_oposiciones.get(enlace, {})
         barra.set_description(f"{enlace[:19]}...{enlace[-15:]}")
         # Genero el código único para cada búsqueda
         if not texto_busqueda:  # Si no se pasa un argumento, el código es el enlace
@@ -438,6 +495,9 @@ def _ejecutar_aplicacion():
                 analisis_correcto = True
                 momento_analisis = datetime.now()
                 coincidencias_publicacion = 0
+                convocatorias_publicacion = []
+                if seleccionar_extractor(fecha_boe) == "historico":
+                    raise RuntimeError("La publicación histórica debe entrar por ejecutar_flujo_historico")
                 for contenido in contenidos:
                     try:
                         # La función devuelve una lista de diccionarios con las coincidencias y
@@ -452,25 +512,7 @@ def _ejecutar_aplicacion():
                                     contenido.text, titulo, fecha_boe, enlace
                                 )
                             )
-                        coincidencias_publicacion += len(convocatorias_extraidas)
-                        convocatorias_extraidas = añadir_trazabilidad_convocatorias(
-                            convocatorias_extraidas, enlace, momento_analisis
-                        )
-                        convocatorias_filtradas = (
-                            coincidencias.filtrar_convocatorias_por_texto(
-                                convocatorias_extraidas, texto_busqueda
-                            )
-                        )
-                        lista_diccionarios_puestos.extend(convocatorias_extraidas)
-                        for diccionario in convocatorias_filtradas:
-                            if diccionario.get("Administración") == "--":
-                                tqdm.write(
-                                    f"Convocatoria del Estado encontrada: {diccionario["Puesto"]}"
-                                )
-                            else:
-                                tqdm.write(
-                                    f"{diccionario["Num_plazas"]} x {diccionario["Puesto"]} en {diccionario["Administración"]}"
-                                )
+                        convocatorias_publicacion.extend(convocatorias_extraidas or [])
 
                     except (TypeError, ValueError) as e:
                         analisis_correcto = False
@@ -483,6 +525,28 @@ def _ejecutar_aplicacion():
                         continue
 
                 if analisis_correcto:
+                    # Una única resolución por publicación, antes de que la clave
+                    # funcional (que incluye Administración) llegue a deduplicarse.
+                    metadatos_publicacion = {
+                        "titulo": metadatos_sumario.get("titulo") or titulo,
+                        "departamento": metadatos_sumario.get("departamento", ""),
+                    }
+                    convocatorias_enriquecidas, _ = enriquecer_convocatorias(
+                        convocatorias_publicacion, metadatos_publicacion
+                    )
+                    coincidencias_publicacion = len(convocatorias_enriquecidas)
+                    convocatorias_enriquecidas = añadir_trazabilidad_convocatorias(
+                        convocatorias_enriquecidas, enlace, momento_analisis
+                    )
+                    convocatorias_filtradas = coincidencias.filtrar_convocatorias_por_texto(
+                        convocatorias_enriquecidas, texto_busqueda
+                    )
+                    lista_diccionarios_puestos.extend(convocatorias_enriquecidas)
+                    for diccionario in convocatorias_filtradas:
+                        if diccionario.get("Administración") == "--":
+                            tqdm.write(f"Convocatoria del Estado encontrada: {diccionario['Puesto']}")
+                        else:
+                            tqdm.write(f"{diccionario['Num_plazas']} x {diccionario['Puesto']} en {diccionario['Administración']}")
                     diccionario_busquedas["Código"].append(codigo)
                     codigos_procesados.add(codigo)
                     publicaciones_analizadas += 1
@@ -494,6 +558,9 @@ def _ejecutar_aplicacion():
                             titulo,
                             coincidencias_publicacion,
                             momento_analisis,
+                            VERSION_EXTRACTOR_HISTORICO if seleccionar_extractor(fecha_boe) == "historico" else None,
+                            departamento_boe=metadatos_sumario.get("departamento", ""),
+                            titulo_sumario=metadatos_sumario.get("titulo", ""),
                         ),
                     )
                 else:

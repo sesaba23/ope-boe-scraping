@@ -1,0 +1,11 @@
+{
+  "fecha_generacion": "2026-08-29",
+  "referencia_ine": "2026-01-01",
+  "version_cnig": "NGMEP 2026-03",
+  "fuentes": {
+    "ine": "https://www.ine.es/daco/daco42/codmun/26codmun.xlsx",
+    "cnig": "https://centrodedescargas.cnig.es/CentroDescargas/detalleArchivo?sec=9000004"
+  },
+  "transformacion": "Cruce por los cinco primeros dígitos de COD_INE (CPRO+CMUN); denominación y provincia INE; coordenadas, altitud y población municipal CNIG.",
+  "filas": 8132
+}

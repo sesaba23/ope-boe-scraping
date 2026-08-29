@@ -45,10 +45,10 @@ def bloqueo_excel(nombre_archivo="BOE-oposiciones.xlsx"):
         os.close(descriptor)
 
 
-def preparar_excel_y_dataframes():
+def preparar_excel_y_dataframes(nombre_archivo="BOE-oposiciones.xlsx"):
     # Cargamos un Excel con las fechas de los días que nos interesan
     # Verificar si el archivo Excel existe. Si no, crearlo
-    if not os.path.exists("BOE-oposiciones.xlsx"):
+    if not os.path.exists(nombre_archivo):
         # Crear un nuevo libro de Excel
         wb = Workbook()
         # Renombrar la hoja activa a "busquedas"
@@ -64,10 +64,10 @@ def preparar_excel_y_dataframes():
         ws_cobertura = wb.create_sheet(title="Cobertura")
         ws_cobertura.append(COLUMNAS_COBERTURA)
         # Guardar el archivo
-        wb.save("BOE-oposiciones.xlsx")
+        wb.save(nombre_archivo)
 
     # Cargamos el archivo Excel
-    excel_file = pd.ExcelFile("BOE-oposiciones.xlsx")
+    excel_file = pd.ExcelFile(nombre_archivo)
 
     # Leer todas las hojas como diccionario de DataFrames
     dataframes_dict = {
@@ -150,11 +150,12 @@ def guardar_excel(
     df_log_errores,
     df_publicaciones=None,
     df_cobertura=None,
+    nombre_archivo="BOE-oposiciones.xlsx",
 ):
     """
     Código para guardar los resultados en un archivo Excel
     """
-    nombre_archivo = Path("BOE-oposiciones.xlsx")
+    nombre_archivo = Path(nombre_archivo)
     archivo_temporal = None
     try:
         descriptor, ruta_temporal = tempfile.mkstemp(

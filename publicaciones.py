@@ -10,6 +10,7 @@ from trazabilidad import (
     extraer_publicacion_id,
     necesita_reprocesamiento,
 )
+from resolucion_administraciones import VERSION_RESOLUCION, resolver_administracion
 
 
 COLUMNAS_PUBLICACIONES = [
@@ -21,6 +22,13 @@ COLUMNAS_PUBLICACIONES = [
     "Version_extractor",
     "Estado_analisis",
     "Coincidencias",
+    "Departamento_BOE",
+    "Administracion_resuelta",
+    "Familia_administrativa",
+    "Estado_resolucion",
+    "Metodo_resolucion",
+    "Confianza_resolucion",
+    "Version_resolucion",
 ]
 
 
@@ -53,20 +61,31 @@ def publicaciones_desde_oposiciones(df_oposiciones):
     return pd.DataFrame(filas, columns=COLUMNAS_PUBLICACIONES)
 
 
-def crear_registro_publicacion(enlace, fecha_boe, titulo, coincidencias, momento=None):
+def crear_registro_publicacion(enlace, fecha_boe, titulo, coincidencias, momento=None,
+                               version_extractor=VERSION_EXTRACTOR, departamento_boe="",
+                               titulo_sumario=None):
     """Crea el registro de un análisis correcto de una publicación."""
     fecha_analisis = (momento or datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+    titulo_boe = titulo_sumario if isinstance(titulo_sumario, str) and titulo_sumario.strip() else titulo
+    resolucion = resolver_administracion(titulo_boe, departamento_boe)
     return {
         "Publicacion_ID": extraer_publicacion_id(enlace),
         "Enlace": enlace,
         "Fecha_BOE": _extraer_fecha_oficial(fecha_boe),
-        "Titulo_original": titulo,
+        "Titulo_original": titulo_boe,
         "Fecha_ultimo_analisis": fecha_analisis,
-        "Version_extractor": VERSION_EXTRACTOR,
+        "Version_extractor": version_extractor or VERSION_EXTRACTOR,
         "Estado_analisis": (
             "con_coincidencias" if coincidencias > 0 else "sin_coincidencias"
         ),
         "Coincidencias": int(coincidencias),
+        "Departamento_BOE": departamento_boe or "",
+        "Administracion_resuelta": resolucion.administracion,
+        "Familia_administrativa": resolucion.familia,
+        "Estado_resolucion": resolucion.estado,
+        "Metodo_resolucion": resolucion.metodo,
+        "Confianza_resolucion": resolucion.confianza,
+        "Version_resolucion": VERSION_RESOLUCION,
     }
 
 
@@ -89,7 +108,7 @@ def registrar_publicacion(df_publicaciones, registro):
         publicaciones = publicaciones.drop(index=coincidencias[:-1]).reset_index(drop=True)
         indice = publicaciones.index[publicaciones["Publicacion_ID"] == publicacion_id][-1]
 
-    for columna in ("Enlace", "Fecha_BOE", "Titulo_original"):
+    for columna in ("Enlace", "Fecha_BOE", "Titulo_original", "Departamento_BOE"):
         if _esta_vacio(publicaciones.at[indice, columna]) and not _esta_vacio(
             registro.get(columna)
         ):
@@ -99,6 +118,12 @@ def registrar_publicacion(df_publicaciones, registro):
         "Version_extractor",
         "Estado_analisis",
         "Coincidencias",
+        "Administracion_resuelta",
+        "Familia_administrativa",
+        "Estado_resolucion",
+        "Metodo_resolucion",
+        "Confianza_resolucion",
+        "Version_resolucion",
     ):
         publicaciones.at[indice, columna] = registro.get(columna, pd.NA)
     return publicaciones[COLUMNAS_PUBLICACIONES]

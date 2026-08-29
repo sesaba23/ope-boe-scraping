@@ -1,0 +1,395 @@
+{
+  "fecha_ejecucion": "2026-08-23T10:13:43",
+  "resumen": {
+    "documentos_analizados": 2,
+    "TABLA_UTIL": 0,
+    "TABLA_PARCIAL": 2,
+    "TABLA_NO_UTIL": 0,
+    "SIN_TABLAS": 0,
+    "porcentajes": {
+      "TABLA_UTIL": 0.0,
+      "TABLA_PARCIAL": 100.0,
+      "TABLA_NO_UTIL": 0.0,
+      "SIN_TABLAS": 0.0
+    }
+  },
+  "documentos": [
+    {
+      "Publicacion_ID": "BOE-A-2004-6389",
+      "Fecha": "2004-04-10",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6389",
+      "numero_tablas": 3,
+      "tablas": [
+        {
+          "indice": 0,
+          "encabezados": [
+            "Unidad de destino",
+            "Núm, de plazas",
+            "Titulación",
+            "Funciones y tareas principales",
+            "Programa"
+          ],
+          "filas": [
+            [
+              "Área de Producción.",
+              "1",
+              "Grado Medio de Formación Profesional en Mantenimiento y Servicios a la Producción.",
+              "Es el trabajador que, con conocimientos suficientes y siguiendo las directrices del Oficial primera, realiza el mantenimiento preventivo y correctivo, así como los desmontajes, reparaciones y montajes de cualquier tipo de mecanismos de las máquinas en las distintas plantas productivas del organismo.",
+              "Ver anexo V."
+            ]
+          ],
+          "columnas_identificadas": {
+            "Num_plazas": 1
+          },
+          "resultados": [
+            {
+              "Puesto": null,
+              "Num_plazas": 1,
+              "Escala": null,
+              "Turno": null,
+              "Sistema": null
+            }
+          ]
+        },
+        {
+          "indice": 1,
+          "encabezados": [
+            "Unidad de destino",
+            "Núm, de plazas",
+            "Titulación",
+            "Funciones y tareas principales",
+            "Programa"
+          ],
+          "filas": [
+            [
+              "Área de Producción.",
+              "1",
+              "Grado Medio de Formación Profesional en Artes Gráficas.",
+              "Es el trabajador que se ocupa de la carga y descarga de las bobinas de papel a pie de máquina para la impresión, pudiendo ayudar o suplir en caso de necesidad al Oficial segunda.",
+              "Ver anexo V."
+            ]
+          ],
+          "columnas_identificadas": {
+            "Num_plazas": 1
+          },
+          "resultados": [
+            {
+              "Puesto": null,
+              "Num_plazas": 1,
+              "Escala": null,
+              "Turno": null,
+              "Sistema": null
+            }
+          ]
+        },
+        {
+          "indice": 2,
+          "encabezados": [
+            "Unidad de destino",
+            "Núm, de plazas",
+            "Titulación",
+            "Funciones y tareas principales",
+            "Programa"
+          ],
+          "filas": [
+            [
+              "Área de Producción.",
+              "2",
+              "Grado Medio de Formación Profesional en Artes Gráficas.",
+              "Es el operario que ayuda al Oficial primera o segunda en sus funciones y realiza tareas de montaje o abastecimiento del papel y colocación de planchas.",
+              "Ver anexo V."
+            ]
+          ],
+          "columnas_identificadas": {
+            "Num_plazas": 1
+          },
+          "resultados": [
+            {
+              "Puesto": null,
+              "Num_plazas": 2,
+              "Escala": null,
+              "Turno": null,
+              "Sistema": null
+            }
+          ]
+        }
+      ],
+      "resultados_parciales": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Escala": null,
+          "Turno": null,
+          "Sistema": null
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Escala": null,
+          "Turno": null,
+          "Sistema": null
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 2,
+          "Escala": null,
+          "Turno": null,
+          "Sistema": null
+        }
+      ],
+      "filas_utiles": 3,
+      "extractor_actual_filas": 0,
+      "clasificacion": "TABLA_PARCIAL",
+      "campos_no_recuperados": [
+        "Puesto",
+        "Escala",
+        "Turno",
+        "Sistema"
+      ]
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6488",
+      "Fecha": "2004-04-13",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6488",
+      "numero_tablas": 3,
+      "tablas": [
+        {
+          "indice": 0,
+          "encabezados": [
+            "Código",
+            "Categoría/Cuerpo/Escala-Tipo",
+            "Ded.",
+            "Departamento",
+            "Área de conocimiento"
+          ],
+          "filas": [
+            [
+              "",
+              "Catedráticos de Universidad",
+              "",
+              "",
+              ""
+            ],
+            [
+              "K040K49/D07901",
+              "Actividades docentes e investigadoras a realizar por quien obtenga la plaza: Docencia e Investigación en el área de conocimiento de Comunicación Audiovisual y Publicidad. Docencia inicial en la Facultad de Ciencias Sociales, Jurídicas y de la Comunicación, Segovia.",
+              "C08",
+              "H.ª Mod. Con, y A. Per, y C.A. y P.",
+              "Comunicación Audiovisual y Publicidad."
+            ],
+            [
+              "",
+              "Profesores Titulares de Universidad",
+              "",
+              "",
+              ""
+            ],
+            [
+              "K070K06/D15920",
+              "Actividades docentes e investigadoras a realizar por quien obtenga la plaza: Actividades docentes, la derivadas del Área de Proyectos Arquitectónicos. Actividades investigadoras relativas a Arquitectura Moderna y Contemporánea. Docencia inicial en la E.T.S. Arquitectura, Valladolid.",
+              "C08",
+              "T.ª Arquit, y Proyectos Arquit.",
+              "Proyectos Arquitectónicos."
+            ]
+          ],
+          "columnas_identificadas": {
+            "Puesto": 1,
+            "Escala": 1
+          },
+          "resultados": [
+            {
+              "Puesto": "Catedráticos de Universidad",
+              "Num_plazas": null,
+              "Escala": "Catedráticos de Universidad",
+              "Turno": null,
+              "Sistema": null
+            },
+            {
+              "Puesto": "Profesores Titulares de Universidad",
+              "Num_plazas": null,
+              "Escala": "Profesores Titulares de Universidad",
+              "Turno": null,
+              "Sistema": null
+            }
+          ]
+        },
+        {
+          "indice": 1,
+          "encabezados": [
+            "Calidad",
+            "Apellidos y nombre",
+            "Categoría/Cuerpo/Escala",
+            "Organismo"
+          ],
+          "filas": [
+            [
+              "Presidente titular",
+              "Gutiérrez-Vierna Espada, Luis Ángel.",
+              "Catedráticos de Universidad.",
+              "Univer. Complutense de Madrid."
+            ],
+            [
+              "Secretario titular.",
+              "Río Pereda, Pablo del.",
+              "Catedráticos de Universidad.",
+              "Univer, de Salamanca."
+            ],
+            [
+              "Vocal 1 titular.",
+              "Prado Pico, Emilio.",
+              "Catedráticos de Universidad.",
+              "Univer. Autónoma de Barcelona."
+            ],
+            [
+              "Vocal 2 titular.",
+              "Franquet Calvet, Rosa.",
+              "Catedráticos de Universidad.",
+              "Univer. Autónoma de Barcelona."
+            ],
+            [
+              "Vocal 3 titular.",
+              "Aguilera Moyano, Joaquín de.",
+              "Catedráticos de Universidad.",
+              "Univer, de Málaga."
+            ],
+            [
+              "Presidente suplente.",
+              "Zunzunegui Díez, Santos.",
+              "Catedráticos de Universidad.",
+              "Univer, del País Vasco."
+            ],
+            [
+              "Secretario suplente.",
+              "García Fernández, Emilio Carlos.",
+              "Catedráticos de Universidad.",
+              "Univer. Complutense de Madrid."
+            ],
+            [
+              "Vocal 1 suplente.",
+              "Gubern Garriga-Nogués, Román.",
+              "Catedráticos de Universidad.",
+              "Univer. Autónoma de Barcelona."
+            ],
+            [
+              "Vocal 2 suplente.",
+              "Balsebre Torroja, Armando.",
+              "Catedráticos de Universidad.",
+              "Univer. Autónoma de Barcelona."
+            ],
+            [
+              "Vocal 3 suplente.",
+              "Romano García, Vicente.",
+              "Catedráticos de Universidad.",
+              "Univer, de Sevilla."
+            ]
+          ],
+          "columnas_identificadas": {},
+          "resultados": []
+        },
+        {
+          "indice": 2,
+          "encabezados": [
+            "Calidad",
+            "Apellidos y nombre",
+            "Categoría/Cuerpo/Escala",
+            "Organismo"
+          ],
+          "filas": [
+            [
+              "Presidente titular.",
+              "Arnuncio Pastor, Juan Carlos.",
+              "Catedráticos de Universidad.",
+              "Univer, de Valladolid."
+            ],
+            [
+              "Secretario titular.",
+              "Grijalba Bengoetxea, Julio.",
+              "Profesores Titulares de Univer.",
+              "Univer, de Valladolid."
+            ],
+            [
+              "Vocal 1 titular.",
+              "González Fraile, Eduardo.",
+              "Profesores Titulares de Univer.",
+              "Univer, de Valladolid."
+            ],
+            [
+              "Vocal 2 titular.",
+              "Pinón Pallarés, Heliodoro.",
+              "Catedráticos de Universidad.",
+              "Univer. Politécnica de Cataluña."
+            ],
+            [
+              "Vocal 3 titular.",
+              "Lapuerta Montoya, José María de.",
+              "Profesores Titulares de Univer.",
+              "Univer. Politécnica de Madrid."
+            ],
+            [
+              "Presidente suplente.",
+              "Ruiz Cabrero, Gabriel.",
+              "Catedráticos de Universidad.",
+              "Univer. Politécnica de Madrid."
+            ],
+            [
+              "Secretario suplente.",
+              "González-Capitel Martínez, Antonio.",
+              "Catedráticos de Universidad.",
+              "Univer. Politécnica de Madrid."
+            ],
+            [
+              "Vocal 1 suplente.",
+              "Sancho Osinaga, Juan Carlos.",
+              "Profesores Titulares de Univer.",
+              "Univer. Politécnica de Madrid."
+            ],
+            [
+              "Vocal 2 suplente.",
+              "Casabella López, José Manuel.",
+              "Profesores Titulares de Univer.",
+              "Univer, de La Coruña."
+            ],
+            [
+              "Vocal 3 suplente.",
+              "Morales Sánchez, José.",
+              "Profesores Titulares de Univer.",
+              "Univer, de Sevilla."
+            ]
+          ],
+          "columnas_identificadas": {},
+          "resultados": []
+        }
+      ],
+      "resultados_parciales": [
+        {
+          "Puesto": "Catedráticos de Universidad",
+          "Num_plazas": null,
+          "Escala": "Catedráticos de Universidad",
+          "Turno": null,
+          "Sistema": null
+        },
+        {
+          "Puesto": "Profesores Titulares de Universidad",
+          "Num_plazas": null,
+          "Escala": "Profesores Titulares de Universidad",
+          "Turno": null,
+          "Sistema": null
+        }
+      ],
+      "filas_utiles": 2,
+      "extractor_actual_filas": 0,
+      "clasificacion": "TABLA_PARCIAL",
+      "campos_no_recuperados": [
+        "Num_plazas",
+        "Turno",
+        "Sistema"
+      ]
+    }
+  ],
+  "criterios": {
+    "TABLA_UTIL": "Algún resultado contiene Puesto y Num_plazas explícitos.",
+    "TABLA_PARCIAL": "Hay campos recuperables, pero ningún resultado contiene ambos.",
+    "TABLA_NO_UTIL": "Hay tablas, pero no campos recuperables de forma controlada.",
+    "SIN_TABLAS": "El bloque texto no contiene tablas."
+  }
+}

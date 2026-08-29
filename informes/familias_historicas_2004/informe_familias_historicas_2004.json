@@ -1,0 +1,28 @@
+{
+  "fecha_ejecucion": "2026-08-23 13:16:22",
+  "universo_evidencia_estructural": 518,
+  "familias": {
+    "CUERPO_TABLA_DESGLOSE": 3,
+    "TOTAL_DISTRIBUCION": 8,
+    "SUBCUPO_RESERVADO": 6,
+    "CLASE_CANTIDADES": 2
+  },
+  "reglas_implementadas": [],
+  "metricas_30": {
+    "VALIDA": 18,
+    "VALIDA_PARCIAL": 44,
+    "NO_UTILIZABLE": 6,
+    "publicaciones_con_alguna_valida": 9,
+    "nuevas_validas": 0
+  },
+  "falsos_positivos": 0,
+  "falsos_negativos": 9,
+  "casos_prioritarios": [
+    "BOE-A-2004-3891",
+    "BOE-A-2004-3826",
+    "BOE-A-2004-6777",
+    "BOE-A-2004-10220",
+    "BOE-A-2004-14618"
+  ],
+  "recomendacion": "No integrar ni añadir reglas: las familias recurrentes no prueban de forma general una asociación inequívoca Puesto+Num_plazas."
+}

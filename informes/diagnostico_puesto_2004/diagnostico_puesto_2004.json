@@ -1,0 +1,704 @@
+{
+  "alcance": "Solo las diez publicaciones REVISADO y propuestas precargadas del corpus.",
+  "resultado_antes": {
+    "publicaciones_revisadas": 10,
+    "convocatorias_esperadas": 8,
+    "convocatorias_obtenidas": 16,
+    "verdaderos_positivos": 0,
+    "falsos_positivos": 16,
+    "falsos_negativos": 8,
+    "precision": 0.375,
+    "recall_cobertura": 0.75,
+    "publicaciones_exactas": 2,
+    "diferencias_Puesto": 8,
+    "diferencias_Num_plazas": 0,
+    "posibles_dobles_conteos": 0,
+    "detalle": [
+      {
+        "Publicacion_ID": "BOE-A-2004-74",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-81",
+        "verdaderos_positivos": 1,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 1,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-372",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-1396",
+        "verdaderos_positivos": 1,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-2476",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 2,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-3826",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-3891",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 1,
+        "diferencias_Puesto": 1,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-6309",
+        "verdaderos_positivos": 4,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-8235",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-10041",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 5,
+        "falsos_negativos": 1,
+        "diferencias_Puesto": 1,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      }
+    ]
+  },
+  "resultado_despues": {
+    "publicaciones_revisadas": 10,
+    "convocatorias_esperadas": 8,
+    "convocatorias_obtenidas": 16,
+    "verdaderos_positivos": 6,
+    "falsos_positivos": 10,
+    "falsos_negativos": 2,
+    "precision": 0.375,
+    "recall_cobertura": 0.75,
+    "publicaciones_exactas": 5,
+    "diferencias_Puesto": 2,
+    "diferencias_Num_plazas": 0,
+    "posibles_dobles_conteos": 0,
+    "detalle": [
+      {
+        "Publicacion_ID": "BOE-A-2004-74",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-81",
+        "verdaderos_positivos": 1,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 1,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-372",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-1396",
+        "verdaderos_positivos": 1,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-2476",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 2,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-3826",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-3891",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 1,
+        "falsos_negativos": 1,
+        "diferencias_Puesto": 1,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-6309",
+        "verdaderos_positivos": 4,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-8235",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 0,
+        "falsos_negativos": 0,
+        "diferencias_Puesto": 0,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      },
+      {
+        "Publicacion_ID": "BOE-A-2004-10041",
+        "verdaderos_positivos": 0,
+        "falsos_positivos": 5,
+        "falsos_negativos": 1,
+        "diferencias_Puesto": 1,
+        "diferencias_Num_plazas": 0,
+        "diferencias_campos_opcionales": 0,
+        "posibles_dobles_conteos": 0
+      }
+    ]
+  },
+  "reglas_aplicadas": [
+    "Categoría profesional explícita",
+    "Lista local denominación, cantidad",
+    "Categoría explícita del título sobre descriptor genérico"
+  ],
+  "familias_repetidas": {
+    "PUESTO_NO_DETECTADO": 3,
+    "PUESTO_DEMASIADO_CORTO": 1,
+    "ESCALA_CONFUNDIDA_CON_PUESTO": 1
+  },
+  "casos_no_resueltos": [
+    "BOE-A-2004-3891",
+    "BOE-A-2004-6309",
+    "BOE-A-2004-10041"
+  ],
+  "publicaciones": [
+    {
+      "Publicacion_ID": "BOE-A-2004-74",
+      "esperadas": [],
+      "extraidas": [],
+      "parejas": [],
+      "familia_principal": "SIN_DISCREPANCIA",
+      "explicacion": "",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-81",
+      "esperadas": [
+        {
+          "Puesto": "Ordenanza",
+          "Turno": "Promoción interna",
+          "Sistema": "concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 1
+        }
+      ],
+      "extraidas": [
+        {
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Ordenanza",
+          "Num_plazas": 1
+        }
+      ],
+      "parejas": [
+        {
+          "esperado": {
+            "Puesto": "Ordenanza",
+            "Num_plazas": 1
+          },
+          "extraido": {
+            "Puesto": "Ordenanza",
+            "Num_plazas": 1
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": " Orgánica 3/1980, de 22 de abril, del Consejo de Estado y su Reglamento Orgánico, he resuelto: Primero. Convocar proceso selectivo para proveer, por el turno de promoción interna, una plaza vacante de personal laboral del Consejo de Estado de la categoría profesional de Ordenanza, nivel 7. Segundo. Las bases que desarrollan la convocatoria se expondrán en el tablón de anuncios de la planta baja del Consejo de Estado, calle Ma",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        }
+      ],
+      "familia_principal": "PUESTO_NO_DETECTADO",
+      "explicacion": "La denominación explícita correcta es «categoría profesional de Ordenanza»; la propuesta solo asoció la cantidad.",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-372",
+      "esperadas": [],
+      "extraidas": [
+        {
+          "Puesto": "personal laboral mediante contratación laboral fija",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 2
+        }
+      ],
+      "parejas": [],
+      "familia_principal": "SIN_DISCREPANCIA",
+      "explicacion": "",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-1396",
+      "esperadas": [
+        {
+          "Puesto": "Jefe Regional de Seguridad",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "extraidas": [
+        {
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Jefe Regional de Seguridad",
+          "Num_plazas": 59
+        }
+      ],
+      "parejas": [
+        {
+          "esperado": {
+            "Puesto": "Jefe Regional de Seguridad",
+            "Num_plazas": 59
+          },
+          "extraido": {
+            "Puesto": "Jefe Regional de Seguridad",
+            "Num_plazas": 59
+          },
+          "familia": "PUESTO_DEMASIADO_CORTO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": "para 2003 por Real Decreto 215/2003, de 21 de febrero (Boletín Oficial del Estado del 22). En dicha oferta se autoriza a la Agencia Estatal de Administración Tributaria a convocar 59 plazas de personal laboral. Por lo tanto, en cumplimiento de dicho Real Decreto y con el fin de atender las necesidades de personal, Esta Presidencia, previo informe favorable de la Dirección General de la Función Pública, ha resuelto: Primero.-C",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        }
+      ],
+      "familia_principal": "PUESTO_DEMASIADO_CORTO",
+      "explicacion": "«personal laboral» es una descripción genérica; la denominación explícita correcta es «categoría de Jefe Regional de Seguridad».",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-2476",
+      "esperadas": [],
+      "extraidas": [
+        {
+          "Puesto": null,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 6
+        },
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 1
+        }
+      ],
+      "parejas": [],
+      "familia_principal": "SIN_DISCREPANCIA",
+      "explicacion": "",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3826",
+      "esperadas": [],
+      "extraidas": [
+        {
+          "Puesto": "primera a convocar y 24 de segunda",
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 39
+        }
+      ],
+      "parejas": [],
+      "familia_principal": "SIN_DISCREPANCIA",
+      "explicacion": "",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "esperadas": [
+        {
+          "Puesto": "Guardia Civil",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Superior de Oficiales",
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 237
+        }
+      ],
+      "extraidas": [
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Superior de Oficiales de la Guardia Civil",
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 237
+        }
+      ],
+      "parejas": [
+        {
+          "esperado": {
+            "Puesto": "Guardia Civil",
+            "Num_plazas": 237
+          },
+          "extraido": {
+            "Puesto": null,
+            "Num_plazas": 237
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": "a Escala Superior de Oficiales de los Cuerpos Generales de los Ejércitos y de Infantería de Marina y a la Escala Superior de Oficiales de la Guardia Civil, para cubrir un total de 237 plazas, distribuidas de la siguiente forma: Ejército Cuerpo Plazas Tierra. General de las Armas. 124 Armada. General. 31 Infantería de Marina. 7 Aire. General. 43 Guardia Civil. 32 Total. 237 2. Condiciones para optar al ingreso Los aspirantes de",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        }
+      ],
+      "familia_principal": "PUESTO_NO_DETECTADO",
+      "explicacion": "La cantidad total se asoció sin Puesto. La tabla Ejército/Cuerpo contiene jerarquía y el valor manual «Guardia Civil» no se puede inferir de forma segura para el total 237.",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6309",
+      "esperadas": [
+        {
+          "Puesto": "Profesores de Enseñanza Secundaria",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 183
+        },
+        {
+          "Puesto": "Profesores Técnicos de Formación Profesional",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 35
+        },
+        {
+          "Puesto": "Profesores de Escuelas Oficiales de Idiomas",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 5
+        },
+        {
+          "Puesto": "Profesores de Música y Artes Escénicas",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "extraidas": [
+        {
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Profesores de Enseñanza Secundaria",
+          "Num_plazas": 183
+        },
+        {
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Profesores Técnicos de Formación Profesional",
+          "Num_plazas": 35
+        },
+        {
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Profesores de Escuelas Oficiales de Idiomas",
+          "Num_plazas": 5
+        },
+        {
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Puesto": "Profesores de Música y Artes Escénicas",
+          "Num_plazas": 59
+        }
+      ],
+      "parejas": [
+        {
+          "esperado": {
+            "Puesto": "Profesores de Enseñanza Secundaria",
+            "Num_plazas": 183
+          },
+          "extraido": {
+            "Puesto": "Profesores de Enseñanza Secundaria",
+            "Num_plazas": 183
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": "narios de los mencionados cuerpos. Que el número de plazas convocadas, cuya distribución se indica en anexo a esta Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales co",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        },
+        {
+          "esperado": {
+            "Puesto": "Profesores Técnicos de Formación Profesional",
+            "Num_plazas": 35
+          },
+          "extraido": {
+            "Puesto": "Profesores Técnicos de Formación Profesional",
+            "Num_plazas": 35
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": " convocadas, cuya distribución se indica en anexo a esta Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de est",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        },
+        {
+          "esperado": {
+            "Puesto": "Profesores de Escuelas Oficiales de Idiomas",
+            "Num_plazas": 5
+          },
+          "extraido": {
+            "Puesto": "Profesores de Escuelas Oficiales de Idiomas",
+            "Num_plazas": 5
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": " Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de esta convocatoria en el Boletín Oficial de Aragón. Que la ",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        },
+        {
+          "esperado": {
+            "Puesto": "Profesores de Música y Artes Escénicas",
+            "Num_plazas": 59
+          },
+          "extraido": {
+            "Puesto": "Profesores de Música y Artes Escénicas",
+            "Num_plazas": 59
+          },
+          "familia": "PUESTO_NO_DETECTADO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": "nza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de esta convocatoria en el Boletín Oficial de Aragón. Que la solicitud será dirigida a la Consejera de Educación",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        }
+      ],
+      "familia_principal": "PUESTO_NO_DETECTADO",
+      "explicacion": "Cada denominación correcta aparece explícitamente antes de su cantidad («Profesores …, N plazas»), pero la propuesta no conserva esa asociación textual.",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8235",
+      "esperadas": [],
+      "extraidas": [],
+      "parejas": [],
+      "familia_principal": "SIN_DISCREPANCIA",
+      "explicacion": "",
+      "observacion": ""
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10041",
+      "esperadas": [
+        {
+          "Puesto": "Intervención-Tesorería",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        }
+      ],
+      "extraidas": [
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 50
+        },
+        {
+          "Puesto": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 50
+        },
+        {
+          "Puesto": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 5
+        }
+      ],
+      "parejas": [
+        {
+          "esperado": {
+            "Puesto": "Intervención-Tesorería",
+            "Num_plazas": 100
+          },
+          "extraido": {
+            "Puesto": null,
+            "Num_plazas": 100
+          },
+          "familia": "ESCALA_CONFUNDIDA_CON_PUESTO",
+          "evidencia": {
+            "fuente": "HISTORICAL_TEXT",
+            "fragmento": "e febrero, por el que se aprueba la oferta de empleo público para el año 2004 («Boletín Oficial del Estado» del 7), autoriza en su disposición adicional segunda la convocatoria de 100 plazas para la Subescala de Intervención-Tesorería, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional. Así, en cumplimiento de lo dispuesto en el Real Decreto 222/2004, de 6 de febrer",
+            "regla_patron": "propuesta_extractor precargada; sin regla de Puesto cuando el valor es nulo"
+          }
+        }
+      ],
+      "familia_principal": "ESCALA_CONFUNDIDA_CON_PUESTO",
+      "explicacion": "La denominación manual correcta es «Subescala de Intervención-Tesorería». Las cinco propuestas mezclan total, referencia de escala, componentes y subcupo.",
+      "observacion": "Cinco filas: total 100, referencia de escala 100, dos componentes 50 y subcupo 5; no se modifica reconciliación."
+    }
+  ]
+}

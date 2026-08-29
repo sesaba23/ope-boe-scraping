@@ -147,6 +147,9 @@ def test_normalizacion_municipal_unifica_apostrofos_espacios_tildes_y_guiones():
     assert normalizar_nombre_municipal(
         "Medina-Sidonia"
     ) == normalizar_nombre_municipal("Medina Sidonia")
+    assert normalizar_nombre_municipal("Sant Joan d´Alacant") == normalizar_nombre_municipal(
+        "Sant Joan d'Alacant"
+    )
 
 
 def test_ayuntamiento_con_provincia_incompatible_no_se_geolocaliza():

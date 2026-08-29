@@ -1,0 +1,3470 @@
+{
+  "fecha_ejecucion": "2026-08-23T10:53:24",
+  "resumen": {
+    "documentos_analizados": 21,
+    "CONVOCATORIA": 21,
+    "NO_CONVOCATORIA": 0,
+    "INDETERMINADO": 0,
+    "documentos_con_filas_extraidas": 15,
+    "total_convocatorias": 25,
+    "campos_completos": 20,
+    "campos_parciales": 5,
+    "documentos_mejorados": 15,
+    "falsos_positivos_potenciales": 3
+  },
+  "documentos": [
+    {
+      "publicacion_id": "BOE-A-2004-82",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "su plantilla",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040102",
+          "Publicacion_ID": "BOE-A-2004-82",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-82"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": null,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocar pruebas selectivas para la provisión, en propiedad, de las siguientes plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "su plantilla",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de su plantilla"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040102",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040102"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-82",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-82"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 18 de noviembre de 2003, del Ayuntamiento de Benalup-Casas Viejas (Cádiz), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040102",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 7,
+            "fragmento": "Siete plazas",
+            "posicion": 228,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "su plantilla",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "onvocar pruebas selectivas para la provisión, en propiedad, de las siguientes plazas de su plantilla: A) Personal funcionario: 1. Administración Especial, Servicios Especiales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. La",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 316,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "su plantilla: A) Personal funcionario: 1. Administración Especial, Servicios Especiales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. Las bases que rigen estas convocatorias se encuentran en el «Boletín Oficial de la Prov",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 397,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ciales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. Las bases que rigen estas convocatorias se encuentran en el «Boletín Oficial de la Provincia de Cádiz» número 245, de fecha 22 de octubre de 2003, y en el «Boletín Ofic",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 746,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Trabajador Social",
+            "Turno": null,
+            "Sistema": "Concurso",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ncia de Cádiz» número 245, de fecha 22 de octubre de 2003, y en el «Boletín Oficial de la Junta de Andalucía» número 217, de fecha 11 de noviembre de 2003. B) Personal laboral: 1. Una plaza de Trabajador Social, sistema de acceso concurso-libre. Las bases que rigen esta convocatoria se encuentran en el «Boletín Oficial de la Provincia de Cádiz» número 245, de fecha 22 de octubre de 2003. El plazo de presentación de instancias",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 7,
+            "fragmento": "Siete plazas",
+            "posicion": 228,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "su plantilla",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "onvocar pruebas selectivas para la provisión, en propiedad, de las siguientes plazas de su plantilla: A) Personal funcionario: 1. Administración Especial, Servicios Especiales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. La",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 316,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "su plantilla: A) Personal funcionario: 1. Administración Especial, Servicios Especiales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. Las bases que rigen estas convocatorias se encuentran en el «Boletín Oficial de la Prov",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 397,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ciales: a) Siete plazas de Agente de Policía Local, sistema de acceso concurso-oposición libre. b) Una plaza de Agente de Policía Local, sistema de acceso Movilidad Horizontal. c) Una plaza de Subinspector de Policía Local, sistema de acceso Promoción interna. Las bases que rigen estas convocatorias se encuentran en el «Boletín Oficial de la Provincia de Cádiz» número 245, de fecha 22 de octubre de 2003, y en el «Boletín Ofic",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 746,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Trabajador Social",
+            "Turno": null,
+            "Sistema": "Concurso",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ncia de Cádiz» número 245, de fecha 22 de octubre de 2003, y en el «Boletín Oficial de la Junta de Andalucía» número 217, de fecha 11 de noviembre de 2003. B) Personal laboral: 1. Una plaza de Trabajador Social, sistema de acceso concurso-libre. Las bases que rigen esta convocatoria se encuentran en el «Boletín Oficial de la Provincia de Cádiz» número 245, de fecha 22 de octubre de 2003. El plazo de presentación de instancias",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-02",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-113",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Aparejador",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Técnica",
+          "Clase": "Técnico Medio",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-113",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-113"
+        },
+        {
+          "Puesto": "Oficial Albañil",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Personal de Oficios",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-113",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-113"
+        },
+        {
+          "Puesto": "Taquillero-Monitor",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Cometidos Especiales",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-113",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-113"
+        },
+        {
+          "Puesto": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+          "Num_plazas": 2,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Personal de Oficios",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-113",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-113"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "cubrir en propiedad, una plaza"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Aparejador",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Aparejador"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Técnica",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala Técnica"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Técnico Medio",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase Técnico Medio"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-113",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-113"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "cubrir en propiedad, una plaza"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Oficial Albañil",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Oficial Albañil"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Personal de Oficios",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase Personal de Oficios"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-113",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-113"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "cubrir en propiedad, una plaza"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Taquillero-Monitor",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Taquillero-Monitor"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Cometidos Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase Cometidos Especiales"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-113",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-113"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "cubrir en propiedad, dos plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Personal de Oficios",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase Personal de Oficios"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-113",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-113"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 11 de diciembre de 2003, del Ayuntamiento de Ciudad Real, referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 4,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 392,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Aparejador",
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Técnica",
+            "Clase": "Técnico Medio",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "gir los procesos selectivos convocados por este Excmo. Ayuntamiento de Ciudad Real, para la provisión de las siguientes plazas: Concurso-oposición libre, para cubrir en propiedad, una plaza de Aparejador, Escala de Administración Especial, Subescala Técnica, Clase Técnico Medio. Concurso-oposición libre, para cubrir en propiedad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, ",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 544,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Aparejador",
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Técnica",
+            "Clase": "Técnico Medio",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": ", para cubrir en propiedad, una plaza de Aparejador, Escala de Administración Especial, Subescala Técnica, Clase Técnico Medio. Concurso-oposición libre, para cubrir en propiedad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. Concurso-oposición libre, para cubrir en propiedad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subes",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 720,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial Albañil",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Oficios",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. Concurso-oposición libre, para cubrir en propiedad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 894,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Taquillero-Monitor",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "edad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 928,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "tor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte días naturales, contados a parti",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 970,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "bescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte días naturales, contados a partir del siguiente al de la publicación del p",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 392,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Aparejador",
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Técnica",
+            "Clase": "Técnico Medio",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "gir los procesos selectivos convocados por este Excmo. Ayuntamiento de Ciudad Real, para la provisión de las siguientes plazas: Concurso-oposición libre, para cubrir en propiedad, una plaza de Aparejador, Escala de Administración Especial, Subescala Técnica, Clase Técnico Medio. Concurso-oposición libre, para cubrir en propiedad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, ",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 544,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Aparejador",
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Técnica",
+            "Clase": "Técnico Medio",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": ", para cubrir en propiedad, una plaza de Aparejador, Escala de Administración Especial, Subescala Técnica, Clase Técnico Medio. Concurso-oposición libre, para cubrir en propiedad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. Concurso-oposición libre, para cubrir en propiedad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subes",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 720,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial Albañil",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Oficios",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ad, una plaza de Oficial Albañil, Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. Concurso-oposición libre, para cubrir en propiedad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 894,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Taquillero-Monitor",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "edad, una plaza de Taquillero-Monitor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 928,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "tor, Escala de Administración Especial, Subescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte días naturales, contados a parti",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 970,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre)",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especiales",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "bescala Servicios Especiales, Clase Cometidos Especiales. Concurso-oposición, para cubrir en propiedad, dos plazas de Ayudante Jardinero (una plaza en turno de promoción interna y una plaza en turno libre), Escala de Administración Especial, Subescala Servicios Especiales, Clase Personal de Oficios. El plazo de presentación de instancias será de veinte días naturales, contados a partir del siguiente al de la publicación del p",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-115",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 15 de diciembre de 2003, del Ayuntamiento de Igualada (Barcelona), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [],
+        "grupos": [],
+        "cantidades_funcionales": [],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-120",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 17 de diciembre de 2003, del Ayuntamiento de Marbella (Málaga), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 288,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Subinspectores de la Policía Local en régimen funcionarial encuadradas en la Escala de la Administrac",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": "la Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad por promoción interna y mediante el sistema de concurso oposición 4 plazas de Subinspectores de la Policía Local en régimen funcionarial encuadradas en la Escala de la Administración Especial, Subescala de Servicios Especiales, vacantes en la plantilla de este Ayuntamiento. Las personas interesadas podrán present",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 288,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Subinspectores de la Policía Local en régimen funcionarial encuadradas en la Escala de la Administrac",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": "la Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad por promoción interna y mediante el sistema de concurso oposición 4 plazas de Subinspectores de la Policía Local en régimen funcionarial encuadradas en la Escala de la Administración Especial, Subescala de Servicios Especiales, vacantes en la plantilla de este Ayuntamiento. Las personas interesadas podrán present",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-121",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Policía Local en régimen funcionarial",
+          "Num_plazas": 58,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-121",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-121"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 58,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocatoria para cubrir en propiedad 58 plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Policía Local en régimen funcionarial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Policía Local en régimen funcionarial"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-121",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-121"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 17 de diciembre de 2003, del Ayuntamiento de Marbella (Málaga), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 58,
+            "fragmento": "58 plazas",
+            "posicion": 222,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local en régimen funcionarial",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "álaga, n.o 239 de fecha 16/12/2003 y Boletín Oficial de la Junta de Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad 58 plazas de Policía Local en régimen funcionarial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante conc",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 47,
+            "fragmento": "47 plazas",
+            "posicion": 274,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local en régimen funcionarial",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " de la Junta de Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad 58 plazas de Policía Local en régimen funcionarial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante concurso de méritos por movilidad horizontal, a tenor de",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 11,
+            "fragmento": "11 plazas",
+            "posicion": 448,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": "la Administración Especial",
+            "Subescala": "Servicios Especiales apartado a)",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "rial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante concurso de méritos por movilidad horizontal, a tenor de lo establecido en el Capítulo IV del Decreto 201/2003, encuadradas en la Escala de la Administración Especial, Subescala de Servicios Especiales apartado a), vacantes en la ",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 58,
+            "fragmento": "58 plazas",
+            "posicion": 222,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local en régimen funcionarial",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "álaga, n.o 239 de fecha 16/12/2003 y Boletín Oficial de la Junta de Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad 58 plazas de Policía Local en régimen funcionarial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante conc",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 47,
+            "fragmento": "47 plazas",
+            "posicion": 274,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local en régimen funcionarial",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " de la Junta de Andalucía n.o 239 de fecha 12/12/2003 han sido publicadas las Bases de la convocatoria para cubrir en propiedad 58 plazas de Policía Local en régimen funcionarial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante concurso de méritos por movilidad horizontal, a tenor de",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 11,
+            "fragmento": "11 plazas",
+            "posicion": 448,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Turno libre",
+            "Sistema": "Concurso oposición",
+            "Escala": "la Administración Especial",
+            "Subescala": "Servicios Especiales apartado a)",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "rial, 47 plazas mediante concurso oposición por turno libre, en aplicación de la Disposición Transitoria V de la Ley 13/2001 de Coordinación de los Policías Locales de Andalucía y 11 plazas mediante concurso de méritos por movilidad horizontal, a tenor de lo establecido en el Capítulo IV del Decreto 201/2003, encuadradas en la Escala de la Administración Especial, Subescala de Servicios Especiales apartado a), vacantes en la ",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-124",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 18 de diciembre de 2003, del Ayuntamiento de Bailén (Jaén), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 282,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local",
+            "Turno": "Movilidad",
+            "Sistema": "Oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Policía Local",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "cial de la Provincia núm. 288 de 17 de diciembre del mismo año, han sido publicadas íntegramente las Bases para la provisión en propiedad mediante el sistema de oposición libre de 4 plazas y 1 de turno de movilidad sin ascenso vacantes de Policía Local, encuadradas en la escala de Administración Especial, Subescala de Servicios Especiales, Clase Policía Local, Categoría Policía. El plazo de presentación de instancias será de",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 282,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local",
+            "Turno": "Movilidad",
+            "Sistema": "Oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Policía Local",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "cial de la Provincia núm. 288 de 17 de diciembre del mismo año, han sido publicadas íntegramente las Bases para la provisión en propiedad mediante el sistema de oposición libre de 4 plazas y 1 de turno de movilidad sin ascenso vacantes de Policía Local, encuadradas en la escala de Administración Especial, Subescala de Servicios Especiales, Clase Policía Local, Categoría Policía. El plazo de presentación de instancias será de",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-126",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "policía del Cuerpo de la Policía Local",
+          "Num_plazas": 2,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-126",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-126"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Convocatoria para la provisión de 2 plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "policía del Cuerpo de la Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de policía del Cuerpo de la Policía Local"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-126",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-126"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 18 de diciembre de 2003, del Ayuntamiento de Casares (Málaga), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 2,
+            "fragmento": "2 plazas",
+            "posicion": 34,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "policía del Cuerpo de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "Convocatoria para la provisión de 2 plazas de policía del Cuerpo de la Policía Local, promoción interna, por el procedimiento de concurso oposición, de Administración Especial, Servicios Especiales. Dichas bases aparecen publicadas íntegramente en el Boletín Oficial de la Provincia",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 2,
+            "fragmento": "2 plazas",
+            "posicion": 34,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "policía del Cuerpo de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "Convocatoria para la provisión de 2 plazas de policía del Cuerpo de la Policía Local, promoción interna, por el procedimiento de concurso oposición, de Administración Especial, Servicios Especiales. Dichas bases aparecen publicadas íntegramente en el Boletín Oficial de la Provincia",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-127",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Policía del Cuerpo de Policía Local del Excmo",
+          "Num_plazas": 2,
+          "Turno": "Movilidad",
+          "Sistema": "Concurso",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Policía Local",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-127",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-127"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "provisión, mediante el procedimiento de concurso por movilidad interadministrativa, de dos plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Policía del Cuerpo de Policía Local del Excmo",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Policía del Cuerpo de Policía Local del Excmo"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala de Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase Policía Local"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Movilidad",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "movilidad"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-127",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-127"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 18 de diciembre de 2003, del Ayuntamiento de Huesca, referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 238,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía del Cuerpo de Policía Local del Excmo",
+            "Turno": "Movilidad",
+            "Sistema": "Concurso",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Policía Local",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e fecha 18 de diciembre de 2003, se publicaron las bases que regirán la convocatoria para la provisión, mediante el procedimiento de concurso por movilidad interadministrativa, de dos plazas de Policía del Cuerpo de Policía Local del Excmo. Ayuntamiento de Huesca, vacantes en la plantilla municipal, pertenecientes a la Escala de Administración Especial, Subescala de Servicios Especiales, Clase Policía Local. El plazo de presen",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 238,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía del Cuerpo de Policía Local del Excmo",
+            "Turno": "Movilidad",
+            "Sistema": "Concurso",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Policía Local",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e fecha 18 de diciembre de 2003, se publicaron las bases que regirán la convocatoria para la provisión, mediante el procedimiento de concurso por movilidad interadministrativa, de dos plazas de Policía del Cuerpo de Policía Local del Excmo. Ayuntamiento de Huesca, vacantes en la plantilla municipal, pertenecientes a la Escala de Administración Especial, Subescala de Servicios Especiales, Clase Policía Local. El plazo de presen",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-129",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "funcionarios de carrera",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-129",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-129"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-129",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-129"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 3,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-129",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-129"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": null,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "provisión de las siguientes plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "funcionarios de carrera",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de funcionarios de carrera"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-129",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-129"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Número de plazas: 1"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Promoción Interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-Oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-129",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-129"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 3,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Número de plazas: 3"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso-Oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-129",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-129"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 18 de diciembre de 2003, del Ayuntamiento de Trebujena (Cádiz), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 3,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [],
+        "grupos": [],
+        "cantidades_funcionales": [],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-130",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Agente de la Policía Local",
+          "Num_plazas": 5,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-130",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-130"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 5,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "provisión en propiedad de cinco plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Agente de la Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "vacantes de Agente de la Policía Local"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-130",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-130"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 19 de diciembre de 2003, del Ayuntamiento de Nules (Castellón), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 5,
+            "fragmento": "cinco plazas",
+            "posicion": 260,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " 2003, y en el Diario Oficial de la Generalitat Valenciana n.º 4.629, de 13 de noviembre de 2003, se publican las bases de las pruebas selectivas para la provisión en propiedad de cinco plazas vacantes de Agente de la Policía Local, mediante el sistema de oposición libre, incluida una de movilidad en caso de no proveerse, y una de Oficial de la Policía Local, mediante concurso-oposición por el sistema de promoción interna. El pl",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 5,
+            "fragmento": "cinco plazas",
+            "posicion": 260,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " 2003, y en el Diario Oficial de la Generalitat Valenciana n.º 4.629, de 13 de noviembre de 2003, se publican las bases de las pruebas selectivas para la provisión en propiedad de cinco plazas vacantes de Agente de la Policía Local, mediante el sistema de oposición libre, incluida una de movilidad en caso de no proveerse, y una de Oficial de la Policía Local, mediante concurso-oposición por el sistema de promoción interna. El pl",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-131",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Policía Local del Ayuntamiento de Santa Eulalia del Río",
+          "Num_plazas": null,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-131",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-131"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": null,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convoca para la provisión, como funcionario de carrera, de diecisiete plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Policía Local del Ayuntamiento de Santa Eulalia del Río",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Policía Local del Ayuntamiento de Santa Eulalia del Río"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-131",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-131"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 19 de diciembre de 2003, del Ayuntamiento de Santa Eulalia del Río (Illes Balears), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 7,
+            "fragmento": "siete plazas",
+            "posicion": 230,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local del Ayuntamiento de Santa Eulalia del Río",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "4, de fecha 18 de diciembre de 2003, han sido publicadas las bases que han de regir en el concurso-oposición que se convoca para la provisión, como funcionario de carrera, de diecisiete plazas de Policía Local del Ayuntamiento de Santa Eulalia del Río, nueve de las cuales son de promoción interna, aprobadas por Comisión de Gobierno de Administración Especial, Servicios Especiales. El plazo de presentación de solicitudes será de ",
+            "relacion_distribucion": true
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 7,
+            "fragmento": "siete plazas",
+            "posicion": 230,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Policía Local del Ayuntamiento de Santa Eulalia del Río",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "4, de fecha 18 de diciembre de 2003, han sido publicadas las bases que han de regir en el concurso-oposición que se convoca para la provisión, como funcionario de carrera, de diecisiete plazas de Policía Local del Ayuntamiento de Santa Eulalia del Río, nueve de las cuales son de promoción interna, aprobadas por Comisión de Gobierno de Administración Especial, Servicios Especiales. El plazo de presentación de solicitudes será de ",
+            "relacion_distribucion": true
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-135",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Auxiliar Administrativo",
+          "Num_plazas": 4,
+          "Turno": null,
+          "Sistema": "Concurso oposición",
+          "Escala": null,
+          "Subescala": "Auxiliar",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-135",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-135"
+        },
+        {
+          "Puesto": "Agentes de la Policía Local",
+          "Num_plazas": 6,
+          "Turno": "Promoción interna",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": "Administrativa",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-135",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-135"
+        },
+        {
+          "Puesto": "Oficial de la Policía Local",
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-135",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-135"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 4,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Cuatro plazas de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Auxiliar Administrativo",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Auxiliar Administrativo"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Auxiliar",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Auxiliar"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-135",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-135"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 6,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Seis plazas de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Agentes de la Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Agentes de la Policía Local"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Administrativa",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Administrativa"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-135",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-135"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Una plaza de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Oficial de la Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Oficial de la Policía Local"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-135",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-135"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 22 de diciembre de 2003, del Ayuntamiento de Miajadas (Cáceres), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 3,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 4,
+            "fragmento": "Cuatro plazas",
+            "posicion": 373,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": null,
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "s las bases íntegras de la convocatoria para la provisión en propiedad de las plazas que se enumeran a continuación, vacantes en la plantilla de funcionarios de este Ayuntamiento: Cuatro plazas de Auxiliar Administrativo, mediante el sistema de concurso oposición libre, Administración General, subescala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, ",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 6,
+            "fragmento": "Seis plazas",
+            "posicion": 542,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ntamiento: Cuatro plazas de Auxiliar Administrativo, mediante el sistema de concurso oposición libre, Administración General, subescala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, Administración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 673,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agentes de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "cala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, Administración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala Administrativa. Una plaza de Oficial de la Policía Local, mediante el sistema de concurso oposición por promoción interna, Admin",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 810,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Jefe de Negociado",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "nistración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala Administrativa. Una plaza de Oficial de la Policía Local, mediante el sistema de concurso oposición por promoción interna, Administración Especial, Servicios Especiales. El plazo de presentación de instancias será de veinte días naturales, contados a partir del sig",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 4,
+            "fragmento": "Cuatro plazas",
+            "posicion": 373,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": null,
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "s las bases íntegras de la convocatoria para la provisión en propiedad de las plazas que se enumeran a continuación, vacantes en la plantilla de funcionarios de este Ayuntamiento: Cuatro plazas de Auxiliar Administrativo, mediante el sistema de concurso oposición libre, Administración General, subescala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, ",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 6,
+            "fragmento": "Seis plazas",
+            "posicion": 542,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "ntamiento: Cuatro plazas de Auxiliar Administrativo, mediante el sistema de concurso oposición libre, Administración General, subescala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, Administración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 673,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agentes de la Policía Local",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "cala Auxiliar, consolidación de empleo temporal. Seis plazas de Agentes de la Policía Local, mediante el sistema de oposición libre, Administración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala Administrativa. Una plaza de Oficial de la Policía Local, mediante el sistema de concurso oposición por promoción interna, Admin",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "Una plaza",
+            "posicion": 810,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Jefe de Negociado",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "nistración Especial, Servicios Especiales. Una plaza de Jefe de Negociado, mediante el sistema de concurso por promoción interna, Administración General, subescala Administrativa. Una plaza de Oficial de la Policía Local, mediante el sistema de concurso oposición por promoción interna, Administración Especial, Servicios Especiales. El plazo de presentación de instancias será de veinte días naturales, contados a partir del sig",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-137",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Agente de la Policía Local",
+          "Num_plazas": 2,
+          "Turno": "Movilidad",
+          "Sistema": "Concurso oposición",
+          "Escala": "básica",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040103",
+          "Publicacion_ID": "BOE-A-2004-137",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-137"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "provisión, con carácter de funcionario, de dos plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Agente de la Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Agente de la Policía Local"
+          },
+          {
+            "campo": "Escala",
+            "valor": "básica",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "escala básica"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Movilidad",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "movilidad"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Concurso Oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040103",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040103"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-137",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-137"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 23 de diciembre de 2003, del Ayuntamiento de Monòvar (Alicante), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040103",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 192,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de la Policía Local",
+            "Turno": "Movilidad",
+            "Sistema": "Oposición",
+            "Escala": "básica",
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "n Oficial de la Provincia de Alicante número 181, de fecha 8 de agosto de 2003, se publican las Bases Generales que han de regir para la provisión, con carácter de funcionario, de dos plazas de Agente de la Policía Local, escala básica, una mediante concurso de movilidad y otra mediante oposición libre, y en el Boletín Oficial de la Provincia de Alicante número 286, de fecha 15 de diciembre de 2003, se publica la modificación ",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 2,
+            "fragmento": "dos plazas",
+            "posicion": 192,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Agente de la Policía Local",
+            "Turno": "Movilidad",
+            "Sistema": "Oposición",
+            "Escala": "básica",
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "n Oficial de la Provincia de Alicante número 181, de fecha 8 de agosto de 2003, se publican las Bases Generales que han de regir para la provisión, con carácter de funcionario, de dos plazas de Agente de la Policía Local, escala básica, una mediante concurso de movilidad y otra mediante oposición libre, y en el Boletín Oficial de la Provincia de Alicante número 286, de fecha 15 de diciembre de 2003, se publica la modificación ",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-03",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-233",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Administrativo de Administración General-Responsable de Informática",
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040106",
+          "Publicacion_ID": "BOE-A-2004-233",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-233"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Número de vacantes: Una"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Administrativo de Administración General-Responsable de Informática",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Administrativo de Administración General-Responsable de Informática"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración General",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración General"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Administrativa",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Administrativa"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040106",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040106"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-233",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-233"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 2 de diciembre de 2003, del Ayuntamiento de Villabona (Guipúzcoa), referente a la convocatoria para proveer una plaza.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040106",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Administrativo de Administración General-Responsable de Informática",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración General",
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Administrativo de Administración General-Responsable de Informática, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración General, subescala Administrativa. N",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Administrativo de Administración General-Responsable de Informática",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración General",
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Administrativo de Administración General-Responsable de Informática, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración General, subescala Administrativa. N",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-06",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-235",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 9 de diciembre de 2003, de la Diputación Provincial de Alicante, referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040106",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 44,
+            "fragmento": "44 plazas",
+            "posicion": 427,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Especialista de Mantenimiento",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicio",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " las pruebas selectivas convocadas por Resolución del Ilmo. Sr. Presidente de la Corporación, para cubrir, mediante promoción interna y por el procedimiento de concurso-oposición, 44 plazas de Especialista de Mantenimiento, vacantes en la plantilla de esta Diputación Provincial, dentro de las plazas reservadas a funcionarios de carrera. Estas plazas están encuadradas en la Escala de Administración Especial, subescala Servicio",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 44,
+            "fragmento": "44 plazas",
+            "posicion": 427,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Especialista de Mantenimiento",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicio",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " las pruebas selectivas convocadas por Resolución del Ilmo. Sr. Presidente de la Corporación, para cubrir, mediante promoción interna y por el procedimiento de concurso-oposición, 44 plazas de Especialista de Mantenimiento, vacantes en la plantilla de esta Diputación Provincial, dentro de las plazas reservadas a funcionarios de carrera. Estas plazas están encuadradas en la Escala de Administración Especial, subescala Servicio",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-06",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-237",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 10 de diciembre de 2003, del Ayuntamiento de Montefrío (Granada), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040106",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [],
+        "grupos": [],
+        "cantidades_funcionales": [],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-06",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-368",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Orden APU/3729/2003, de 17 de diciembre, por la que se convocan pruebas selectivas para cubrir plazas de personal laboral en la categoría de Técnico de Investigación y Laboratorio, mediante contratación laboral fija, por el turno de promoción interna.",
+        "departamento": "Ministerio de Administraciones Públicas",
+        "fecha_publicacion": "20040108",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 0,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [],
+        "grupos": [],
+        "cantidades_funcionales": [],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-08",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-375",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Administrativo de Administración General",
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040108",
+          "Publicacion_ID": "BOE-A-2004-375",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-375"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Número de vacantes: Una"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Administrativo de Administración General",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Administrativo de Administración General"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración General",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración General"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Administrativa",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Administrativa"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040108",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040108"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-375",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-375"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 2 de diciembre de 2003, del Ayuntamiento de Villabona (Guipúzcoa), referente a la convocatoria para proveer una plaza.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040108",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Administrativo de Administración General",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración General",
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Administrativo de Administración General, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración General, subescala Administrativa. Número de vacantes: Una. Den",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Administrativo de Administración General",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración General",
+            "Subescala": "Administrativa",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Administrativo de Administración General, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración General, subescala Administrativa. Número de vacantes: Una. Den",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-08",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-376",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Oficial 1",
+          "Num_plazas": 3,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Personal de Oficios",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040108",
+          "Publicacion_ID": "BOE-A-2004-376",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-376"
+        },
+        {
+          "Puesto": "Oficial 1",
+          "Num_plazas": 1,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Personal de Oficios",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040108",
+          "Publicacion_ID": "BOE-A-2004-376",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-376"
+        },
+        {
+          "Puesto": "Oficial 1",
+          "Num_plazas": 1,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040108",
+          "Publicacion_ID": "BOE-A-2004-376",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-376"
+        },
+        {
+          "Puesto": "Peón Especialista",
+          "Num_plazas": 4,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040108",
+          "Publicacion_ID": "BOE-A-2004-376",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-376"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 3,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "3 plazas de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Oficial 1",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Oficial 1"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala de Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Personal de Oficios",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase de Personal de Oficios"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040108",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040108"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-376",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-376"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "1 plaza de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Oficial 1",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Oficial 1"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala de Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Personal de Oficios",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Clase de Personal de Oficios"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040108",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040108"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-376",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-376"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "1 plaza de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Oficial 1",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Oficial 1"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040108",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040108"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-376",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-376"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 4,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "4 plazas de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Peón Especialista",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Peón Especialista"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040108",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040108"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-376",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-376"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 15 de diciembre de 2003, del Ayuntamiento de Córdoba, referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040108",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 4,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 3,
+            "fragmento": "3 plazas",
+            "posicion": 234,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Ofici",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": ", de 28 de octubre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 140, de 23 de octubre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 3 plazas de Oficial 1.ª Pintor/a, mediante el sistema de concurso-oposición, en turno de promoción interna, pertenecientes a la plantilla funcionarial, Escala de Administración Especial, Subescala de Servicios Especiales, Clase de Personal de Ofici",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "1 plaza",
+            "posicion": 723,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Oficios",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e 18 de noviembre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 1 plaza de Oficial 1.ª Herrero/a, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla funcionarial, Escala de Administración Especial, Subescala de Servicios Especiales, Clase de Personal de Oficios. En el Bolet",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "1 plaza",
+            "posicion": 1194,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " de 23 de octubre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 1 plaza de Oficial 1.ª Conductor/a, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla laboral fijo. En el Boletín Oficial de la Junta de Andalucía n.º 220, de 14 de noviembre de 2003 y Boletín Oficial de la Pr",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 1569,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Peón Especialista",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e 14 de noviembre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 4 plazas de Peón Especialista, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla laboral fijo. El plazo de presentación de instancias será de veinte días naturales, contados a partir del siguiente al de la publ",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 3,
+            "fragmento": "3 plazas",
+            "posicion": 234,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Ofici",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": ", de 28 de octubre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 140, de 23 de octubre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 3 plazas de Oficial 1.ª Pintor/a, mediante el sistema de concurso-oposición, en turno de promoción interna, pertenecientes a la plantilla funcionarial, Escala de Administración Especial, Subescala de Servicios Especiales, Clase de Personal de Ofici",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "1 plaza",
+            "posicion": 723,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Personal de Oficios",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e 18 de noviembre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 1 plaza de Oficial 1.ª Herrero/a, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla funcionarial, Escala de Administración Especial, Subescala de Servicios Especiales, Clase de Personal de Oficios. En el Bolet",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "1 plaza",
+            "posicion": 1194,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Oficial 1",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " de 23 de octubre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 1 plaza de Oficial 1.ª Conductor/a, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla laboral fijo. En el Boletín Oficial de la Junta de Andalucía n.º 220, de 14 de noviembre de 2003 y Boletín Oficial de la Pr",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 4,
+            "fragmento": "4 plazas",
+            "posicion": 1569,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Peón Especialista",
+            "Turno": "Turno libre",
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e 14 de noviembre de 2003 y Boletín Oficial de la Provincia de Córdoba n.º 159, de 1 de diciembre de 2003, se publican las bases de convocatoria para cubrir las siguientes plazas: 4 plazas de Peón Especialista, mediante el sistema de concurso-oposición, en turno libre, perteneciente a la plantilla laboral fijo. El plazo de presentación de instancias será de veinte días naturales, contados a partir del siguiente al de la publ",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-08",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-444",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Encargado de la Biblioteca Municipal",
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Cometidos Especiales",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040109",
+          "Publicacion_ID": "BOE-A-2004-444",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-444"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Número de vacantes: Una"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Encargado de la Biblioteca Municipal",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Encargado de la Biblioteca Municipal"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala de Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Cometidos Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "clase Cometidos Especiales"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso-oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso-oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040109",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040109"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-444",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-444"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 2 de diciembre de 2003, del Ayuntamiento de Villabona (Guipúzcoa), referente a la convocatoria para proveer una plaza.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040109",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Encargado de la Biblioteca Municipal",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especi",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Encargado de la Biblioteca Municipal, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración Especial, subescala de Servicios Especiales, clase Cometidos Especi",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 221,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Encargado de la Biblioteca Municipal",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso-oposición",
+            "Escala": "Administración Especial",
+            "Subescala": "Servicios Especiales",
+            "Clase": "Cometidos Especi",
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "o 228, de 28 de noviembre de 2003, se publican íntegramente las bases para la provisión en propiedad, por el sistema de concurso-oposición, por el sistema de promoción interna, de una plaza de Encargado de la Biblioteca Municipal, vacante en la plantilla de funcionarios del Ayuntamiento de Villabona, de las siguientes características: Escala de Administración Especial, subescala de Servicios Especiales, clase Cometidos Especi",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-09",
+      "validacion_reconciliador": "NO_APLICA"
+    },
+    {
+      "publicacion_id": "BOE-A-2004-448",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Auxiliar Administrativo",
+          "Num_plazas": 1,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": null,
+          "Subescala": "auxiliar",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040109",
+          "Publicacion_ID": "BOE-A-2004-448",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-448"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocatoria para cubrir mediante concurso oposición por promoción interna de una plaza"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Auxiliar Administrativo",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Auxiliar Administrativo"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "auxiliar",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala auxiliar"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Concurso oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "concurso oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040109",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040109"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-448",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-448"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 11 de diciembre de 2003, del Ayuntamiento de Táliga (Badajoz), referente a la convocatoria para proveer una plaza.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20040109",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "filas_antes_reconciliacion": 1,
+      "reconciliacion": {
+        "estado": "SIN_RECONCILIACION",
+        "cantidades": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 222,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "adajoz, n.º 203, de fecha 24 de octubre de 2003, se publican íntegramente las bases y programas de la convocatoria para cubrir mediante concurso oposición por promoción interna de una plaza de Auxiliar Administrativo, vacante en la plantilla de funcionarios de este Ayuntamiento, de Administración General, subescala auxiliar. El plazo de presentación de solicitudes será de 20 días naturales a contar del siguiente al de la publ",
+            "relacion_distribucion": false
+          }
+        ],
+        "grupos": [],
+        "cantidades_funcionales": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 222,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "Auxiliar Administrativo",
+            "Turno": "Promoción interna",
+            "Sistema": "Concurso oposición",
+            "Escala": null,
+            "Subescala": "auxiliar",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "adajoz, n.º 203, de fecha 24 de octubre de 2003, se publican íntegramente las bases y programas de la convocatoria para cubrir mediante concurso oposición por promoción interna de una plaza de Auxiliar Administrativo, vacante en la plantilla de funcionarios de este Ayuntamiento, de Administración General, subescala auxiliar. El plazo de presentación de solicitudes será de 20 días naturales a contar del siguiente al de la publ",
+            "relacion_distribucion": false
+          }
+        ],
+        "totales_descartados": [],
+        "subcupos_incluidos": [],
+        "tipos_relacion": []
+      },
+      "fecha_muestra": "2004-01-09",
+      "validacion_reconciliador": "NO_APLICA"
+    }
+  ]
+}

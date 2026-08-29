@@ -1,0 +1,69 @@
+{
+  "fecha_ejecucion": "2026-08-23 13:12:32",
+  "modelo": {
+    "celda": [
+      "texto",
+      "fila_original",
+      "columna_original",
+      "rowspan",
+      "colspan",
+      "heredada",
+      "celda_origen"
+    ],
+    "fila": [
+      "celdas",
+      "grupo_padre",
+      "nivel_jerarquico",
+      "es_grupo"
+    ],
+    "bloque": [
+      "section_id",
+      "parent_section",
+      "bloque_padre"
+    ]
+  },
+  "antes": {
+    "VALIDA": 18,
+    "VALIDA_PARCIAL": 44,
+    "NO_UTILIZABLE": 6,
+    "filas_con_puesto": 22,
+    "filas_con_num_plazas": 58,
+    "filas_con_ambos": 18,
+    "publicaciones_con_alguna_valida": 9,
+    "opcionales": {
+      "Turno": 9,
+      "Sistema": 3,
+      "Escala": 8,
+      "Subescala": 6,
+      "Clase": 0
+    }
+  },
+  "despues": {
+    "VALIDA": 18,
+    "VALIDA_PARCIAL": 44,
+    "NO_UTILIZABLE": 6,
+    "filas_con_puesto": 22,
+    "filas_con_num_plazas": 58,
+    "filas_con_ambos": 18,
+    "publicaciones_con_alguna_valida": 9,
+    "opcionales": {
+      "Turno": 9,
+      "Sistema": 3,
+      "Escala": 8,
+      "Subescala": 6,
+      "Clase": 0
+    }
+  },
+  "nuevas_validas": [],
+  "herencias_estructurales": 0,
+  "herencias_rechazadas": 14,
+  "efecto_reconciliador": "Sin cambios: 1 TOTAL_DESGLOSADO y 29 SIN_RECONCILIACION.",
+  "casos_prioritarios": {
+    "BOE-A-2004-3891": "tabla jerárquica sin fila agrupadora demostrable para las columnas extraídas",
+    "BOE-A-2004-3826": "desglose por clase no estructurado como relación padre/hijo inequívoca",
+    "BOE-A-2004-6777": "no se halló tabla que resuelva la asociación textual",
+    "BOE-A-2004-10220": "subcupos sin contención estructural demostrable",
+    "BOE-A-2004-14618": "reserva sin relación padre/hijo demostrable"
+  },
+  "recomendacion": "No integrar. La siguiente fase debe estudiar el XML de tablas con composición de encabezados multinivel antes de habilitar herencia."
+}

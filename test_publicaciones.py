@@ -22,6 +22,28 @@ def _enlace(publicacion_id="BOE-A-2026-10463"):
     return f"https://www.boe.es/diario_boe/txt.php?id={publicacion_id}"
 
 
+def test_registro_persiste_sumario_y_trazabilidad_sin_tocar_convocatorias():
+    registro = crear_registro_publicacion(
+        _enlace(), "22 de agosto de 2026", "Título HTML", 2,
+        titulo_sumario="Resolución del Ayuntamiento de Ciudad Real, referente a la convocatoria.",
+        departamento_boe="Administración Local",
+    )
+    assert registro["Titulo_original"].startswith("Resolución del Ayuntamiento")
+    assert registro["Departamento_BOE"] == "Administración Local"
+    assert (registro["Administracion_resuelta"], registro["Familia_administrativa"],
+            registro["Estado_resolucion"], registro["Confianza_resolucion"],
+            registro["Version_resolucion"]) == ("Ayuntamiento de Ciudad Real", "AYUNTAMIENTO", "RESUELTA", "ALTA", "1")
+
+
+def test_resolucion_ambigua_no_inventa_administracion():
+    registro = crear_registro_publicacion(
+        _enlace(), "22 de agosto de 2026",
+        "Resolución del Ayuntamiento de A, referente a la convocatoria del Consorcio B.", 0,
+    )
+    assert registro["Administracion_resuelta"] == ""
+    assert (registro["Estado_resolucion"], registro["Confianza_resolucion"]) == ("AMBIGUA", "AMBIGUA")
+
+
 def _publicaciones_con_version(version):
     return pd.DataFrame(
         [

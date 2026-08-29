@@ -1,0 +1,531 @@
+{
+  "resumen": {
+    "filas_oposiciones": 106350,
+    "filas_cubiertas_actualmente": 1323,
+    "filas_no_cubiertas": 105027,
+    "porcentaje_titulo_disponible": 1.25,
+    "filas_clasificadas_por_titulo": 53,
+    "filas_clasificadas_por_administracion_existente": 104974,
+    "campos_metadatos_boe_en_publicaciones": [],
+    "filas_adicionales_por_metadatos_boe": 0,
+    "recomendadas": [
+      "MINISTERIO",
+      "COMUNIDAD_AUTONOMA",
+      "CONSORCIO",
+      "MANCOMUNIDAD",
+      "AGENCIA",
+      "CABILDO",
+      "CONSEJO_INSULAR",
+      "INSTITUTO",
+      "CONSEJERIA"
+    ]
+  },
+  "ranking": [
+    {
+      "familia": "ADMINISTRACION_LOCAL_GENERICA",
+      "publicaciones": 52696,
+      "filas": 97204,
+      "porcentaje_filas": 91.4,
+      "porcentaje_acumulado_con_cobertura_actual": 92.64,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2004-83",
+          "titulo": "",
+          "administracion": "Administración Local",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Administración Local"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-85",
+          "titulo": "",
+          "administracion": "Administración Local",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Administración Local"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-112",
+          "titulo": "",
+          "administracion": "Administración Local",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Administración Local"
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Administración Local",
+          "filas": 97204
+        }
+      ]
+    },
+    {
+      "familia": "SIN_CLASIFICAR",
+      "publicaciones": 2462,
+      "filas": 3336,
+      "porcentaje_filas": 3.14,
+      "porcentaje_acumulado_con_cobertura_actual": 95.78,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2004-81",
+          "titulo": "",
+          "administracion": "Consejo de Estado",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Consejo de Estado"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-603",
+          "titulo": "",
+          "administracion": "Universidades",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Universidades"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-604",
+          "titulo": "",
+          "administracion": "Universidades",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Universidades"
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Universidades",
+          "filas": 2872
+        },
+        {
+          "administracion": "Comunidad de Madrid",
+          "filas": 130
+        },
+        {
+          "administracion": "Consejo General del Poder Judicial",
+          "filas": 112
+        },
+        {
+          "administracion": "Cortes Generales",
+          "filas": 81
+        },
+        {
+          "administracion": "Tribunal Constitucional",
+          "filas": 54
+        },
+        {
+          "administracion": "Tribunal de Cuentas",
+          "filas": 33
+        },
+        {
+          "administracion": "Consejo de Estado",
+          "filas": 18
+        },
+        {
+          "administracion": "Comisión Nacional de los Mercados y la Competencia",
+          "filas": 18
+        },
+        {
+          "administracion": "Consejo de Seguridad Nuclear",
+          "filas": 11
+        },
+        {
+          "administracion": "Comunitat Valenciana",
+          "filas": 6
+        }
+      ]
+    },
+    {
+      "familia": "MINISTERIO",
+      "publicaciones": 1494,
+      "filas": 2357,
+      "porcentaje_filas": 2.22,
+      "porcentaje_acumulado_con_cobertura_actual": 98.0,
+      "sede_estimable": "MEDIA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2004-372",
+          "titulo": "",
+          "administracion": "Ministerio de Ciencia y Tecnología",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Ministerio de Ciencia y Tecnología"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-373",
+          "titulo": "",
+          "administracion": "Ministerio de Ciencia y Tecnología",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Ministerio de Ciencia y Tecnología"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-374",
+          "titulo": "",
+          "administracion": "Ministerio de Ciencia y Tecnología",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Ministerio de Ciencia y Tecnología"
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Ministerio de Justicia",
+          "filas": 453
+        },
+        {
+          "administracion": "Ministerio del Interior",
+          "filas": 156
+        },
+        {
+          "administracion": "Ministerio de Sanidad y Consumo",
+          "filas": 121
+        },
+        {
+          "administracion": "Ministerio de Ciencia e Innovación",
+          "filas": 108
+        },
+        {
+          "administracion": "Ministerio de Defensa",
+          "filas": 106
+        },
+        {
+          "administracion": "Ministerio de Educación y Ciencia",
+          "filas": 104
+        },
+        {
+          "administracion": "Ministerio de Ciencia y Tecnología",
+          "filas": 101
+        },
+        {
+          "administracion": "Ministerio de Trabajo y Asuntos Sociales",
+          "filas": 101
+        },
+        {
+          "administracion": "Ministerio de Hacienda",
+          "filas": 99
+        },
+        {
+          "administracion": "Ministerio de Fomento",
+          "filas": 99
+        }
+      ]
+    },
+    {
+      "familia": "COMUNIDAD_AUTONOMA",
+      "publicaciones": 98,
+      "filas": 2074,
+      "porcentaje_filas": 1.95,
+      "porcentaje_acumulado_con_cobertura_actual": 99.95,
+      "sede_estimable": "MEDIA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2004-2004",
+          "titulo": "",
+          "administracion": "Comunidad Autónoma de Cataluña",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Comunidad Autónoma de Cataluña"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-4743",
+          "titulo": "",
+          "administracion": "Comunidad Autónoma de las Illes Balears",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Comunidad Autónoma de las Illes Balears"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2004-4744",
+          "titulo": "",
+          "administracion": "Comunidad Autónoma de las Illes Balears",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Comunidad Autónoma de las Illes Balears"
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Comunidad Autónoma de Andalucía",
+          "filas": 901
+        },
+        {
+          "administracion": "Comunidad Autónoma del País Vasco",
+          "filas": 233
+        },
+        {
+          "administracion": "Comunidad Autónoma del Principado de Asturias",
+          "filas": 216
+        },
+        {
+          "administracion": "Comunidad Autónoma de Galicia",
+          "filas": 187
+        },
+        {
+          "administracion": "Comunidad Foral de Navarra",
+          "filas": 146
+        },
+        {
+          "administracion": "Comunidad Autónoma de Canarias",
+          "filas": 124
+        },
+        {
+          "administracion": "Comunidad Autónoma de La Rioja",
+          "filas": 90
+        },
+        {
+          "administracion": "Comunidad Autónoma de Aragón",
+          "filas": 76
+        },
+        {
+          "administracion": "Comunidad Autónoma de Cantabria",
+          "filas": 69
+        },
+        {
+          "administracion": "Comunidad Autónoma de las Illes Balears",
+          "filas": 18
+        }
+      ]
+    },
+    {
+      "familia": "CONSORCIO",
+      "publicaciones": 12,
+      "filas": 18,
+      "porcentaje_filas": 0.02,
+      "porcentaje_acumulado_con_cobertura_actual": 99.96,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-13526",
+          "titulo": "Resolución de 16 de junio de 2026, del Consorcio de Plan Zonal de Residuos 5, Área de Gestión V4 (Valencia/València), referente a la convocatoria para proveer una plaza.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, del Consorcio de Plan Zonal de Residuos 5, Área de Gestión V4 (Valencia/València), referente a la convocatoria para proveer una plaza."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-13680",
+          "titulo": "Resolución de 16 de junio de 2026, del Consorcio Provincial del Agua de Málaga (Málaga), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, del Consorcio Provincial del Agua de Málaga (Málaga), referente a la convocatoria para proveer varias plazas."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-13680",
+          "titulo": "Resolución de 16 de junio de 2026, del Consorcio Provincial del Agua de Málaga (Málaga), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, del Consorcio Provincial del Agua de Málaga (Málaga), referente a la convocatoria para proveer varias plazas."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Administración Local",
+          "filas": 18
+        }
+      ]
+    },
+    {
+      "familia": "MANCOMUNIDAD",
+      "publicaciones": 14,
+      "filas": 17,
+      "porcentaje_filas": 0.02,
+      "porcentaje_acumulado_con_cobertura_actual": 99.98,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-13523",
+          "titulo": "Resolución de 16 de junio de 2026, de la Mancomunidad La Serranía (Valencia/València), referente a la convocatoria para proveer una plaza.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, de la Mancomunidad La Serranía (Valencia/València), referente a la convocatoria para proveer una plaza."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-13529",
+          "titulo": "Resolución de 16 de junio de 2026, de la Mancomunidad del Sur (Madrid), referente a la convocatoria para proveer una plaza.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, de la Mancomunidad del Sur (Madrid), referente a la convocatoria para proveer una plaza."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-13530",
+          "titulo": "Resolución de 16 de junio de 2026, de la Mancomunidad de los 150 pueblos de la Tierra de Soria (Soria), referente a la convocatoria para proveer una plaza.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 16 de junio de 2026, de la Mancomunidad de los 150 pueblos de la Tierra de Soria (Soria), referente a la convocatoria para proveer una plaza."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Administración Local",
+          "filas": 17
+        }
+      ]
+    },
+    {
+      "familia": "AGENCIA",
+      "publicaciones": 3,
+      "filas": 7,
+      "porcentaje_filas": 0.01,
+      "porcentaje_acumulado_con_cobertura_actual": 99.99,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-9309",
+          "titulo": "",
+          "administracion": "Agencia Española de Protección de Datos",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Agencia Española de Protección de Datos"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-9309",
+          "titulo": "",
+          "administracion": "Agencia Española de Protección de Datos",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Agencia Española de Protección de Datos"
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-9309",
+          "titulo": "",
+          "administracion": "Agencia Española de Protección de Datos",
+          "origen": "ADMINISTRACION_EXISTENTE",
+          "texto_clasificado": "Agencia Española de Protección de Datos"
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Agencia Española de Protección de Datos",
+          "filas": 3
+        },
+        {
+          "administracion": "Ministerio para la Transición Ecológica y el Reto Demográfico",
+          "filas": 3
+        },
+        {
+          "administracion": "Ministerio de Asuntos Exteriores, Unión Europea y Cooperación",
+          "filas": 1
+        }
+      ]
+    },
+    {
+      "familia": "CABILDO",
+      "publicaciones": 5,
+      "filas": 6,
+      "porcentaje_filas": 0.01,
+      "porcentaje_acumulado_con_cobertura_actual": 99.99,
+      "sede_estimable": "ALTA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-13829",
+          "titulo": "Resolución de 19 de junio de 2026, del Cabildo Insular de de Gran Canaria (Las Palmas), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 19 de junio de 2026, del Cabildo Insular de de Gran Canaria (Las Palmas), referente a la convocatoria para proveer varias plazas."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-14366",
+          "titulo": "Resolución de 14 de abril de 2026, del Cabildo Insular de Tenerife (Santa Cruz de Tenerife), referente a la convocatoria para proveer una plaza.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 14 de abril de 2026, del Cabildo Insular de Tenerife (Santa Cruz de Tenerife), referente a la convocatoria para proveer una plaza."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-14598",
+          "titulo": "Resolución de 26 de junio de 2026, del Cabildo Insular de Tenerife (Santa Cruz de Tenerife), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 26 de junio de 2026, del Cabildo Insular de Tenerife (Santa Cruz de Tenerife), referente a la convocatoria para proveer varias plazas."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Administración Local",
+          "filas": 6
+        }
+      ]
+    },
+    {
+      "familia": "CONSEJO_INSULAR",
+      "publicaciones": 4,
+      "filas": 5,
+      "porcentaje_filas": 0.0,
+      "porcentaje_acumulado_con_cobertura_actual": 100.0,
+      "sede_estimable": "ALTA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-13826",
+          "titulo": "Resolución de 19 de junio de 2026, del Consejo Insular de Formentera (Illes Balears), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 19 de junio de 2026, del Consejo Insular de Formentera (Illes Balears), referente a la convocatoria para proveer varias plazas."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-15158",
+          "titulo": "Resolución de 3 de julio de 2026, del Consejo Insular de Ibiza (Illes Balears), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 3 de julio de 2026, del Consejo Insular de Ibiza (Illes Balears), referente a la convocatoria para proveer varias plazas."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-15420",
+          "titulo": "Resolución de 8 de julio de 2026, del Consejo Insular de Mallorca, Instituto Mallorquín de Asuntos Sociales (Illes Balears), referente a la convocatoria para proveer varias plazas.",
+          "administracion": "Administración Local",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 8 de julio de 2026, del Consejo Insular de Mallorca, Instituto Mallorquín de Asuntos Sociales (Illes Balears), referente a la convocatoria para proveer varias plazas."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Administración Local",
+          "filas": 5
+        }
+      ]
+    },
+    {
+      "familia": "INSTITUTO",
+      "publicaciones": 2,
+      "filas": 2,
+      "porcentaje_filas": 0.0,
+      "porcentaje_acumulado_con_cobertura_actual": 100.0,
+      "sede_estimable": "BAJA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-14587",
+          "titulo": "Resolución de 24 de junio de 2026, de la Subsecretaría, por la que se convoca proceso selectivo para ingreso, como personal laboral fijo fuera de convenio, en la categoría de Médico de Sanidad Marítima en el Instituto Social de la Marina.",
+          "administracion": "Ministerio de Inclusión, Seguridad Social y Migraciones",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 24 de junio de 2026, de la Subsecretaría, por la que se convoca proceso selectivo para ingreso, como personal laboral fijo fuera de convenio, en la categoría de Médico de Sanidad Marítima en el Instituto Social de la Marina."
+        },
+        {
+          "Publicacion_ID": "BOE-A-2026-15609",
+          "titulo": "Resolución de 9 de julio de 2026, de la Subsecretaría, por la que se convoca concurso específico para la provisión de puestos de trabajo en el Instituto Nacional de Estadística.",
+          "administracion": "Ministerio de Economía, Comercio y Empresa",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 9 de julio de 2026, de la Subsecretaría, por la que se convoca concurso específico para la provisión de puestos de trabajo en el Instituto Nacional de Estadística."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Ministerio de Inclusión, Seguridad Social y Migraciones",
+          "filas": 1
+        },
+        {
+          "administracion": "Ministerio de Economía, Comercio y Empresa",
+          "filas": 1
+        }
+      ]
+    },
+    {
+      "familia": "CONSEJERIA",
+      "publicaciones": 1,
+      "filas": 1,
+      "porcentaje_filas": 0.0,
+      "porcentaje_acumulado_con_cobertura_actual": 100.0,
+      "sede_estimable": "MEDIA",
+      "ejemplos": [
+        {
+          "Publicacion_ID": "BOE-A-2026-14364",
+          "titulo": "Resolución de 23 de junio de 2026, de la Secretaría General de Servicios Judiciales, de la Consejería de Justicia, Administración Local y Función Pública, por la que se convoca la provisión de puestos de trabajo por el sistema de libre designación, en la Oficina de la Secretaría de Gobierno del Tribunal Superior de Justicia de Andalucía.",
+          "administracion": "Comunidad Autónoma de Andalucía",
+          "origen": "TITULO_BOE",
+          "texto_clasificado": "Resolución de 23 de junio de 2026, de la Secretaría General de Servicios Judiciales, de la Consejería de Justicia, Administración Local y Función Pública, por la que se convoca la provisión de puestos de trabajo por el sistema de libre designación, en la Oficina de la Secretaría de Gobierno del Tribunal Superior de Justicia de Andalucía."
+        }
+      ],
+      "administraciones_frecuentes": [
+        {
+          "administracion": "Comunidad Autónoma de Andalucía",
+          "filas": 1
+        }
+      ]
+    }
+  ]
+}

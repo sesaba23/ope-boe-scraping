@@ -1,0 +1,934 @@
+{
+  "fecha_ejecucion": "2026-08-23T10:36:17",
+  "resumen": {
+    "documentos_analizados": 10,
+    "CONVOCATORIA": 8,
+    "NO_CONVOCATORIA": 2,
+    "INDETERMINADO": 0,
+    "documentos_con_filas_extraidas": 6,
+    "total_convocatorias": 13,
+    "campos_completos": 6,
+    "campos_parciales": 7,
+    "documentos_mejorados": 6,
+    "falsos_positivos_potenciales": 3
+  },
+  "documentos": [
+    {
+      "publicacion_id": "BOE-A-2004-1870",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Orden SCO/3886/2003, de 11 de diciembre, por la que se convocan pruebas selectivas para cubrir plazas, afectadas por la disposición transitoria decimoquinta de la Ley 30/1984, de 2 de agosto, modificada por Ley 23/1988, de 28 de julio, mediante ingreso en la Escala Técnica de Gestión de Organismos Autónomos, especialidad de Sanidad y Consumo.",
+        "departamento": "Ministerio de Sanidad y Consumo",
+        "fecha_publicacion": "20040131",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-4176",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Clasificado como convocatoria, pero sin bloques o tablas aprovechables"
+      ],
+      "metadatos": {
+        "titulo": "Orden FOM/585/2004, de 25 de febrero, por la que se convoca concurso específico Ref.ª FE3/04 para la provisión de puestos en el Departamento.",
+        "departamento": "Ministerio de Fomento",
+        "fecha_publicacion": "20040308",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-6389",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de la Presidencia",
+          "Fecha_boe": "20040410",
+          "Publicacion_ID": "BOE-A-2004-6389",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-6389"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de la Presidencia",
+          "Fecha_boe": "20040410",
+          "Publicacion_ID": "BOE-A-2004-6389",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-6389"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 2,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de la Presidencia",
+          "Fecha_boe": "20040410",
+          "Publicacion_ID": "BOE-A-2004-6389",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-6389"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Num_plazas: 1"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de la Presidencia",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de la Presidencia"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040410",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040410"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-6389",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-6389"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Num_plazas: 1"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de la Presidencia",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de la Presidencia"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040410",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040410"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-6389",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-6389"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Num_plazas: 2"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de la Presidencia",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de la Presidencia"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040410",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040410"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-6389",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-6389"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Orden PRE/932/2004, de 23 de marzo, por la que se convoca proceso selectivo para ingreso como personal laboral fijo del Boletín Oficial del Estado.",
+        "departamento": "Ministerio de la Presidencia",
+        "fecha_publicacion": "20040410",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-6488",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Catedráticos de Universidad",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Catedráticos de Universidad",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040413",
+          "Publicacion_ID": "BOE-A-2004-6488",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-6488"
+        },
+        {
+          "Puesto": "Profesores Titulares de Universidad",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Profesores Titulares de Universidad",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040413",
+          "Publicacion_ID": "BOE-A-2004-6488",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-6488"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Puesto",
+            "valor": "Catedráticos de Universidad",
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Puesto: Catedráticos de Universidad"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Catedráticos de Universidad",
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Escala: Catedráticos de Universidad"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Universidades",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Universidades"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040413",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040413"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-6488",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-6488"
+          }
+        ],
+        [
+          {
+            "campo": "Puesto",
+            "valor": "Profesores Titulares de Universidad",
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Puesto: Profesores Titulares de Universidad"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Profesores Titulares de Universidad",
+            "fuente": "XML_TABLE",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Escala: Profesores Titulares de Universidad"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Universidades",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Universidades"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040413",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040413"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-6488",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-6488"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 31 de marzo de 2004, de la Universidad de Valladolid, por la que se convocan a concurso de acceso plazas de Cuerpos de Funcionarios Docentes Universitarios.",
+        "departamento": "Universidades",
+        "fecha_publicacion": "20040413",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-10041",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": null,
+          "Num_plazas": 100,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-10041"
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 100,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-10041"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 5,
+          "Turno": "Turno libre",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-10041"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 100,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocatoria de 100 plazas"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Funcionarios de Administración Local con habilitación de carácter nacional",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Funcionarios de Administración Local con habilitación de carácter nacional"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Intervención-Tesorería",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala de Intervención-Tesorería"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de Administraciones Públicas",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de Administraciones Públicas"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040529",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040529"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-10041",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-10041"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 100,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Se convocan pruebas selectivas para cubrir 100 plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "funcionarios de Administración Local con habilitación de carácter nacional",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "vacantes de funcionarios de Administración Local con habilitación de carácter nacional"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Intervención-Tesorería",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Subescala de Intervención-Tesorería"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de Administraciones Públicas",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de Administraciones Públicas"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040529",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040529"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-10041",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-10041"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 5,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocatoria a 5 plazas"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Turno libre",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "turno libre"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de Administraciones Públicas",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de Administraciones Públicas"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040529",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040529"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-10041",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-10041"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Orden APU/1522/2004, de 10 de mayo, por la que se convocan pruebas selectivas para el acceso a la Subescala de Intervención-Tesorería, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional.",
+        "departamento": "Ministerio de Administraciones Públicas",
+        "fecha_publicacion": "20040529",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-11945",
+      "clasificacion_documento": "NO_CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Documento excluido o ambiguo antes de extraer"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 16 de junio de 2004, de la Universidad de Valladolid, por la que se declara concluido el procedimiento y desierta una plaza de Catedrático de Universidad de «Comunicación Audiovisual y Publicidad».",
+        "departamento": "Universidades",
+        "fecha_publicacion": "20040625",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "senales_clasificacion": [
+        "\\bdeclara concluido el procedimiento\\b"
+      ]
+    },
+    {
+      "publicacion_id": "BOE-A-2004-12152",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Investigadores Científicos del Consejo Superior de Investigaciones Científicas",
+          "Num_plazas": 80,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": "Investigadores Científicos (Código -5403-) del Consejo Superior de Investigaciones Científicas",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040629",
+          "Publicacion_ID": "BOE-A-2004-12152",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-12152"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 80,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Se convocan pruebas selectivas para cubrir ochenta plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Investigadores Científicos del Consejo Superior de Investigaciones Científicas",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de la Escala de Investigadores Científicos del Consejo Superior de Investigaciones Científicas"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Investigadores Científicos (Código -5403-) del Consejo Superior de Investigaciones Científicas",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Investigadores Científicos (Código -5403-) del Consejo Superior de Investigaciones Científicas"
+          },
+          {
+            "campo": "Turno",
+            "valor": "Promoción interna",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "promoción interna"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Ministerio de Educación y Ciencia",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Ministerio de Educación y Ciencia"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20040629",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20040629"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-12152",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-12152"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Orden ECI/2084/2004, de 28 de mayo, por la que se convoca proceso selectivo para el acceso, por promoción interna, a la Escala de Investigadores Científicos del Consejo Superior de Investigaciones Científicas.",
+        "departamento": "Ministerio de Educación y Ciencia",
+        "fecha_publicacion": "20040629",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-12500",
+      "clasificacion_documento": "NO_CONVOCATORIA",
+      "convocatorias": [],
+      "evidencias": [],
+      "advertencias": [
+        "Documento excluido o ambiguo antes de extraer"
+      ],
+      "metadatos": {
+        "titulo": "Resolución de 1 de junio de 2004, de la Secretaría de Estado de Cooperación Internacional, por la que se amplía el plazo de resolución del concurso específico de méritos para la provisión de puestos de trabajo vacantes en la Agencia Española de Cooperación Internacional, entre funcionarios de los Grupos A, B, C y D, convocado por Resolución de 20 de febrero de 2004.",
+        "departamento": "Ministerio de Asuntos Exteriores y de Cooperación",
+        "fecha_publicacion": "20040703",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0,
+      "senales_clasificacion": [
+        "\\bse ampl[ií]a el plazo\\b"
+      ]
+    },
+    {
+      "publicacion_id": "BOE-A-2004-19327",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Técnico Superior (Organización)",
+          "Num_plazas": 3,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": "Plazas de Cometidos Especiales",
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041113",
+          "Publicacion_ID": "BOE-A-2004-19327",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-19327"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 3,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "convocatoria de la oposición libre para la provisión en propiedad de 3 plazas"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Técnico Superior (Organización)",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Técnico Superior (Organización)"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Servicios Especiales"
+          },
+          {
+            "campo": "Clase",
+            "valor": "Plazas de Cometidos Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "clase Plazas de Cometidos Especiales"
+          },
+          {
+            "campo": "Sistema",
+            "valor": "Oposición",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "oposición"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20041113",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20041113"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-19327",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-19327"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 14 de octubre de 2004, del Ayuntamiento de Elche (Alicante), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20041113",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    },
+    {
+      "publicacion_id": "BOE-A-2004-21018",
+      "clasificacion_documento": "CONVOCATORIA",
+      "convocatorias": [
+        {
+          "Puesto": "Técnico de Gestión",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Administración General",
+          "Subescala": "Gestión",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041214",
+          "Publicacion_ID": "BOE-A-2004-21018",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-21018"
+        },
+        {
+          "Puesto": "Administrativo",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Administración General",
+          "Subescala": "Administrativa",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041214",
+          "Publicacion_ID": "BOE-A-2004-21018",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-21018"
+        },
+        {
+          "Puesto": "Auxiliar de Policía Local",
+          "Num_plazas": 2,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Administración Especial",
+          "Subescala": "Servicios Especiales",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041214",
+          "Publicacion_ID": "BOE-A-2004-21018",
+          "Enlace": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-21018"
+        }
+      ],
+      "evidencias": [
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Una plaza de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Técnico de Gestión",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Técnico de Gestión"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración General",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración General"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Gestión",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Gestión"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20041214",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20041214"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-21018",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-21018"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 1,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Una plaza de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Administrativo",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plaza de Administrativo"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración General",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración General"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Administrativa",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Administrativa"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20041214",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20041214"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-21018",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-21018"
+          }
+        ],
+        [
+          {
+            "campo": "Num_plazas",
+            "valor": 2,
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "Dos plazas de"
+          },
+          {
+            "campo": "Puesto",
+            "valor": "Auxiliar de Policía Local",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "plazas de Auxiliar de Policía Local"
+          },
+          {
+            "campo": "Escala",
+            "valor": "Administración Especial",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "Escala de Administración Especial"
+          },
+          {
+            "campo": "Subescala",
+            "valor": "Servicios Especiales",
+            "fuente": "HISTORICAL_TEXT",
+            "confianza": "MEDIA",
+            "fragmento_evidencia": "subescala Servicios Especiales"
+          },
+          {
+            "campo": "Administración",
+            "valor": "Administración Local",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "departamento: Administración Local"
+          },
+          {
+            "campo": "Fecha_boe",
+            "valor": "20041214",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "fecha_publicacion: 20041214"
+          },
+          {
+            "campo": "Publicacion_ID",
+            "valor": "BOE-A-2004-21018",
+            "fuente": "XML_METADATA",
+            "confianza": "ALTA",
+            "fragmento_evidencia": "identificador: BOE-A-2004-21018"
+          }
+        ]
+      ],
+      "advertencias": [],
+      "metadatos": {
+        "titulo": "Resolución de 24 de noviembre de 2004, del Ayuntamiento de Villanueva de Gállego (Zaragoza), referente a la convocatoria para proveer varias plazas.",
+        "departamento": "Administración Local",
+        "fecha_publicacion": "20041214",
+        "seccion": "2",
+        "subseccion": "B"
+      },
+      "extractor_actual_filas": 0
+    }
+  ]
+}

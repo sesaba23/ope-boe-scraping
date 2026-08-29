@@ -1,0 +1,2877 @@
+{
+  "alias_incorporados": 55,
+  "filas_resueltas_por_alias": 795,
+  "ranking_alias": [
+    {
+      "posicion": 1,
+      "Alias": "Histórica Villa de Adeje",
+      "Provincia": "Santa Cruz de Tenerife",
+      "Municipio_oficial": "Adeje",
+      "Codigo_INE": "38001",
+      "filas_oposiciones": 58,
+      "filas_acumuladas": 58
+    },
+    {
+      "posicion": 2,
+      "Alias": "As Pontes de García Rodríguez",
+      "Provincia": "A Coruña",
+      "Municipio_oficial": "Pontes de García Rodríguez, As",
+      "Codigo_INE": "15070",
+      "filas_oposiciones": 52,
+      "filas_acumuladas": 110
+    },
+    {
+      "posicion": 3,
+      "Alias": "Palma de Mallorca",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Palma",
+      "Codigo_INE": "07040",
+      "filas_oposiciones": 46,
+      "filas_acumuladas": 156
+    },
+    {
+      "posicion": 4,
+      "Alias": "Sa Pobla",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Pobla, Sa",
+      "Codigo_INE": "07044",
+      "filas_oposiciones": 34,
+      "filas_acumuladas": 190
+    },
+    {
+      "posicion": 5,
+      "Alias": "Santa María de Guía",
+      "Provincia": "Las Palmas",
+      "Municipio_oficial": "Santa María de Guía de Gran Canaria",
+      "Codigo_INE": "35023",
+      "filas_oposiciones": 32,
+      "filas_acumuladas": 222
+    },
+    {
+      "posicion": 6,
+      "Alias": "Villa de Garafía",
+      "Provincia": "Santa Cruz de Tenerife",
+      "Municipio_oficial": "Garafía",
+      "Codigo_INE": "38016",
+      "filas_oposiciones": 31,
+      "filas_acumuladas": 253
+    },
+    {
+      "posicion": 7,
+      "Alias": "Vilanova y la Geltrú",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Vilanova i la Geltrú",
+      "Codigo_INE": "08307",
+      "filas_oposiciones": 27,
+      "filas_acumuladas": 280
+    },
+    {
+      "posicion": 8,
+      "Alias": "Es Castell",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Castell, Es",
+      "Codigo_INE": "07064",
+      "filas_oposiciones": 25,
+      "filas_acumuladas": 305
+    },
+    {
+      "posicion": 9,
+      "Alias": "Chinchilla de Montearagón",
+      "Provincia": "Albacete",
+      "Municipio_oficial": "Chinchilla de Monte-Aragón",
+      "Codigo_INE": "02029",
+      "filas_oposiciones": 22,
+      "filas_acumuladas": 327
+    },
+    {
+      "posicion": 10,
+      "Alias": "Els Poblets",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Poblets, els",
+      "Codigo_INE": "03901",
+      "filas_oposiciones": 22,
+      "filas_acumuladas": 349
+    },
+    {
+      "posicion": 11,
+      "Alias": "Zahara de la Sierra",
+      "Provincia": "Cádiz",
+      "Municipio_oficial": "Zahara",
+      "Codigo_INE": "11042",
+      "filas_oposiciones": 22,
+      "filas_acumuladas": 371
+    },
+    {
+      "posicion": 12,
+      "Alias": "Daganzo",
+      "Provincia": "Madrid",
+      "Municipio_oficial": "Daganzo de Arriba",
+      "Codigo_INE": "28053",
+      "filas_oposiciones": 21,
+      "filas_acumuladas": 392
+    },
+    {
+      "posicion": 13,
+      "Alias": "L'Hospitalet",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Hospitalet de Llobregat, L'",
+      "Codigo_INE": "08101",
+      "filas_oposiciones": 19,
+      "filas_acumuladas": 411
+    },
+    {
+      "posicion": 14,
+      "Alias": "Ses Salines",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Salines, Ses",
+      "Codigo_INE": "07059",
+      "filas_oposiciones": 18,
+      "filas_acumuladas": 429
+    },
+    {
+      "posicion": 15,
+      "Alias": "Santa Lucía",
+      "Provincia": "Las Palmas",
+      "Municipio_oficial": "Santa Lucía de Tirajana",
+      "Codigo_INE": "35022",
+      "filas_oposiciones": 18,
+      "filas_acumuladas": 447
+    },
+    {
+      "posicion": 16,
+      "Alias": "Sant Carles de la Ràpita",
+      "Provincia": "Tarragona",
+      "Municipio_oficial": "Ràpita, La",
+      "Codigo_INE": "43136",
+      "filas_oposiciones": 16,
+      "filas_acumuladas": 463
+    },
+    {
+      "posicion": 17,
+      "Alias": "Arrasate-Mondragón",
+      "Provincia": "Gipuzkoa",
+      "Municipio_oficial": "Arrasate/Mondragón",
+      "Codigo_INE": "20055",
+      "filas_oposiciones": 16,
+      "filas_acumuladas": 479
+    },
+    {
+      "posicion": 18,
+      "Alias": "Vilasar de Mar",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Vilassar de Mar",
+      "Codigo_INE": "08219",
+      "filas_oposiciones": 16,
+      "filas_acumuladas": 495
+    },
+    {
+      "posicion": 19,
+      "Alias": "Castell d'Aro",
+      "Provincia": "Girona",
+      "Municipio_oficial": "Castell d'Aro, Platja d'Aro i s'Agaró",
+      "Codigo_INE": "17048",
+      "filas_oposiciones": 16,
+      "filas_acumuladas": 511
+    },
+    {
+      "posicion": 20,
+      "Alias": "Elche-Elx",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Elx/Elche",
+      "Codigo_INE": "03065",
+      "filas_oposiciones": 15,
+      "filas_acumuladas": 526
+    },
+    {
+      "posicion": 21,
+      "Alias": "Es Migjorn Gran",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Migjorn Gran, Es",
+      "Codigo_INE": "07902",
+      "filas_oposiciones": 15,
+      "filas_acumuladas": 541
+    },
+    {
+      "posicion": 22,
+      "Alias": "Es Mercadal",
+      "Provincia": "Illes Balears",
+      "Municipio_oficial": "Mercadal, Es",
+      "Codigo_INE": "07037",
+      "filas_oposiciones": 14,
+      "filas_acumuladas": 555
+    },
+    {
+      "posicion": 23,
+      "Alias": "El Burgo de Osma-Ciudad de Osma",
+      "Provincia": "Soria",
+      "Municipio_oficial": "Burgo de Osma-Ciudad de Osma",
+      "Codigo_INE": "42043",
+      "filas_oposiciones": 14,
+      "filas_acumuladas": 569
+    },
+    {
+      "posicion": 24,
+      "Alias": "Donostia-San Sebastián",
+      "Provincia": "Gipuzkoa",
+      "Municipio_oficial": "Donostia/San Sebastián",
+      "Codigo_INE": "20069",
+      "filas_oposiciones": 13,
+      "filas_acumuladas": 582
+    },
+    {
+      "posicion": 25,
+      "Alias": "Muro del Alcoy",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Muro de Alcoy",
+      "Codigo_INE": "03092",
+      "filas_oposiciones": 13,
+      "filas_acumuladas": 595
+    },
+    {
+      "posicion": 26,
+      "Alias": "Calonge",
+      "Provincia": "Girona",
+      "Municipio_oficial": "Calonge i Sant Antoni",
+      "Codigo_INE": "17034",
+      "filas_oposiciones": 13,
+      "filas_acumuladas": 608
+    },
+    {
+      "posicion": 27,
+      "Alias": "Villa de La Orotava",
+      "Provincia": "Santa Cruz de Tenerife",
+      "Municipio_oficial": "Orotava, La",
+      "Codigo_INE": "38026",
+      "filas_oposiciones": 12,
+      "filas_acumuladas": 620
+    },
+    {
+      "posicion": 28,
+      "Alias": "Els Pallaresos",
+      "Provincia": "Tarragona",
+      "Municipio_oficial": "Pallaresos, Els",
+      "Codigo_INE": "43100",
+      "filas_oposiciones": 12,
+      "filas_acumuladas": 632
+    },
+    {
+      "posicion": 29,
+      "Alias": "Calpe",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Calp",
+      "Codigo_INE": "03047",
+      "filas_oposiciones": 11,
+      "filas_acumuladas": 643
+    },
+    {
+      "posicion": 30,
+      "Alias": "Villafranca del Penedès",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Vilafranca del Penedès",
+      "Codigo_INE": "08305",
+      "filas_oposiciones": 11,
+      "filas_acumuladas": 654
+    },
+    {
+      "posicion": 31,
+      "Alias": "Les Borges Blanques",
+      "Provincia": "Lleida",
+      "Municipio_oficial": "Borges Blanques, Les",
+      "Codigo_INE": "25058",
+      "filas_oposiciones": 10,
+      "filas_acumuladas": 664
+    },
+    {
+      "posicion": 32,
+      "Alias": "Serranillos de Valle",
+      "Provincia": "Madrid",
+      "Municipio_oficial": "Serranillos del Valle",
+      "Codigo_INE": "28140",
+      "filas_oposiciones": 10,
+      "filas_acumuladas": 674
+    },
+    {
+      "posicion": 33,
+      "Alias": "As Somozas",
+      "Provincia": "A Coruña",
+      "Municipio_oficial": "Somozas, As",
+      "Codigo_INE": "15081",
+      "filas_oposiciones": 8,
+      "filas_acumuladas": 682
+    },
+    {
+      "posicion": 34,
+      "Alias": "les Masies de Roda",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Masies de Roda, Les",
+      "Codigo_INE": "08116",
+      "filas_oposiciones": 8,
+      "filas_acumuladas": 690
+    },
+    {
+      "posicion": 35,
+      "Alias": "Les Alqueries/Alquerías del Niño Perdido",
+      "Provincia": "Castellón/Castelló",
+      "Municipio_oficial": "Alqueries, les/Alquerías del Niño Perdido",
+      "Codigo_INE": "12901",
+      "filas_oposiciones": 8,
+      "filas_acumuladas": 698
+    },
+    {
+      "posicion": 36,
+      "Alias": "Abanto Zierbena",
+      "Provincia": "Bizkaia",
+      "Municipio_oficial": "Abanto y Ciérvana-Abanto Zierbena",
+      "Codigo_INE": "48002",
+      "filas_oposiciones": 7,
+      "filas_acumuladas": 705
+    },
+    {
+      "posicion": 37,
+      "Alias": "Anteiglesia de Erandio",
+      "Provincia": "Bizkaia",
+      "Municipio_oficial": "Erandio",
+      "Codigo_INE": "48902",
+      "filas_oposiciones": 7,
+      "filas_acumuladas": 712
+    },
+    {
+      "posicion": 38,
+      "Alias": "Santa Coloma de Gramanet",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Santa Coloma de Gramenet",
+      "Codigo_INE": "08245",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 718
+    },
+    {
+      "posicion": 39,
+      "Alias": "Les Coves de Vinromà",
+      "Provincia": "Castellón/Castelló",
+      "Municipio_oficial": "Coves de Vinromà, les",
+      "Codigo_INE": "12050",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 724
+    },
+    {
+      "posicion": 40,
+      "Alias": "El Puig",
+      "Provincia": "Valencia/València",
+      "Municipio_oficial": "Puig de Santa Maria, el",
+      "Codigo_INE": "46204",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 730
+    },
+    {
+      "posicion": 41,
+      "Alias": "Polop de la Marina",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Polop",
+      "Codigo_INE": "03107",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 736
+    },
+    {
+      "posicion": 42,
+      "Alias": "Les Useres",
+      "Provincia": "Castellón/Castelló",
+      "Municipio_oficial": "Useres, les/Useras",
+      "Codigo_INE": "12122",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 742
+    },
+    {
+      "posicion": 43,
+      "Alias": "Les Franqueses del Vallès",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Franqueses del Vallès, Les",
+      "Codigo_INE": "08086",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 748
+    },
+    {
+      "posicion": 44,
+      "Alias": "Les Borges del Camp",
+      "Provincia": "Tarragona",
+      "Municipio_oficial": "Borges del Camp, Les",
+      "Codigo_INE": "43031",
+      "filas_oposiciones": 6,
+      "filas_acumuladas": 754
+    },
+    {
+      "posicion": 45,
+      "Alias": "Roales del Pan",
+      "Provincia": "Zamora",
+      "Municipio_oficial": "Roales",
+      "Codigo_INE": "49178",
+      "filas_oposiciones": 5,
+      "filas_acumuladas": 759
+    },
+    {
+      "posicion": 46,
+      "Alias": "Anteiglesia de Iurreta",
+      "Provincia": "Bizkaia",
+      "Municipio_oficial": "Iurreta",
+      "Codigo_INE": "48910",
+      "filas_oposiciones": 5,
+      "filas_acumuladas": 764
+    },
+    {
+      "posicion": 47,
+      "Alias": "Anteiglesia de Zaldibar",
+      "Provincia": "Bizkaia",
+      "Municipio_oficial": "Zaldibar",
+      "Codigo_INE": "48095",
+      "filas_oposiciones": 5,
+      "filas_acumuladas": 769
+    },
+    {
+      "posicion": 48,
+      "Alias": "Guadiana del Caudillo",
+      "Provincia": "Badajoz",
+      "Municipio_oficial": "Guadiana",
+      "Codigo_INE": "06903",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 773
+    },
+    {
+      "posicion": 49,
+      "Alias": "El Poble Nou de Benitatxell",
+      "Provincia": "Alicante/Alacant",
+      "Municipio_oficial": "Poble Nou de Benitatxell, el/Benitachell",
+      "Codigo_INE": "03042",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 777
+    },
+    {
+      "posicion": 50,
+      "Alias": "Real de Montroi",
+      "Provincia": "Valencia/València",
+      "Municipio_oficial": "Montroi/Montroy",
+      "Codigo_INE": "46176",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 781
+    },
+    {
+      "posicion": 51,
+      "Alias": "Cortelazor la Real",
+      "Provincia": "Huelva",
+      "Municipio_oficial": "Cortelazor",
+      "Codigo_INE": "21026",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 785
+    },
+    {
+      "posicion": 52,
+      "Alias": "Ferreruela de Tábara",
+      "Provincia": "Zamora",
+      "Municipio_oficial": "Ferreruela",
+      "Codigo_INE": "49068",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 789
+    },
+    {
+      "posicion": 53,
+      "Alias": "Les Cabanyes",
+      "Provincia": "Barcelona",
+      "Municipio_oficial": "Cabanyes, Les",
+      "Codigo_INE": "08027",
+      "filas_oposiciones": 4,
+      "filas_acumuladas": 793
+    },
+    {
+      "posicion": 54,
+      "Alias": "Sopelana",
+      "Provincia": "Bizkaia",
+      "Municipio_oficial": "Sopela",
+      "Codigo_INE": "48085",
+      "filas_oposiciones": 2,
+      "filas_acumuladas": 795
+    }
+  ],
+  "umbrales_cobertura": {
+    "50": {
+      "aliases_necesarios": 41,
+      "filas_cubiertas": 736
+    },
+    "75": {
+      "aliases_necesarios": null,
+      "filas_cubiertas": 795
+    },
+    "90": {
+      "aliases_necesarios": null,
+      "filas_cubiertas": 795
+    },
+    "95": {
+      "aliases_necesarios": null,
+      "filas_cubiertas": 795
+    }
+  },
+  "ranking_municipios_no_resueltos": [
+    {
+      "posicion": 1,
+      "Administracion": "Ayuntamiento de Granada",
+      "municipio_extraido": "Granada",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Granada (Granada)",
+        "Granada, La (Barcelona)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 181
+    },
+    {
+      "posicion": 2,
+      "Administracion": "Ayuntamiento de Villanueva de Castellón (Valencia)",
+      "municipio_extraido": "Villanueva de Castellón",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 15
+    },
+    {
+      "posicion": 3,
+      "Administracion": "Ayuntamiento de Frontera, Isla de El Hierro (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Frontera",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Frontera (Santa Cruz de Tenerife)",
+        "Frontera, La (Cuenca)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 14
+    },
+    {
+      "posicion": 4,
+      "Administracion": "Ayuntamiento de Píñar (Granada)",
+      "municipio_extraido": "Píñar",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Pinar, El (Granada)",
+        "Píñar (Granada)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 9
+    },
+    {
+      "posicion": 5,
+      "Administracion": "Ayuntamiento de Ciudad Real referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Ciudad Real referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 8
+    },
+    {
+      "posicion": 6,
+      "Administracion": "Ayuntamiento de Coria-Organismo Autónomo «Residencia Club de Ancianos» (Cáceres)",
+      "municipio_extraido": "Coria-Organismo Autónomo «Residencia Club de Ancianos»",
+      "provincia_extraida": "Cáceres",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 8
+    },
+    {
+      "posicion": 7,
+      "Administracion": "Ayuntamiento de As Pontes de García Rodríguez (A Coruña) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "As Pontes de García Rodríguez (A Coruña) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 8
+    },
+    {
+      "posicion": 8,
+      "Administracion": "Ayuntamiento de Vilablino (León)",
+      "municipio_extraido": "Vilablino",
+      "provincia_extraida": "León",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 8
+    },
+    {
+      "posicion": 9,
+      "Administracion": "Ayuntamiento de Alfarp (Valencia)",
+      "municipio_extraido": "Alfarp",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 7
+    },
+    {
+      "posicion": 10,
+      "Administracion": "Ayuntamiento de Arcos de la Llana (Burgos)",
+      "municipio_extraido": "Arcos de la Llana",
+      "provincia_extraida": "Burgos",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 7
+    },
+    {
+      "posicion": 11,
+      "Administracion": "Ayuntamiento de Sopelana (Vizcaya)",
+      "municipio_extraido": "Sopelana",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 6
+    },
+    {
+      "posicion": 12,
+      "Administracion": "Ayuntamiento de Valéncia)",
+      "municipio_extraido": "Valéncia)",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 6
+    },
+    {
+      "posicion": 13,
+      "Administracion": "Ayuntamiento de Benimodo (Valencia,) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Benimodo (Valencia",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 6
+    },
+    {
+      "posicion": 14,
+      "Administracion": "Ayuntamiento de Anteiglesia de Erandio (Vizcaya)",
+      "municipio_extraido": "Anteiglesia de Erandio",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 5
+    },
+    {
+      "posicion": 15,
+      "Administracion": "Ayuntamiento de Granada, Fundación Pública Local Granada Educa",
+      "municipio_extraido": "Granada",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Granada (Granada)",
+        "Granada, La (Barcelona)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 5
+    },
+    {
+      "posicion": 16,
+      "Administracion": "Ayuntamiento de Estación Linares-Baeza (Jaén)",
+      "municipio_extraido": "Estación Linares-Baeza",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 5
+    },
+    {
+      "posicion": 17,
+      "Administracion": "Ayuntamiento de Sant Sadurní de Anoia (Barcelona)",
+      "municipio_extraido": "Sant Sadurní de Anoia",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 5
+    },
+    {
+      "posicion": 18,
+      "Administracion": "Ayuntamiento de Cerdedo (Pontevedra)",
+      "municipio_extraido": "Cerdedo",
+      "provincia_extraida": "Pontevedra",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 4
+    },
+    {
+      "posicion": 19,
+      "Administracion": "Ayuntamiento de Os Blancos (Ourense)",
+      "municipio_extraido": "Os Blancos",
+      "provincia_extraida": "Ourense",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 4
+    },
+    {
+      "posicion": 20,
+      "Administracion": "Ayuntamiento de Donostia-San Sebastián (Guipúzcoa)",
+      "municipio_extraido": "Donostia-San Sebastián",
+      "provincia_extraida": "Guipúzcoa",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 4
+    },
+    {
+      "posicion": 21,
+      "Administracion": "Ayuntamiento de Alberche del Caudillo (Toledo)",
+      "municipio_extraido": "Alberche del Caudillo",
+      "provincia_extraida": "Toledo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 4
+    },
+    {
+      "posicion": 22,
+      "Administracion": "Ayuntamiento de Granada, Patronato Municipal de Deportes",
+      "municipio_extraido": "Granada",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Granada (Granada)",
+        "Granada, La (Barcelona)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 23,
+      "Administracion": "Ayuntamiento de Villaviciosa de Asturias (Asturias)",
+      "municipio_extraido": "Villaviciosa de Asturias",
+      "provincia_extraida": "Asturias",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 24,
+      "Administracion": "Ayuntamiento de Almazora (Castellón)",
+      "municipio_extraido": "Almazora",
+      "provincia_extraida": "Castellón",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 25,
+      "Administracion": "Ayuntamiento de Santa Marta de los Barros (Badajoz)",
+      "municipio_extraido": "Santa Marta de los Barros",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 26,
+      "Administracion": "Ayuntamiento de Castell-Platja d'Aro (Girona)",
+      "municipio_extraido": "Castell-Platja d'Aro",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 27,
+      "Administracion": "Ayuntamiento de Villena-Patronato Municipal de Música (Alicante)",
+      "municipio_extraido": "Villena-Patronato Municipal de Música",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 28,
+      "Administracion": "Ayuntamiento de A Rúa de Valdeorras (Ourense)",
+      "municipio_extraido": "A Rúa de Valdeorras",
+      "provincia_extraida": "Ourense",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 29,
+      "Administracion": "Ayuntamiento de Marín (Pontevedra) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Marín (Pontevedra) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 30,
+      "Administracion": "Ayuntamiento de Maó-Mahón (Illes Balears)",
+      "municipio_extraido": "Maó-Mahón",
+      "provincia_extraida": "Illes Balears",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 31,
+      "Administracion": "Ayuntamiento de Les Llosses (Girona)",
+      "municipio_extraido": "Les Llosses",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 32,
+      "Administracion": "Ayuntamiento de Les Avellanes (Lleida)",
+      "municipio_extraido": "Les Avellanes",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 33,
+      "Administracion": "Ayuntamiento de Getxo (Bizkaia) Organismo Autónomo Local Residencia Municipal",
+      "municipio_extraido": "Getxo (Bizkaia) Organismo Autónomo Local Residencia Municipal",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 3
+    },
+    {
+      "posicion": 34,
+      "Administracion": "Ayuntamiento de Jalón (Alicante)",
+      "municipio_extraido": "Jalón",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 35,
+      "Administracion": "Ayuntamiento de Santa Eulalia del Río (Illes Balears)",
+      "municipio_extraido": "Santa Eulalia del Río",
+      "provincia_extraida": "Illes Balears",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 36,
+      "Administracion": "Ayuntamiento de El Mareny (Valencia)",
+      "municipio_extraido": "El Mareny",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 37,
+      "Administracion": "Ayuntamiento de Burgos referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Burgos referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 38,
+      "Administracion": "Ayuntamiento de Ribera de l'Urgellet (Lleida)",
+      "municipio_extraido": "Ribera de l'Urgellet",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 39,
+      "Administracion": "Ayuntamiento de Castelló de la Ribera (Valencia)",
+      "municipio_extraido": "Castelló de la Ribera",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 40,
+      "Administracion": "Ayuntamiento de Sonseca (Toledo) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Sonseca (Toledo) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 41,
+      "Administracion": "Ayuntamiento de Cuevas de Almanzora (Almería)",
+      "municipio_extraido": "Cuevas de Almanzora",
+      "provincia_extraida": "Almería",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 42,
+      "Administracion": "Ayuntamiento de Santa Perpètua de Mogoda-Patronato de Deportes (Barcelona)",
+      "municipio_extraido": "Santa Perpètua de Mogoda-Patronato de Deportes",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 43,
+      "Administracion": "Ayuntamiento de Valverde del Júcar (Cuenca)",
+      "municipio_extraido": "Valverde del Júcar",
+      "provincia_extraida": "Cuenca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 44,
+      "Administracion": "Ayuntamiento de Abanto y Ciérvana (Vizcaya)",
+      "municipio_extraido": "Abanto y Ciérvana",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 45,
+      "Administracion": "Ayuntamiento de Algimia de Alfara (Valencia)",
+      "municipio_extraido": "Algimia de Alfara",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 46,
+      "Administracion": "Ayuntamiento de Barcelona referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Barcelona referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 47,
+      "Administracion": "Ayuntamiento de Vilaflor (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Vilaflor",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 48,
+      "Administracion": "Ayuntamiento de Alaguàs (Valencia)",
+      "municipio_extraido": "Alaguàs",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 49,
+      "Administracion": "Ayuntamiento de Ribarroja del Turia (Valencia)",
+      "municipio_extraido": "Ribarroja del Turia",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 50,
+      "Administracion": "Ayuntamiento de Paracuellos del Jarama (Madrid)",
+      "municipio_extraido": "Paracuellos del Jarama",
+      "provincia_extraida": "Madrid",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 51,
+      "Administracion": "Ayuntamiento de Bidegoian (Guipúzcoa)",
+      "municipio_extraido": "Bidegoian",
+      "provincia_extraida": "Guipúzcoa",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 52,
+      "Administracion": "Ayuntamiento de Santa María de Corcó (Barcelona)",
+      "municipio_extraido": "Santa María de Corcó",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 53,
+      "Administracion": "Ayuntamiento de San Vicent del Raspeig (Alicante)",
+      "municipio_extraido": "San Vicent del Raspeig",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 54,
+      "Administracion": "Ayuntamiento de Corvera (Asturias)",
+      "municipio_extraido": "Corvera",
+      "provincia_extraida": "Asturias",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 55,
+      "Administracion": "Ayuntamiento de Zestoa (Guipúzcoa) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Zestoa (Guipúzcoa) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 56,
+      "Administracion": "Ayuntamiento de Riveira (A Coruña)",
+      "municipio_extraido": "Riveira",
+      "provincia_extraida": "A Coruña",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 57,
+      "Administracion": "Ayuntamiento de Roses (Girona) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Roses (Girona) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 58,
+      "Administracion": "Ayuntamiento de Oropesa y Corchuela (Toledo)",
+      "municipio_extraido": "Oropesa y Corchuela",
+      "provincia_extraida": "Toledo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 59,
+      "Administracion": "Ayuntamiento de Villa de Moya (Las Palmas)",
+      "municipio_extraido": "Villa de Moya",
+      "provincia_extraida": "Las Palmas",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 60,
+      "Administracion": "Ayuntamiento de Les Valls de Valira (Lleida)",
+      "municipio_extraido": "Les Valls de Valira",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 61,
+      "Administracion": "Ayuntamiento de Soraluze (Gipuzkoa)",
+      "municipio_extraido": "Soraluze",
+      "provincia_extraida": "Gipuzkoa",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 62,
+      "Administracion": "Ayuntamiento de Puebla de Alcollarín (Badajoz)",
+      "municipio_extraido": "Puebla de Alcollarín",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 63,
+      "Administracion": "Ayuntamiento de Narón (A Coruña) y Patronato de Cultura",
+      "municipio_extraido": "Narón (A Coruña) y Patronato de Cultura",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 64,
+      "Administracion": "Ayuntamiento de Villa de Santa Brígida (Las Palmas)",
+      "municipio_extraido": "Villa de Santa Brígida",
+      "provincia_extraida": "Las Palmas",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 65,
+      "Administracion": "Ayuntamiento de Paracuellos de la Vega (Cuenca)",
+      "municipio_extraido": "Paracuellos de la Vega",
+      "provincia_extraida": "Cuenca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 66,
+      "Administracion": "Ayuntamiento de A Mariña (Lugo), Sociedad Municipal \"Aparcamientos A Mariña SL\"",
+      "municipio_extraido": "A Mariña",
+      "provincia_extraida": "Lugo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 67,
+      "Administracion": "Ayuntamiento de Moheda de Gata (Cáceres)",
+      "municipio_extraido": "Moheda de Gata",
+      "provincia_extraida": "Cáceres",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 68,
+      "Administracion": "Ayuntamiento de Moraleja de las Panderas (Valladolid)",
+      "municipio_extraido": "Moraleja de las Panderas",
+      "provincia_extraida": "Valladolid",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 69,
+      "Administracion": "Ayuntamiento de Els Garidells (Tarragona)",
+      "municipio_extraido": "Els Garidells",
+      "provincia_extraida": "Tarragona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 70,
+      "Administracion": "Ayuntamiento de Anteiglesia de Abadiño (Bizkaia)",
+      "municipio_extraido": "Anteiglesia de Abadiño",
+      "provincia_extraida": "Bizkaia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 71,
+      "Administracion": "Ayuntamiento de Masarac (Girona)",
+      "municipio_extraido": "Masarac",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 72,
+      "Administracion": "Ayuntamiento de Alcúdia, Fundación Biblioteca de Alcúdia Can Torró (Illes Balears)",
+      "municipio_extraido": "Alcúdia",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Alcúdia (Illes Balears)",
+        "Alcúdia, l' (Valencia/València)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 73,
+      "Administracion": "Ayuntamiento de Cañizo de Campos (Zamora)",
+      "municipio_extraido": "Cañizo de Campos",
+      "provincia_extraida": "Zamora",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 74,
+      "Administracion": "Ayuntamiento de Es Bòrdes (Lleida)",
+      "municipio_extraido": "Es Bòrdes",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 2
+    },
+    {
+      "posicion": 75,
+      "Administracion": "Ayuntamiento de Comarca Bajo Cinca/Baix Cinca (Huesca)",
+      "municipio_extraido": "Comarca Bajo Cinca/Baix Cinca",
+      "provincia_extraida": "Huesca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 76,
+      "Administracion": "Ayuntamiento de Torre Endomenech (Castellón)",
+      "municipio_extraido": "Torre Endomenech",
+      "provincia_extraida": "Castellón",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 77,
+      "Administracion": "Ayuntamiento de Entidad Local Menor de Guadiana del Caudillo (Badajoz)",
+      "municipio_extraido": "Entidad Local Menor de Guadiana del Caudillo",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 78,
+      "Administracion": "Ayuntamiento de Muro de l'Alcoi (Alicante)",
+      "municipio_extraido": "Muro de l'Alcoi",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 79,
+      "Administracion": "Ayuntamiento de Entidad de Ámbito Territorial Inferior al Municipio de La Xara (Alicante)",
+      "municipio_extraido": "Entidad de Ámbito Territorial Inferior al Municipio de La Xara",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 80,
+      "Administracion": "Ayuntamiento de Sabiñánigo (Huesca) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Sabiñánigo (Huesca) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 81,
+      "Administracion": "Ayuntamiento de El Albiol (Tarragona)",
+      "municipio_extraido": "El Albiol",
+      "provincia_extraida": "Tarragona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 82,
+      "Administracion": "Ayuntamiento de Cabrera d`Igualada (Barcelona)",
+      "municipio_extraido": "Cabrera d`Igualada",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 83,
+      "Administracion": "Ayuntamiento de Yecla (Murcia) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Yecla (Murcia) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 84,
+      "Administracion": "Ayuntamiento de Cabrera d'Igualada (Barcelona)",
+      "municipio_extraido": "Cabrera d'Igualada",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 85,
+      "Administracion": "Ayuntamiento de Albalat de Sorells (Valencia)",
+      "municipio_extraido": "Albalat de Sorells",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 86,
+      "Administracion": "Ayuntamiento de Entidad Local Menor de La Xara (Alicante)",
+      "municipio_extraido": "Entidad Local Menor de La Xara",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 87,
+      "Administracion": "Ayuntamiento de Oropesa de Mar (Castellón)",
+      "municipio_extraido": "Oropesa de Mar",
+      "provincia_extraida": "Castellón",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 88,
+      "Administracion": "Ayuntamiento de Xirivella (Valencia) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Xirivella (Valencia) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 89,
+      "Administracion": "Ayuntamiento de Monserrat (Valencia)",
+      "municipio_extraido": "Monserrat",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 90,
+      "Administracion": "Ayuntamiento de Paterna de la Rivera (Cádiz)",
+      "municipio_extraido": "Paterna de la Rivera",
+      "provincia_extraida": "Cádiz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 91,
+      "Administracion": "Ayuntamiento de Náguera (Valencia)",
+      "municipio_extraido": "Náguera",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 92,
+      "Administracion": "Ayuntamiento de Villa de Arico (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Villa de Arico",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 93,
+      "Administracion": "Ayuntamiento de San Pedro de Pinatar (Murcia), que corrige error en la de 29 de agosto de 2005",
+      "municipio_extraido": "San Pedro de Pinatar",
+      "provincia_extraida": "Murcia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 94,
+      "Administracion": "Ayuntamiento de Zarautz (Guipúzcoa) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Zarautz (Guipúzcoa) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 95,
+      "Administracion": "Ayuntamiento de Murgia (Álava)",
+      "municipio_extraido": "Murgia",
+      "provincia_extraida": "Álava",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 96,
+      "Administracion": "Ayuntamiento de Chercos (Almería) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Chercos (Almería) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 97,
+      "Administracion": "Ayuntamiento de Legutiano (Álava)",
+      "municipio_extraido": "Legutiano",
+      "provincia_extraida": "Álava",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 98,
+      "Administracion": "Ayuntamiento de San Martín de la vega (Madrid) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "San Martín de la vega (Madrid) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 99,
+      "Administracion": "Ayuntamiento de Huéscar (Granada) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Huéscar (Granada) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 100,
+      "Administracion": "Ayuntamiento de Santa Cruz de Retamar (Toledo)",
+      "municipio_extraido": "Santa Cruz de Retamar",
+      "provincia_extraida": "Toledo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 101,
+      "Administracion": "Ayuntamiento de Galdanes (Vizcaya)",
+      "municipio_extraido": "Galdanes",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 102,
+      "Administracion": "Ayuntamiento de San Ildefonso-La Granja (Segovia)",
+      "municipio_extraido": "San Ildefonso-La Granja",
+      "provincia_extraida": "Segovia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 103,
+      "Administracion": "Ayuntamiento de Guardamar de Segura (Alicante)",
+      "municipio_extraido": "Guardamar de Segura",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 104,
+      "Administracion": "Ayuntamiento de Sant Esteve de Sesrovires (Barcelona)",
+      "municipio_extraido": "Sant Esteve de Sesrovires",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 105,
+      "Administracion": "Ayuntamiento de Banalmádena (Málaga)",
+      "municipio_extraido": "Banalmádena",
+      "provincia_extraida": "Málaga",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 106,
+      "Administracion": "Ayuntamiento de Torrolodones (Madrid)",
+      "municipio_extraido": "Torrolodones",
+      "provincia_extraida": "Madrid",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 107,
+      "Administracion": "Ayuntamiento de Santander-Servicio Municipal de Transportes Urbanos (Cantabria)",
+      "municipio_extraido": "Santander-Servicio Municipal de Transportes Urbanos",
+      "provincia_extraida": "Cantabria",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 108,
+      "Administracion": "Ayuntamiento de Berja-Patronato Municipal de Deportes (Almería)",
+      "municipio_extraido": "Berja-Patronato Municipal de Deportes",
+      "provincia_extraida": "Almería",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 109,
+      "Administracion": "Ayuntamiento de Llanes (Asturias) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Llanes (Asturias) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 110,
+      "Administracion": "Ayuntamiento de Benatal (Jaén)",
+      "municipio_extraido": "Benatal",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 111,
+      "Administracion": "Ayuntamiento de Jesús Pobre (Alicante)",
+      "municipio_extraido": "Jesús Pobre",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 112,
+      "Administracion": "Ayuntamiento de Cruïlles-Monells-Sant Sadurní de l'Heura (Girona)",
+      "municipio_extraido": "Cruïlles-Monells-Sant Sadurní de l'Heura",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 113,
+      "Administracion": "Ayuntamiento de San Sebastián de los Basllesteros (Córdoba)",
+      "municipio_extraido": "San Sebastián de los Basllesteros",
+      "provincia_extraida": "Córdoba",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 114,
+      "Administracion": "Ayuntamiento de Massamassa (Valencia)",
+      "municipio_extraido": "Massamassa",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 115,
+      "Administracion": "Ayuntamiento de Palau-solità y Plegamans (Barcelona)",
+      "municipio_extraido": "Palau-solità y Plegamans",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 116,
+      "Administracion": "Ayuntamiento de Lorca (Murcia) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Lorca (Murcia) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 117,
+      "Administracion": "Ayuntamiento de Rótava (Valencia)",
+      "municipio_extraido": "Rótava",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 118,
+      "Administracion": "Ayuntamiento de Villlanueva del Arzobispo (Jaén)",
+      "municipio_extraido": "Villlanueva del Arzobispo",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 119,
+      "Administracion": "Ayuntamiento de Binérfar (Huesca)",
+      "municipio_extraido": "Binérfar",
+      "provincia_extraida": "Huesca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 120,
+      "Administracion": "Ayuntamiento de Abrucema (Almería)",
+      "municipio_extraido": "Abrucema",
+      "provincia_extraida": "Almería",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 121,
+      "Administracion": "Ayuntamiento de Sant Viçens dels Horts (Barcelona)",
+      "municipio_extraido": "Sant Viçens dels Horts",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 122,
+      "Administracion": "Ayuntamiento de Villa de Estepona (Málaga)",
+      "municipio_extraido": "Villa de Estepona",
+      "provincia_extraida": "Málaga",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 123,
+      "Administracion": "Ayuntamiento de Markina (Vizcaya)",
+      "municipio_extraido": "Markina",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 124,
+      "Administracion": "Ayuntamiento de Rivadedeva (Asturias)",
+      "municipio_extraido": "Rivadedeva",
+      "provincia_extraida": "Asturias",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 125,
+      "Administracion": "Ayuntamiento de Coristanco (A Coruña) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Coristanco (A Coruña) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 126,
+      "Administracion": "Ayuntamiento de Palma de Mallorca-Patronato Municipal de Escuelas Infantiles (Illes Balears)",
+      "municipio_extraido": "Palma de Mallorca-Patronato Municipal de Escuelas Infantiles",
+      "provincia_extraida": "Illes Balears",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 127,
+      "Administracion": "Ayuntamiento de Cotobade (Pontevedra)",
+      "municipio_extraido": "Cotobade",
+      "provincia_extraida": "Pontevedra",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 128,
+      "Administracion": "Ayuntamiento de Benitatxell (Alicante)",
+      "municipio_extraido": "Benitatxell",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 129,
+      "Administracion": "Ayuntamiento de Villa de San Juan de la Rambla (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Villa de San Juan de la Rambla",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 130,
+      "Administracion": "Ayuntamiento de Esparraguera (Barcelona)",
+      "municipio_extraido": "Esparraguera",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 131,
+      "Administracion": "Ayuntamiento de Villa de la Matanza de Acentejo (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Villa de la Matanza de Acentejo",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 132,
+      "Administracion": "Ayuntamiento de Castellón de la Plana (Castellón) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Castellón de la Plana (Castellón) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 133,
+      "Administracion": "Ayuntamiento de Escatrón (Zaragoza) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Escatrón (Zaragoza) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 134,
+      "Administracion": "Ayuntamiento de Palma del Río-Patronato Deportivo Municipal (Córdoba)",
+      "municipio_extraido": "Palma del Río-Patronato Deportivo Municipal",
+      "provincia_extraida": "Córdoba",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 135,
+      "Administracion": "Ayuntamiento de Ugao-Miravalles (Vizcaya)",
+      "municipio_extraido": "Ugao-Miravalles",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 136,
+      "Administracion": "Ayuntamiento de Iglesuela (Toledo)",
+      "municipio_extraido": "Iglesuela",
+      "provincia_extraida": "Toledo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 137,
+      "Administracion": "Ayuntamiento de Llanera del Ranes (Valencia)",
+      "municipio_extraido": "Llanera del Ranes",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 138,
+      "Administracion": "Ayuntamiento de Castril de la Peña (Granada)",
+      "municipio_extraido": "Castril de la Peña",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 139,
+      "Administracion": "Ayuntamiento de Castell de Ferro (Granada)",
+      "municipio_extraido": "Castell de Ferro",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 140,
+      "Administracion": "Ayuntamiento de Lucena Gerencia Municipal de Urbanismo (Córdoba)",
+      "municipio_extraido": "Lucena Gerencia Municipal de Urbanismo",
+      "provincia_extraida": "Córdoba",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 141,
+      "Administracion": "Ayuntamiento de Arboleas (Almería) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Arboleas (Almería) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 142,
+      "Administracion": "Ayuntamiento de Els Hostalets de Pierola (Barcelona)",
+      "municipio_extraido": "Els Hostalets de Pierola",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 143,
+      "Administracion": "Ayuntamiento de Soria referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Soria referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 144,
+      "Administracion": "Ayuntamiento de Granada, Gerencia Municipal de Urbanismo y Obras",
+      "municipio_extraido": "Granada",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Granada (Granada)",
+        "Granada, La (Barcelona)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 145,
+      "Administracion": "Ayuntamiento de Valdepeñas de Jaén (Jaén) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Valdepeñas de Jaén (Jaén) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 146,
+      "Administracion": "Ayuntamiento de Cubas de la Sagra Madrid)",
+      "municipio_extraido": "Cubas de la Sagra Madrid)",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 147,
+      "Administracion": "Ayuntamiento de Antzuola (Guipúzcoa))",
+      "municipio_extraido": "Antzuola (Guipúzcoa))",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 148,
+      "Administracion": "Ayuntamiento de Alcúdia, Patronato Municipal de Deportes (Illes Balears)",
+      "municipio_extraido": "Alcúdia",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Alcúdia (Illes Balears)",
+        "Alcúdia, l' (Valencia/València)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 149,
+      "Administracion": "Ayuntamiento de Hornos de Segura (Jaén)",
+      "municipio_extraido": "Hornos de Segura",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 150,
+      "Administracion": "Ayuntamiento de Villanueva de Castellón (Castellón)",
+      "municipio_extraido": "Villanueva de Castellón",
+      "provincia_extraida": "Castellón",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 151,
+      "Administracion": "Ayuntamiento de Bembribe (León)",
+      "municipio_extraido": "Bembribe",
+      "provincia_extraida": "León",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 152,
+      "Administracion": "Ayuntamiento de Sant Vicenç del Castellet (Barcelona)",
+      "municipio_extraido": "Sant Vicenç del Castellet",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 153,
+      "Administracion": "Ayuntamiento de Sant Antoni de Postmany (Illes Balears)",
+      "municipio_extraido": "Sant Antoni de Postmany",
+      "provincia_extraida": "Illes Balears",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 154,
+      "Administracion": "Ayuntamiento de Cortagana (Huelva)",
+      "municipio_extraido": "Cortagana",
+      "provincia_extraida": "Huelva",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 155,
+      "Administracion": "Ayuntamiento de Ribarroja del Turia (Valencia) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Ribarroja del Turia (Valencia) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 156,
+      "Administracion": "Ayuntamiento de Benisamó (Valencia)",
+      "municipio_extraido": "Benisamó",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 157,
+      "Administracion": "Ayuntamiento de Alquería de Aznar (Alicante)",
+      "municipio_extraido": "Alquería de Aznar",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 158,
+      "Administracion": "Ayuntamiento de Sant Vicente del Raspeig (Alicante)",
+      "municipio_extraido": "Sant Vicente del Raspeig",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 159,
+      "Administracion": "Ayuntamiento de Ferrerira (Granada)",
+      "municipio_extraido": "Ferrerira",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 160,
+      "Administracion": "Ayuntamiento de Guntín de Pallares (Lugo)",
+      "municipio_extraido": "Guntín de Pallares",
+      "provincia_extraida": "Lugo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 161,
+      "Administracion": "Ayuntamiento de Villa de Fuentes de Oñoro (Salamanca)",
+      "municipio_extraido": "Villa de Fuentes de Oñoro",
+      "provincia_extraida": "Salamanca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 162,
+      "Administracion": "Ayuntamiento de Villadecanes (León)",
+      "municipio_extraido": "Villadecanes",
+      "provincia_extraida": "León",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 163,
+      "Administracion": "Ayuntamiento de Carbornero el Mayor (Segovia)",
+      "municipio_extraido": "Carbornero el Mayor",
+      "provincia_extraida": "Segovia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 164,
+      "Administracion": "Ayuntamiento de Aretaxabaleta (Guipúzcoa)",
+      "municipio_extraido": "Aretaxabaleta",
+      "provincia_extraida": "Guipúzcoa",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 165,
+      "Administracion": "Ayuntamiento de Villa de Firgas (Las Palmas)",
+      "municipio_extraido": "Villa de Firgas",
+      "provincia_extraida": "Las Palmas",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 166,
+      "Administracion": "Ayuntamiento de Sant Antony de Portmany (Illes Balears)",
+      "municipio_extraido": "Sant Antony de Portmany",
+      "provincia_extraida": "Illes Balears",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 167,
+      "Administracion": "Ayuntamiento de Puerto de Serrano (Cádiz)",
+      "municipio_extraido": "Puerto de Serrano",
+      "provincia_extraida": "Cádiz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 168,
+      "Administracion": "Ayuntamiento de Santa Cruz de Bezama (Cantabria)",
+      "municipio_extraido": "Santa Cruz de Bezama",
+      "provincia_extraida": "Cantabria",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 169,
+      "Administracion": "Ayuntamiento de Abanto y Ciérvana (Vizcaya) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Abanto y Ciérvana (Vizcaya) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 170,
+      "Administracion": "Ayuntamiento de Les Planes d'Hostoles (Girona)",
+      "municipio_extraido": "Les Planes d'Hostoles",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 171,
+      "Administracion": "Ayuntamiento de Higueras de Vargas (Badajoz)",
+      "municipio_extraido": "Higueras de Vargas",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 172,
+      "Administracion": "Ayuntamiento de El Padul (Granada)",
+      "municipio_extraido": "El Padul",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 173,
+      "Administracion": "Ayuntamiento de Piedrasblancas (Asturias)",
+      "municipio_extraido": "Piedrasblancas",
+      "provincia_extraida": "Asturias",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 174,
+      "Administracion": "Ayuntamiento de Calayatud (Zaragoza)",
+      "municipio_extraido": "Calayatud",
+      "provincia_extraida": "Zaragoza",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 175,
+      "Administracion": "Ayuntamiento de Zurbarán (Badajoz)",
+      "municipio_extraido": "Zurbarán",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 176,
+      "Administracion": "Ayuntamiento de Ciempozuelos (Madrid) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Ciempozuelos (Madrid) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 177,
+      "Administracion": "Ayuntamiento de Amorebieta-Extano (Vizcaya)",
+      "municipio_extraido": "Amorebieta-Extano",
+      "provincia_extraida": "Vizcaya",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 178,
+      "Administracion": "Ayuntamiento de Linares (Jaén). referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Linares (Jaén). referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 179,
+      "Administracion": "Ayuntamiento de Alcalá de la Real (Jaén)",
+      "municipio_extraido": "Alcalá de la Real",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 180,
+      "Administracion": "Ayuntamiento de Otura (Granada)",
+      "municipio_extraido": "Otura",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 181,
+      "Administracion": "Ayuntamiento de Granada, Patronato Municipal Fundación Albaicín-Granada",
+      "municipio_extraido": "Granada",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Granada (Granada)",
+        "Granada, La (Barcelona)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 182,
+      "Administracion": "Ayuntamiento de Benitachel (Alicante)",
+      "municipio_extraido": "Benitachel",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 183,
+      "Administracion": "Ayuntamiento de San Agustín de Guadalix (Madrid)",
+      "municipio_extraido": "San Agustín de Guadalix",
+      "provincia_extraida": "Madrid",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 184,
+      "Administracion": "Ayuntamiento de les Planes d´Hostoles (Girona)",
+      "municipio_extraido": "les Planes d´Hostoles",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 185,
+      "Administracion": "Ayuntamiento de Huétor Santillán (Granada)",
+      "municipio_extraido": "Huétor Santillán",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 186,
+      "Administracion": "Ayuntamiento de El Pozo de Guadalajara (Guadalajara)",
+      "municipio_extraido": "El Pozo de Guadalajara",
+      "provincia_extraida": "Guadalajara",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 187,
+      "Administracion": "Ayuntamiento de Bidegoian (Gipuzkoa)",
+      "municipio_extraido": "Bidegoian",
+      "provincia_extraida": "Gipuzkoa",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 188,
+      "Administracion": "Ayuntamiento de Las Regueras (Asturias) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Las Regueras (Asturias) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 189,
+      "Administracion": "Ayuntamiento de Cogollos Vega (Granada)",
+      "municipio_extraido": "Cogollos Vega",
+      "provincia_extraida": "Granada",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 190,
+      "Administracion": "Ayuntamiento de Oyón (Álava)",
+      "municipio_extraido": "Oyón",
+      "provincia_extraida": "Álava",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 191,
+      "Administracion": "Ayuntamiento de Villa de Ingenio (Las Palmas)",
+      "municipio_extraido": "Villa de Ingenio",
+      "provincia_extraida": "Las Palmas",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 192,
+      "Administracion": "Ayuntamiento de Villa de La Matanza de Acentejo (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Villa de La Matanza de Acentejo",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 193,
+      "Administracion": "Ayuntamiento de Puzol (Valencia)",
+      "municipio_extraido": "Puzol",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 194,
+      "Administracion": "Ayuntamiento de Roa de Duero (Burgos)",
+      "municipio_extraido": "Roa de Duero",
+      "provincia_extraida": "Burgos",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 195,
+      "Administracion": "Ayuntamiento de Bilbao (Bizkaia) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Bilbao (Bizkaia) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 196,
+      "Administracion": "Ayuntamiento de Les Preses (Girona)",
+      "municipio_extraido": "Les Preses",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 197,
+      "Administracion": "Ayuntamiento de Pepino (Toledo) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Pepino (Toledo) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 198,
+      "Administracion": "Ayuntamiento de Albal (Valencia) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Albal (Valencia) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 199,
+      "Administracion": "Ayuntamiento de Ciutadella (Menorca)",
+      "municipio_extraido": "Ciutadella",
+      "provincia_extraida": "Menorca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 200,
+      "Administracion": "Ayuntamiento de Gijón/Xixón (Asturias)",
+      "municipio_extraido": "Gijón/Xixón",
+      "provincia_extraida": "Asturias",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 201,
+      "Administracion": "Ayuntamiento de As Neves (Pontevedra)",
+      "municipio_extraido": "As Neves",
+      "provincia_extraida": "Pontevedra",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 202,
+      "Administracion": "Ayuntamiento de Brunyola y Sant Martí Sapresa (Girona)",
+      "municipio_extraido": "Brunyola y Sant Martí Sapresa",
+      "provincia_extraida": "Girona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 203,
+      "Administracion": "Ayuntamiento de Sant Feliu de Llobgregat (Barcelona)",
+      "municipio_extraido": "Sant Feliu de Llobgregat",
+      "provincia_extraida": "Barcelona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 204,
+      "Administracion": "Ayuntamiento de Benalup Casasviejas (Cádiz)",
+      "municipio_extraido": "Benalup Casasviejas",
+      "provincia_extraida": "Cádiz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 205,
+      "Administracion": "Ayuntamiento de Granada de Riotinto (Huelva)",
+      "municipio_extraido": "Granada de Riotinto",
+      "provincia_extraida": "Huelva",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 206,
+      "Administracion": "Ayuntamiento de Bedmar y Garcíez (Jaén) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Bedmar y Garcíez (Jaén) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 207,
+      "Administracion": "Ayuntamiento de El Bercial (Toledo)",
+      "municipio_extraido": "El Bercial",
+      "provincia_extraida": "Toledo",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 208,
+      "Administracion": "Ayuntamiento de Chinchilla (Albacete)",
+      "municipio_extraido": "Chinchilla",
+      "provincia_extraida": "Albacete",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 209,
+      "Administracion": "Ayuntamiento de Villa de La Orotava (Tenerife)",
+      "municipio_extraido": "Villa de La Orotava",
+      "provincia_extraida": "Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 210,
+      "Administracion": "Ayuntamiento de Fuente Victoria (Almería)",
+      "municipio_extraido": "Fuente Victoria",
+      "provincia_extraida": "Almería",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 211,
+      "Administracion": "Ayuntamiento de Es Castell (Islas Baleares)",
+      "municipio_extraido": "Es Castell",
+      "provincia_extraida": "Islas Baleares",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 212,
+      "Administracion": "Ayuntamiento de San Pedro de Palmiches (Cuenca)",
+      "municipio_extraido": "San Pedro de Palmiches",
+      "provincia_extraida": "Cuenca",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 213,
+      "Administracion": "Ayuntamiento de Entidad Local Autónoma de El Mármol (Jaén)",
+      "municipio_extraido": "Entidad Local Autónoma de El Mármol",
+      "provincia_extraida": "Jaén",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 214,
+      "Administracion": "Ayuntamiento de Valdivia (Badajoz)",
+      "municipio_extraido": "Valdivia",
+      "provincia_extraida": "Badajoz",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 215,
+      "Administracion": "Ayuntamiento de Bretó de la Ribera (Zamora)",
+      "municipio_extraido": "Bretó de la Ribera",
+      "provincia_extraida": "Zamora",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 216,
+      "Administracion": "Ayuntamiento de Garvín de la Jara (Cáceres)",
+      "municipio_extraido": "Garvín de la Jara",
+      "provincia_extraida": "Cáceres",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 217,
+      "Administracion": "Ayuntamiento de Campofrío (Huelva) referente a la convocatoria para proveer una plaza",
+      "municipio_extraido": "Campofrío (Huelva) referente a la convocatoria para proveer una plaza",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 218,
+      "Administracion": "Ayuntamiento de Torre de Capdella (Lleida)",
+      "municipio_extraido": "Torre de Capdella",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 219,
+      "Administracion": "Ayuntamiento de Les Oluges (Lleida)",
+      "municipio_extraido": "Les Oluges",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 220,
+      "Administracion": "Ayuntamiento de Barraca d'Aigües Vives (Valencia)",
+      "municipio_extraido": "Barraca d'Aigües Vives",
+      "provincia_extraida": "Valencia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 221,
+      "Administracion": "Ayuntamiento de San Pedro Castañero (León)",
+      "municipio_extraido": "San Pedro Castañero",
+      "provincia_extraida": "León",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 222,
+      "Administracion": "Ayuntamiento de Yécora-Iekora (Álava)",
+      "municipio_extraido": "Yécora-Iekora",
+      "provincia_extraida": "Álava",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 223,
+      "Administracion": "Ayuntamiento de Santa Eulària des Riu (Illes Balears) referente a la convocatoria para proveer varias plazas",
+      "municipio_extraido": "Santa Eulària des Riu (Illes Balears) referente a la convocatoria para proveer varias plazas",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 224,
+      "Administracion": "Ayuntamiento de Els Guiamets (Tarragona)",
+      "municipio_extraido": "Els Guiamets",
+      "provincia_extraida": "Tarragona",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 225,
+      "Administracion": "Ayuntamiento de Torrent, Organismo Autónomo Fundación Deportiva Municipal de Torrent (Valencia)",
+      "municipio_extraido": "Torrent",
+      "provincia_extraida": "",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [
+        "Torrent (Girona)",
+        "Torrent (Valencia/València)"
+      ],
+      "causa_probable": "AMBIGUEDAD_REAL",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 226,
+      "Administracion": "Ayuntamiento de Azabal (Cáceres)",
+      "municipio_extraido": "Azabal",
+      "provincia_extraida": "Cáceres",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 227,
+      "Administracion": "Ayuntamiento de Els Omells de na Gaia (Lleida)",
+      "municipio_extraido": "Els Omells de na Gaia",
+      "provincia_extraida": "Lleida",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 228,
+      "Administracion": "Ayuntamiento de Vecilla de Curueño (León)",
+      "municipio_extraido": "Vecilla de Curueño",
+      "provincia_extraida": "León",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 229,
+      "Administracion": "Ayuntamiento de Villa de Tegueste (Santa Cruz de Tenerife)",
+      "municipio_extraido": "Villa de Tegueste",
+      "provincia_extraida": "Santa Cruz de Tenerife",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 230,
+      "Administracion": "Ayuntamiento de Trucíos (Bizkaia)",
+      "municipio_extraido": "Trucíos",
+      "provincia_extraida": "Bizkaia",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 231,
+      "Administracion": "Ayuntamiento de Vila Joiosa (Alicante), Organismo Autónomo Local Centro Municipal Hospital Asilo Santa Marta",
+      "municipio_extraido": "Vila Joiosa",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 232,
+      "Administracion": "Ayuntamiento de Aldehuela de Jerte (Cáceres)",
+      "municipio_extraido": "Aldehuela de Jerte",
+      "provincia_extraida": "Cáceres",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "MUNICIPIO_NO_IDENTIFICABLE",
+      "filas_oposiciones": 1
+    },
+    {
+      "posicion": 233,
+      "Administracion": "Ayuntamiento de Vila Joiosa (Alicante), Organismo Autónomo Local Parra Conca",
+      "municipio_extraido": "Vila Joiosa",
+      "provincia_extraida": "Alicante",
+      "familia": "AYUNTAMIENTO",
+      "candidatos_exactos": [],
+      "causa_probable": "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA",
+      "filas_oposiciones": 1
+    }
+  ],
+  "causas_restantes": {
+    "AMBIGUEDAD_REAL": 218,
+    "MUNICIPIO_NO_IDENTIFICABLE": 294,
+    "TEXTO_ADICIONAL_O_EXTRACCION_INCORRECTA": 84
+  }
+}

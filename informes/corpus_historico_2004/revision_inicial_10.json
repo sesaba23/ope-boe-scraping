@@ -1,0 +1,710 @@
+{
+  "version_formato": 1,
+  "descripcion": "Borrador manual de diez fichas; editar solo campos de revisión.",
+  "publicaciones": [
+    {
+      "Publicacion_ID": "BOE-A-2004-81",
+      "Fecha_boe": "2004-01-02",
+      "titulo": "Resolución de 22 de diciembre de 2003, del Consejo de Estado, por la que se anuncia la convocatoria de un concurso-oposición para la provisión, mediante promoción interna, de una plaza vacante de personal laboral de la categoría de Ordenanza.",
+      "departamento": "CONSEJO DE ESTADO",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-81",
+      "clasificacion_documento": "UNICA_CONVOCATORIA",
+      "convocatorias_esperadas": [
+        {
+          "Puesto": "Ordenanza",
+          "Turno": "Promoción interna",
+          "Sistema": "concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 1
+        }
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 1
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [
+          {
+            "valor": 1,
+            "fragmento": "una plaza",
+            "posicion": 705,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " Orgánica 3/1980, de 22 de abril, del Consejo de Estado y su Reglamento Orgánico, he resuelto: Primero. Convocar proceso selectivo para proveer, por el turno de promoción interna, una plaza vacante de personal laboral del Consejo de Estado de la categoría profesional de Ordenanza, nivel 7. Segundo. Las bases que desarrollan la convocatoria se expondrán en el tablón de anuncios de la planta baja del Consejo de Estado, calle Ma",
+            "relacion_distribucion": false
+          }
+        ],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "SENCILLA_UNICA",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-372",
+      "Fecha_boe": "2004-01-08",
+      "titulo": "Orden CTE/3731/2003, de 11 de diciembre, por la que se aprueban las listas provisionales de aspirantes admitidos y excluidos y se determina la fecha, lugar y hora de comienzo de la fase de oposición para cubrir plazas de personal laboral fijo en el Instituto de Astrofísica de Canarias (Grupo 2), con motivo del proceso de consolidación de empleo temporal.",
+      "departamento": "MINISTERIO DE CIENCIA Y TECNOLOGÍA",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-372",
+      "clasificacion_documento": "UNICA_CONVOCATORIA",
+      "convocatorias_esperadas": [
+
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": "personal laboral mediante contratación laboral fija",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 2
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [
+          {
+            "valor": 2,
+            "fragmento": "2 plazas",
+            "posicion": 42,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "personal laboral mediante contratación laboral fija",
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "Convocadas pruebas selectivas para cubrir 2 plazas de personal laboral mediante contratación laboral fija, con motivo del proceso de consolidación de empleo temporal del Instituto de Astrofísica de Canarias según Orden CTE/3144/2003 de 17 de Octubre, del Ministerio de Ciencia y Tecnología ",
+            "relacion_distribucion": false
+          }
+        ],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "SENCILLA_UNICA",
+      "clasificacion_documento_revision": "NO_CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-1396",
+      "Fecha_boe": "2004-01-23",
+      "titulo": "Resolución de 29 de diciembre de 2003, de la Presidencia de la Agencia Estatal de Administración Tributaria, por la que se anuncia la convocatoria de proceso selectivo para proveer plazas de personal laboral fijo de la categoría de Jefe Regional de Seguridad.",
+      "departamento": "MINISTERIO DE HACIENDA",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-1396",
+      "clasificacion_documento": "UNICA_CONVOCATORIA",
+      "convocatorias_esperadas": [
+        {
+          "Puesto": "Jefe Regional de Seguridad",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": "personal laboral",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [
+          {
+            "valor": 59,
+            "fragmento": "59 plazas",
+            "posicion": 369,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "personal laboral",
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "para 2003 por Real Decreto 215/2003, de 21 de febrero (Boletín Oficial del Estado del 22). En dicha oferta se autoriza a la Agencia Estatal de Administración Tributaria a convocar 59 plazas de personal laboral. Por lo tanto, en cumplimiento de dicho Real Decreto y con el fin de atender las necesidades de personal, Esta Presidencia, previo informe favorable de la Dirección General de la Función Pública, ha resuelto: Primero.-C",
+            "relacion_distribucion": false
+          }
+        ],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "SENCILLA_UNICA",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-74",
+      "Fecha_boe": "2004-01-02",
+      "titulo": "Orden INT/3690/2003, de 12 de diciembre, por la que se aprueban las listas definitivas de admitidos y de excluidos al proceso selectivo convocado por Orden INT/2752/2003, de 26 de septiembre, para proveer plazas de personal laboral fijo, en la categoría de Oficial de Mantenimiento y Oficios, en el marco del proceso de consolidación de empleo temporal y se cita para la realización del ejercicio.",
+      "departamento": "MINISTERIO DEL INTERIOR",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-74",
+      "clasificacion_documento": "SIN_CONVOCATORIA",
+      "convocatorias_esperadas": [],
+      "propuesta_extractor": [],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "SIN_CONVOCATORIA",
+      "clasificacion_documento_revision": "NO_CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8235",
+      "Fecha_boe": "2004-05-04",
+      "titulo": "Resolución de 26 de marzo de 2004, de la Subsecretaría, por la que se aprueba la lista de aspirantes admitidos y el lugar, fecha y hora de la realización de las pruebas selectivas para proveer plazas de personal laboral fijo, en el marco del proceso de consolidación de empleo temporal en la categoría de Operario de Limpieza.",
+      "departamento": "MINISTERIO DE ECONOMÍA",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8235",
+      "clasificacion_documento": "SIN_CONVOCATORIA",
+      "convocatorias_esperadas": [],
+      "propuesta_extractor": [],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "SIN_CONVOCATORIA",
+      "clasificacion_documento_revision": "NO_CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3826",
+      "Fecha_boe": "2004-03-02",
+      "titulo": "Resolución de 19 de febrero de 2004, de la Dirección General de los Registros y del Notariado, por la que se convoca oposición entre Notarios.",
+      "departamento": "MINISTERIO DE JUSTICIA",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3826",
+      "clasificacion_documento": "ESTRUCTURAL_TABLA",
+      "convocatorias_esperadas": [],
+      "propuesta_extractor": [
+        {
+          "Puesto": "primera a convocar y 24 de segunda",
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 39
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [
+          "los mencionados derechos de examen y oportuna validación, en cualquier banco, caja de ahorros o cooperativa de crédito de las que actúan como entidades colaboradoras en la recaudación tributaria. La falta de justificación de abono de los derechos de examen determinará la exclusión de la lista de admitidos a"
+        ],
+        "cantidades_detectadas": [
+          {
+            "valor": 39,
+            "fragmento": "39 plazas",
+            "posicion": 811,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "primera a convocar y 24 de segunda",
+            "Turno": null,
+            "Sistema": "Oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "TOTAL",
+            "confianza": "ALTA",
+            "evidencia": "e represente el 3 por 100 del número total de Notarías de primera existentes, es decir 1.321, y el 4 por 100 del número total de las de segunda, o sea 624, lo que hace un total de 39 plazas de primera a convocar y 24 de segunda. En su virtud y en cumplimiento de lo ordenado por los mencionados artículos reglamentarios, esta Dirección General ha acordado convocar oposición entre Notarios, con arreglo a las siguientes bases: Pr",
+            "relacion_distribucion": false
+          }
+        ],
+        "tablas_relevantes": [
+          "inclusion"
+        ]
+      },
+      "categoria_seleccion": "TABLA",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "Fecha_boe": "2004-03-03",
+      "titulo": "Resolución 452/38026/2004, de 25 de febrero, de la Subsecretaría, por la que se convocan pruebas selectivas para el ingreso en los Centros Docentes Militares de Formación para la incorporación a las Escalas Superiores de Oficiales de los Cuerpos Generales de los Ejércitos y de Infantería de Marina y a la Escala Superior de Oficiales del Cuerpo de la Guardia Civil.",
+      "departamento": "MINISTERIO DE DEFENSA",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891",
+      "clasificacion_documento": "ESTRUCTURAL_TABLA",
+      "convocatorias_esperadas": [
+        {
+          "Puesto": "Guardia Civil",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Superior de Oficiales",
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 237
+        }
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Superior de Oficiales de la Guardia Civil",
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 237
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [
+          "y de Infantería de Marina y a la Escala Superior de Oficiales de la Guardia Civil, para cubrir un total de 237 plazas, distribuidas de la siguiente forma: Ejército Cuerpo Plazas Tierra. General de las Armas. 124"
+        ],
+        "cantidades_detectadas": [
+          {
+            "valor": 237,
+            "fragmento": "237 plazas",
+            "posicion": 3082,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Superior de Oficiales de la Guardia Civil",
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "TOTAL",
+            "confianza": "ALTA",
+            "evidencia": "a Escala Superior de Oficiales de los Cuerpos Generales de los Ejércitos y de Infantería de Marina y a la Escala Superior de Oficiales de la Guardia Civil, para cubrir un total de 237 plazas, distribuidas de la siguiente forma: Ejército Cuerpo Plazas Tierra. General de las Armas. 124 Armada. General. 31 Infantería de Marina. 7 Aire. General. 43 Guardia Civil. 32 Total. 237 2. Condiciones para optar al ingreso Los aspirantes de",
+            "relacion_distribucion": true
+          }
+        ],
+        "tablas_relevantes": [
+          "distribucion"
+        ]
+      },
+      "categoria_seleccion": "TABLA",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10041",
+      "Fecha_boe": "2004-05-29",
+      "titulo": "Orden APU/1522/2004, de 10 de mayo, por la que se convocan pruebas selectivas para el acceso a la Subescala de Intervención-Tesorería, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional.",
+      "departamento": "MINISTERIO DE ADMINISTRACIONES PÚBLICAS",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10041",
+      "clasificacion_documento": "TOTAL_DESGLOSE",
+      "convocatorias_esperadas": [
+        {
+          "Puesto": "Intervención-Tesorería",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        }
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 100
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 50
+        },
+        {
+          "Puesto": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Num_plazas": 50
+        },
+        {
+          "Puesto": null,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 5
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [
+          "Administración Local con habilitación de carácter nacional, Subescala de Intervención-Tesorería, categoría de entrada, con la siguiente distribución: Cincuenta plazas para cubrir por el sistema general de acceso libre. Cincuenta plazas para cubrir por el sistema de promoción interna. Del total de plazas ofertadas se reservará",
+          "Administración Tributaria para la recaudación de tasas», en cualquier Banco, Caja de Ahorros o Cooperativa de Crédito, de las que actúan como entidades colaboradoras en la recaudación tributaria (la práctica totalidad de las mismas). 4.4.2 El importe de la tasa por derechos de examen se consignará en el recu"
+        ],
+        "cantidades_detectadas": [
+          {
+            "valor": 100,
+            "fragmento": "100 plazas",
+            "posicion": 212,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "e febrero, por el que se aprueba la oferta de empleo público para el año 2004 («Boletín Oficial del Estado» del 7), autoriza en su disposición adicional segunda la convocatoria de 100 plazas para la Subescala de Intervención-Tesorería, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional. Así, en cumplimiento de lo dispuesto en el Real Decreto 222/2004, de 6 de febrer",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 100,
+            "fragmento": "100 plazas",
+            "posicion": 1276,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "tipo_inicial": "TOTAL",
+            "confianza": "ALTA",
+            "evidencia": "ministración Local con habilitación de carácter nacional, con sujeción a las siguientes Bases de la convocatoria 1. Normas Generales 1.1 Se convocan pruebas selectivas para cubrir 100 plazas vacantes de funcionarios de Administración Local con habilitación de carácter nacional, Subescala de Intervención-Tesorería, categoría de entrada, con la siguiente distribución: Cincuenta plazas para cubrir por el sistema general de acceso",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 50,
+            "fragmento": "Cincuenta plazas",
+            "posicion": 1465,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+            "Turno": "Turno libre",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "tipo_inicial": "COMPONENTE",
+            "confianza": "ALTA",
+            "evidencia": "s vacantes de funcionarios de Administración Local con habilitación de carácter nacional, Subescala de Intervención-Tesorería, categoría de entrada, con la siguiente distribución: Cincuenta plazas para cubrir por el sistema general de acceso libre. Cincuenta plazas para cubrir por el sistema de promoción interna. Del total de plazas ofertadas se reservará un 5 por 100 para ser cubiertas por personas con minusvalía con grado de disca",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 50,
+            "fragmento": "Cincuenta plazas",
+            "posicion": 1534,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "tipo_inicial": "COMPONENTE",
+            "confianza": "ALTA",
+            "evidencia": "e carácter nacional, Subescala de Intervención-Tesorería, categoría de entrada, con la siguiente distribución: Cincuenta plazas para cubrir por el sistema general de acceso libre. Cincuenta plazas para cubrir por el sistema de promoción interna. Del total de plazas ofertadas se reservará un 5 por 100 para ser cubiertas por personas con minusvalía con grado de discapacidad igual o superior al 33 por 100, de acuerdo con la disposición",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 5,
+            "fragmento": "5 plazas",
+            "posicion": 2094,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " ley 23/1988, de 28 de julio, reformada por Ley 53/2003, de 10 de diciembre, sobre el Empleo Público de Discapacitados. Este cupo de reserva asciende en la presente convocatoria a 5 plazas y se aplicarán 3 al sistema general de acceso libre y 2 al de promoción interna. Las plazas no cubiertas de las reservadas a promoción interna y al cupo de reserva de discapacidad acrecerán las restantes plazas de acceso libre. En consecue",
+            "relacion_distribucion": true
+          }
+        ],
+        "tablas_relevantes": [
+          "distribucion",
+          "inclusion"
+        ]
+      },
+      "categoria_seleccion": "TOTAL_DESGLOSE",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-2476",
+      "Fecha_boe": "2004-02-10",
+      "titulo": "Resolución de 16 de enero de 2004, de la Universidad Complutense de Madrid, por la que se convocan pruebas selectivas para ingreso en la Escala de Gestión Universitaria.",
+      "departamento": "UNIVERSIDADES",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-2476",
+      "clasificacion_documento": "SUBCUPOS",
+      "convocatorias_esperadas": [],
+      "propuesta_extractor": [
+        {
+          "Puesto": null,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 6
+        },
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 1
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [
+          "s: Primer ejercicio: Consistirá en contestar un cuestionario de 125 preguntas con respuestas múltiples, siendo sólo una de ellas la correcta, basado en el contenido del programa de estas pruebas a que hace referencia el Anexo II. Las contestaciones erróneas se valorarán negativamente. El tiempo máximo para",
+          "antía del puesto de trabajo. La promoción interna. Tema 7. Situaciones administrativas: supuestos y efectos de cada una de ellas. Tema 8. Sistema de retribuciones de los funcionarios: conceptos retributivos y determinación de la cuantía de los conceptos retributivos. Retribuciones de los funcionarios en prá"
+        ],
+        "cantidades_detectadas": [
+          {
+            "valor": 6,
+            "fragmento": "6 plazas",
+            "posicion": 804,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": "Turno libre",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "TOTAL",
+            "confianza": "ALTA",
+            "evidencia": "tión Universitaria de la Universidad Complutense de Madrid, con sujeción a las siguientes: Bases de convocatoria 1. Normas generales 1.1 Se convocan pruebas selectivas para cubrir 6 plazas por el sistema general de acceso libre. De acuerdo con el artículo único de Ley 53/2003, de 10 de diciembre, sobre empleo público de discapacitados por el que se modifica la disposición adicional decimonovena de la Ley 30/1984, de 2 de ago",
+            "relacion_distribucion": false
+          },
+          {
+            "valor": 1,
+            "fragmento": "1 plaza",
+            "posicion": 1170,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "posición adicional decimonovena de la Ley 30/1984, de 2 de agosto, de Medidas para la Reforma de la Función Pública, en la redacción dada a la misma por la Ley 23/1988, se reserva 1 plaza para personas con discapacidad de grado igual o superior al 33 por 100, siempre que se cumplan los requisitos que en dichas normas se establecen, que se acumulará al resto de plazas convocadas en la medida en que quede sin cubrir. Las prue",
+            "relacion_distribucion": false
+          }
+        ],
+        "tablas_relevantes": [
+          "inclusion"
+        ]
+      },
+      "categoria_seleccion": "SUBCUPO",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6309",
+      "Fecha_boe": "2004-04-08",
+      "titulo": "Resolución de 31 de marzo de 2004, de la Dirección General de Gestión de Personal, del Departamento de Educación, Cultura y Deporte, por la que se anuncia la convocatoria de procedimientos selectivos de ingreso y acceso a los Cuerpos de Profesores de Enseñanza Secundaria, Profesores Técnicos de Formación Profesional, Profesores de Escuelas Oficiales de Idiomas y Profesores de Música y Artes Escénicas y procedimiento para la adquisición de nuevas especialidades por los funcionarios de los mencionados cuerpos.",
+      "departamento": "COMUNIDAD AUTÓNOMA DE ARAGÓN",
+      "url_xml": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6309",
+      "clasificacion_documento": "MULTICONVOCATORIA",
+      "convocatorias_esperadas": [
+        {
+          "Puesto": "Profesores de Enseñanza Secundaria",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 183
+        },
+        {
+          "Puesto": "Profesores Técnicos de Formación Profesional",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 35
+        },
+        {
+          "Puesto": "Profesores de Escuelas Oficiales de Idiomas",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 5
+        },
+        {
+          "Puesto": "Profesores de Música y Artes Escénicas",
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "propuesta_extractor": [
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 183
+        },
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 35
+        },
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 5
+        },
+        {
+          "Puesto": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Num_plazas": 59
+        }
+      ],
+      "notas_revision": "",
+      "estado_revision": "PENDIENTE",
+      "ayuda_revision": {
+        "fragmentos_relevantes": [],
+        "cantidades_detectadas": [
+          {
+            "valor": 183,
+            "fragmento": "183 plazas",
+            "posicion": 1024,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "narios de los mencionados cuerpos. Que el número de plazas convocadas, cuya distribución se indica en anexo a esta Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales co",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 35,
+            "fragmento": "35 plazas",
+            "posicion": 1082,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " convocadas, cuya distribución se indica en anexo a esta Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de est",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 5,
+            "fragmento": "5 plazas",
+            "posicion": 1138,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": " Resolución, es el siguiente: Profesores de Enseñanza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de esta convocatoria en el Boletín Oficial de Aragón. Que la ",
+            "relacion_distribucion": true
+          },
+          {
+            "valor": 59,
+            "fragmento": "59 plazas",
+            "posicion": 1188,
+            "fuente": "HISTORICAL_TEXT",
+            "Puesto": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "tipo_inicial": "DESCONOCIDO",
+            "confianza": "BAJA",
+            "evidencia": "nza Secundaria, 183 plazas. Profesores Técnicos de Formación Profesional, 35 plazas. Profesores de Escuelas Oficiales de Idiomas, 5 plazas. Profesores de Música y Artes Escénicas, 59 plazas. Que el plazo de presentación de instancias será de veinte días naturales contados a partir del siguiente al de la publicación de esta convocatoria en el Boletín Oficial de Aragón. Que la solicitud será dirigida a la Consejera de Educación",
+            "relacion_distribucion": true
+          }
+        ],
+        "tablas_relevantes": []
+      },
+      "categoria_seleccion": "MULTICONVOCATORIA",
+      "clasificacion_documento_revision": "CONVOCATORIA"
+    }
+  ]
+}

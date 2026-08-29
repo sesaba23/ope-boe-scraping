@@ -1,0 +1,2310 @@
+{
+  "fecha_ejecucion": "2026-08-23 12:23:57",
+  "muestra": {
+    "tamano": 30,
+    "origen": "informes/validacion_final_historico_2004",
+    "ids": [
+      "BOE-A-2004-10041",
+      "BOE-A-2004-10218",
+      "BOE-A-2004-11125",
+      "BOE-A-2004-8501",
+      "BOE-A-2004-17768",
+      "BOE-A-2004-8225",
+      "BOE-A-2004-14618",
+      "BOE-A-2004-4911",
+      "BOE-A-2004-6777",
+      "BOE-A-2004-16964",
+      "BOE-A-2004-599",
+      "BOE-A-2004-6695",
+      "BOE-A-2004-10220",
+      "BOE-A-2004-603",
+      "BOE-A-2004-1938",
+      "BOE-A-2004-2476",
+      "BOE-A-2004-3113",
+      "BOE-A-2004-3826",
+      "BOE-A-2004-3891",
+      "BOE-A-2004-6696",
+      "BOE-A-2004-12789",
+      "BOE-A-2004-12790",
+      "BOE-A-2004-14961",
+      "BOE-A-2004-16452",
+      "BOE-A-2004-20342",
+      "BOE-A-2004-21227",
+      "BOE-A-2004-78",
+      "BOE-A-2004-12319",
+      "BOE-A-2004-14746",
+      "BOE-A-2004-15716"
+    ]
+  },
+  "diseno": {
+    "segmentador": "Recorre XML en orden, preserva párrafos y tablas; produce bloques con origen, posición, campos y evidencias locales. Solo considera válida una fila con Puesto y Num_plazas.",
+    "reglas_generales": [
+      "cabeceras explícitas de tabla para denominación/cantidad",
+      "secuencias \"N plazas de Puesto\"",
+      "encabezado vertical breve seguido de \"Número de plazas\"",
+      "cantidades numéricas con miles y palabras controladas"
+    ],
+    "reglas_reconciliador_anadidas": []
+  },
+  "bloques": {
+    "total": 62,
+    "por_origen": {
+      "PARRAFO": 51,
+      "TABLA": 11
+    }
+  },
+  "antes": {
+    "VALIDA": 19,
+    "VALIDA_PARCIAL": 27,
+    "NO_UTILIZABLE": 3,
+    "filas_con_puesto": 23,
+    "filas_con_num_plazas": 42,
+    "filas_con_ambos": 19,
+    "publicaciones_con_alguna_valida": 16,
+    "opcionales_recuperados": {
+      "Turno": 14,
+      "Sistema": 15,
+      "Escala": 10,
+      "Subescala": 9,
+      "Clase": 0
+    },
+    "filas_evaluadas": 46
+  },
+  "despues": {
+    "VALIDA": 18,
+    "VALIDA_PARCIAL": 44,
+    "NO_UTILIZABLE": 6,
+    "filas_con_puesto": 22,
+    "filas_con_num_plazas": 58,
+    "filas_con_ambos": 18,
+    "publicaciones_con_alguna_valida": 9,
+    "opcionales_recuperados": {
+      "Turno": 9,
+      "Sistema": 3,
+      "Escala": 8,
+      "Subescala": 6,
+      "Clase": 0
+    },
+    "filas_evaluadas": 62
+  },
+  "reconciliador": {
+    "antes": {
+      "TOTAL_DESGLOSADO": 1,
+      "SIN_RECONCILIACION": 29
+    },
+    "despues": {
+      "TOTAL_DESGLOSADO": 1,
+      "SIN_RECONCILIACION": 29
+    },
+    "efecto": "No se ampliaron sus reglas. La segmentación no convierte automáticamente totales y componentes en filas; por tanto no cambió decisiones confirmadas."
+  },
+  "duplicados": [],
+  "falsos_positivos_revisar": [
+    {
+      "Publicacion_ID": "BOE-A-2004-14618",
+      "motivo": "La reserva \"1 plaza de la Sección\" aporta cantidad pero no una denominación de puesto inequívoca; se mantiene como parcial."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10220",
+      "motivo": "Las secciones y reservas se segmentan, pero deben pasar por reconciliación de subcupos antes de emitirse como convocatorias independientes."
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "motivo": "La tabla contiene cuerpos y una fila Total; se excluyen Total y etiquetas genéricas, pero el contexto de Ejército/Cuerpo requiere composición tabular adicional."
+    }
+  ],
+  "documentos": [
+    {
+      "Publicacion_ID": "BOE-A-2004-10041",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 50,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10041"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 50,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Intervención-Tesorería",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040529",
+          "Publicacion_ID": "BOE-A-2004-10041",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10041"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "El Real Decreto 222/2004, de 6 de febrero, por el que se aprueba la oferta de empleo público para el año 2004 («Boletín Oficial del Estado» del 7), autoriza en su disposición adicional segunda la convocatoria de 100 plazas para la Subescala de Intervención-Tesorería, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 100,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 100 plazas vacantes de funcionarios de Administración Local con habilitación de carácter nacional, Subescala de Intervención-Tesorería, categoría de entrada, con la siguiente distribución:",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 100,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Intervención-Tesorería",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 8,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Del total de plazas ofertadas se reservará un 5 por 100 para ser cubiertas por personas con minusvalía con grado de discapacidad igual o superior al 33 por 100, de acuerdo con la disposición adicional decimonovena de la Ley 30/84, de 2 de agosto, de Medidas para la Reforma de la Función Pública, modificada por la ley 23/1988, de 28 de julio, reformada por Ley 53/2003, de 10 de diciembre, sobre el Empleo Público de Discapacitados. Este cupo de reserva asciende en la presente convocatoria a 5 plazas y se aplicarán 3 al sistema general de acceso libre y 2 al de promoción interna.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 5,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "TOTAL_DESGLOSADO",
+      "reconciliacion_despues": "TOTAL_DESGLOSADO"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10218",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 75,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 5,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 4,
+          "Turno": "Turno libre",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10218",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10218"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "El Real Decreto 222/2004, de 6 de febrero, por el que se aprueba la oferta de empleo público para el año 2004 («Boletín Oficial del Estado» del 7), autoriza en su disposición adicional segunda la convocatoria de 75 plazas para la Subescala de Secretaría, categoría de entrada, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 75,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+            "Subescala": "Secretaría",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 6,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir setenta y cinco plazas vacantes de funcionarios de Administración Local con habilitación de carácter nacional, Subescala de Secretaría, categoría de entrada, con la siguiente distribución:",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 5,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Secretaría",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 10,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Este cupo de reserva asciende en la presente convocatoria a 4 plazas y se aplicarán 2 al sistema general de acceso libre y 2 al de promoción interna.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 4,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-11125",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 25,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040615",
+          "Publicacion_ID": "BOE-A-2004-11125",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-11125"
+        },
+        {
+          "Puesto": "funcionarios de Administración Local con habilitación de carácter nacional",
+          "Num_plazas": 25,
+          "Turno": null,
+          "Sistema": "Concurso de méritos",
+          "Escala": null,
+          "Subescala": "Secretaría",
+          "Clase": null,
+          "Administración": "Ministerio de Administraciones Públicas",
+          "Fecha_boe": "20040615",
+          "Publicacion_ID": "BOE-A-2004-11125",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-11125"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "El Real Decreto 222/2004, de 6 de febrero, por el que se aprueba la oferta de empleo público para el año 2004 («Boletín Oficial del Estado» del 7), autoriza en su disposición adicional segunda la convocatoria de veinticinco plazas para la subescala de Secretaría, categoría superior, de la Escala de Funcionarios de Administración Local con habilitación de carácter nacional.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 25,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Funcionarios de Administración Local con habilitación de carácter nacional",
+            "Subescala": "Secretaría",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan procedimientos selectivos para cubrir veinticinco plazas de funcionarios de Administración Local con habilitación de carácter nacional, Subescala de Secretaría, categoría superior, de conformidad con lo dispuesto en el artículo 24.2 del Real Decreto 1174/1987, de 18 de septiembre, por el que se regula el régimen jurídico de los funcionarios de Administración Local con habilitación de carácter nacional, con la siguiente distribución:",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 25,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": "Secretaría",
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8501",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 8,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Economía y Hacienda",
+          "Fecha_boe": "20040507",
+          "Publicacion_ID": "BOE-A-2004-8501",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8501"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convoca proceso selectivo para cubrir 8 plazas del Cuerpo Superior de Inspectores de Seguros del Estado, Código A0013, por el sistema general de acceso libre y 4 plazas por el sistema de promoción interna, de las comprendidas en el artículo 5 del Real Decreto 222/2004, de 6 de febrero.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 8,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-17768",
+      "referencia": "VARIAS_DISTRIBUCIONES",
+      "filas_antes": [
+        {
+          "Puesto": "Auxiliar de Administración General",
+          "Num_plazas": null,
+          "Turno": "Turno libre",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "auxiliar",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        },
+        {
+          "Puesto": "Subalterno/a",
+          "Num_plazas": 3,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "subalterna",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        },
+        {
+          "Puesto": "Subalterno/a",
+          "Num_plazas": 2,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso oposición",
+          "Escala": "Administración General",
+          "Subescala": "subalterna",
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20041015",
+          "Publicacion_ID": "BOE-A-2004-17768",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-17768"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 6,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "28 plazas de Auxiliar de Administración General, Escala de",
+          "campos": {
+            "Puesto": "Auxiliar de Administración General, Escala de",
+            "Num_plazas": 28,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 10,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "24 plazas de Subalterno/a, Escala de Administración General,",
+          "campos": {
+            "Puesto": "Subalterno/a, Escala de Administración General,",
+            "Num_plazas": 24,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Administración General",
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-8225",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": "Cuerpo Superior de Técnicos de la Administración de la Seguridad Social, con dos modalidades de acce",
+          "Num_plazas": 15,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 15,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 13,
+          "Turno": "Promoción interna",
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040504",
+          "Publicacion_ID": "BOE-A-2004-8225",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-8225"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "El Real Decreto 222/2004, de 6 de febrero, por el que se aprueba la Oferta de Empleo Público para el año 2004, («Boletín Oficial del Estado» del 7), autoriza en su anexo la convocatoria de quince plazas para el ingreso en el Cuerpo Superior de Técnicos de la Administración de la Seguridad Social. Igualmente, el artículo 5 del citado real decreto prevé la convocatoria de hasta 4346 plazas de promoción interna para los distintos grupos de personal funcionario, con la distribución por Cuerpos y Escalas que determine el Ministerio de Administraciones Públicas. Una vez efectuada dicha distribución, han sido adjudicadas trece plazas para el ingreso en el Cuerpo Superior de Técnicos de la Administración de la Seguridad Social.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 15,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 15 plazas del Cuerpo Superior de Técnicos de la Administración de la Seguridad Social, por el sistema general de acceso libre.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 15,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 10,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.2 Asimismo, se convocan pruebas selectivas para cubrir 13 plazas del Cuerpo Superior de Técnicos de la Administración de la Seguridad Social, por promoción interna.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 13,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14618",
+      "referencia": "AMBIGUO",
+      "filas_antes": [
+        {
+          "Puesto": "Auxiliares de Archivos",
+          "Num_plazas": 32,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Auxiliares de Archivos",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040806",
+          "Publicacion_ID": "BOE-A-2004-14618",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14618"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 15,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convoca proceso selectivo para cubrir 32 plazas de",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 32,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-4911",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "Agentes Medioambientales de Parques Nacionales",
+          "Num_plazas": 10,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Agentes Medioambientales de Parques Nacionales",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Medio Ambiente",
+          "Fecha_boe": "20040317",
+          "Publicacion_ID": "BOE-A-2004-4911",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-4911"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convoca proceso selectivo para cubrir 10 plazas de la Escala de Agentes Medioambientales de Parques Nacionales, Código 5000, por el sistema general de acceso libre.",
+          "campos": {
+            "Puesto": "la Escala de Agentes Medioambientales de Parques Nacionales, Código 5000, por el sistema general de acceso libre",
+            "Num_plazas": 10,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Agentes Medioambientales de Parques Nacionales",
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6777",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16964",
+      "referencia": "VARIAS_DISTRIBUCIONES",
+      "filas_antes": [
+        {
+          "Puesto": "Radiofísicos hospitalarios en formación",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20041001",
+          "Publicacion_ID": "BOE-A-2004-16964",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-16964"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 85,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1. Médicos: 5406 plazas de formación sanitaria especializada",
+          "campos": {
+            "Puesto": "Médicos",
+            "Num_plazas": 5406,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 92,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "a) Sector público: 5196 plazas de formación, pertenecientes",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 5196,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 96,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "b) Sector privado: 58 plazas de formación en hospitales y",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 58,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 110,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "2. Farmacéuticos: 209 plazas de formación en las",
+          "campos": {
+            "Puesto": "Farmacéuticos",
+            "Num_plazas": 209,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 121,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "a) Sector público: 184 plazas de formación, que corresponden",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 184,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 131,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "B) 21 plazas de farmacéuticos para las especializaciones",
+          "campos": {
+            "Puesto": "farmacéuticos para las especializaciones",
+            "Num_plazas": 21,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 139,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "3. Químicos: 29 plazas de formación sanitaria especializada",
+          "campos": {
+            "Puesto": "Químicos",
+            "Num_plazas": 29,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 145,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "4. Biólogos: 33 plazas de formación sanitaria especializada",
+          "campos": {
+            "Puesto": "Biólogos",
+            "Num_plazas": 33,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 150,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "a) Sector público: 31 plazas de formación, pertenecientes a",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 31,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 167,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "6. Psicólogos: 81 plazas de formación sanitaria especializada",
+          "campos": {
+            "Puesto": "Psicólogos",
+            "Num_plazas": 81,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 172,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "a) Sector público: 79 plazas de formación que corresponden",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 79,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 182,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "7. Radiofísicos hospitalarios: 28 plazas en las que la",
+          "campos": {
+            "Puesto": "Radiofísicos hospitalarios",
+            "Num_plazas": 28,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 794,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "puntuación mínima, no podrá adjudicarse un número de plazas de",
+          "campos": {
+            "Puesto": "Cualquiera que sea el número de aspirantes que supere la",
+            "Num_plazas": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-599",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Ciencia y Tecnología",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-599",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-599"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Ciencia y Tecnología",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-599",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-599"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "En cumplimiento de lo dispuesto en el Real Decreto 198/2002, de 15 de febrero, por el que se aprueba la Oferta de Empleo Público para el año 2002 («Boletín Oficial del Estado» de 16 de febrero), y de conformidad con lo previsto en el artículo 13.7 de la Ley 6/1997, de 14 de abril de Organización y Funcionamiento de la Administración General del Estado, este Ministerio, previo informe favorable de la Dirección General de la Función Pública de 4 de diciembre de 2003, en uso de las competencias que le están atribuidas, ha resuelto convocar pruebas selectivas para cubrir, con personal laboral fijo, una plaza en el marco del proceso de consolidación de empleo temporal del Instituto de Astrofísica de Canarias, con sujeción a las siguientes bases:",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 3,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 1 plaza en el marco del proceso de consolidación de empleo temporal del Instituto de Astrofísica de Canarias, con el número de orden, grupo y categoría profesional, área de conocimiento, especialización y destinos que se especifican en el Anexo I.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6695",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": "Gestión de la Administración de la Seguridad Social",
+          "Num_plazas": 35,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040415",
+          "Publicacion_ID": "BOE-A-2004-6695",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6695"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 18,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 35 plazas del",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 35,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 256,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "número de plazas convocadas.",
+          "campos": {
+            "Puesto": "y de oposición, sin que, en ningún caso, se pueda exceder el",
+            "Num_plazas": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-10220",
+      "referencia": "AMBIGUO",
+      "filas_antes": [
+        {
+          "Puesto": "Ayudantes de Archivos",
+          "Num_plazas": 41,
+          "Turno": "Turno libre",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Cultura",
+          "Fecha_boe": "20040602",
+          "Publicacion_ID": "BOE-A-2004-10220",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-10220"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 5,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convoca proceso selectivo para cubrir 41 plazas del Cuerpo de Ayudantes de Archivos, Bibliotecas y Museos Código 0313 por el sistema general de acceso libre y 4 plazas por el sistema de promoción interna, de las comprendidas en el artículo 5 del Real Decreto 222/2004 de 6 de febrero, para los ministerios de Cultura, Educación y Ciencia, y Defensa.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 41,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 7,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Sección Archivos: 7 plazas por el turno libre.",
+          "campos": {
+            "Puesto": "Sección Archivos",
+            "Num_plazas": 7,
+            "Turno": "Turno libre",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 11,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Sección Museos: 13 plazas por el turno libre.",
+          "campos": {
+            "Puesto": "Sección Museos",
+            "Num_plazas": 13,
+            "Turno": "Turno libre",
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-603",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "la Escala Administrativa de la Universidad Pablo de Olavide",
+          "Num_plazas": 60,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": "Administrativa de la Universidad Pablo de Olavide",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040112",
+          "Publicacion_ID": "BOE-A-2004-603",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-603"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 4,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 60 plazas de la Escala Administrativa de la Universidad Pablo de Olavide, de Sevilla, grupo C, por el sistema general de acceso libre.",
+          "campos": {
+            "Puesto": "la Escala Administrativa de la Universidad Pablo de Olavide, de Sevilla, grupo C, por el sistema general de acceso libre",
+            "Num_plazas": 60,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": "Administrativa de la Universidad Pablo de Olavide",
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-1938",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "la categoría de Técnico Auxiliar de Servicios de Conserjerías",
+          "Num_plazas": 9,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040202",
+          "Publicacion_ID": "BOE-A-2004-1938",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-1938"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 23,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir nueve plazas",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 9,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 190,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "del número de plazas convocadas.",
+          "campos": {
+            "Puesto": "Universidad de Jaén, sin que en ningún caso excedan las propuestas",
+            "Num_plazas": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-2476",
+      "referencia": "SUBCUPO",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 6,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040210",
+          "Publicacion_ID": "BOE-A-2004-2476",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-2476"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 15,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 6 plazas por",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 6,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3113",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": "Personal Laboral fijo",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040219",
+          "Publicacion_ID": "BOE-A-2004-3113",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3113"
+        },
+        {
+          "Puesto": "Personal Laboral con la categoría de Titulado de Grado Medio de Servicios Técnicos de Apoyo a la Doce",
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": "Concurso-oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Universidades",
+          "Fecha_boe": "20040219",
+          "Publicacion_ID": "BOE-A-2004-3113",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3113"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 1,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Este Rectorado, en uso de las competencias que le están atribuidas en el artículo 48 apartado «N» de los Estatutos de esta Universidad, publicados por Decreto 325/2003, de 25 de noviembre, del Consejo de Gobierno de la Junta de Andalucía en el «Boletín Oficial de la Junta de Andalucía» número 236, de 9 de diciembre de 2003, dentro del marco de lo dispuesto en el artículo 2.2 e) de la Ley Orgánica 6/2001, de 21 de diciembre, de Universidades, ha resuelto convocar, para su provisión mediante el sistema de concurso-oposición libre, 1 plaza de Personal Laboral fijo, dotada presupuestariamente y que se halla vacante en la plantilla de esta Universidad, con sujeción a las bases que a continuación se reproducen y que han sido elaboradas por la Gerencia previo acuerdo con el Comité de Empresa.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 4,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 1 plaza de Personal Laboral con la categoría de Titulado de Grado Medio de Servicios Técnicos de Apoyo a la Docencia e Investigación del Servicio General de Investigación (Ayudante Técnico Sanitario/Diplomado Universitario de Enfermería de Empresa, Grupo II), vacante en esta Universidad, mediante el procedimiento de concurso-oposición libre.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3826",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [
+        {
+          "Puesto": "primera a convocar y 24 de segunda",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Justicia",
+          "Fecha_boe": "20040302",
+          "Publicacion_ID": "BOE-A-2004-3826",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3826"
+        }
+      ],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-3891",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [
+        {
+          "Puesto": "General de las Armas.",
+          "Num_plazas": 124,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 31,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        },
+        {
+          "Puesto": "Infantería de Marina.",
+          "Num_plazas": 7,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 43,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 32,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 237,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Defensa",
+          "Fecha_boe": "20040303",
+          "Publicacion_ID": "BOE-A-2004-3891",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-3891"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 17,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Se convocan pruebas selectivas por el sistema de concurso-oposición libre para el acceso directo en los Centros docentes militares de formación para la Escala Superior de Oficiales de los Cuerpos Generales de los Ejércitos y de Infantería de Marina y a la Escala Superior de Oficiales de la Guardia Civil, para cubrir un total de 237 plazas, distribuidas de la siguiente forma:",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 237,
+            "Turno": null,
+            "Sistema": "Concurso-oposición",
+            "Escala": "Superior de Oficiales de la Guardia Civil",
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 0,
+          "texto": "Tierra. | General de las Armas. | 124",
+          "campos": {
+            "Puesto": "General de las Armas.",
+            "Num_plazas": 124,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 1,
+          "texto": "Armada. | General. | 31",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 31,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 2,
+          "texto": "Armada. | Infantería de Marina. | 7",
+          "campos": {
+            "Puesto": "Infantería de Marina.",
+            "Num_plazas": 7,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 3,
+          "texto": "Aire. | General. | 43",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 43,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 4,
+          "texto": "Guardia Civil. |  | 32",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 32,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 18,
+          "tabla_indice": 0,
+          "fila_indice": 5,
+          "texto": "Total. | Total. | 237",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 237,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-6696",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 612,
+          "Turno": "Promoción interna",
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040415",
+          "Publicacion_ID": "BOE-A-2004-6696",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-6696"
+        }
+      ],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12789",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 2,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Fomento",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12789",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12789"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 6,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir dos plazas en el Cuerpo Especial Facultativo de la Marina Civil, código 0006, por el turno de plazas afectadas por el artículo 15 de la Ley 30/1984, de Medidas para la Reforma de la Función Pública, en virtud del Acuerdo de la Comisión Ejecutiva de la Comisión Interministerial de Retribuciones de 5 de noviembre de 2003.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 2,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12790",
+      "referencia": "RELACION_TOTAL_DESGLOSE",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        },
+        {
+          "Puesto": null,
+          "Num_plazas": 1,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Educación y Ciencia",
+          "Fecha_boe": "20040708",
+          "Publicacion_ID": "BOE-A-2004-12790",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12790"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 4,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convocan pruebas selectivas para cubrir 5 plazas de la Escala de Investigadores Titulares de los Organismos Públicos de Investigación en el marco del proceso de consolidación de empleo temporal en el Instituto Geológico y Minero de España, todas ellas en las áreas de conocimiento y especialización y con los destinos que se especifican en el Anexo II.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 5,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 124,
+          "tabla_indice": 0,
+          "fila_indice": 0,
+          "texto": "1 | Estratigrafía y sedimentología. Investigación estratigráfica y sedimentología en cuencas cenozoicas continentales. Trabajos de cartografía geológica y síntesis cartográfica en cuencas cenozoicas continentales. | IGME (Geología y Geofísica. Tres Cantos).",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 124,
+          "tabla_indice": 0,
+          "fila_indice": 1,
+          "texto": "1 | Análisis de cuencas. Estratigrafía y sedimentología de sedimentos continentales cenozoicos. Estratigrafía y sedimentología de sedimentos litorales holocenos. | IGME (Geología y Geofísica. Tres Cantos).",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 124,
+          "tabla_indice": 0,
+          "fila_indice": 2,
+          "texto": "1 | Delimitación de perímetros de protección de captaciones de aguas subterráneas y caracterización hidrogeológica de medios de baja permeabilidad. | IGME (Hidrogeología y Aguas Subterráneas, Madrid).",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 124,
+          "tabla_indice": 0,
+          "fila_indice": 3,
+          "texto": "1 | Evaluación y gestión de recursos hídricos. | IGME (Hidrogeología y Aguas Subterráneas, Madrid).",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "TABLA",
+          "posicion": 124,
+          "tabla_indice": 0,
+          "fila_indice": 4,
+          "texto": "1 | Hidrogeología y geoestadística. | IGME (Secretaría General. Granada).",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 1,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14961",
+      "referencia": "AMBIGUO",
+      "filas_antes": [
+        {
+          "Puesto": "la categoría de Facultativo Especialista en Dermatología en los Centros de Destino y con las condicio",
+          "Num_plazas": 4,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Trabajo y Asuntos Sociales",
+          "Fecha_boe": "20040812",
+          "Publicacion_ID": "BOE-A-2004-14961",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14961"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 35,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "convocan 4 plazas de la categoría de Facultativo Especialista en",
+          "campos": {
+            "Puesto": "la categoría de Facultativo Especialista en",
+            "Num_plazas": 4,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-16452",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "alumnos del Centro de Formación",
+          "Num_plazas": 75,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": "Ejecutiva",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio del Interior",
+          "Fecha_boe": "20040922",
+          "Publicacion_ID": "BOE-A-2004-16452",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-16452"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 32,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Número de plazas y sistema de provisión.-Se convocan",
+          "campos": {
+            "Puesto": "selectivo",
+            "Num_plazas": null,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        },
+        {
+          "origen": "PARRAFO",
+          "posicion": 33,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "75 plazas de alumnos del Centro de Formación, de la División",
+          "campos": {
+            "Puesto": "alumnos del Centro de Formación, de la División",
+            "Num_plazas": 75,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-20342",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "Abogados del Estado",
+          "Num_plazas": 20,
+          "Turno": null,
+          "Sistema": "Oposición",
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Justicia",
+          "Fecha_boe": "20041201",
+          "Publicacion_ID": "BOE-A-2004-20342",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-20342"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 4,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1. Se convocan pruebas selectivas para proveer 20 plazas del Cuerpo de Abogados del Estado, Código 0903, por el sistema general de acceso libre.",
+          "campos": {
+            "Puesto": "Abogados del Estado, Código 0903, por el sistema general de acceso libre",
+            "Num_plazas": 20,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-21227",
+      "referencia": "CANTIDADES_INDEPENDIENTES",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 16,
+          "Turno": "Promoción interna",
+          "Sistema": "Concurso-oposición",
+          "Escala": "Especialista Técnico de Organismos Autónomos",
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20041217",
+          "Publicacion_ID": "BOE-A-2004-21227",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-21227"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 4,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "1.1 Se convoca proceso selectivo para el acceso a 16 plazas en la Escala de Especialista Técnico de Organismos Autónomos, especialidad de Sanidad y Consumo, Grupo C, Código 5010 por el sistema de promoción interna.",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 16,
+            "Turno": "Promoción interna",
+            "Sistema": null,
+            "Escala": "Especialista Técnico de Organismos Autónomos",
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-78",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-12319",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [
+        {
+          "Puesto": "Facultativos Especialistas de Área de Reumatología",
+          "Num_plazas": null,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Ministerio de Sanidad y Consumo",
+          "Fecha_boe": "20040701",
+          "Publicacion_ID": "BOE-A-2004-12319",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-12319"
+        }
+      ],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-14746",
+      "referencia": "SUBCUPO",
+      "filas_antes": [
+        {
+          "Puesto": null,
+          "Num_plazas": 7,
+          "Turno": null,
+          "Sistema": null,
+          "Escala": null,
+          "Subescala": null,
+          "Clase": null,
+          "Administración": "Administración Local",
+          "Fecha_boe": "20040809",
+          "Publicacion_ID": "BOE-A-2004-14746",
+          "Enlace": "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2004-14746"
+        }
+      ],
+      "bloques_despues": [
+        {
+          "origen": "PARRAFO",
+          "posicion": 6,
+          "tabla_indice": null,
+          "fila_indice": null,
+          "texto": "Número de plazas: 7, de las cuales se reservará 1 plaza para",
+          "campos": {
+            "Puesto": null,
+            "Num_plazas": 7,
+            "Turno": null,
+            "Sistema": null,
+            "Escala": null,
+            "Subescala": null,
+            "Clase": null,
+            "Administración": null,
+            "Fecha_boe": null,
+            "Publicacion_ID": null,
+            "Enlace": null
+          },
+          "calidad": "VALIDA_PARCIAL"
+        }
+      ],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    },
+    {
+      "Publicacion_ID": "BOE-A-2004-15716",
+      "referencia": "NO_HAY_RELACION_RELEVANTE",
+      "filas_antes": [],
+      "bloques_despues": [],
+      "reconciliacion_antes": "SIN_RECONCILIACION",
+      "reconciliacion_despues": "SIN_RECONCILIACION"
+    }
+  ],
+  "recomendacion": "Mantener el segmentador como auditoría experimental. La calidad Puesto+Num_plazas mejora en estructuras explícitas, pero deben resolverse la composición de tablas y el enlace de componentes/subcupos antes de utilizar sus filas para escritura histórica."
+}
