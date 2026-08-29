@@ -20,6 +20,7 @@ datos/*.db-wal
 # Backups generados
 backups/sqlite/
 backups/exportacion_excel/
+backups/snapshots/
 
 # Exportaciones generadas
 BOE-oposiciones_exportado.xlsx

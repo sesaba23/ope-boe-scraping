@@ -93,6 +93,43 @@ Excel queda limitado a dos operaciones explícitas:
 - `python migrar_excel_sqlite.py --excel BOE-oposiciones.xlsx`: importa un Excel histórico a SQLite.
 - `python exportar_excel.py --bd datos/boe.db --salida BOE-oposiciones_exportado.xlsx`: exporta SQLite a XLSX.
 
+### Sincronización manual entre equipos
+
+La base no se almacena en Git. Para transportarla de forma verificable se
+crean un snapshot SQLite consistente y su manifiesto JSON:
+
+```bash
+python sincronizar_sqlite.py inspeccionar
+python sincronizar_sqlite.py snapshot
+python sincronizar_sqlite.py comparar /ruta/boe_snapshot_....db
+python sincronizar_sqlite.py restaurar /ruta/boe_snapshot_....db
+```
+
+Puede seleccionarse otra base con `--base-datos`. El snapshot y su `.json`
+asociado deben transportarse juntos mediante SCP/SFTP, NAS, almacenamiento
+cloud, USB u otro medio; la herramienta no usa red.
+
+El SHA-256 físico comprueba que el archivo transportado no cambió. El
+fingerprint lógico identifica el contenido aunque SQLite tenga otro layout
+físico. `data_version` es informativo: una versión mayor no demuestra por sí
+sola que una base descienda de otra. Sin una cadena de manifiestos verificable,
+dos contenidos distintos se consideran divergentes.
+
+La cadena comienza cuando una base se restaura desde un snapshot gestionado.
+Los snapshots posteriores heredan ese fingerprint como padre. Las bases que ya
+divergían antes de adoptar este flujo no reciben una ascendencia inventada y
+deben reconciliarse por un procedimiento separado.
+
+La comparación admite bases sin manifiesto, calculando sus huellas directamente.
+La restauración, en cambio, exige un manifiesto válido y solo acepta una
+ascendencia remota demostrada. Antes crea y valida un snapshot de la base local.
+No existe `--force`.
+
+Antes de restaurar deben cerrarse `plazasboe.py`, el servidor web y cualquier
+otro proceso que pueda escribir SQLite. La operación usa un bloqueo cooperativo,
+rechaza bases con archivos `-wal`/`-shm` presentes y realiza el reemplazo de
+forma atómica.
+
 Para ejecutar las pruebas:
 
 ```bash
