@@ -102,6 +102,15 @@ def test_insertar_oposiciones_aplica_resolutor_a_nuevas_publicaciones(tmp_path, 
     assert fila == ("LOCAL", "MUNICIPAL" if municipio else "SUPRAMUNICIPAL", municipio or None, provincia, comunidad, "ALTA", evidencia, "geografia-v1")
 
 
+def test_insertar_oposiciones_normaliza_turno_y_sistema(tmp_path):
+    ruta = tmp_path / "boe.db"; conexion = base_datos.conectar(ruta); base_datos.crear_esquema(conexion)
+    lote = _lote(); lote["Oposiciones"].loc[0, ["Turno", "Sistema"]] = ["Turno libre.", "Concurso oposición"]
+    with base_datos.transaccion(conexion):
+        base_datos.insertar_publicaciones(conexion, lote["Publicaciones"])
+        base_datos.insertar_oposiciones(conexion, lote["Oposiciones"])
+    assert conexion.execute("SELECT turno,sistema FROM oposiciones").fetchone() == ("Turno Libre", "Concurso-Oposición")
+
+
 def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
     ruta = _base_con_lote(tmp_path)
     conexion = base_datos.conectar(ruta)

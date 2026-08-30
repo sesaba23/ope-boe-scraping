@@ -284,6 +284,7 @@ def insertar_publicaciones(conexion, df):
 def insertar_oposiciones(conexion, df):
     filas, fecha = _funciones_migracion()
     from normalizacion_puestos import normalizar_puesto
+    from normalizacion_seleccion import normalizar_sistema, normalizar_turno
 
     columnas = ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase",
                 "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio",
@@ -297,7 +298,7 @@ def insertar_oposiciones(conexion, df):
             comunidad_autonoma, confianza_geografica, evidencia_geografica, version_resolutor,
             latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
         ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        ((num, puesto, normalizar_puesto(puesto), administracion, geo.administracion_normalizada, geo.ambito, geo.tipo_entidad, escala, subescala, clase, sistema, turno,
+        ((num, puesto, normalizar_puesto(puesto), administracion, geo.administracion_normalizada, geo.ambito, geo.tipo_entidad, escala, subescala, clase, normalizar_sistema(sistema), normalizar_turno(turno),
           fecha(f_boe), f_boe, publicacion, enlace, geo.municipio or municipio, geo.provincia or provincia, geo.comunidad_autonoma,
           geo.confianza, geo.evidencia, geo.version_catalogo, latitud, longitud, habitantes, publicacion_id, version, analisis)
          for num, puesto, administracion, escala, subescala, clase, sistema, turno,
