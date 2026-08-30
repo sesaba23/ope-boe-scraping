@@ -297,20 +297,24 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
             except (TypeError, ValueError):
                 pass
         # Limitar ancho para "Puesto" y "Administración"
-        if header in ["puesto", "administración"]:
+        if header in ["puesto", "puesto_normalizado", "administración", "administración_normalizada"]:
             ws.column_dimensions[col_letter].width = min(max_length + 2, max_width)
         else:
             ws.column_dimensions[col_letter].width = max_length + 2
 
     # Formatear columna "Habitantes" como número sin decimales y con separador de miles
     for idx, cell in enumerate(ws[1], 1):
-        if str(cell.value).strip().lower() == "habitantes":
+        if str(cell.value).strip().lower() in {"habitantes", "num_plazas"}:
             for row in ws.iter_rows(
                 min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row
             ):
                 for c in row:
                     c.number_format = "#,##0"
-            break
+    for idx, cell in enumerate(ws[1], 1):
+        if str(cell.value).strip().lower() in {"fecha_boe", "fecha_boe_original", "fecha_analisis"}:
+            for row in ws.iter_rows(min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row):
+                for c in row:
+                    c.number_format = "@"
     # Formatear la columna Enlace como hipervínculo
     if col_enlace:
         for row in ws.iter_rows(
