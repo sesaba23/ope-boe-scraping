@@ -38,6 +38,9 @@ CREATE TABLE oposiciones (
     puesto TEXT NOT NULL,
     puesto_normalizado TEXT,
     administracion TEXT,
+    administracion_normalizada TEXT,
+    ambito TEXT,
+    tipo_entidad TEXT,
     escala TEXT NOT NULL,
     subescala TEXT NOT NULL,
     clase TEXT NOT NULL,
@@ -49,6 +52,10 @@ CREATE TABLE oposiciones (
     enlace TEXT NOT NULL,
     municipio TEXT,
     provincia TEXT,
+    comunidad_autonoma TEXT,
+    confianza_geografica TEXT,
+    evidencia_geografica TEXT,
+    version_resolutor TEXT,
     latitud REAL,
     longitud REAL,
     habitantes INTEGER,
@@ -79,11 +86,13 @@ CREATE TABLE log_errores (
 );
 """
 
-VERSION_ESQUEMA = "3"
+VERSION_ESQUEMA = "4"
 
 INDICES = """
 CREATE INDEX ix_oposiciones_fecha ON oposiciones(fecha_boe);
 CREATE INDEX ix_oposiciones_administracion ON oposiciones(administracion);
+CREATE INDEX ix_oposiciones_administracion_normalizada ON oposiciones(administracion_normalizada);
+CREATE INDEX ix_oposiciones_ambito ON oposiciones(ambito);
 CREATE INDEX ix_oposiciones_municipio ON oposiciones(municipio);
 CREATE INDEX ix_oposiciones_provincia ON oposiciones(provincia);
 CREATE INDEX ix_oposiciones_publicacion ON oposiciones(publicacion_id);
@@ -182,9 +191,9 @@ def validar_base_principal(ruta_bd):
     finally:
         conexion.close()
     obligatorias = {"schema_version", "data_version", "created_at", "updated_at"}
-    if filas.get("schema_version") == "2" and VERSION_ESQUEMA == "3":
+    if filas.get("schema_version") in {"2", "3"}:
         raise EspejoSQLiteError(
-            "SQLite usa schema_version 2. Ejecute: "
+            f"SQLite usa schema_version {filas.get('schema_version')}. Ejecute: "
             "python migrar_esquema_sqlite.py --base-datos datos/boe.db"
         )
     if filas.get("schema_version") != VERSION_ESQUEMA or not obligatorias <= set(filas):
@@ -280,18 +289,21 @@ def insertar_oposiciones(conexion, df):
                 "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio",
                 "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID",
                 "Version_extractor", "Fecha_analisis"]
+    from resolucion_geografica import resolver_administracion_geografia
     conexion.executemany(
         """INSERT INTO oposiciones(
-            num_plazas, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
+            num_plazas, puesto, puesto_normalizado, administracion, administracion_normalizada, ambito, tipo_entidad, escala, subescala, clase, sistema, turno,
             fecha_boe, fecha_boe_original, publicacion, enlace, municipio, provincia,
+            comunidad_autonoma, confianza_geografica, evidencia_geografica, version_resolutor,
             latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        ((num, puesto, normalizar_puesto(puesto), administracion, escala, subescala, clase, sistema, turno,
-          fecha(f_boe), f_boe, publicacion, enlace, municipio, provincia, latitud,
-          longitud, habitantes, publicacion_id, version, analisis)
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        ((num, puesto, normalizar_puesto(puesto), administracion, geo.administracion_normalizada, geo.ambito, geo.tipo_entidad, escala, subescala, clase, sistema, turno,
+          fecha(f_boe), f_boe, publicacion, enlace, geo.municipio or municipio, geo.provincia or provincia, geo.comunidad_autonoma,
+          geo.confianza, geo.evidencia, geo.version_catalogo, latitud, longitud, habitantes, publicacion_id, version, analisis)
          for num, puesto, administracion, escala, subescala, clase, sistema, turno,
          f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
-         habitantes, publicacion_id, version, analisis in filas(df, columnas)),
+         habitantes, publicacion_id, version, analisis in filas(df, columnas)
+         for geo in (resolver_administracion_geografia(administracion, puesto),)),
     )
 
 

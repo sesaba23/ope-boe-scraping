@@ -24,6 +24,7 @@ def crear_app(ruta_bd=None):
         fecha_final = request.args.get("fecha_final") or None
         puesto = request.args.get("puesto") or None
         provincia = request.args.get("provincia") or None
+        ambito = request.args.get("ambito") or None
         sistema = request.args.get("sistema") or None
         turno = request.args.get("turno") or None
 
@@ -43,7 +44,7 @@ def crear_app(ruta_bd=None):
             opciones = opciones_filtros(ruta)
             estadisticas = calcular_estadisticas_sqlite(
                 ruta, desde=fecha_inicio, hasta=fecha_final, puesto=puesto,
-                provincia=provincia, sistema=sistema, turno=turno)
+                provincia=provincia, ambito=ambito, sistema=sistema, turno=turno)
             datos_metadata = metadata(ruta)
         except (ErrorConsultaSQLite, OSError, ValueError) as error:
             return jsonify({"error": f"No se pudieron cargar las estadísticas: {error}"}), 503
@@ -55,6 +56,7 @@ def crear_app(ruta_bd=None):
                     "fecha_final": fecha_final,
                     "puesto": puesto,
                     "provincia": provincia,
+                    "ambito": ambito,
                     "sistema": sistema,
                     "turno": turno,
                 },

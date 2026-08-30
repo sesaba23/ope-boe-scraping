@@ -57,7 +57,7 @@ def test_aplica_backup_version_integridad_e_idempotencia(tmp_path):
     assert resultado["data_version_despues"] == "8"
     assert list((tmp_path / "backups").glob("*.db"))
     metadata, filas = _estado(ruta)
-    assert metadata["schema_version"] == "3" and metadata["data_version"] == "8"
+    assert metadata["schema_version"] == "4" and metadata["data_version"] == "8"
     assert filas == [
         ("Ingeniero Técnico Industrial", "Ingeniero Técnico Industrial"),
         ("Técnico de Grado Medio Ingeniero Técnico Industrial", "Ingeniero Técnico Industrial"),

@@ -14,8 +14,8 @@ def _leer(ruta_bd):
     try:
         metadata = dict(conexion.execute("SELECT clave,valor FROM metadata"))
         columnas = {fila[1].casefold() for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
-        if metadata.get("schema_version") != "3" or "puesto_normalizado" not in columnas:
-            raise RuntimeError("El recálculo requiere schema_version 3 con Puesto_normalizado")
+        if metadata.get("schema_version") not in {"3", "4"} or "puesto_normalizado" not in columnas:
+            raise RuntimeError("El recálculo requiere schema_version 3 o 4 con Puesto_normalizado")
         filas = conexion.execute(
             "SELECT oposicion_id,puesto,puesto_normalizado FROM oposiciones ORDER BY oposicion_id"
         ).fetchall()

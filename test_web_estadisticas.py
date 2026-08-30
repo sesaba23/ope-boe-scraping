@@ -323,6 +323,7 @@ def test_api_devuelve_el_esquema_esperado(cliente):
     assert respuesta.get_json()["archivo"]["ultima_modificacion"] is not None
     assert respuesta.get_json()["opciones"] == {
         "provincias": ["Madrid", "Sevilla"],
+        "ambitos": [],
         "sistemas": ["Concurso", "Oposición"],
         "turnos": ["Discapacidad", "Libre"],
     }
@@ -334,6 +335,8 @@ def test_api_devuelve_el_esquema_esperado(cliente):
         "administracion_no_disponible": 0,
         "sistema_no_disponible": 0,
         "turno_no_disponible": 0,
+        "municipio_no_disponible": 2,
+        "ambito_indeterminado": 2,
     }
 
 

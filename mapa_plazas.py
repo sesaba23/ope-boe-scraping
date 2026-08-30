@@ -48,6 +48,31 @@ def _cargar_catalogo_municipios():
 
 
 def buscar_municipio(administracion):
+    """Compatibilidad del mapa: sólo delega en el resolutor exacto v4.
+
+    La implementación histórica de subcadenas queda intencionadamente
+    inaccesible: nunca debe convertir una coincidencia parcial en ubicación.
+    """
+    from resolucion_geografica import resolver_administracion_geografia
+    resolucion = resolver_administracion_geografia(administracion)
+    if resolucion.confianza == "ALTA" and resolucion.municipio and resolucion.provincia:
+        # Sólo adaptación de formato: el municipio ya fue decidido por el
+        # resolutor. Las variantes del CSV antiguo no participan en decidirlo.
+        df, _ = _cargar_catalogo_municipios()
+        candidatas = df[df["Provincia"].map(normaliza) == normaliza(resolucion.provincia)]
+        for _, antigua in candidatas.iterrows():
+            if normaliza(resolucion.municipio) in {normaliza(x) for x in _variantes_nombre_catalogo(antigua["Población"])}:
+                return _datos_municipio(antigua)
+        from resolucion_geografica import catalogo
+        fila = next((x for x in catalogo().municipios if x["Codigo_INE"] == resolucion.codigo_ine), None)
+        if fila is None:
+            return {"Municipio": resolucion.municipio, "Provincia": resolucion.provincia}
+        return {"Municipio": fila["Municipio"], "Provincia": fila["Provincia"],
+                "Latitud": float(fila["Latitud"]), "Longitud": float(fila["Longitud"]),
+                "Habitantes": int(float(fila["Habitantes"]))}
+    return None
+
+def _buscar_municipio_historico_no_usar(administracion):
     df, municipios = _cargar_catalogo_municipios()
 
     # Priorizar los contenidos entre paréntesis que coincidan con el catálogo

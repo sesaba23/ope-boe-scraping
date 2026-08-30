@@ -67,7 +67,7 @@ def test_inspeccion_es_read_only_y_no_cambia_archivo(tmp_path):
     info = sync.inspeccionar(ruta)
     despues = (sync.sha256_archivo(ruta), ruta.stat().st_size, ruta.stat().st_mtime_ns)
     assert antes == despues
-    assert info["schema_version"] == "3"
+    assert info["schema_version"] == "4"
     assert info["conteos"]["oposiciones"] == 1
     assert info["integrity_check"] == ["ok"]
     assert info["foreign_key_check"] == []

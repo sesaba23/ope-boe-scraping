@@ -123,6 +123,9 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
         "sistema_no_disponible": _contar_no_disponibles(datos, "Sistema"),
         "turno_no_disponible": _contar_no_disponibles(datos, "Turno"),
     }
+    if "Ambito" in datos.columns:
+        calidad_datos["municipio_no_disponible"] = _contar_no_disponibles(datos, "Municipio")
+        calidad_datos["ambito_indeterminado"] = _contar_no_disponibles(datos, "Ambito", marcadores=("indeterminado",))
     total_plazas = _numero_python(datos["Num_plazas_num"].sum(min_count=1))
     if pd.isna(total_plazas):
         total_plazas = 0

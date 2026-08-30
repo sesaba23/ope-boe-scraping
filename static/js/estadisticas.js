@@ -100,6 +100,7 @@ function actualizarGraficos(datos) {
 function actualizarOpciones(opciones, filtros) {
     [
         ["provincia", opciones.provincias, filtros.provincia],
+        ["ambito", opciones.ambitos || [], filtros.ambito],
         ["sistema", opciones.sistemas, filtros.sistema],
         ["turno", opciones.turnos, filtros.turno],
     ].forEach(([id, valores, seleccionado]) => {
@@ -122,6 +123,7 @@ function actualizarMetadatos(datos) {
     }
     if (datos.filtros.puesto) filtros.push(`Puesto: ${datos.filtros.puesto}`);
     if (datos.filtros.provincia) filtros.push(`Provincia: ${datos.filtros.provincia}`);
+    if (datos.filtros.ambito) filtros.push(`Ámbito: ${datos.filtros.ambito}`);
     if (datos.filtros.sistema) filtros.push(`Sistema: ${datos.filtros.sistema}`);
     if (datos.filtros.turno) filtros.push(`Turno: ${datos.filtros.turno}`);
     document.querySelector("#filtros-activos").textContent = filtros.length ? filtros.join(" · ") : "Sin filtros aplicados";

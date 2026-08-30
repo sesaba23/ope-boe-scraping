@@ -102,7 +102,7 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
                 "SELECT name FROM sqlite_master WHERE type='table'"
             )
         }
-        assert metadata["schema_version"] == "3"
+        assert metadata["schema_version"] == "4"
         assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
         assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas
         assert base_datos.integrity_check(conexion) == ["ok"]

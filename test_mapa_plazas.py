@@ -16,7 +16,7 @@ from preparar_archivo_datos import combinar_dataframes
     "nombre, esperado",
     [
         ("Calp", "Calp/Calpe"),
-        ("A Coruña", "Coruña (A)"),
+        ("A Coruña", "Coruña, A"),
         ("Elx/Elche", "Elche/Elx"),
         ("Elche/Elx", "Elche/Elx"),
     ],
@@ -59,11 +59,11 @@ def test_referencia_provincial_ambigua_no_asigna_lleida_capital():
 
 def test_buscar_municipio_normal_mantiene_el_resultado():
     assert buscar_municipio("A Coruña") == {
-        "Municipio": "Coruña (A)",
+        "Municipio": "Coruña, A",
         "Provincia": "A Coruña",
-        "Latitud": 43.37087,
-        "Longitud": -8.395835,
-        "Habitantes": 246056,
+        "Latitud": 43.37149478,
+        "Longitud": -8.395825599,
+        "Habitantes": 251277,
     }
 
 
@@ -72,59 +72,59 @@ def test_buscar_municipio_normal_mantiene_el_resultado():
     [
         (
             "Ayuntamiento de Castell d'Aro (Girona)",
-            "Castell-Platja d'Aro",
+            "Castell d'Aro, Platja d'Aro i s'Agaró",
             "Girona",
-            41.818,
-            3.067004,
-            10376,
+            41.8175818,
+            3.067323841,
+            12889,
         ),
         (
             "Ayuntamiento de L'Alcora (Castellón/Castelló)",
-            "Alcora (l')",
+            "Alcora, l'",
             "Castellón/Castelló",
-            40.07278,
-            -0.2130235,
-            11150,
+            40.07434197,
+            -0.213046923,
+            10646,
         ),
         (
             "Ayuntamiento de L'Eliana (Valencia/València)",
-            "Eliana (l')",
+            "Eliana, l'",
             "Valencia/València",
-            39.56632,
-            -0.5302467,
-            16552,
+            39.56657901,
+            -0.530183987,
+            19952,
         ),
         (
             "Ayuntamiento de L'Espluga de Francolí (Tarragona)",
-            "Espluga de Francolí (L')",
+            "Espluga de Francolí, L'",
             "Tarragona",
-            41.39481,
-            1.09851,
-            3982,
+            41.39655369,
+            1.104462437,
+            3892,
         ),
         (
             "Ayuntamiento de L'Olleria (Valencia/València)",
-            "Olleria (l')",
+            "Olleria, l'",
             "Valencia/València",
-            38.91419,
-            -0.5494962,
-            8692,
+            38.91172401,
+            -0.546653364,
+            8928,
         ),
         (
             "Ayuntamiento de La Ràpita (Tarragona)",
-            "Sant Carles de la Ràpita",
+            "Ràpita, La",
             "Tarragona",
-            40.6202,
-            0.5928925,
-            15511,
+            40.62029937,
+            0.592405252,
+            16230,
         ),
         (
             "Ayuntamiento de Medina Sidonia (Cádiz)",
-            "Medina-Sidonia",
+            "Medina Sidonia",
             "Cádiz",
-            36.46768,
-            -5.927894,
-            11683,
+            36.45606047,
+            -5.927588997,
+            11870,
         ),
     ],
 )
@@ -298,7 +298,7 @@ def test_buscar_municipio_desde_otro_directorio(monkeypatch, tmp_path):
     resultado = buscar_municipio("A Coruña")
 
     assert resultado is not None
-    assert resultado["Municipio"] == "Coruña (A)"
+    assert resultado["Municipio"] == "Coruña, A"
 
 
 def test_catalogo_municipal_se_carga_una_sola_vez(monkeypatch):
@@ -316,7 +316,7 @@ def test_catalogo_municipal_se_carga_una_sola_vez(monkeypatch):
     resultado_calp = buscar_municipio("Calp")
 
     assert len(lecturas) == 1
-    assert resultado_coruna["Municipio"] == "Coruña (A)"
+    assert resultado_coruna["Municipio"] == "Coruña, A"
     assert resultado_calp["Municipio"] == "Calp/Calpe"
 
 

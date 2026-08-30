@@ -3,6 +3,16 @@
 Este proyecto realiza **web scraping** del Boletín Oficial del Estado (BOE) para extraer información sobre oposiciones y otros datos relevantes. SQLite (`datos/boe.db`) es la fuente de verdad; los resultados se pueden filtrar por fechas y patrones de búsqueda.
 ---
 
+## Geografía y ámbito (schema v4)
+
+La resolución geográfica usa sólo catálogos locales y coincidencias exactas;
+no usa subcadenas ni similitud libre. `administracion` conserva el original y
+`administracion_normalizada` sólo elimina paréntesis territoriales validados.
+`ambito` (`ESTATAL`, `AUTONOMICO`, `LOCAL`, `OTRO`, `INDETERMINADO`) es
+independiente de ubicación. Mallorca, Menorca, Ibiza/Eivissa y Formentera son
+provincias analíticas; la mención general a Illes Balears sólo identifica la
+comunidad. Use `recalcular_geografia.py --dry-run` antes de aplicar cambios.
+
 ## 🎯 ¿Para quién es útil este proyecto?
 
 Está específicamente pensado para buscar plazas o convocatorias publicadas por:
