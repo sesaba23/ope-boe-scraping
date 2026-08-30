@@ -85,6 +85,23 @@ def _base_con_lote(tmp_path):
     return ruta
 
 
+@pytest.mark.parametrize("administracion,municipio,provincia,comunidad,evidencia", [
+    ("Ayuntamiento de Santa Eulalia del Río (Illes Balears)", "Santa Eulària des Riu", "Ibiza/Eivissa", "Illes Balears", "MUNICIPIO_AYUNTAMIENTO"),
+    ("Mancomunidad de Servicios Sociales THAM de Madrid", "", "Madrid", "Comunidad de Madrid", "ENTIDAD_TERRITORIAL_CATALOGADA"),
+])
+def test_insertar_oposiciones_aplica_resolutor_a_nuevas_publicaciones(tmp_path, administracion, municipio, provincia, comunidad, evidencia):
+    ruta = tmp_path / "boe.db"
+    conexion = base_datos.conectar(ruta)
+    base_datos.crear_esquema(conexion)
+    lote = _lote()
+    lote["Oposiciones"].loc[0, "Administración"] = administracion
+    with base_datos.transaccion(conexion):
+        base_datos.insertar_publicaciones(conexion, lote["Publicaciones"])
+        base_datos.insertar_oposiciones(conexion, lote["Oposiciones"])
+    fila = conexion.execute("SELECT ambito,tipo_entidad,municipio,provincia,comunidad_autonoma,confianza_geografica,evidencia_geografica,version_resolutor FROM oposiciones").fetchone()
+    assert fila == ("LOCAL", "MUNICIPAL" if municipio else "SUPRAMUNICIPAL", municipio or None, provincia, comunidad, "ALTA", evidencia, "geografia-v1")
+
+
 def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
     ruta = _base_con_lote(tmp_path)
     conexion = base_datos.conectar(ruta)
