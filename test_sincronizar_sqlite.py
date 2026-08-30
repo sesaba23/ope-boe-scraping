@@ -9,7 +9,7 @@ import base_datos
 import sincronizar_sqlite as sync
 
 
-def _crear_base(ruta, filas=("A",), *, data_version=1, schema_version="2", orden=None):
+def _crear_base(ruta, filas=("A",), *, data_version=1, schema_version="3", orden=None):
     ruta = Path(ruta)
     ruta.parent.mkdir(parents=True, exist_ok=True)
     conexion = base_datos.conectar(ruta)
@@ -32,7 +32,7 @@ def _crear_base(ruta, filas=("A",), *, data_version=1, schema_version="2", orden
             ("la", f"Puesto {pid}", None, "--", "--", "--", "--", "--",
              "2026-01-01", "20260101", f"https://x/{pid}", pid, "1"),
         )
-    if schema_version != "2":
+    if schema_version != "3":
         conexion.execute(
             "UPDATE metadata SET valor=? WHERE clave='schema_version'", (schema_version,)
         )
@@ -67,7 +67,7 @@ def test_inspeccion_es_read_only_y_no_cambia_archivo(tmp_path):
     info = sync.inspeccionar(ruta)
     despues = (sync.sha256_archivo(ruta), ruta.stat().st_size, ruta.stat().st_mtime_ns)
     assert antes == despues
-    assert info["schema_version"] == "2"
+    assert info["schema_version"] == "3"
     assert info["conteos"]["oposiciones"] == 1
     assert info["integrity_check"] == ["ok"]
     assert info["foreign_key_check"] == []
@@ -151,7 +151,7 @@ def test_rechaza_manifiesto_recalculado_que_miente_sobre_contenido(tmp_path):
 
 def test_incompatible_y_divergencia_no_se_deciden_por_data_version(tmp_path):
     local = _crear_base(tmp_path / "local.db", ("A",), data_version=1)
-    incompatible = _crear_base(tmp_path / "incompatible.db", ("A",), schema_version="3")
+    incompatible = _crear_base(tmp_path / "incompatible.db", ("A",), schema_version="2")
     rama_1 = _crear_base(tmp_path / "rama1.db", ("A", "B"), data_version=2)
     rama_2 = _crear_base(tmp_path / "rama2.db", ("A", "C"), data_version=2)
     supuesta_nueva = _crear_base(tmp_path / "nueva.db", ("A", "D"), data_version=9)

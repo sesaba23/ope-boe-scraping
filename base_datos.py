@@ -36,6 +36,7 @@ CREATE TABLE oposiciones (
     oposicion_id INTEGER PRIMARY KEY,
     num_plazas INTEGER,
     puesto TEXT NOT NULL,
+    puesto_normalizado TEXT,
     administracion TEXT,
     escala TEXT NOT NULL,
     subescala TEXT NOT NULL,
@@ -78,7 +79,7 @@ CREATE TABLE log_errores (
 );
 """
 
-VERSION_ESQUEMA = "2"
+VERSION_ESQUEMA = "3"
 
 INDICES = """
 CREATE INDEX ix_oposiciones_fecha ON oposiciones(fecha_boe);
@@ -181,6 +182,11 @@ def validar_base_principal(ruta_bd):
     finally:
         conexion.close()
     obligatorias = {"schema_version", "data_version", "created_at", "updated_at"}
+    if filas.get("schema_version") == "2" and VERSION_ESQUEMA == "3":
+        raise EspejoSQLiteError(
+            "SQLite usa schema_version 2. Ejecute: "
+            "python migrar_esquema_sqlite.py --base-datos datos/boe.db"
+        )
     if filas.get("schema_version") != VERSION_ESQUEMA or not obligatorias <= set(filas):
         raise EspejoSQLiteError("SQLite no contiene metadatos válidos. Ejecute migrar_excel_sqlite.py.")
     return filas
@@ -208,7 +214,7 @@ def cargar_para_lectura(ruta_bd, fecha_inicio, fecha_fin):
             "Búsquedas": _dataframe(conexion, "SELECT codigo FROM busquedas", ["Código"]),
             # Fecha_boe pertenece a la clave funcional: fuera del intervalo no puede
             # existir un duplicado de una convocatoria del intervalo.
-            "Oposiciones": _dataframe(conexion, """SELECT num_plazas,puesto,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones WHERE fecha_boe BETWEEN ? AND ?""", ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"], (inicio, fin)),
+            "Oposiciones": _dataframe(conexion, """SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones WHERE fecha_boe BETWEEN ? AND ?""", ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"], (inicio, fin)),
             "Publicaciones": _dataframe(conexion, "SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones WHERE fecha_boe BETWEEN ? AND ?", ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias", "Departamento_BOE", "Administracion_resuelta", "Familia_administrativa", "Estado_resolucion", "Metodo_resolucion", "Confianza_resolucion", "Version_resolucion"], (inicio, fin)),
             "Cobertura": _dataframe(conexion, "SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura WHERE fecha BETWEEN ? AND ?", ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"], (inicio, fin)),
             # Sólo hay 33 filas; se conserva la semántica de append del libro.
@@ -268,23 +274,36 @@ def insertar_publicaciones(conexion, df):
 
 def insertar_oposiciones(conexion, df):
     filas, fecha = _funciones_migracion()
+    from normalizacion_puestos import normalizar_puesto
+
     columnas = ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase",
                 "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio",
                 "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID",
                 "Version_extractor", "Fecha_analisis"]
     conexion.executemany(
         """INSERT INTO oposiciones(
-            num_plazas, puesto, administracion, escala, subescala, clase, sistema, turno,
+            num_plazas, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
             fecha_boe, fecha_boe_original, publicacion, enlace, municipio, provincia,
             latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        ((num, puesto, administracion, escala, subescala, clase, sistema, turno,
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        ((num, puesto, normalizar_puesto(puesto), administracion, escala, subescala, clase, sistema, turno,
           fecha(f_boe), f_boe, publicacion, enlace, municipio, provincia, latitud,
           longitud, habitantes, publicacion_id, version, analisis)
          for num, puesto, administracion, escala, subescala, clase, sistema, turno,
          f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
          habitantes, publicacion_id, version, analisis in filas(df, columnas)),
     )
+
+
+def normalizar_oposiciones_dataframe(df):
+    """Calcula siempre el canon desde Puesto, sin confiar en datos derivados."""
+    from normalizacion_puestos import normalizar_puesto
+
+    resultado = df.copy(deep=True)
+    if "Puesto" not in resultado.columns:
+        raise ValueError("Falta la columna obligatoria: Puesto")
+    resultado["Puesto_normalizado"] = resultado["Puesto"].map(normalizar_puesto)
+    return resultado
 
 
 def actualizar_busquedas(conexion, df):
@@ -331,6 +350,10 @@ def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin, direc
     funcional de deduplicación, por lo que el resto no participa en ella.
     """
     validar_base_principal(ruta_bd)
+    dataframes = dict(dataframes)
+    dataframes["Oposiciones"] = normalizar_oposiciones_dataframe(
+        dataframes["Oposiciones"]
+    )
     inicio, fin = _iso_rango(fecha_inicio), _iso_rango(fecha_fin)
     conexion = conectar(ruta_bd)
     try:
@@ -428,6 +451,7 @@ def persistir_lote_historico(ruta_bd, oposiciones_nuevas, publicaciones, cobertu
     cobertura son el estado final del rango y se actualizan mediante sus claves.
     """
     validar_base_principal(ruta_bd)
+    oposiciones_nuevas = normalizar_oposiciones_dataframe(oposiciones_nuevas)
     actuales = cargar_historico_para_aplicar(ruta_bd, fecha_inicio, fecha_fin)
     columnas_publicaciones = ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original",
         "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias",

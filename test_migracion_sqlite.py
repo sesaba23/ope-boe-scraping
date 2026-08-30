@@ -102,7 +102,7 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
                 "SELECT name FROM sqlite_master WHERE type='table'"
             )
         }
-        assert metadata["schema_version"] == "2"
+        assert metadata["schema_version"] == "3"
         assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
         assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas
         assert base_datos.integrity_check(conexion) == ["ok"]
@@ -118,5 +118,6 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
         exportar_excel.CONTRATOS["Oposiciones"][1]
     )
     assert hojas["Oposiciones"].loc[0, "Num_plazas"] == "la"
+    assert hojas["Oposiciones"].loc[0, "Puesto_normalizado"] == "Auxiliar"
     assert pd.isna(hojas["Oposiciones"].loc[0, "Administración"])
     assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "20260101"

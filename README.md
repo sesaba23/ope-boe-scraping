@@ -93,6 +93,21 @@ Excel queda limitado a dos operaciones explícitas:
 - `python migrar_excel_sqlite.py --excel BOE-oposiciones.xlsx`: importa un Excel histórico a SQLite.
 - `python exportar_excel.py --bd datos/boe.db --salida BOE-oposiciones_exportado.xlsx`: exporta SQLite a XLSX.
 
+La versión 3 del esquema conserva la denominación literal del BOE en
+`Puesto` y guarda separadamente el canon estadístico en `Puesto_normalizado`.
+Las búsquedas textuales libres siguen consultando el texto original; rankings y
+agrupaciones prefieren el canon. El mapa continúa mostrando el texto publicado.
+
+Una base con `schema_version = 2` no se migra al arrancar la aplicación. Debe
+cerrarse cualquier proceso escritor y ejecutarse deliberadamente:
+
+```bash
+python migrar_esquema_sqlite.py --base-datos datos/boe.db
+```
+
+La migración crea primero un backup SQLite consistente, realiza el backfill en
+una sola transacción e incrementa `data_version` exactamente una vez.
+
 ### Sincronización manual entre equipos
 
 La base no se almacena en Git. Para transportarla de forma verificable se

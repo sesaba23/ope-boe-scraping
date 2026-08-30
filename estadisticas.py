@@ -120,7 +120,10 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
     top_administraciones_datos = _agrupar(
         datos, "Administración", top_administraciones
     )
-    top_puestos_datos = _agrupar(datos, "Puesto", top_puestos)
+    columna_puesto = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
+    if columna_puesto == "Puesto_normalizado":
+        datos["Puesto_normalizado"] = datos["Puesto_normalizado"].fillna(datos["Puesto"])
+    top_puestos_datos = _agrupar(datos, columna_puesto, top_puestos)
 
     provincias = datos.copy()
     if "Provincia" not in provincias.columns:
@@ -162,7 +165,7 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
         "top_administraciones": _registros_agrupados(
             top_administraciones_datos, "Administración", "administracion"
         ),
-        "top_puestos": _registros_agrupados(top_puestos_datos, "Puesto", "puesto"),
+        "top_puestos": _registros_agrupados(top_puestos_datos, columna_puesto, "puesto"),
         "plazas_por_provincia": _registros_agrupados(
             plazas_por_provincia, "Provincia", "provincia"
         ),

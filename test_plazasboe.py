@@ -1443,7 +1443,9 @@ def test_busqueda_nueva_reutiliza_publicacion_y_filtra_oposiciones_locales(
     }
     pd.testing.assert_frame_equal(
         oposiciones_guardadas[-1].reset_index(drop=True),
-        oposiciones_iniciales.reset_index(drop=True),
+        plazasboe.base_datos.normalizar_oposiciones_dataframe(
+            oposiciones_iniciales
+        ).reset_index(drop=True),
     )
     pd.testing.assert_frame_equal(
         publicaciones_guardadas[-1], publicaciones_iniciales

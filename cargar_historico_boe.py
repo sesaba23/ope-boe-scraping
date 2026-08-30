@@ -400,7 +400,9 @@ def aplicar(desde, hasta, *, ruta_bd="datos/boe.db", directorio="informes/proces
     dataframes, oposiciones, publicaciones, cobertura, resumen = _preparar_aplicacion(estado, ruta_bd)
     if dry_run:
         return {"dry_run": True, "ruta_estado": ruta, **resumen}
-    nuevas = _oposiciones_nuevas(dataframes["Oposiciones"], oposiciones)
+    nuevas = base_datos.normalizar_oposiciones_dataframe(
+        _oposiciones_nuevas(dataframes["Oposiciones"], oposiciones)
+    )
     escritura = base_datos.persistir_lote_historico(
         ruta_bd, nuevas, publicaciones, cobertura, desde, hasta, backup_directorio)
     if not escritura["cambios"]:

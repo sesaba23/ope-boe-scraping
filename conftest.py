@@ -6,6 +6,7 @@ import pytest
 
 
 RUTA_EXCEL_REAL = Path(__file__).parent / "BOE-oposiciones.xlsx"
+RUTA_BD_REAL = Path(__file__).parent / "datos" / "boe.db"
 
 
 def _firma(ruta):
@@ -22,5 +23,20 @@ def no_modificar_excel_real(request):
     despues = _firma(RUTA_EXCEL_REAL)
     assert despues == antes, (
         f"{request.node.nodeid} modificó el Excel real; use tmp_path y una ruta explícita. "
+        f"Antes={antes}; después={despues}"
+    )
+
+
+@pytest.fixture(autouse=True, scope="session")
+def no_modificar_sqlite_real():
+    """La suite nunca puede migrar o escribir accidentalmente la base real."""
+    if not RUTA_BD_REAL.exists():
+        yield
+        return
+    antes = _firma(RUTA_BD_REAL)
+    yield
+    despues = _firma(RUTA_BD_REAL)
+    assert despues == antes, (
+        "La suite modificó datos/boe.db; use tmp_path. "
         f"Antes={antes}; después={despues}"
     )

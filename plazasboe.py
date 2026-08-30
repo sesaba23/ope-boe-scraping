@@ -610,6 +610,7 @@ def _ejecutar_aplicacion():
             [df_log_errores, pd.DataFrame(errores_formateados)], ignore_index=True
         )
 
+    df_combinado = base_datos.normalizar_oposiciones_dataframe(df_combinado)
     lote_definitivo = {
         "Búsquedas": df_busquedas_combinado, "Oposiciones": df_combinado,
         "Log-errores": df_log_errores, "Publicaciones": df_publicaciones,

@@ -15,6 +15,7 @@ import pandas as pd
 from tqdm import tqdm
 
 import base_datos
+from normalizacion_puestos import normalizar_puesto
 
 
 CLAVE_DEDUPLICACION = [
@@ -64,7 +65,11 @@ def leer_excel(ruta_excel):
         faltantes = set(TABLAS) - set(libro.sheet_names)
         if faltantes:
             raise ValueError(f"Faltan hojas requeridas: {sorted(faltantes)}")
-        return {hoja: libro.parse(hoja) for hoja in TABLAS}
+        hojas = {hoja: libro.parse(hoja) for hoja in TABLAS}
+    hojas["Oposiciones"]["Puesto_normalizado"] = hojas["Oposiciones"]["Puesto"].map(
+        normalizar_puesto
+    )
+    return hojas
 
 
 def _filas(df, columnas):
@@ -99,22 +104,25 @@ def importar(conexion, hojas, *, progreso=True):
             "Version_extractor", "Fecha_analisis",
         ]
         filas = (
-            (num, puesto, administracion, escala, subescala, clase, sistema, turno,
+            (num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
              normalizar_fecha(fecha), fecha, publicacion, enlace, municipio, provincia,
              latitud, longitud, habitantes, publicacion_id, version, analisis)
-            for num, puesto, administracion, escala, subescala, clase, sistema, turno,
+            for num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
             fecha, publicacion, enlace, municipio, provincia, latitud, longitud,
-            habitantes, publicacion_id, version, analisis in _filas(oposiciones, columnas_oposiciones)
+            habitantes, publicacion_id, version, analisis in _filas(
+                oposiciones,
+                ["Num_plazas", "Puesto", "Puesto_normalizado", *columnas_oposiciones[2:]],
+            )
         )
         if progreso:
             filas = tqdm(filas, total=len(oposiciones), desc="Importando Oposiciones", unit="fila")
         conexion.executemany(
             """INSERT INTO oposiciones(
-                num_plazas, puesto, administracion, escala, subescala, clase, sistema,
+                num_plazas, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema,
                 turno, fecha_boe, fecha_boe_original, publicacion, enlace, municipio,
                 provincia, latitud, longitud, habitantes, publicacion_id,
                 version_extractor, fecha_analisis
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             filas,
         )
         conteos["oposiciones"] = len(oposiciones)
@@ -162,7 +170,7 @@ def _fingerprint(registros):
 def _registros_excel(hojas, hoja):
     columnas = {
         "Búsquedas": ["Código"],
-        "Oposiciones": ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"],
+        "Oposiciones": ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"],
         "Log-errores": ["Fecha", "Tipo de error", "Enlace Web"],
         "Publicaciones": ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias"],
         "Cobertura": ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"],
@@ -170,7 +178,7 @@ def _registros_excel(hojas, hoja):
     registros = list(_filas(hojas[hoja], columnas))
     texto_por_hoja = {
         "Búsquedas": {"Código"},
-        "Oposiciones": {"Puesto", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Publicacion_ID", "Version_extractor", "Fecha_analisis"},
+        "Oposiciones": {"Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Publicacion_ID", "Version_extractor", "Fecha_analisis"},
         "Log-errores": {"Fecha", "Tipo de error", "Enlace Web"},
         "Publicaciones": {"Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis"},
         "Cobertura": {"Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta"},
@@ -184,7 +192,7 @@ def _registros_excel(hojas, hoja):
     # Su semántica de datos es entera y SQLite la conserva como INTEGER.
     if hoja == "Oposiciones":
         registros = [
-            fila[:15] + (int(fila[15]) if isinstance(fila[15], float) and fila[15].is_integer() else fila[15],) + fila[16:]
+            fila[:16] + (int(fila[16]) if isinstance(fila[16], float) and fila[16].is_integer() else fila[16],) + fila[17:]
             for fila in registros
         ]
     return registros, columnas
@@ -193,7 +201,7 @@ def _registros_excel(hojas, hoja):
 def _registros_sqlite(conexion, hoja):
     consultas = {
         "Búsquedas": "SELECT codigo FROM busquedas",
-        "Oposiciones": "SELECT num_plazas,puesto,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones",
+        "Oposiciones": "SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones",
         "Log-errores": "SELECT fecha,tipo_error,enlace_web FROM log_errores",
         "Publicaciones": "SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias FROM publicaciones",
         "Cobertura": "SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura",
@@ -231,11 +239,11 @@ def auditar(hojas, conexion):
 
     oposiciones_excel, _ = _registros_excel(hojas, "Oposiciones")
     oposiciones_sqlite = _registros_sqlite(conexion, "Oposiciones")
-    indice_clave = [1, 8, 2, 10, 0, 7, 6, 3, 4, 5]
+    indice_clave = [1, 9, 3, 11, 0, 8, 7, 4, 5, 6]
     duplicados_excel = len(oposiciones_excel) - len({_clave_nula_segura([fila[i] for i in indice_clave]) for fila in oposiciones_excel})
     duplicados_sqlite = len(oposiciones_sqlite) - len({_clave_nula_segura([fila[i] for i in indice_clave]) for fila in oposiciones_sqlite})
     ids_publicaciones = {fila[0] for fila in _registros_sqlite(conexion, "Publicaciones")}
-    ids_oposiciones = {fila[16] for fila in oposiciones_sqlite}
+    ids_oposiciones = {fila[17] for fila in oposiciones_sqlite}
     no_enteros = [fila[0] for fila in oposiciones_sqlite if not isinstance(fila[0], int)]
     semantica = {
         "publicacion_id_unicos": len(ids_publicaciones),

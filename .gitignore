@@ -28,3 +28,4 @@ BOE-oposiciones_exportado.xlsx
 # Informes generados por SQLite/exportación
 informes/exportacion_excel/
 informes/migracion_sqlite/
+informes/normalizacion_puestos/
