@@ -2,11 +2,29 @@ import pandas as pd
 import pytest
 
 from estadisticas import (
+    _convertir_fecha,
     calcular_estadisticas,
     filtrar_datos,
     normalizar_datos,
     obtener_opciones_filtros,
 )
+
+
+@pytest.mark.parametrize(
+    ("entrada", "esperada"),
+    [
+        (20260702, "2026-07-02"),
+        ("20260702", "2026-07-02"),
+        ("2026-07-02", "2026-07-02"),
+        ("2 de julio de 2026", "2026-07-02"),
+    ],
+)
+def test_convertir_fecha_admite_formatos_inequivocos(entrada, esperada):
+    assert _convertir_fecha(entrada) == pd.Timestamp(esperada)
+
+
+def test_convertir_fecha_rechaza_texto_corrupto():
+    assert pd.isna(_convertir_fecha("fecha corrupta"))
 
 
 def _datos():
@@ -153,8 +171,13 @@ def test_calcular_estadisticas_suma_plazas_y_cuenta_registros():
     assert resultado["total_plazas"] == 12
     assert resultado["total_registros"] == 4
     assert resultado["calidad_datos"] == {
-        "fechas_invalidas": 1,
-        "numeros_plazas_invalidos": 1,
+        "fecha_no_utilizable": 1,
+        "numero_plazas_no_utilizable": 1,
+        "puesto_no_utilizable": 0,
+        "provincia_no_disponible": 2,
+        "administracion_no_disponible": 0,
+        "sistema_no_disponible": 4,
+        "turno_no_disponible": 4,
     }
 
 
@@ -268,9 +291,37 @@ def test_calcular_estadisticas_admite_dataframe_vacio():
         "plazas_por_provincia": [],
         "evolucion_mensual": [],
         "calidad_datos": {
-            "fechas_invalidas": 0,
-            "numeros_plazas_invalidos": 0,
+            "fecha_no_utilizable": 0,
+            "numero_plazas_no_utilizable": 0,
+            "puesto_no_utilizable": 0,
+            "provincia_no_disponible": 0,
+            "administracion_no_disponible": 0,
+            "sistema_no_disponible": 0,
+            "turno_no_disponible": 0,
         },
+    }
+
+
+def test_calidad_distingue_carencias_sin_invalidar_otras_estadisticas():
+    datos = pd.DataFrame([
+        {"Fecha_boe": "2026-07-02", "Num_plazas": 2, "Puesto": "A",
+         "Administración": "--", "Provincia": None, "Sistema": "--", "Turno": "--"},
+        {"Fecha_boe": "20260703", "Num_plazas": "mal", "Puesto": " ",
+         "Administración": " ", "Provincia": "Madrid", "Sistema": "Libre", "Turno": ""},
+    ])
+    resultado = calcular_estadisticas(datos)
+
+    assert resultado["total_registros"] == 2
+    assert resultado["total_plazas"] == 2
+    assert resultado["top_administraciones"] == []
+    assert resultado["calidad_datos"] == {
+        "fecha_no_utilizable": 0,
+        "numero_plazas_no_utilizable": 1,
+        "puesto_no_utilizable": 1,
+        "provincia_no_disponible": 1,
+        "administracion_no_disponible": 2,
+        "sistema_no_disponible": 1,
+        "turno_no_disponible": 2,
     }
 
 

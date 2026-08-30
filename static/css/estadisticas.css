@@ -62,7 +62,10 @@ input:focus, select:focus { border-color: var(--primario); outline: 3px solid rg
 .estado-cargando { border: 1px solid #cbd8fb; background: var(--primario-suave); color: #173f9c; }
 .estado-error { border: 1px solid #f2b6b6; background: var(--error-fondo); color: var(--error); }
 .estado-vacio { border: 1px dashed #b9c4d4; background: #f8fafc; color: var(--texto-secundario); text-align: center; }
-.aviso-calidad { border: 1px solid #f0d791; background: var(--aviso-fondo); color: var(--aviso); font-size: .92rem; }
+.aviso-calidad { border: 1px solid #d8e0ec; background: #f8fafc; color: var(--texto); font-size: .92rem; }
+.aviso-calidad h2 { margin-bottom: 8px; }
+.aviso-calidad ul { margin: 0 0 8px; padding-left: 20px; }
+.aviso-calidad p { margin: 0; color: var(--texto-secundario); }
 
 .metadatos-consulta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin: 24px 2px 12px; color: var(--texto-secundario); font-size: .86rem; }
 .rejilla-indicadores { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-bottom: 18px; }

@@ -109,20 +109,30 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
     if "Fecha_dt" not in datos.columns or "Num_plazas_num" not in datos.columns:
         datos = normalizar_datos(datos)
 
+    columna_puesto = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
+    if columna_puesto == "Puesto_normalizado":
+        datos["Puesto_normalizado"] = datos["Puesto_normalizado"].fillna(datos["Puesto"])
     calidad_datos = {
-        "fechas_invalidas": int(datos["Fecha_dt"].isna().sum()),
-        "numeros_plazas_invalidos": int(datos["Num_plazas_num"].isna().sum()),
+        "fecha_no_utilizable": int(datos["Fecha_dt"].isna().sum()),
+        "numero_plazas_no_utilizable": int(datos["Num_plazas_num"].isna().sum()),
+        "puesto_no_utilizable": _contar_no_disponibles(datos, columna_puesto),
+        "provincia_no_disponible": _contar_no_disponibles(
+            datos, "Provincia", marcadores=("sin provincia",)
+        ),
+        "administracion_no_disponible": _contar_no_disponibles(datos, "Administración"),
+        "sistema_no_disponible": _contar_no_disponibles(datos, "Sistema"),
+        "turno_no_disponible": _contar_no_disponibles(datos, "Turno"),
     }
     total_plazas = _numero_python(datos["Num_plazas_num"].sum(min_count=1))
     if pd.isna(total_plazas):
         total_plazas = 0
 
+    administraciones_validas = datos[
+        ~_mascara_no_disponible(datos, "Administración")
+    ]
     top_administraciones_datos = _agrupar(
-        datos, "Administración", top_administraciones
+        administraciones_validas, "Administración", top_administraciones
     )
-    columna_puesto = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
-    if columna_puesto == "Puesto_normalizado":
-        datos["Puesto_normalizado"] = datos["Puesto_normalizado"].fillna(datos["Puesto"])
     top_puestos_datos = _agrupar(datos, columna_puesto, top_puestos)
 
     provincias = datos.copy()
@@ -141,7 +151,7 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
         plazas_por_provincia["Provincia"].astype(str).str.strip().str.casefold()
         != "sin provincia"
     ]
-    administraciones = _agrupar(datos, "Administración")
+    administraciones = _agrupar(administraciones_validas, "Administración")
     administraciones = administraciones[
         (administraciones["Num_plazas_num"] > 0)
         & (administraciones["Administración"].astype(str).str.strip() != "")
@@ -180,16 +190,32 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
 def _convertir_fecha(valor):
     if pd.isna(valor):
         return pd.NaT
+    if isinstance(valor, int) and re.fullmatch(r"\d{8}", str(valor)):
+        return pd.to_datetime(str(valor), format="%Y%m%d", errors="coerce")
     if not isinstance(valor, str):
         return pd.to_datetime(valor, errors="coerce")
 
     fecha = valor.strip().lower()
+    if re.fullmatch(r"\d{8}", fecha):
+        return pd.to_datetime(fecha, format="%Y%m%d", errors="coerce")
     for mes, numero in MESES.items():
         fecha = re.sub(rf"\s+de\s+{mes}\s+de\s+", f"/{numero}/", fecha)
     fecha_convertida = pd.to_datetime(fecha, format="%d/%m/%Y", errors="coerce")
     if pd.isna(fecha_convertida):
         fecha_convertida = pd.to_datetime(fecha, format="%Y-%m-%d", errors="coerce")
     return fecha_convertida
+
+
+def _mascara_no_disponible(datos, columna, marcadores=()):
+    if columna not in datos.columns:
+        return pd.Series(True, index=datos.index, dtype=bool)
+    valores = datos[columna]
+    textos = valores.fillna("").astype(str).str.strip().str.casefold()
+    return valores.isna() | textos.isin(("", "--", "no disponible", *marcadores))
+
+
+def _contar_no_disponibles(datos, columna, marcadores=()):
+    return int(_mascara_no_disponible(datos, columna, marcadores).sum())
 
 
 def _convertir_fecha_filtro(valor, nombre):

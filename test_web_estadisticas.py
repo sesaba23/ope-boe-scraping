@@ -7,6 +7,7 @@ import subprocess
 import pandas as pd
 import pytest
 import base_datos
+from consultas_boe import oposiciones
 
 import web_estadisticas
 
@@ -89,6 +90,8 @@ def test_pagina_contiene_filtros_indicadores_y_graficos(cliente):
     assert "Cargando datos..." in html
     assert 'id="sin-resultados"' in html
     assert 'id="aviso-calidad"' in html
+    assert "Calidad de los datos históricos" in html
+    assert "afectan únicamente" in html
 
 
 def test_pagina_carga_chart_css_y_javascript_desde_recursos_locales(cliente):
@@ -122,7 +125,9 @@ def test_javascript_incluye_carga_filtros_limpieza_y_estados(cliente):
     assert 'botonAplicar.disabled = cargando' in javascript
     assert 'document.addEventListener("DOMContentLoaded"' in javascript
     assert "El archivo Excel no está disponible temporalmente" in javascript
-    assert "incidencias en registros históricos" in javascript
+    assert "incidencias en registros históricos" not in javascript
+    assert '"numero_plazas_no_utilizable"' in javascript
+    assert "visibles.length === 0" in javascript
     assert 'formulario.reset()' in javascript
     assert '["provincia", opciones.provincias' in javascript
     assert '["sistema", opciones.sistemas' in javascript
@@ -204,12 +209,24 @@ const llamadasTrasRankings = llamadasChart.length;
 vm.runInContext('renderizarRanking("ranking-vacio", [], "puesto", 10)', contexto);
 vm.runInContext('crearGraficoProvincias([{provincia: "Madrid", plazas: 8}])', contexto);
 vm.runInContext('crearGraficoEvolucion([{mes: "2025-01", plazas: 8}])', contexto);
+const calidadCero = {fecha_no_utilizable: 0, numero_plazas_no_utilizable: 0,
+    puesto_no_utilizable: 0, provincia_no_disponible: 0,
+    administracion_no_disponible: 0, sistema_no_disponible: 0,
+    turno_no_disponible: 0};
+vm.runInContext(`actualizarAvisoCalidad(${JSON.stringify(calidadCero)})`, contexto);
+const calidadOcultaConCeros = obtenerElemento("#aviso-calidad").hidden;
+const calidadReal = {...calidadCero, numero_plazas_no_utilizable: 1,
+    provincia_no_disponible: 12640};
+vm.runInContext(`actualizarAvisoCalidad(${JSON.stringify(calidadReal)})`, contexto);
 process.stdout.write(JSON.stringify({
     administraciones: serializar("#ranking-administraciones"),
     puestos: serializar("#ranking-puestos"),
     vacio: obtenerElemento("#ranking-vacio").children[0].textContent,
     llamadasTrasRankings,
-    tiposChart: llamadasChart.map(llamada => llamada.type)
+    tiposChart: llamadasChart.map(llamada => llamada.type),
+    calidadOcultaConCeros,
+    calidadVisible: !obtenerElemento("#aviso-calidad").hidden,
+    calidadTextos: obtenerElemento("#lista-calidad").children.map(x => x.textContent)
 }));
 """
     codigo = (
@@ -265,6 +282,17 @@ def test_rankings_vacios_y_uso_de_chart_js():
     assert datos["tiposChart"] == ["bar", "line"]
 
 
+def test_calidad_frontend_oculta_ceros_y_muestra_metricas_independientes():
+    datos, _, _ = _ejecutar_diagnostico_rankings()
+
+    assert datos["calidadOcultaConCeros"] is True
+    assert datos["calidadVisible"] is True
+    assert datos["calidadTextos"] == [
+        "1 registro sin número de plazas utilizable.",
+        "12.640 registros sin provincia disponible.",
+    ]
+
+
 def test_javascript_no_reconstruye_graficos_durante_resize(cliente):
     javascript = cliente.get("/static/js/estadisticas.js").get_data(as_text=True)
 
@@ -298,6 +326,25 @@ def test_api_devuelve_el_esquema_esperado(cliente):
         "sistemas": ["Concurso", "Oposición"],
         "turnos": ["Discapacidad", "Libre"],
     }
+    assert respuesta.get_json()["calidad_datos"] == {
+        "fecha_no_utilizable": 0,
+        "numero_plazas_no_utilizable": 0,
+        "puesto_no_utilizable": 0,
+        "provincia_no_disponible": 0,
+        "administracion_no_disponible": 0,
+        "sistema_no_disponible": 0,
+        "turno_no_disponible": 0,
+    }
+
+
+def test_consulta_estadistica_expone_fecha_canonica_y_original_por_separado(ruta_bd):
+    canonicas = oposiciones(ruta_bd, columnas=["Fecha_boe"])
+    originales = oposiciones(ruta_bd, columnas=["Fecha_boe_original"])
+
+    assert canonicas["Fecha_boe"].tolist() == ["2025-01-01", "2025-02-01"]
+    assert originales["Fecha_boe_original"].tolist() == [
+        "1 de enero de 2025", "1 de febrero de 2025"
+    ]
 
 
 def test_api_aplica_y_devuelve_los_filtros_de_fecha(cliente):

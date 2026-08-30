@@ -64,7 +64,11 @@
         </section>
 
         <div id="estado-consulta" class="estado estado-cargando" role="status" aria-live="polite">Cargando datos...</div>
-        <div id="aviso-calidad" class="aviso-calidad" role="status" hidden></div>
+        <section id="aviso-calidad" class="aviso-calidad" aria-labelledby="titulo-calidad" hidden>
+            <h2 id="titulo-calidad">Calidad de los datos históricos</h2>
+            <ul id="lista-calidad"></ul>
+            <p>Estas carencias afectan únicamente a las estadísticas o filtros que requieren esa dimensión.</p>
+        </section>
 
         <section id="dashboard" aria-label="Resultados estadísticos" hidden>
             <div class="metadatos-consulta">

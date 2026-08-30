@@ -128,11 +128,25 @@ function actualizarMetadatos(datos) {
 }
 
 function actualizarAvisoCalidad(calidad) {
-    const incidencias = calidad.fechas_invalidas + calidad.numeros_plazas_invalidos;
-    avisoCalidad.hidden = incidencias === 0;
-    if (incidencias) {
-        avisoCalidad.textContent = `${formatoNumero.format(incidencias)} incidencias en registros históricos contienen datos que no han podido utilizarse completamente en las estadísticas.`;
-    }
+    const descripciones = [
+        ["fecha_no_utilizable", "sin fecha utilizable"],
+        ["numero_plazas_no_utilizable", "sin número de plazas utilizable"],
+        ["puesto_no_utilizable", "sin puesto utilizable"],
+        ["provincia_no_disponible", "sin provincia disponible"],
+        ["administracion_no_disponible", "sin administración disponible"],
+        ["sistema_no_disponible", "sin sistema disponible"],
+        ["turno_no_disponible", "sin turno disponible"],
+    ];
+    const visibles = descripciones.filter(([clave]) => Number(calidad[clave]) > 0);
+    avisoCalidad.hidden = visibles.length === 0;
+    const lista = document.querySelector("#lista-calidad");
+    lista.replaceChildren();
+    visibles.forEach(([clave, descripcion]) => {
+        const elemento = document.createElement("li");
+        const cantidad = Number(calidad[clave]);
+        elemento.textContent = `${formatoNumero.format(cantidad)} ${cantidad === 1 ? "registro" : "registros"} ${descripcion}.`;
+        lista.append(elemento);
+    });
 }
 
 function prepararRanking(registros, claveTexto, limite) {

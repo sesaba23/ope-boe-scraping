@@ -361,7 +361,7 @@ def generar_mapa_municipios(df=None, ruta_bd="datos/boe.db", **filtros):
             <b>Nº Plazas:</b> {escape(str(row['Num_plazas']), quote=True)}</br>
             <b>Administración:</b> {escape(str(row['Administración']), quote=True)}<br>
             <b>Sistema:</b> {escape(str(row['Sistema']), quote=True)}<br>
-            <b>Fecha:</b> {escape(str(row['Fecha_boe']), quote=True)}, {enlace_html}<br>
+            <b>Fecha:</b> {escape(str(row.get('Fecha_boe_original', row.get('Fecha_boe'))), quote=True)}, {enlace_html}<br>
             {f"{int(row['Habitantes']):,}".replace(",", ".")} habitantes<br>
             """
             folium.Marker(
@@ -413,7 +413,7 @@ def mostrar_puestos_sin_coordenadas(df):
             <b>Puesto:</b> {escape(str(row.get('Puesto', '')), quote=True)}<br>
             <b>Nº Plazas:</b> {escape(str(row.get('Num_plazas', '')), quote=True)}<br>
             <b>Administración:</b> {escape(str(row.get('Administración', '')), quote=True)}<br>
-            <b>Fecha:</b> {escape(str(row['Fecha_boe']), quote=True)}, {enlace_html}<br>
+            <b>Fecha:</b> {escape(str(row.get('Fecha_boe_original', row.get('Fecha_boe'))), quote=True)}, {enlace_html}<br>
         </div>
         """
 

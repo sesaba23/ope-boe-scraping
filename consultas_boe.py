@@ -12,7 +12,7 @@ class ErrorConsultaSQLite(RuntimeError):
 
 
 COLUMNAS_ESTADISTICAS = ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Provincia", "Municipio", "Sistema", "Turno", "Fecha_boe"]
-COLUMNAS_MAPA = ["Num_plazas", "Puesto", "Administración", "Sistema", "Fecha_boe", "Enlace", "Latitud", "Longitud", "Habitantes", "Municipio", "Provincia"]
+COLUMNAS_MAPA = ["Num_plazas", "Puesto", "Administración", "Sistema", "Fecha_boe_original", "Enlace", "Latitud", "Longitud", "Habitantes", "Municipio", "Provincia"]
 
 
 def _conexion(ruta_bd):
@@ -43,7 +43,8 @@ def oposiciones(ruta_bd="datos/boe.db", *, columnas=COLUMNAS_ESTADISTICAS, **fil
     mapa = {"Num_plazas": "num_plazas", "Puesto": "puesto",
             "Puesto_normalizado": "COALESCE(puesto_normalizado, puesto)", "Administración": "administracion",
             "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
-            "Fecha_boe": "fecha_boe_original", "Enlace": "enlace", "Latitud": "latitud",
+            "Fecha_boe": "fecha_boe", "Fecha_boe_original": "fecha_boe_original",
+            "Enlace": "enlace", "Latitud": "latitud",
             "Longitud": "longitud", "Habitantes": "habitantes"}
     try:
         seleccion = ",".join(f"{mapa[c]} AS '{c}'" for c in columnas)
