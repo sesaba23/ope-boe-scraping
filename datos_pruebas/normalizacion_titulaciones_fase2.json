@@ -1,0 +1,1776 @@
+{
+  "version": 1,
+  "origen": "Auditoría FASE 2; fixture mínimo versionado",
+  "casos": [
+    {
+      "texto": "Ingeniero Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero técnico industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniería Técnica Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingeniero técnico industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingeniero/a técnico/a industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/Ingeniero Técnica/Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Industrial del grupo/subgrupo A2",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la subescala Técnica de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial perteneciente a la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico de Industria",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero o Ingeniera Técnica Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial (personal funcionario)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Industria",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a de Técnico/a Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a técnico industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingenieros/as Técnico Industriales",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio de Ingeniería Técnica de la rama industrial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio/a Ingeniero/a Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Superior Ingeniero Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Auxiliar Técnico de Ingeniería Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Industrial (Electricidad) perteneciente a la escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Industrial pertenecientes a la escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniera/o Técnico Industrial del grupo/subgrupo A2 (–cuatro en turno libre ordinario y dos en turno",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingenierio Técnico Industrial",
+      "clasificacion": "ERRATA_PROBABLE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Tecnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial (Especialidad Mecánica)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial (Servicio Alumbrado Público)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial (Técnico adjunto de Instalaciones)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial (concurso oposición libre)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial (personal funcionario)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial A2",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial Prevención",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial Rama Eléctrica",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial a tiempo parcial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial a tiempo parcial (dos horas semanales) de la plantilla de personal labor",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial a tiempo parcial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial como personal funcionario de carrera",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de equipamientos e instalaciones eléctricas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de esta Universidad",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la Escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la Subescala Técnica Media de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la Subescala Técnica de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial de la plantilla de personal funcionario",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial en la Concejalía de Presidencia",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial en la especialidad de Electricidad",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial encuadradas en la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial para el Ayuntamiento de San Martín de la Vega",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial perteneciente/s a la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial y una plaza de Ingeniero Técnico Topógrafo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial y/o grado en Ingeniería",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero o Ingeniera Técnico Industrial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero técnico industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero técnico industrial o ingeniero técnico de obras públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Industrial a jornada completa (subgrupo A2)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Industrial de Minas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Industrial de Obras y Servicios",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/A Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a (Industrial)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial (Técnico/a de Ruidos)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial Eléctrico",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial Prevención",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial Químico",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial de Equipamientos e instalaciones eléctricas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial de la plantilla de personal funcionario",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial pertenecientes a la Escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial pertenecientes a la escala Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial pertenecientes a la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Industrial/a de la escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero/a-Ingeniero/a Técnico Industrial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingenieros/as Técnicos/as Industriales",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Responsable Municipal (Arquitecto técnico o Ingeniería Técnica civil o industrial o asimilado) de la",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "TGM Aparejador/Ingeniero Técnico Industrial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "TMAE Ingeniero/a técnico/a industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Grado Medio (Ingeniero Técnico Industrial) en AEPSA",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Técnico Industrial (OEP 2008)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Técnico Industrial (OEP extraordinaria 2020)",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio Ingeniería Industrial (concurso-oposición libre)",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Medio de Administración Especial Ingeniero/a Técnico/a Industrial del Ayuntamiento de Getafe",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Superior Ingeniero Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico Superior Ingeniero/a Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico de Grado Medio Ingeniero Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico en Ingeniería Industrial (Especialidad en Organización Industrial)",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Ingeniero Industrial de actividades del Ayuntamiento de Santa Margalida",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Ingeniero/a Industrial o Arquitecto/a Superior",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio Administración Especial ingeniero/a técnico industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio de Administración Especial-Ingeniero/a Técnico/a Industrial-subgrupo A2",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio de Ingeniería Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Medio/a Ingeniero/a Técnico/a Industrial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a Superior Ingeniero/a Industrial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Técnico/a superior de Ingeniería Industrial de la plantilla de personal laboral fijo",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "consolidación de trabajo temporal de Ingeniero Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingeniero técnico industrial de esta Universidad",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingeniero técnico/a industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingeniero/a técnico/a industrial en prevención",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "ingenieros técnicos industriales",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "personal Ingeniero Técnico Industrial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Industrial",
+      "canon_esperado": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "personal funcionario de la Escala de Gestión (Especialidad Ingeniero/a Técnico/a Industrial) de la Un",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "técnico medio arquitectura-ingeniería –ingeniero técnico industrial–",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "técnico superior arquitectura-ingeniería –ingeniero industrial–",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "técnico/a medio/a de administración especial (ingeniero/a técnico/a industrial)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Industrial"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingenieros Técnicos de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico en Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero o Ingeniera Técnico o Técnica de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a (Obras Públicas)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniería Técnica de Obras Públicas",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico Obras Públicas de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Publicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico o Ingeniera Técnica de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Obras Públicas de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas Municipales",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a o Ayudante de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a técnico de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Personal Ingeniero Técnico de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "ingeniero técnico de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniera/Ingeniero Técnica/o Obras Públicas de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Obras Públicas del grupo/subgrupo A2",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniera/o de Técnica de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Tecnico de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico (de Obras Públicas)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico Obras Públicas (personal funcionario)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas de Villanueva del Pardillo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas de la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas perteneciente a la Escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de Obras Públicas y una plaza de Ayudante de Cementerio",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico de obras publicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico en Obras Públicas o Arquitecto Técnico",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero Técnico en Obras Públicas y una plaza de Técnico Medio de Drogodependencias",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero técnico de Obras Públicas de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero técnico de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero técnico industrial o ingeniero técnico de obras públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Obras Públicas pertenecientes a la Escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Obras Publicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas (ITOP 2)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas de la plantilla del Ayuntamiento de Torrejón de Ardoz",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas o Graduado/a en Ingeniería Civil",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas pertenecientes a la Escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de Obras Públicas/Ingeniero/a Civil",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a en Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a de obras públicas del área de Medio Ambiente y Territorio",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingenieros Técnicos de Obras Públicas Código 1011 por el sistema general de acceso libre y 1 plaza po",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingenieros Técnicos de Obras Públicas Código 1011 por el sistema general de acceso libre y 3 plazas p",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingenieros/as Técnicos de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingenieros/as Técnicos/as de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "TMAE Ingeniero Técnico de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico Medio Administración Especial (TAE) Ingeniero/a Técnico de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico Superior-Ingeniero de Obras Públicas",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico de Ingeniero Técnico de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico/a Medio de Arquitectura e Ingeniería (Ingeniero/a Técnico/a de Obras Públicas) del Ayuntamien",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico/a Medio de Ingeniería Ingeniero de Obras Públicas",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico/a medio de administración especial (ingeniero/a técnico/a de obras públicas)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Técnico/a medio/a (ingeniero/a técnico/a de obras públicas)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "ingeniero/a técnico/a de obras públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "personal Ingeniero/a Técnico/a de Obras Públicas",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Obras Públicas",
+      "canon_esperado": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "profesional 2G y especialidad Ingeniería Técnica de Obras Públicas",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Obras Públicas"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Agrícola de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingenieros Técnicos en Especialidades Agrícolas",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola perteneciente a la escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agricola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola a tiempo parcial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a técnico agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Profesor/a Técnico/a (Ingeniería Técnica Agrícola)",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Técnico Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniera/o Técnico Agrícola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola (código FUN/13)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola de la Escala de Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola de la IFSO de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola de la plantilla de personal funcionario",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola del Ayuntamiento de Madrid",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola o Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola para ser cubierta por turno libre",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola vacante en la plantilla de personal funcionario de este Ayuntamiento",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola-Especialidad Explotaciones Agropecuarias",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola-Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola/Agrónomo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico agrícola de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero técnico agrícola (dedicación parcial)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/Ingeniera Técnico/a Agrícola",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Tecnico Agricola",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Agrícola en Prevención",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a (Agrícola)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola (grupo A",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola de la plantilla de personal laboral fijo grupo A2",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola/Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero/a técnico agrícola de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Profesor/a Técnico/a (Ingeniero/a Técnico/a Agrícola)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Profesor/a técnico/a (ingeniería técnica agrícola)",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Titulado Grado Medio (Ingenieros/as Técnicos/as Agrícolas)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Técnico Medio (Ingeniero Técnico Agrícola)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Técnico Medio Administración Especial (TAE) Ingeniero/a Técnico Agrícola",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Técnico Medio Ingeniero Agrícola",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Técnico Medio de Administración Especial Ingeniero/a Técnico/a Agrícola del Ayuntamiento de Getafe",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Agrícola",
+      "canon_esperado": "Ingeniero Técnico Agrícola"
+    },
+    {
+      "texto": "Ingeniero Técnico Forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingenieros Técnicos Forestales",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o Forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Técnico Forestal de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingenieros Técnicos Forestales al Servicio de la Hacienda Pública",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingenieros Técnicos Forestales al servicio de la Hacienda Pública",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Tecnico Forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola o Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Técnico Agrícola-Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Técnico Forestal perteneciente a la escala de la Administración Especial",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/Ingeniera Técnico Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a (Forestal)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Agrícola/Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Forestal de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Forestal personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a forestal",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Forestal",
+      "canon_esperado": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniería Técnica Forestal",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniería Técnica Forestal perteneciente a la escala de Administración Especial",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Profesor/a Técnico/a (Ingeniería Técnica Forestal)",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Técnico/a de Administración Especial Media Ingeniero/a Técnico/a Forestal",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Técnico/a medio/a de Administració Especial (Ingeniero/a Técnico/a Forestal)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Forestal"
+    },
+    {
+      "texto": "Ingeniero Técnico de Telecomunicaciones",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Telecomunicación",
+      "canon_esperado": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniera/Ingeniero Técnica/o Telecomunicaciones de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero Técnico Telecomunicaciones",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Telecomunicación",
+      "canon_esperado": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero Técnico Telecomunicaciones de la Ciudad de Ceuta",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero Técnico en Telecomunicaciones",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero Técnico en Telecomunicaciones de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Telecomunicaciones",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Telecomunicación",
+      "canon_esperado": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Telecomunicaciones",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico de Telecomunicación",
+      "canon_esperado": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a en Telecomunicaciones",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a en telecomunicaciones",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Técnico Superior Ingeniero Telecomunicaciones",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Técnico/a Superior de Administración Especial Ingeniero/a de Telecomunicaciones",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Técnico/a Superior en Ingeniería de Telecomunicaciones",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico de Telecomunicación"
+    },
+    {
+      "texto": "Ingeniero Técnico Informático",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Informático/a",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico en Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico Informático de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Informático",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a especialidad Informático/a",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingenieros/as Técnicos Informáticos",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniería Técnica Informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico Superior en Ingeniería de Tráfico (Ingeniero en Informática) en la Subdirección de Gestión de",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico Informática de la Ciudad de Ceuta",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico de Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero Técnico en Informática de la plantilla de personal laboral fijo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Informático/a",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico en Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico en Informática y Comunicaciones",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Topógrafo y una plaza de Técnico/a Medio Informática",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a en Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a técnico informático",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a de Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniero/ra Técnico Informática de la plantilla de personal laboral fijo",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingenieros Técnicos Informáticos",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingenieros/as Técnicos/as en Informática",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico en Informática",
+      "canon_esperado": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingeniería Técnica de Informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico Superior Administración Especial (TAE) Ingeniero/a Informático",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico Superior Ingeniero/a Informático",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico Superior de Administración Especial (Grado en Ingeniería Informática)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico Superior en Ingeniería Informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico superior Ingeniero Informático",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico/a Medio Administración Especial Ingeniero/a Informático/a",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico/a Superior Ingeniero/a Informático",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico/a Superior Ingeniería Informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico/a de Administración Especial Ingeniero/a Informático/a",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Técnico/a superior en Ingeniería Informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "personal Técnico Superior de ingeniería informática",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico en Informática"
+    },
+    {
+      "texto": "Ingenieros Técnicos Aeronáuticos",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Aeronáutico",
+      "canon_esperado": "Ingeniero Técnico Aeronáutico"
+    },
+    {
+      "texto": "Ingeniero Técnico Topógrafo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Topógrafo",
+      "canon_esperado": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico en Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Topógrafo/a",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a en Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingenieros Técnicos en Topografía",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Topógrafo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Topógrafo",
+      "canon_esperado": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Topógrafo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Topógrafo",
+      "canon_esperado": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a técnico de topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a técnico/a topógrafo/a",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniera/o Técnica/o (Topografía)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico Industrial y una plaza de Ingeniero Técnico Topógrafo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico Topografía de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico Topográfico",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico de Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero Técnico en Topografía de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero técnico en topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico en Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico topógrafo (personal laboral fijo)",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a Topógrafo y una plaza de Técnico/a Medio Informática",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a Técnico/a en Topografía de la plantilla de personal laboral fijo",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniero/a técnico en topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Ingeniería Técnica en Topografía",
+      "clasificacion": "NO_EQUIVALENTE",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Profesor de Ingeniero Técnico Topógrafo de la escala de Administración Especial",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Técnico Medio Administración Especial (TAE) Ingeniero/a Técnico en Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "Técnico/a en Cartografía y una plaza de Ingeniero/a Técnico/a de Topografía",
+      "clasificacion": "AMBIGUO",
+      "familia": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "ingeniero técnico topógrafo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Topógrafo",
+      "canon_esperado": "Ingeniero Técnico Topógrafo"
+    },
+    {
+      "texto": "personal Ingeniero Técnico Topógrafo",
+      "clasificacion": "SEGURO",
+      "familia": "Ingeniero Técnico Topógrafo",
+      "canon_esperado": "Ingeniero Técnico Topógrafo"
+    }
+  ]
+}
