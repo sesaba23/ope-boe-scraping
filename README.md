@@ -8,7 +8,7 @@ Este proyecto realiza **web scraping** del Boletín Oficial del Estado (BOE) par
 La resolución geográfica usa sólo catálogos locales y coincidencias exactas;
 no usa subcadenas ni similitud libre. `administracion` conserva el original y
 `administracion_normalizada` sólo elimina paréntesis territoriales validados.
-`ambito` (`ESTATAL`, `AUTONOMICO`, `LOCAL`, `OTRO`, `INDETERMINADO`) es
+`ambito` (`ESTATAL`, `AUTONOMICO`, `LOCAL`, `UNIVERSITARIO`, `OTRO`, `INDETERMINADO`) es
 independiente de ubicación. Mallorca, Menorca, Ibiza/Eivissa y Formentera son
 provincias analíticas; la mención general a Illes Balears sólo identifica la
 comunidad. Use `recalcular_geografia.py --dry-run` antes de aplicar cambios.
