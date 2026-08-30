@@ -120,4 +120,4 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
     assert hojas["Oposiciones"].loc[0, "Num_plazas"] == "la"
     assert hojas["Oposiciones"].loc[0, "Puesto_normalizado"] == "Auxiliar"
     assert pd.isna(hojas["Oposiciones"].loc[0, "Administración"])
-    assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "20260101"
+    assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "2026-01-01"

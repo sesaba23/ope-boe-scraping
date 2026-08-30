@@ -17,11 +17,31 @@ from migrar_excel_sqlite import _fingerprint, _registros_excel
 
 CONTRATOS = {
     "Búsquedas": ("SELECT codigo FROM busquedas ORDER BY codigo", ["Código"]),
-    "Oposiciones": ("""SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones ORDER BY fecha_boe,enlace,puesto,oposicion_id""", ["Num_plazas","Puesto","Puesto_normalizado","Administración","Escala","Subescala","Clase","Sistema","Turno","Fecha_boe","Publicación","Enlace","Municipio","Provincia","Latitud","Longitud","Habitantes","Publicacion_ID","Version_extractor","Fecha_analisis"]),
+    "Oposiciones": ("", ["Oposicion_ID","Publicacion_ID","Fecha_boe","Fecha_boe_original","Puesto","Puesto_normalizado","Num_plazas","Administración","Administración_normalizada","Ambito","Tipo_entidad","Comunidad_Autónoma","Provincia","Municipio","Sistema","Turno","Escala","Subescala","Clase","Publicación","Latitud","Longitud","Habitantes","Version_extractor","Fecha_analisis","Confianza_geografica","Evidencia_geografica","Version_resolutor","Enlace"]),
     "Log-errores": ("SELECT fecha,tipo_error,enlace_web FROM log_errores ORDER BY error_id", ["Fecha","Tipo de error","Enlace Web"]),
     "Publicaciones": ("""SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones ORDER BY fecha_boe,publicacion_id""", ["Publicacion_ID","Enlace","Fecha_BOE","Titulo_original","Fecha_ultimo_analisis","Version_extractor","Estado_analisis","Coincidencias","Departamento_BOE","Administracion_resuelta","Familia_administrativa","Estado_resolucion","Metodo_resolucion","Confianza_resolucion","Version_resolucion"]),
     "Cobertura": ("SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura ORDER BY fecha", ["Fecha","Estado","Version_extractor","Fecha_ultima_consulta","Numero_publicaciones"]),
 }
+
+MAPA_OPOSICIONES = {
+    "Oposicion_ID": "oposicion_id", "Publicacion_ID": "publicacion_id", "Fecha_boe": "fecha_boe",
+    "Fecha_boe_original": "fecha_boe_original", "Puesto": "puesto", "Puesto_normalizado": "puesto_normalizado",
+    "Num_plazas": "num_plazas", "Administración": "administracion", "Administración_normalizada": "administracion_normalizada",
+    "Ambito": "ambito", "Tipo_entidad": "tipo_entidad", "Comunidad_Autónoma": "comunidad_autonoma",
+    "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
+    "Escala": "escala", "Subescala": "subescala", "Clase": "clase", "Publicación": "publicacion",
+    "Latitud": "latitud", "Longitud": "longitud", "Habitantes": "habitantes", "Version_extractor": "version_extractor",
+    "Fecha_analisis": "fecha_analisis", "Confianza_geografica": "confianza_geografica",
+    "Evidencia_geografica": "evidencia_geografica", "Version_resolutor": "version_resolutor", "Enlace": "enlace",
+}
+
+def _contratos(con):
+    contratos = dict(CONTRATOS)
+    existentes = {fila[1] for fila in con.execute("PRAGMA table_info(oposiciones)")}
+    columnas = [nombre for nombre in CONTRATOS["Oposiciones"][1] if MAPA_OPOSICIONES[nombre] in existentes]
+    seleccion = ",".join(MAPA_OPOSICIONES[nombre] for nombre in columnas)
+    contratos["Oposiciones"] = (f"SELECT {seleccion} FROM oposiciones ORDER BY fecha_boe,enlace,puesto,oposicion_id", columnas)
+    return contratos
 
 
 def cargar_sqlite(ruta):
@@ -34,7 +54,8 @@ def cargar_sqlite(ruta):
         tablas = {fila[0] for fila in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         if {"metadata", "busquedas", "oposiciones", "log_errores", "publicaciones", "cobertura"} - tablas:
             raise RuntimeError("SQLite no contiene el esquema requerido")
-        return {nombre: pd.DataFrame(con.execute(sql).fetchall(), columns=cols) for nombre, (sql, cols) in CONTRATOS.items()}, dict(con.execute("SELECT clave,valor FROM metadata"))
+        contratos = _contratos(con)
+        return {nombre: pd.DataFrame(con.execute(sql).fetchall(), columns=cols) for nombre, (sql, cols) in contratos.items()}, dict(con.execute("SELECT clave,valor FROM metadata"))
     finally:
         con.close()
 
