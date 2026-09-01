@@ -8,6 +8,20 @@ import exportar_excel
 import migrar_excel_sqlite as migracion
 
 
+def test_fingerprint_exportacion_equivale_vacios_xlsx_solo_en_campos_v5():
+    columnas = exportar_excel.CONTRATOS["Oposiciones"][1]
+    base = {columna: None for columna in columnas}
+    base.update({"Fecha_boe": "2026-09-01", "Provincia": "", "Municipio": "",
+                 "Administración_normalizada": "", "Evidencia_geografica": ""})
+    sqlite = pd.DataFrame([base])
+    excel = sqlite.copy()
+    for columna in ("Administración_normalizada", "Provincia", "Municipio", "Evidencia_geografica"):
+        excel[columna] = float("nan")
+    assert exportar_excel._fingerprint_hoja(sqlite, "Oposiciones") == exportar_excel._fingerprint_hoja(excel, "Oposiciones")
+    excel.loc[0, "Provincia"] = "Madrid"
+    assert exportar_excel._fingerprint_hoja(sqlite, "Oposiciones") != exportar_excel._fingerprint_hoja(excel, "Oposiciones")
+
+
 def _crear_excel(ruta, *, administracion=None, municipio=None, provincia=None):
     busquedas = pd.DataFrame({"Código": ["codigo"]})
     publicaciones = pd.DataFrame({

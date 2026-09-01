@@ -1,6 +1,6 @@
 """Exporta SQLite a un Excel de interoperabilidad, sin usar Excel como entrada."""
 import argparse
-from datetime import datetime
+from datetime import date, datetime
 import hashlib
 import json
 import os
@@ -61,6 +61,15 @@ def cargar_sqlite(ruta):
 
 
 def _fingerprint_hoja(df, nombre):
+    # Excel devuelve las fechas como Timestamp aunque SQLite las conserva como
+    # texto ISO. La auditoría compara el valor lógico, no su representación.
+    if nombre == "Oposiciones" and "Fecha_boe" in df:
+        df = df.copy()
+        fechas = pd.to_datetime(df["Fecha_boe"], errors="coerce")
+        df["Fecha_boe"] = fechas.dt.strftime("%Y-%m-%d").where(fechas.notna(), df["Fecha_boe"])
+        for columna in ("Administración_normalizada", "Provincia", "Municipio", "Evidencia_geografica"):
+            if columna in df:
+                df[columna] = df[columna].replace("", None)
     return _fingerprint(_registros_excel({nombre: df}, nombre)[0])
 
 
