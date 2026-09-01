@@ -5,6 +5,8 @@ Illes Balears son provincias analíticas por decisión explícita del proyecto.
 """
 from collections import defaultdict
 from dataclasses import asdict, dataclass
+from functools import lru_cache
+import json
 from pathlib import Path
 import re
 
@@ -13,6 +15,7 @@ import pandas as pd
 from mapa_plazas import _variantes_nombre_catalogo, normalizar_nombre_municipal
 
 VERSION_CATALOGO = "geografia-v1"
+RUTA_SEDES_ADMINISTRATIVAS = Path(__file__).resolve().parent / "datos" / "sedes_administrativas.v1.json"
 AMBITOS = {"ESTATAL", "AUTONOMICO", "LOCAL", "UNIVERSITARIO", "OTRO", "INDETERMINADO"}
 PROVINCIAS_ALIAS = {
     "la coruna": "A Coruña", "coruna": "A Coruña", "orense": "Ourense",
@@ -61,6 +64,10 @@ MUNICIPIOS_CERRADOS = {
     "ayuntamiento de sant antony de portmany": ("Sant Antoni de Portmany", "Ibiza/Eivissa", "Illes Balears", None),
 }
 ENTIDADES_CERRADAS = {
+    # Sedes aprobadas individualmente: no son patrones para otros consejos o
+    # consorcios y no alteran el ámbito territorial de competencia.
+    "consejo de seguridad nuclear": ("Madrid", "Madrid", "Comunidad de Madrid", "ESTATAL", "ESTATAL", "SEDE_ADMINISTRATIVA_CATALOGADA", None),
+    "consorcio de teatro fortuny": ("Reus", "Tarragona", "Cataluña/Catalunya", "LOCAL", "SUPRAMUNICIPAL", "ENTIDAD_TERRITORIAL_CATALOGADA", None),
     "mancomunidad des raiguer": ("Raiguer", "Mallorca", "Illes Balears", "LOCAL", "SUPRAMUNICIPAL", "ENTIDAD_TERRITORIAL_CATALOGADA", None),
     "consorcio de la ciudad romana de pollentia": ("Pollentia", "Mallorca", "Illes Balears", "LOCAL", "SUPRAMUNICIPAL", "ENTIDAD_TERRITORIAL_CATALOGADA", None),
     "consorcio hospitalario provicial de castellon": ("", "Castellón/Castelló", "Comunitat Valenciana", "LOCAL", "SUPRAMUNICIPAL", "PROVINCIA_NOMBRE_ENTIDAD", "Consorcio Hospitalario Provincial de Castellón"),
@@ -85,6 +92,63 @@ ENTIDADES_CERRADAS = {
 }
 
 def clave(valor): return normalizar_nombre_municipal(valor)
+
+
+@lru_cache(maxsize=4)
+def cargar_sedes_administrativas(ruta=RUTA_SEDES_ADMINISTRATIVAS):
+    """Carga sólo coincidencias exactas del catálogo versionado de sedes."""
+    datos = json.loads(Path(ruta).read_text(encoding="utf-8"))
+    sedes = {}
+    for sede in datos["sedes"]:
+        clave_sede = clave(sede["administracion"])
+        if clave_sede in sedes:
+            raise ValueError(f"Sede administrativa duplicada: {sede['administracion']}")
+        sedes[clave_sede] = sede
+    return sedes
+
+
+@lru_cache(maxsize=4)
+def cargar_alias_sedes_administrativas(ruta=RUTA_SEDES_ADMINISTRATIVAS):
+    datos = json.loads(Path(ruta).read_text(encoding="utf-8"))
+    sedes = cargar_sedes_administrativas(ruta)
+    aliases = {}
+    for alias in datos.get("alias_sedes", []):
+        clave_alias = clave(alias["denominacion"])
+        destino = sedes.get(clave(alias["sede"]))
+        if clave_alias in aliases or destino is None:
+            raise ValueError(f"Alias de sede inválido: {alias['denominacion']}")
+        aliases[clave_alias] = destino
+    return aliases
+
+
+AMBITOS_SEDES_INSTITUCIONALES = {
+    "ministerio de justicia": ("ESTATAL", "ESTATAL"),
+    "consejo general del poder judicial": ("ESTATAL", "ESTATAL"),
+    "consejo de estado": ("ESTATAL", "ESTATAL"),
+    "consejo de seguridad nuclear": ("ESTATAL", "ESTATAL"),
+    "tribunal constitucional": ("ESTATAL", "ESTATAL"),
+    "tribunal de cuentas": ("ESTATAL", "ESTATAL"),
+    "cortes generales": ("ESTATAL", "ESTATAL"),
+    "comision nacional de los mercados y la competencia": ("ESTATAL", "ESTATAL"),
+    "agencia espanola de proteccion de datos": ("ESTATAL", "ESTATAL"),
+}
+COMUNIDADES_ADMINISTRACION_EXACTA = {
+    "comunidad autonoma de andalucia": "Andalucía",
+    "comunidad autonoma de aragon": "Aragón",
+    "comunidad autonoma del principado de asturias": "Principado de Asturias",
+    "comunidad autonoma de canarias": "Canarias",
+    "comunidad autonoma de cantabria": "Cantabria",
+    "comunidad autonoma de castilla la mancha": "Castilla-La Mancha",
+    "comunidad autonoma de cataluna": "Cataluña/Catalunya",
+    "comunidad autonoma de extremadura": "Extremadura",
+    "comunidad autonoma de galicia": "Galicia",
+    "comunidad autonoma de la rioja": "La Rioja",
+    "comunidad autonoma de las illes balears": "Illes Balears",
+    "comunidad autonoma de la region de murcia": "Región de Murcia",
+    "comunidad autonoma del pais vasco": "País Vasco/Euskadi",
+    "comunidad de madrid": "Comunidad de Madrid",
+    "comunidad foral de navarra": "Comunidad Foral de Navarra",
+}
 
 @dataclass(frozen=True)
 class ResolucionGeografica:
@@ -200,6 +264,12 @@ def resolver_administracion_geografia(administracion, puesto="", *, _catalogo=No
             m=c.municipio(par)
             if m:
                 municipio,provincia,comunidad,codigo=m["Municipio"],m["Provincia"],m["Comunidad"],m["Codigo_INE"]; confianza="ALTA"; evidencia="MUNICIPIO_PARENTESIS"; regla="municipio_parentesis"; territorial=True
+    # Una comunidad identificada literalmente permite completar sólo su nivel
+    # autonómico; no presupone la capital ni una sede institucional.
+    if clave_admin in COMUNIDADES_ADMINISTRACION_EXACTA:
+        comunidad = COMUNIDADES_ADMINISTRACION_EXACTA[clave_admin]
+        ambito, tipo = "AUTONOMICO", "AUTONOMICA"
+        confianza, evidencia, regla = "ALTA", "COMUNIDAD_ADMINISTRACION_EXACTA", "comunidad_administracion_exacta"
     # Ayuntamiento exacto. El contexto provincial, si existe, desambigua.
     patron=re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+(?:de(?:l| la)?|d['’])\s+(.+?)(?:\s*\(|\s*,|$)",admin,re.I)
     if patron:
@@ -223,6 +293,22 @@ def resolver_administracion_geografia(administracion, puesto="", *, _catalogo=No
         patron_entidad = re.match(r"^(?:diputaci[oó]n(?:\s+(?:provincial|foral))?|diputaci[oó]|deputaci[oó]n)\s+de\s+(.+?)\s*$", admin, re.I)
         if patron_entidad and c.provincia(patron_entidad.group(1)):
             provincia=c.provincia(patron_entidad.group(1)); confianza="ALTA"; evidencia="DIPUTACION"; regla="provincia_entidad_exacta"; ambito="LOCAL"; tipo="PROVINCIAL"
+    # Una sede institucional exacta tiene prioridad sobre cualquier destino
+    # citado en el puesto. Las sedes TERRITORIAL se conservan para auditoría,
+    # pero las reglas territoriales explícitas continúan siendo su fuente.
+    sede = (cargar_sedes_administrativas().get(clave_admin)
+            or cargar_alias_sedes_administrativas().get(clave_admin))
+    if (not territorial and not municipio and not provincia and sede
+            and sede["tipo_sede"] == "INSTITUCIONAL"):
+        fila = c.codigo.get(str(sede["municipio_codigo_ine"]).zfill(5))
+        if not fila:
+            raise RuntimeError(f"Municipio INE inexistente en sede: {sede['municipio_codigo_ine']}")
+        ambito, tipo = AMBITOS_SEDES_INSTITUCIONALES.get(clave_admin, (ambito, tipo))
+        return ResolucionGeografica(
+            admin, _limpiar(admin, False), ambito, tipo, fila["Municipio"], fila["Provincia"],
+            fila["Comunidad"], fila["Codigo_INE"], "ALTA", "SEDE_ADMINISTRATIVA_CATALOGADA",
+            "sede_administrativa_catalogada", VERSION_CATALOGO,
+        )
     # Destino provincial cerrado: no altera ámbito.
     destinos={c.provincia(x) for x in re.findall(r"(?:Fiscal[ií]a Provincial|Tribunal Superior de Justicia) de\s+([^,;.()]+)",puesto or "",re.I)}-{None}
     if len(destinos)==1:

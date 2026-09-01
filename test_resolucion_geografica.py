@@ -1,4 +1,7 @@
 """Regresiones independientes de informes locales para FASE 4."""
+import json
+from pathlib import Path
+
 import pytest
 from resolucion_geografica import resolver_administracion_geografia as resolver
 
@@ -21,7 +24,69 @@ def test_conflicto_alta_no_se_persiste():
 
 def test_diputacion_y_destino_no_cambian_ambito():
     assert resolver("Diputación Foral de Gipuzkoa").provincia=="Gipuzkoa"
-    r=resolver("Ministerio de Justicia","Fiscalía Provincial de Girona"); assert (r.ambito,r.provincia)==("ESTATAL","Girona")
+    r=resolver("Ministerio de Justicia","Fiscalía Provincial de Girona")
+    assert (r.ambito,r.municipio,r.provincia,r.comunidad_autonoma,r.evidencia)==(
+        "ESTATAL","Madrid","Madrid","Comunidad de Madrid","SEDE_ADMINISTRATIVA_CATALOGADA")
+
+
+def test_sede_administrativa_es_exacta_y_no_captura_nombres_parecidos():
+    r = resolver("Tribunal Constitucional")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.ambito, r.confianza, r.evidencia) == (
+        "Madrid", "28079", "Madrid", "Comunidad de Madrid", "ESTATAL", "ALTA", "SEDE_ADMINISTRATIVA_CATALOGADA")
+    assert resolver("Tribunal Constitucional Provincial").municipio == ""
+
+
+def test_ministerio_del_interior_tiene_sede_documentada_no_heuristica():
+    r = resolver("Ministerio del Interior", "Fiscalía Provincial de Sevilla")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.ambito, r.evidencia) == (
+        "Madrid", "28079", "Madrid", "Comunidad de Madrid", "ESTATAL", "SEDE_ADMINISTRATIVA_CATALOGADA")
+    assert resolver("Ministerio del Interior Inventado").municipio == ""
+
+
+def test_ministerio_hacienda_es_alias_exacto_de_la_sede_canonica():
+    r = resolver("Ministerio de Hacienda", "Fiscalía Provincial de Sevilla")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.evidencia) == (
+        "Madrid", "28079", "Madrid", "Comunidad de Madrid", "SEDE_ADMINISTRATIVA_CATALOGADA")
+    assert resolver("Ministerio de Hacienda Inventado").municipio == ""
+
+
+def test_catalogo_ministerial_es_exacto_y_resuelve_solo_nombres_explicitos():
+    catalogo = json.loads((Path(__file__).parent / "datos" / "sedes_administrativas.v1.json").read_text())
+    nombres = [fila["administracion"] for fila in catalogo["sedes"]
+               if fila["familia_administrativa"] == "MINISTERIO"]
+    nombres += [fila["denominacion"] for fila in catalogo["alias_sedes"]
+                if fila["denominacion"].startswith("Ministerio")]
+    for administracion in nombres:
+        r = resolver(administracion, "Técnico en Sevilla")
+        assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.confianza, r.evidencia) == (
+            "Madrid", "28079", "Madrid", "Comunidad de Madrid", "ALTA", "SEDE_ADMINISTRATIVA_CATALOGADA")
+    for administracion in ("Ministerio Inventado", "Ministerio de Pesca Inventado", "Ministerio de Hacienda Ficticio"):
+        assert resolver(administracion).municipio == ""
+
+
+@pytest.mark.parametrize("administracion", [
+    "Ministerio de Fomento",
+    "Ministerio de Empleo y Seguridad Social",
+    "Ministerio de Sanidad, Servicios Sociales e Igualdad",
+    "Ministerio de Sanidad y Consumo",
+    "Ministerio de Ciencia e Innovación",
+    "Ministerio de Defensa",
+    "Ministerio de Educación y Ciencia",
+    "Ministerio de Ciencia y Tecnología",
+    "Ministerio de Trabajo y Asuntos Sociales",
+    "Ministerio de Administraciones Públicas",
+])
+def test_sedes_ministeriales_catalogadas_son_exactas(administracion):
+    r = resolver(administracion, "Fiscalía Provincial de Sevilla")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.evidencia) == (
+        "Madrid", "28079", "Madrid", "Comunidad de Madrid", "SEDE_ADMINISTRATIVA_CATALOGADA")
+    assert resolver(f"{administracion} Inventado").municipio == ""
+
+
+def test_comunidad_autonoma_exacta_no_infiere_sede():
+    r = resolver("Comunidad Autónoma de Galicia")
+    assert (r.municipio, r.provincia, r.comunidad_autonoma, r.ambito, r.evidencia) == (
+        "", "", "Galicia", "AUTONOMICO", "COMUNIDAD_ADMINISTRACION_EXACTA")
 
 def test_idempotencia():
     r=resolver("Ayuntamiento de Soneja (Soneja, Castellón)"); assert resolver(r.administracion_original).como_dict()==r.como_dict()
@@ -56,6 +121,23 @@ def test_ibiza_y_formentera_incidental_no_activa_la_regla():
 ])
 def test_entidades_territoriales_aprobadas(texto, provincia):
     r=resolver(texto); assert (r.provincia,r.confianza) == (provincia,"ALTA")
+
+
+def test_sedes_aprobadas_son_reglas_exactas_y_no_patrones():
+    csn = resolver("Consejo de Seguridad Nuclear")
+    assert (csn.ambito, csn.tipo_entidad, csn.municipio, csn.provincia, csn.comunidad_autonoma,
+            csn.confianza, csn.evidencia) == (
+        "ESTATAL", "ESTATAL", "Madrid", "Madrid", "Comunidad de Madrid", "ALTA",
+        "SEDE_ADMINISTRATIVA_CATALOGADA",
+    )
+    fortuny = resolver("Consorcio de Teatro Fortuny")
+    assert (fortuny.ambito, fortuny.tipo_entidad, fortuny.municipio, fortuny.provincia,
+            fortuny.comunidad_autonoma, fortuny.confianza, fortuny.evidencia) == (
+        "LOCAL", "SUPRAMUNICIPAL", "Reus", "Tarragona", "Cataluña/Catalunya", "ALTA",
+        "ENTIDAD_TERRITORIAL_CATALOGADA",
+    )
+    assert resolver("Consejo de Seguridad Radiológica").municipio == ""
+    assert resolver("Consorcio de Teatro Municipal").municipio == ""
 
 @pytest.mark.parametrize("texto,provincia,comunidad", [("Cabildo Insular de Lanzarote","Lanzarote","Canarias"),("Consejo Insular de Aguas de Gran Canaria","Gran Canaria","Canarias"),("Mancomunidad Migjorn de Mallorca","Mallorca","Illes Balears")])
 def test_territorios_insulares_aprobados(texto,provincia,comunidad):

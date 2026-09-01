@@ -161,6 +161,19 @@ Para ejecutar las pruebas:
 python -m pytest -q
 ```
 
+### Catálogo geográfico insular v5
+
+La provincia administrativa y el territorio insular son dimensiones distintas.
+`municipios_territorios_insulares` registra el territorio administrado por cada
+municipio oficial mediante su código INE; `oposiciones_territorios_insulares`
+solo registra islas acreditadas explícitamente para una convocatoria y no se
+rellena a partir del municipio. El catálogo versionado se construye desde las
+fuentes institucionales indicadas en
+`datos/municipios_territorios_insulares.v1.json`. Teguise se relaciona con
+Lanzarote y La Graciosa por la decisión administrativa aprobada; La Graciosa no
+es un municipio. Ibiza-Formentera es una agrupación histórica para oposiciones,
+no un destino de relaciones municipales.
+
 ## 📄 LICENCIA
 
 Este proyecto está licenciado bajo la Licencia Pública General Affero de GNU, versión 3.0 (AGPL-3.0). Puedes consultar sus términos en `licence.md` o en el siguiente enlace:

@@ -21,7 +21,8 @@ def recalcular(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite", dry_r
     ruta=Path(ruta_bd); con=base_datos.conectar(ruta,readonly=True)
     try:
         meta=dict(con.execute("SELECT clave,valor FROM metadata"))
-        if meta.get("schema_version") != "4": raise RuntimeError("El recálculo requiere schema_version 4")
+        if meta.get("schema_version") not in {"4", "5"}:
+            raise RuntimeError("El recálculo requiere schema_version 4 o 5")
         cambios=propuestas(con)
     finally: con.close()
     transformaciones=Counter((campo, anterior, nuevo) for _,cs,actual in cambios for campo,nuevo in cs.items() for anterior in (actual[0] if campo=="turno" else actual[1],))

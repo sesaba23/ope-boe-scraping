@@ -81,6 +81,7 @@ def importar(conexion, hojas, *, progreso=True):
     """Inserta las hojas en una única transacción; devuelve conteos."""
     publicaciones = hojas["Publicaciones"]
     oposiciones = hojas["Oposiciones"]
+    from migrar_esquema_sqlite import referencias_administrativas
     conteos = {}
     with base_datos.transaccion(conexion):
         filas = (
@@ -106,6 +107,7 @@ def importar(conexion, hojas, *, progreso=True):
         filas = (
             (num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
              normalizar_fecha(fecha), fecha, publicacion, enlace, municipio, provincia,
+             *referencias_administrativas(conexion, municipio, provincia, ""),
              latitud, longitud, habitantes, publicacion_id, version, analisis)
             for num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
             fecha, publicacion, enlace, municipio, provincia, latitud, longitud,
@@ -120,9 +122,10 @@ def importar(conexion, hojas, *, progreso=True):
             """INSERT INTO oposiciones(
                 num_plazas, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema,
                 turno, fecha_boe, fecha_boe_original, publicacion, enlace, municipio,
-                provincia, latitud, longitud, habitantes, publicacion_id,
+                provincia, municipio_codigo_ine, provincia_id, comunidad_id,
+                latitud, longitud, habitantes, publicacion_id,
                 version_extractor, fecha_analisis
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             filas,
         )
         conteos["oposiciones"] = len(oposiciones)
@@ -294,6 +297,26 @@ def migrar(ruta_excel="BOE-oposiciones.xlsx", destino="datos/boe.db", *, recrear
         conexion = base_datos.conectar(temporal)
         try:
             base_datos.crear_esquema(conexion)
+            # Una base creada directamente ya nace con las tablas maestras v5
+            # cargadas desde las mismas fuentes versionadas que usa la migración.
+            from migrar_esquema_sqlite import importar_catalogos_administrativos
+            importar_catalogos_administrativos(conexion)
+            from migrar_esquema_sqlite import (
+                TERRITORIOS_INSULARES, _cargar_catalogo_municipios_territorios_insulares,
+                _normalizar,
+            )
+            # Las tablas nuevas se cargan con el mismo catálogo manual versionado
+            # que la migración v5; no se infieren relaciones municipales.
+            conexion.execute("INSERT INTO catalogos_geograficos(nombre,version,fuente) VALUES (?,?,?)", ("territorios_insulares", "decisiones-insulares-v1", "Decisiones manuales aprobadas; relación Teguise–La Graciosa aprobada"))
+            catalogo_id = conexion.execute("SELECT catalogo_id FROM catalogos_geograficos WHERE nombre='territorios_insulares'").fetchone()[0]
+            provincias = dict(conexion.execute("SELECT nombre,provincia_id FROM provincias")); comunidades = dict(conexion.execute("SELECT nombre,comunidad_id FROM comunidades_autonomas"))
+            conexion.executemany("INSERT INTO territorios_insulares(nombre,nombre_normalizado,clase,provincia_id,comunidad_id,catalogo_id) VALUES (?,?,?,?,?,?)", ((n,_normalizar(n),cl,provincias[pr],comunidades[ca],catalogo_id) for n,cl,pr,ca in TERRITORIOS_INSULARES))
+            territorios = dict(conexion.execute("SELECT nombre,territorio_id FROM territorios_insulares"))
+            conexion.executemany("INSERT INTO municipios_territorios_insulares VALUES (?,?,?)", (("35024",territorios["Lanzarote"],catalogo_id),("35024",territorios["La Graciosa"],catalogo_id)))
+            _cargar_catalogo_municipios_territorios_insulares(conexion)
+            # importar() abre su propia transacción; el archivo temporal no se
+            # publica hasta superar toda la auditoría posterior.
+            conexion.commit()
             conteos = importar(conexion, hojas, progreso=progreso)
             base_datos.crear_indices(conexion)
             base_datos.guardar_metadata(conexion, source_excel_hash=hash_excel, data_version=1)

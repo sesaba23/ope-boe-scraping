@@ -7,7 +7,7 @@ import sqlite3
 import pandas as pd
 
 
-ESQUEMA = """
+ESQUEMA_V4 = """
 CREATE TABLE metadata (
     clave TEXT PRIMARY KEY,
     valor TEXT NOT NULL
@@ -86,9 +86,131 @@ CREATE TABLE log_errores (
 );
 """
 
-VERSION_ESQUEMA = "4"
+ESQUEMA_V5 = """
+CREATE TABLE catalogos_geograficos (
+    catalogo_id INTEGER PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    version TEXT NOT NULL,
+    fuente TEXT NOT NULL,
+    fecha_referencia TEXT,
+    sha256 TEXT,
+    UNIQUE (nombre, version)
+);
 
-INDICES = """
+CREATE TABLE comunidades_autonomas (
+    comunidad_id INTEGER PRIMARY KEY,
+    nombre TEXT NOT NULL UNIQUE,
+    nombre_normalizado TEXT NOT NULL UNIQUE,
+    es_ciudad_autonoma INTEGER NOT NULL CHECK (es_ciudad_autonoma IN (0, 1)),
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id)
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE provincias (
+    provincia_id TEXT PRIMARY KEY,
+    nombre TEXT NOT NULL UNIQUE,
+    nombre_normalizado TEXT NOT NULL UNIQUE,
+    comunidad_id INTEGER NOT NULL REFERENCES comunidades_autonomas(comunidad_id)
+        ON DELETE RESTRICT,
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id)
+        ON DELETE RESTRICT,
+    UNIQUE (provincia_id, comunidad_id)
+);
+
+CREATE TABLE municipios (
+    codigo_ine TEXT PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    nombre_normalizado TEXT NOT NULL,
+    provincia_id TEXT,
+    comunidad_id INTEGER NOT NULL REFERENCES comunidades_autonomas(comunidad_id)
+        ON DELETE RESTRICT,
+    latitud REAL,
+    longitud REAL,
+    altitud REAL,
+    habitantes INTEGER,
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id)
+        ON DELETE RESTRICT,
+    FOREIGN KEY (provincia_id, comunidad_id)
+        REFERENCES provincias(provincia_id, comunidad_id)
+        ON DELETE RESTRICT,
+    UNIQUE (nombre_normalizado, provincia_id)
+);
+
+ALTER TABLE oposiciones ADD COLUMN municipio_codigo_ine TEXT
+    REFERENCES municipios(codigo_ine) ON DELETE RESTRICT;
+ALTER TABLE oposiciones ADD COLUMN provincia_id TEXT
+    REFERENCES provincias(provincia_id) ON DELETE RESTRICT;
+ALTER TABLE oposiciones ADD COLUMN comunidad_id INTEGER
+    REFERENCES comunidades_autonomas(comunidad_id) ON DELETE RESTRICT;
+
+CREATE TABLE territorios_insulares (
+    territorio_id INTEGER PRIMARY KEY,
+    nombre TEXT NOT NULL UNIQUE,
+    nombre_normalizado TEXT NOT NULL UNIQUE,
+    clase TEXT NOT NULL CHECK (clase IN ('ISLA', 'AGRUPACION_INSULAR_HISTORICA')),
+    provincia_id TEXT NOT NULL REFERENCES provincias(provincia_id) ON DELETE RESTRICT,
+    comunidad_id INTEGER NOT NULL REFERENCES comunidades_autonomas(comunidad_id) ON DELETE RESTRICT,
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id) ON DELETE RESTRICT
+);
+CREATE TABLE municipios_territorios_insulares (
+    codigo_ine TEXT NOT NULL REFERENCES municipios(codigo_ine) ON DELETE RESTRICT,
+    territorio_id INTEGER NOT NULL REFERENCES territorios_insulares(territorio_id) ON DELETE RESTRICT,
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id) ON DELETE RESTRICT,
+    PRIMARY KEY (codigo_ine, territorio_id)
+);
+CREATE TABLE oposiciones_territorios_insulares (
+    oposicion_id INTEGER NOT NULL REFERENCES oposiciones(oposicion_id) ON DELETE CASCADE,
+    territorio_id INTEGER NOT NULL REFERENCES territorios_insulares(territorio_id) ON DELETE RESTRICT,
+    evidencia TEXT NOT NULL,
+    version_resolutor TEXT NOT NULL,
+    PRIMARY KEY (oposicion_id, territorio_id)
+);
+
+CREATE TABLE sedes_administraciones (
+    sede_id INTEGER PRIMARY KEY,
+    administracion_canonica TEXT NOT NULL,
+    administracion_normalizada TEXT NOT NULL UNIQUE,
+    municipio_codigo_ine TEXT NOT NULL REFERENCES municipios(codigo_ine) ON DELETE RESTRICT,
+    familia_administrativa TEXT,
+    tipo_sede TEXT NOT NULL CHECK (tipo_sede IN ('INSTITUCIONAL', 'TERRITORIAL')),
+    confianza TEXT NOT NULL CHECK (confianza IN ('ALTA', 'MEDIA')),
+    evidencia TEXT NOT NULL CHECK (evidencia = 'SEDE_ADMINISTRATIVA_CATALOGADA'),
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id) ON DELETE RESTRICT,
+    vigente_desde TEXT,
+    vigente_hasta TEXT
+);
+CREATE TABLE alias_sedes_administraciones (
+    alias_id INTEGER PRIMARY KEY,
+    sede_id INTEGER NOT NULL REFERENCES sedes_administraciones(sede_id) ON DELETE RESTRICT,
+    denominacion TEXT NOT NULL,
+    denominacion_normalizada TEXT NOT NULL UNIQUE,
+    tipo_relacion TEXT NOT NULL CHECK (tipo_relacion IN ('ACTUAL', 'DENOMINACION_HISTORICA', 'CAMBIO_DENOMINACION', 'REORGANIZACION')),
+    fecha_desde TEXT,
+    fecha_hasta TEXT,
+    fuente TEXT NOT NULL,
+    confianza TEXT NOT NULL CHECK (confianza IN ('ALTA', 'MEDIA'))
+);
+CREATE TABLE universidades (
+    universidad_id INTEGER PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    nombre_normalizado TEXT NOT NULL UNIQUE,
+    municipio_codigo_ine TEXT REFERENCES municipios(codigo_ine) ON DELETE RESTRICT,
+    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id) ON DELETE RESTRICT
+);
+CREATE TABLE alias_universidades (
+    alias_id INTEGER PRIMARY KEY,
+    universidad_id INTEGER NOT NULL REFERENCES universidades(universidad_id) ON DELETE RESTRICT,
+    denominacion TEXT NOT NULL,
+    denominacion_normalizada TEXT NOT NULL UNIQUE
+);
+ALTER TABLE oposiciones ADD COLUMN universidad_id INTEGER REFERENCES universidades(universidad_id) ON DELETE RESTRICT;
+"""
+
+ESQUEMA = ESQUEMA_V4 + ESQUEMA_V5
+
+VERSION_ESQUEMA = "5"
+
+INDICES_V4 = """
 CREATE INDEX ix_oposiciones_fecha ON oposiciones(fecha_boe);
 CREATE INDEX ix_oposiciones_administracion ON oposiciones(administracion);
 CREATE INDEX ix_oposiciones_administracion_normalizada ON oposiciones(administracion_normalizada);
@@ -102,6 +224,20 @@ CREATE INDEX ix_oposiciones_clave_deduplicacion ON oposiciones(
     turno, sistema, escala, subescala, clase
 );
 CREATE INDEX ix_publicaciones_fecha ON publicaciones(fecha_boe);
+"""
+
+INDICES = INDICES_V4 + """
+CREATE INDEX ix_oposiciones_municipio_ine ON oposiciones(municipio_codigo_ine);
+CREATE INDEX ix_oposiciones_provincia_id ON oposiciones(provincia_id);
+CREATE INDEX ix_oposiciones_comunidad_id ON oposiciones(comunidad_id);
+CREATE INDEX ix_municipios_provincia ON municipios(provincia_id);
+CREATE INDEX ix_municipios_comunidad ON municipios(comunidad_id);
+CREATE INDEX ix_territorios_provincia ON territorios_insulares(provincia_id);
+CREATE INDEX ix_mti_territorio ON municipios_territorios_insulares(territorio_id);
+CREATE INDEX ix_oti_territorio ON oposiciones_territorios_insulares(territorio_id);
+CREATE INDEX ix_sedes_municipio ON sedes_administraciones(municipio_codigo_ine);
+CREATE INDEX ix_alias_sedes_sede ON alias_sedes_administraciones(sede_id);
+CREATE INDEX ix_oposiciones_universidad ON oposiciones(universidad_id);
 """
 
 
@@ -291,20 +427,28 @@ def insertar_oposiciones(conexion, df):
                 "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID",
                 "Version_extractor", "Fecha_analisis"]
     from resolucion_geografica import resolver_administracion_geografia
+    from migrar_esquema_sqlite import normalizar_referencias_administrativas
     conexion.executemany(
         """INSERT INTO oposiciones(
             num_plazas, puesto, puesto_normalizado, administracion, administracion_normalizada, ambito, tipo_entidad, escala, subescala, clase, sistema, turno,
             fecha_boe, fecha_boe_original, publicacion, enlace, municipio, provincia,
             comunidad_autonoma, confianza_geografica, evidencia_geografica, version_resolutor,
+            municipio_codigo_ine, provincia_id, comunidad_id,
             latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         ((num, puesto, normalizar_puesto(puesto), administracion, geo.administracion_normalizada, geo.ambito, geo.tipo_entidad, escala, subescala, clase, normalizar_sistema(sistema), normalizar_turno(turno),
-          fecha(f_boe), f_boe, publicacion, enlace, geo.municipio or municipio, geo.provincia or provincia, geo.comunidad_autonoma,
-          geo.confianza, geo.evidencia, geo.version_catalogo, latitud, longitud, habitantes, publicacion_id, version, analisis)
+          fecha(f_boe), f_boe, publicacion, enlace, municipio_final, referencias[1], referencias[2],
+          geo.confianza, geo.evidencia, geo.version_catalogo, referencias[0], referencias[3], referencias[4],
+          latitud, longitud, habitantes, publicacion_id, version, analisis)
          for num, puesto, administracion, escala, subescala, clase, sistema, turno,
          f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
          habitantes, publicacion_id, version, analisis in filas(df, columnas)
-         for geo in (resolver_administracion_geografia(administracion, puesto),)),
+         for geo in (resolver_administracion_geografia(administracion, puesto),)
+         for municipio_final in (geo.municipio or municipio,)
+         for referencias in (normalizar_referencias_administrativas(
+             conexion, municipio_final, geo.provincia or provincia,
+             geo.comunidad_autonoma,
+         ),)),
     )
 
 

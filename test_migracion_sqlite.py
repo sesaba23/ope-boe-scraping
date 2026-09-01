@@ -8,7 +8,7 @@ import exportar_excel
 import migrar_excel_sqlite as migracion
 
 
-def _crear_excel(ruta, *, administracion=None):
+def _crear_excel(ruta, *, administracion=None, municipio=None, provincia=None):
     busquedas = pd.DataFrame({"Código": ["codigo"]})
     publicaciones = pd.DataFrame({
         "Publicacion_ID": ["BOE-A-1"], "Enlace": ["https://x"],
@@ -20,7 +20,7 @@ def _crear_excel(ruta, *, administracion=None):
         "Num_plazas": ["la"], "Puesto": ["Auxiliar"], "Administración": [administracion],
         "Escala": ["--"], "Subescala": ["--"], "Clase": ["--"], "Sistema": ["--"],
         "Turno": ["--"], "Fecha_boe": ["20260101"], "Publicación": [None],
-        "Enlace": ["https://x"], "Municipio": [None], "Provincia": [None],
+        "Enlace": ["https://x"], "Municipio": [municipio], "Provincia": [provincia],
         "Latitud": [None], "Longitud": [None], "Habitantes": [None],
         "Publicacion_ID": ["BOE-A-1"], "Version_extractor": ["1"],
         "Fecha_analisis": [None],
@@ -67,6 +67,23 @@ def test_no_reemplaza_base_existente_ni_deja_destino_ante_error(tmp_path, monkey
     assert not destino.exists()
 
 
+def test_base_v5_nueva_carga_catalogos_y_referencias_administrativas(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    excel, destino = tmp_path / "origen.xlsx", tmp_path / "datos" / "boe.db"
+    _crear_excel(excel, municipio="Palma", provincia="Mallorca")
+    migracion.migrar(excel, destino, progreso=False)
+    con = base_datos.conectar(destino, readonly=True)
+    try:
+        fila = con.execute("""SELECT o.municipio,o.provincia,m.codigo_ine,p.nombre,c.nombre
+                              FROM oposiciones o
+                              LEFT JOIN municipios m ON m.codigo_ine=o.municipio_codigo_ine
+                              LEFT JOIN provincias p ON p.provincia_id=o.provincia_id
+                              LEFT JOIN comunidades_autonomas c ON c.comunidad_id=o.comunidad_id""").fetchone()
+        assert fila == ("Palma", "Mallorca", "07040", "Illes Balears", "Illes Balears")
+    finally:
+        con.close()
+
+
 def test_fingerprint_detecta_diferencia(tmp_path):
     excel = tmp_path / "origen.xlsx"
     _crear_excel(excel)
@@ -102,9 +119,11 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
                 "SELECT name FROM sqlite_master WHERE type='table'"
             )
         }
-        assert metadata["schema_version"] == "4"
+        assert metadata["schema_version"] == "5"
         assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
         assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas
+        assert conexion.execute("SELECT count(*) FROM comunidades_autonomas").fetchone()[0] == 19
+        assert conexion.execute("SELECT count(*) FROM provincias").fetchone()[0] == 50
         assert base_datos.integrity_check(conexion) == ["ok"]
         assert base_datos.foreign_key_check(conexion) == []
     finally:

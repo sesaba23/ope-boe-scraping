@@ -1,0 +1,40 @@
+{
+  "version": "municipios-territorios-insulares-v1",
+  "fecha_consulta": "2026-08-31",
+  "fuentes": {
+    "IBESTAT": {
+      "organismo": "Institut d'Estadística de les Illes Balears (IBESTAT)",
+      "url": "https://ibestat.es/edatos/apis/statistical-resources/v1.0/datasets/IBESTAT/000199A_000098/1.0.csv",
+      "descripcion": "Tabla estadística oficial con desglose Illes Balears, isla y municipio."
+    },
+    "ISTAC": {
+      "organismo": "Instituto Canario de Estadística (ISTAC)",
+      "url": "https://www3.gobiernodecanarias.org/istac/statistical-visualizer/visualizer/data.html?agencyId=ISTAC&resourceId=E30245A_000002&resourceType=dataset&version=1.2",
+      "descripcion": "Banco de datos oficial: municipios por islas de Canarias."
+    },
+    "DECISION_MANUAL": {
+      "organismo": "Proyecto BOE",
+      "url": "decision-manual-aprobada:Teguise-La-Graciosa",
+      "descripcion": "La Graciosa depende administrativamente de Teguise; no constituye un municipio."
+    }
+  },
+  "relaciones": {
+    "Mallorca": ["07001", "07003", "07004", "07005", "07006", "07007", "07008", "07009", "07010", "07011", "07012", "07013", "07014", "07016", "07017", "07018", "07019", "07020", "07021", "07022", "07025", "07027", "07028", "07029", "07030", "07031", "07033", "07034", "07035", "07036", "07038", "07039", "07040", "07041", "07042", "07043", "07044", "07045", "07047", "07049", "07051", "07053", "07055", "07056", "07057", "07058", "07059", "07060", "07061", "07062", "07063", "07065", "07901"],
+    "Menorca": ["07002", "07015", "07023", "07032", "07037", "07052", "07064", "07902"],
+    "Ibiza/Eivissa": ["07026", "07046", "07048", "07050", "07054"],
+    "Formentera": ["07024"],
+    "Gran Canaria": ["35001", "35002", "35005", "35006", "35008", "35009", "35011", "35012", "35013", "35016", "35019", "35020", "35021", "35022", "35023", "35025", "35026", "35027", "35031", "35032", "35033"],
+    "Lanzarote": ["35004", "35010", "35018", "35024", "35028", "35029", "35034"],
+    "Fuerteventura": ["35003", "35007", "35014", "35015", "35017", "35030"],
+    "Tenerife": ["38001", "38004", "38005", "38006", "38010", "38011", "38012", "38015", "38017", "38018", "38019", "38020", "38022", "38023", "38025", "38026", "38028", "38031", "38032", "38034", "38035", "38038", "38039", "38040", "38041", "38042", "38043", "38044", "38046", "38051", "38052"],
+    "La Palma": ["38007", "38008", "38009", "38014", "38016", "38024", "38027", "38029", "38030", "38033", "38037", "38045", "38047", "38053"],
+    "La Gomera": ["38002", "38003", "38021", "38036", "38049", "38050"],
+    "El Hierro": ["38013", "38048", "38901"],
+    "La Graciosa": ["35024"]
+  },
+  "procedencia_por_territorio": {
+    "Mallorca": "IBESTAT", "Menorca": "IBESTAT", "Ibiza/Eivissa": "IBESTAT", "Formentera": "IBESTAT",
+    "Gran Canaria": "ISTAC", "Lanzarote": "ISTAC", "Fuerteventura": "ISTAC", "Tenerife": "ISTAC", "La Palma": "ISTAC", "La Gomera": "ISTAC", "El Hierro": "ISTAC",
+    "La Graciosa": "DECISION_MANUAL"
+  }
+}
