@@ -17,6 +17,7 @@ RUTA_PROVINCIAS = RAIZ / "datos" / "provincias.csv"
 RUTA_MUNICIPIOS_METADATA = RAIZ / "datos" / "municipios_oficial.metadata.json"
 RUTA_MUNICIPIOS_TERRITORIOS_INSULARES = RAIZ / "datos" / "municipios_territorios_insulares.v1.json"
 RUTA_SEDES_ADMINISTRATIVAS = RAIZ / "datos" / "sedes_administrativas.v1.json"
+RUTA_MUNICIPIOS_HISTORICOS = RAIZ / "datos" / "municipios_historicos.v1.json"
 
 PROVINCIAS_ANALITICAS = {
     "Mallorca": "Illes Balears", "Menorca": "Illes Balears",
@@ -286,6 +287,85 @@ def normalizar_referencias_administrativas(con, municipio, provincia, comunidad,
         comunidad_id = comunidad_id_anterior
     return (codigo_ine, provincia_administrativa_canon(con, provincia, provincia_id, comunidad_id),
             comunidad_autonoma_canon(con, comunidad, comunidad_id), provincia_id, comunidad_id)
+
+
+def migrar_v5_v6_municipios_historicos(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
+    """Schema 6: catálogo mínimo de municipios extinguidos, sin tocar el maestro vigente."""
+    ruta_bd = Path(ruta_bd)
+    metadata, columnas = _estado(ruta_bd)
+    con = base_datos.conectar(ruta_bd, readonly=True)
+    try:
+        tablas = {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    finally:
+        con.close()
+    requeridas = {"municipios_historicos", "denominaciones_municipales_historicas"}
+    if metadata.get("schema_version") == "6":
+        if not requeridas <= tablas or "municipio_historico_id" not in columnas:
+            raise RuntimeError("Metadata v6 sin estructura municipal histórica")
+        return {"actualizada": False, "schema_version": "6", "data_version": metadata["data_version"]}
+    if metadata.get("schema_version") != "5" or "municipio_historico_id" in columnas:
+        raise RuntimeError("La base no es un esquema v5 migrable a v6 histórico")
+    datos = json.loads(RUTA_MUNICIPIOS_HISTORICOS.read_text(encoding="utf-8"))
+    backup = base_datos.crear_backup(ruta_bd, directorio_backup)
+    inicio = time.perf_counter()
+    con = base_datos.conectar(ruta_bd)
+    try:
+        with base_datos.transaccion(con):
+            con.executescript("""
+                CREATE TABLE municipios_historicos (
+                    municipio_historico_id INTEGER PRIMARY KEY,
+                    codigo_ine TEXT NOT NULL,
+                    nombre TEXT NOT NULL,
+                    nombre_normalizado TEXT NOT NULL,
+                    provincia_id TEXT NOT NULL REFERENCES provincias(provincia_id) ON DELETE RESTRICT,
+                    comunidad_id INTEGER NOT NULL REFERENCES comunidades_autonomas(comunidad_id) ON DELETE RESTRICT,
+                    fecha_desde TEXT, fecha_hasta TEXT, codigo_ine_sucesor TEXT,
+                    tipo_alteracion TEXT NOT NULL, fuente TEXT NOT NULL,
+                    version_catalogo TEXT NOT NULL,
+                    catalogo_id INTEGER NOT NULL REFERENCES catalogos_geograficos(catalogo_id) ON DELETE RESTRICT,
+                    UNIQUE(codigo_ine, nombre_normalizado, fecha_desde)
+                );
+                CREATE TABLE denominaciones_municipales_historicas (
+                    denominacion_historica_id INTEGER PRIMARY KEY,
+                    municipio_historico_id INTEGER REFERENCES municipios_historicos(municipio_historico_id) ON DELETE RESTRICT,
+                    municipio_codigo_ine TEXT REFERENCES municipios(codigo_ine) ON DELETE RESTRICT,
+                    denominacion TEXT NOT NULL, denominacion_normalizada TEXT NOT NULL,
+                    fecha_desde TEXT, fecha_hasta TEXT,
+                    clase TEXT NOT NULL CHECK(clase IN ('OFICIAL','ALIAS')), fuente TEXT NOT NULL,
+                    CHECK((municipio_historico_id IS NOT NULL) != (municipio_codigo_ine IS NOT NULL))
+                );
+                ALTER TABLE oposiciones ADD COLUMN municipio_historico_id INTEGER
+                    REFERENCES municipios_historicos(municipio_historico_id) ON DELETE RESTRICT;
+                CREATE INDEX ix_oposiciones_municipio_historico ON oposiciones(municipio_historico_id);
+                CREATE INDEX ix_denominaciones_historicas_busqueda ON denominaciones_municipales_historicas(denominacion_normalizada,fecha_desde,fecha_hasta);
+            """)
+            fuente = datos["fuente"]
+            con.execute("INSERT INTO catalogos_geograficos(nombre,version,fuente,fecha_referencia,sha256) VALUES (?,?,?,?,?)",
+                        ("municipios_historicos", datos["version"], fuente, "2016-10-20", _hash(RUTA_MUNICIPIOS_HISTORICOS)))
+            catalogo_id = con.execute("SELECT catalogo_id FROM catalogos_geograficos WHERE nombre=? AND version=?",
+                                      ("municipios_historicos", datos["version"])).fetchone()[0]
+            for fila in datos["municipios"]:
+                con.execute("""INSERT INTO municipios_historicos(codigo_ine,nombre,nombre_normalizado,provincia_id,comunidad_id,
+                    fecha_desde,fecha_hasta,codigo_ine_sucesor,tipo_alteracion,fuente,version_catalogo,catalogo_id)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    (fila["codigo_ine"], fila["nombre"], _normalizar(fila["nombre"]), fila["provincia_id"], fila["comunidad_id"],
+                     fila.get("fecha_desde"), fila.get("fecha_hasta"), fila.get("codigo_ine_sucesor"), fila["tipo_alteracion"],
+                     fuente, datos["version"], catalogo_id))
+                hid = con.execute("SELECT municipio_historico_id FROM municipios_historicos WHERE codigo_ine=?", (fila["codigo_ine"],)).fetchone()[0]
+                con.execute("""INSERT INTO denominaciones_municipales_historicas(municipio_historico_id,denominacion,
+                    denominacion_normalizada,fecha_desde,fecha_hasta,clase,fuente) VALUES (?,?,?,?,?,'OFICIAL',?)""",
+                    (hid, fila["nombre"], _normalizar(fila["nombre"]), fila.get("fecha_desde"), fila.get("fecha_hasta"), fuente))
+            # El catálogo y la columna habilitan la resolución; el contenido de
+            # oposiciones cambia en el recálculo posterior y ése es el único
+            # incremento de data_version de esta etapa.
+            base_datos.guardar_metadata(con, schema_version=6, data_version=int(metadata["data_version"]) )
+            if base_datos.integrity_check(con) != ["ok"] or base_datos.foreign_key_check(con):
+                raise RuntimeError("El catálogo histórico no supera integridad")
+    finally:
+        con.close()
+    return {"actualizada": True, "backup": str(backup), "schema_version": "6",
+            "data_version": metadata["data_version"], "segundos": time.perf_counter()-inicio,
+            "municipios_historicos": len(datos["municipios"])}
 
 
 def migrar_v4_v5(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
@@ -1010,7 +1090,7 @@ def main(argv=None):
     parser.add_argument("--directorio-backup", default="backups/sqlite")
     args = parser.parse_args(argv)
     version = _estado(args.base_datos)[0].get("schema_version")
-    funciones = {"2": migrar_v2_v3, "3": migrar_v3_v4, "4": migrar_v4_v5, "5": migrar_v5_territorios_insulares}
+    funciones = {"2": migrar_v2_v3, "3": migrar_v3_v4, "4": migrar_v4_v5, "5": migrar_v5_v6_municipios_historicos}
     if version not in funciones:
         raise RuntimeError(f"No hay migración disponible desde schema_version {version!r}")
     print(json.dumps(funciones[version](args.base_datos, args.directorio_backup), ensure_ascii=False, indent=2))

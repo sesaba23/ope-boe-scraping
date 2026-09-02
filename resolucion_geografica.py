@@ -157,6 +157,7 @@ class ResolucionGeografica:
     municipio: str = ""; provincia: str = ""; comunidad_autonoma: str = ""; codigo_ine: str = ""
     confianza: str = "NO_ENCONTRADO"; evidencia: str = ""; regla: str = ""; version_catalogo: str = VERSION_CATALOGO
     conflicto: str = ""
+    codigo_historico: str = ""
     def como_dict(self): return asdict(self)
 
 class CatalogoGeografico:
@@ -168,7 +169,11 @@ class CatalogoGeografico:
         aliases = pd.read_csv(ruta_alias, sep=";", dtype=str).fillna("").to_dict("records")
         self.provincias = {}
         self.municipios_por_nombre = defaultdict(list)
+        self.aliases_municipales = defaultdict(list)
         self.codigo = {}
+        ruta_historicos = raiz / "datos" / "municipios_historicos.v1.json"
+        datos_historicos = json.loads(ruta_historicos.read_text(encoding="utf-8")) if ruta_historicos.is_file() else {"municipios": []}
+        self.municipios_historicos = datos_historicos.get("municipios", [])
         for fila in self.municipios:
             self.codigo[str(fila["Codigo_INE"]).zfill(5)] = fila
             for v in _variantes_nombre_catalogo(fila["Municipio"]): self.municipios_por_nombre[clave(v)].append(fila)
@@ -176,7 +181,9 @@ class CatalogoGeografico:
         self.provincias.update({clave(k): v for k,v in PROVINCIAS_ALIAS.items()})
         for fila in aliases:
             if fila.get("Confianza") == "ALTA" and str(fila.get("Codigo_INE", "")).zfill(5) in self.codigo:
-                self.municipios_por_nombre[clave(fila["Alias"])].append(self.codigo[str(fila["Codigo_INE"]).zfill(5)])
+                municipio = self.codigo[str(fila["Codigo_INE"]).zfill(5)]
+                self.municipios_por_nombre[clave(fila["Alias"])].append(municipio)
+                self.aliases_municipales[clave(fila["Alias"])].append(municipio)
 
     def provincia(self, texto): return self.provincias.get(clave(texto.strip(" ,.;")))
     def municipio(self, texto, provincia=""):
@@ -184,11 +191,44 @@ class CatalogoGeografico:
         if provincia: candidatos = {k:v for k,v in candidatos.items() if v["Provincia"] == provincia}
         return next(iter(candidatos.values())) if len(candidatos) == 1 else None
 
+    def municipio_alias(self, texto):
+        candidatos = {(x["Codigo_INE"], x["Municipio"]): x for x in self.aliases_municipales.get(clave(texto), [])}
+        return next(iter(candidatos.values())) if len(candidatos) == 1 else None
+
+    def municipio_historico(self, texto, provincia, fecha_boe):
+        """Devuelve sólo una identidad histórica válida en la fecha indicada."""
+        if not fecha_boe:
+            return None
+        candidatos = [x for x in self.municipios_historicos
+                      if clave(x["nombre"]) == clave(texto)
+                      and (not provincia or x["provincia_id"] == self._provincia_id(provincia))
+                      and (not x.get("fecha_desde") or fecha_boe >= x["fecha_desde"])
+                      and (not x.get("fecha_hasta") or fecha_boe <= x["fecha_hasta"])]
+        return candidatos[0] if len(candidatos) == 1 else None
+
+    def _provincia_id(self, provincia):
+        fila = next((x for x in self.municipios if x["Provincia"] == provincia), None)
+        return str(fila["Codigo_INE"]).zfill(5)[:2] if fila else ""
+
 _CATALOGO = None
 def catalogo():
     global _CATALOGO
     if _CATALOGO is None: _CATALOGO = CatalogoGeografico()
     return _CATALOGO
+
+@lru_cache(maxsize=1)
+def _municipios_por_territorio_insular():
+    """Códigos municipales compatibles con cada territorio analítico insular."""
+    ruta = Path(__file__).resolve().parent / "datos" / "municipios_territorios_insulares.v1.json"
+    relaciones = json.loads(ruta.read_text(encoding="utf-8"))["relaciones"]
+    return {territorio: {str(codigo).zfill(5) for codigo in codigos}
+            for territorio, codigos in relaciones.items()}
+
+def _provincia_contextual_compatible(provincia, candidato):
+    """Acepta una isla analítica sólo para municipios incluidos en su catálogo."""
+    if provincia == candidato["Provincia"]:
+        return True
+    return str(candidato["Codigo_INE"]).zfill(5) in _municipios_por_territorio_insular().get(provincia, set())
 
 def _ultimo_parentesis(texto):
     valores = re.findall(r"\(([^()]*)\)", texto or "")
@@ -212,7 +252,7 @@ def _limpiar(admin, territorial):
     if territorial: valor=re.sub(r"\s*\([^()]*\)\s*$","",valor).strip(" ,.;")
     return valor
 
-def resolver_administracion_geografia(administracion, puesto="", *, _catalogo=None):
+def resolver_administracion_geografia(administracion, puesto="", *, fecha_boe="", _catalogo=None):
     """Resuelve sólo evidencias exactas; no persiste ni modifica sus argumentos."""
     c=_catalogo or catalogo(); admin=str(administracion or "").strip(); par=_ultimo_parentesis(admin); k=clave(par)
     ambito,tipo=_ambito_tipo(admin); municipio=provincia=comunidad=codigo=""; evidencia=regla=""; confianza="NO_ENCONTRADO"; territorial=False
@@ -288,12 +328,24 @@ def resolver_administracion_geografia(administracion, puesto="", *, _catalogo=No
         )
         if re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+de\s+la\s+", admin, re.I): nombre="La "+nombre
         elif re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+del\s+", admin, re.I): nombre="El "+nombre
+        historico = c.municipio_historico(nombre, provincia, fecha_boe)
+        if historico:
+            provincia_fila = next(x for x in c.municipios if str(x["Codigo_INE"]).zfill(5)[:2] == historico["provincia_id"])
+            municipio, provincia, comunidad = historico["nombre"], provincia_fila["Provincia"], provincia_fila["Comunidad"]
+            confianza, evidencia, regla = "ALTA", "MUNICIPIO_HISTORICO", "municipio_historico_fecha"
+            return ResolucionGeografica(admin, _limpiar(admin, territorial), ambito, tipo, municipio, provincia,
+                                        comunidad, "", confianza, evidencia, regla, VERSION_CATALOGO,
+                                        "", historico["codigo_ine"])
         m=c.municipio(nombre, provincia)
+        if not m and provincia:
+            candidato_sin_provincia = c.municipio_alias(nombre)
+            if candidato_sin_provincia and _provincia_contextual_compatible(provincia, candidato_sin_provincia):
+                m = candidato_sin_provincia
         if m:
-            if provincia and provincia != m["Provincia"]:
+            if provincia and not _provincia_contextual_compatible(provincia, m):
                 return ResolucionGeografica(admin,_limpiar(admin,territorial),ambito,tipo,confianza="AMBIGUA",evidencia="CONFLICTO",regla="conflicto_municipio_provincia",conflicto="municipio/provincia")
             municipio,provincia,comunidad,codigo=m["Municipio"],m["Provincia"],m["Comunidad"],m["Codigo_INE"]; confianza="ALTA"; evidencia="AYUNTAMIENTO"; regla="municipio_exacto"
-        elif provincia and c.municipio(nombre):
+        elif provincia and c.municipio(nombre) and not _provincia_contextual_compatible(provincia, c.municipio(nombre)):
             return ResolucionGeografica(admin,_limpiar(admin,territorial),ambito,tipo,confianza="AMBIGUA",evidencia="CONFLICTO",regla="conflicto_municipio_provincia",conflicto="municipio/provincia")
     if not municipio and not provincia:
         m=c.municipio(admin)

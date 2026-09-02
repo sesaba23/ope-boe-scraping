@@ -289,14 +289,15 @@ def hash_archivo(ruta):
     return digest.hexdigest()
 
 
-def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None):
+def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None, schema_version=None):
     existente = dict(conexion.execute("SELECT clave,valor FROM metadata"))
     ahora = datetime.now().isoformat(timespec="seconds")
     if data_version is None:
         data_version = int(existente.get("data_version", "0"))
     source_hash = source_excel_hash or existente.get("migration_source_hash")
     pares = [
-        ("schema_version", VERSION_ESQUEMA), ("data_version", str(data_version)),
+        ("schema_version", str(schema_version or VERSION_ESQUEMA)),
+        ("data_version", str(data_version)),
         ("updated_at", ahora), ("created_at", existente.get("created_at", ahora)),
     ]
     if source_hash:
@@ -332,7 +333,7 @@ def validar_base_principal(ruta_bd):
             f"SQLite usa schema_version {filas.get('schema_version')}. Ejecute: "
             "python migrar_esquema_sqlite.py --base-datos datos/boe.db"
         )
-    if filas.get("schema_version") != VERSION_ESQUEMA or not obligatorias <= set(filas):
+    if filas.get("schema_version") not in {VERSION_ESQUEMA, "6"} or not obligatorias <= set(filas):
         raise EspejoSQLiteError("SQLite no contiene metadatos válidos. Ejecute migrar_excel_sqlite.py.")
     return filas
 

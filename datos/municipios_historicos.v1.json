@@ -1,0 +1,26 @@
+{
+  "version": "INE-intercensal-2016-10-20-v1",
+  "fuente": "https://www.ine.es/intercensal/intercensal.do?btnBuscarCod=Consultar+selecci%C3%B3n&codigoMunicipio=902&codigoProvincia=36&search=3",
+  "municipios": [
+    {
+      "codigo_ine": "36011",
+      "nombre": "Cerdedo",
+      "provincia_id": "36",
+      "comunidad_id": 13,
+      "fecha_desde": null,
+      "fecha_hasta": "2016-10-19",
+      "codigo_ine_sucesor": "36902",
+      "tipo_alteracion": "FUSION_EXTINCION"
+    },
+    {
+      "codigo_ine": "36012",
+      "nombre": "Cotobade",
+      "provincia_id": "36",
+      "comunidad_id": 13,
+      "fecha_desde": null,
+      "fecha_hasta": "2016-10-19",
+      "codigo_ine_sucesor": "36902",
+      "tipo_alteracion": "FUSION_EXTINCION"
+    }
+  ]
+}

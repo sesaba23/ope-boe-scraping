@@ -36,30 +36,39 @@ def propuestas_universidades(con):
     return resultado
 def propuestas(con):
     resultado=[]
-    es_v5 = "municipio_codigo_ine" in {x[1] for x in con.execute("PRAGMA table_info(oposiciones)")}
+    columnas_bd = {x[1] for x in con.execute("PRAGMA table_info(oposiciones)")}
+    es_v5 = "municipio_codigo_ine" in columnas_bd
+    es_v6 = "municipio_historico_id" in columnas_bd
     columnas = list(CAMPOS)
     if es_v5:
         columnas += ["municipio_codigo_ine", "provincia_id", "comunidad_id"]
-    for oid,admin,puesto,*actual in con.execute("SELECT oposicion_id,administracion,puesto,"+",".join(columnas)+" FROM oposiciones"):
+    if es_v6:
+        columnas += ["municipio_historico_id"]
+    for oid,admin,puesto,*actual in con.execute("SELECT oposicion_id,administracion,puesto,fecha_boe,"+",".join(columnas)+" FROM oposiciones"):
+        fecha_boe, *actual = actual
         actual_texto = actual[:len(CAMPOS)]
         if es_v5 and admin == "Universidades" and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}:
             continue
-        r=resolver_administracion_geografia(admin,puesto)
+        r=resolver_administracion_geografia(admin,puesto,fecha_boe=fecha_boe)
         # La ausencia de evidencia nueva nunca borra una ubicación histórica.
         municipio = r.municipio or actual_texto[3]
         provincia = r.provincia or actual_texto[4]
         comunidad = r.comunidad_autonoma or actual_texto[5]
         referencias = ()
         if es_v5:
-            codigo_anterior, provincia_id_anterior, comunidad_id_anterior = actual[len(CAMPOS):]
-            referencias = normalizar_referencias_administrativas(
-                con, municipio, provincia, comunidad,
-                # El código emitido por una regla exacta (incluido alias) se
-                # valida contra el maestro; no es un fallback ciego.
-                r.codigo_ine or codigo_anterior,
-                provincia_id_anterior, comunidad_id_anterior,
-            )
-            codigo, provincia, comunidad, provincia_id, comunidad_id = referencias
+            codigo_anterior, provincia_id_anterior, comunidad_id_anterior = actual[len(CAMPOS):len(CAMPOS)+3]
+            historico_anterior = actual[-1] if es_v6 else None
+            if r.codigo_historico:
+                fila_historica = con.execute("SELECT municipio_historico_id,provincia_id,comunidad_id FROM municipios_historicos WHERE codigo_ine=?", (r.codigo_historico,)).fetchone()
+                if not fila_historica: raise RuntimeError(f"Municipio histórico ausente: {r.codigo_historico}")
+                historico, provincia_id, comunidad_id = fila_historica
+                codigo = None
+            else:
+                referencias = normalizar_referencias_administrativas(
+                    con, municipio, provincia, comunidad, r.codigo_ine or codigo_anterior,
+                    provincia_id_anterior, comunidad_id_anterior)
+                codigo, provincia, comunidad, provincia_id, comunidad_id = referencias
+                historico = historico_anterior if not codigo else None
         geo = (municipio, provincia, comunidad)
         valores=(r.administracion_normalizada,r.ambito,r.tipo_entidad,*geo,r.confianza,r.evidencia,r.version_catalogo)
         cambios={c:v for c,v,a in zip(CAMPOS,valores,actual_texto) if v != a}
@@ -71,17 +80,19 @@ def propuestas(con):
             ):
                 if valor != anterior:
                     cambios[campo] = valor
+        if es_v6 and historico != actual[-1]:
+            cambios["municipio_historico_id"] = historico
         if cambios: resultado.append((oid,cambios,r))
     return resultado
 def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run=False):
     ruta=Path(ruta_bd); con=base_datos.conectar(ruta,readonly=True)
     try:
         meta=dict(con.execute("SELECT clave,valor FROM metadata"))
-        if meta.get("schema_version") not in {"4", "5"}: raise RuntimeError("El recálculo requiere schema_version 4 o 5")
+        if meta.get("schema_version") not in {"4", "5", "6"}: raise RuntimeError("El recálculo requiere schema_version 4, 5 o 6")
         cambios=propuestas(con)
-        universitarios=propuestas_universidades(con) if meta.get("schema_version") == "5" and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} else []
+        universitarios=propuestas_universidades(con) if meta.get("schema_version") in {"5", "6"} and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} else []
         cambios += universitarios
-        enlaces = relaciones_territoriales_seguras_pendientes(con) if meta.get("schema_version") == "5" else []
+        enlaces = relaciones_territoriales_seguras_pendientes(con) if meta.get("schema_version") in {"5", "6"} else []
     finally: con.close()
     resumen={"dry_run":dry_run,"filas_cambiadas":len(cambios),"por_campo":dict(Counter(c for _,x,_ in cambios for c in x)),"por_confianza":dict(Counter(getattr(r,'confianza','ALTA') for _,_,r in cambios)),"por_evidencia":dict(Counter(getattr(r,'evidencia',r) for _,_,r in cambios)),"conflictos":sum(getattr(r,'confianza','')=="AMBIGUA" for _,_,r in cambios),"relaciones_territorios_nuevas":len(enlaces),"universidades_directas":sum(r=='UNIVERSIDAD_TEXTO_EXPLICITO' for _,_,r in universitarios),"universidades_propagadas":sum(r=='UNIVERSIDAD_PROPAGADA_PUBLICACION' for _,_,r in universitarios)}
     if dry_run or not (cambios or enlaces): return {**resumen,"backup":None,"data_version":meta["data_version"]}
@@ -90,7 +101,7 @@ def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run
         with base_datos.transaccion(con):
             for oid,cam,_ in cambios:
                 con.execute("UPDATE oposiciones SET "+",".join(f"{c}=?" for c in cam)+" WHERE oposicion_id=?",(*cam.values(),oid))
-            if meta.get("schema_version") == "5":
+            if meta.get("schema_version") in {"5", "6"}:
                 for oid,admin,puesto,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior in con.execute("SELECT oposicion_id,administracion,puesto,municipio,provincia,comunidad_autonoma,municipio_codigo_ine,provincia_id,comunidad_id FROM oposiciones"):
                     refs=normalizar_referencias_administrativas(con,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior)
                     codigo, provincia, comunidad, provincia_id, comunidad_id = refs
@@ -98,7 +109,10 @@ def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run
                                    provincia_id=?,comunidad_id=? WHERE oposicion_id=?""",
                                 (codigo,provincia,comunidad,provincia_id,comunidad_id,oid))
                 con.executemany("INSERT OR IGNORE INTO oposiciones_territorios_insulares VALUES (?,?,?,?)", enlaces)
-            base_datos.guardar_metadata(con,data_version=int(meta["data_version"])+1)
+            base_datos.guardar_metadata(
+                con, data_version=int(meta["data_version"])+1,
+                schema_version=meta["schema_version"],
+            )
             if base_datos.integrity_check(con)!=["ok"] or base_datos.foreign_key_check(con): raise RuntimeError("Falla integridad")
     finally: con.close()
     return {**resumen,"backup":str(backup),"data_version":str(int(meta["data_version"])+1)}

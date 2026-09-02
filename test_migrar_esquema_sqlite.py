@@ -64,6 +64,7 @@ def test_migracion_v2_v3_preserva_original_y_normaliza(tmp_path):
     finally:
         conexion.close()
     assert resultado["actualizada"] is True
+    assert resultado["data_version"] == "8"
     assert resultado["auditoria"]["filas"] == 2
     assert resultado["backup"]
 
@@ -217,6 +218,50 @@ def test_migracion_v4_v5_es_idempotente(tmp_path):
     }
     assert base_datos.hash_archivo(ruta) == firma
     assert not (tmp_path / "otros-backups").exists()
+
+
+def test_migracion_v5_v6_crea_catalogo_historico_e_idempotente(tmp_path):
+    ruta = _base_v4(tmp_path / "boe.db")
+    migracion.migrar_v4_v5(ruta, tmp_path / "v5")
+    migracion.migrar_v5_territorios_insulares(ruta, tmp_path / "islas")
+    resultado = migracion.migrar_v5_v6_municipios_historicos(ruta, tmp_path / "v6")
+    con = base_datos.conectar(ruta, readonly=True)
+    try:
+        assert dict(con.execute("SELECT clave,valor FROM metadata"))["schema_version"] == "6"
+        assert con.execute("SELECT codigo_ine,fecha_hasta,codigo_ine_sucesor FROM municipios_historicos ORDER BY codigo_ine").fetchall() == [
+            ("36011", "2016-10-19", "36902"), ("36012", "2016-10-19", "36902")]
+        assert "municipio_historico_id" in {x[1] for x in con.execute("PRAGMA table_info(oposiciones)")}
+        assert base_datos.integrity_check(con) == ["ok"] and base_datos.foreign_key_check(con) == []
+    finally:
+        con.close()
+    assert resultado["actualizada"] is True
+    assert migracion.migrar_v5_v6_municipios_historicos(ruta, tmp_path / "otra") == {
+        "actualizada": False, "schema_version": "6", "data_version": resultado["data_version"]
+    }
+
+
+def test_recalculo_v6_guarda_fk_historica_sin_codigo_vigente(tmp_path):
+    ruta = _base_v4(tmp_path / "boe.db")
+    migracion.migrar_v4_v5(ruta, tmp_path / "v5")
+    migracion.migrar_v5_territorios_insulares(ruta, tmp_path / "islas")
+    con = base_datos.conectar(ruta)
+    try:
+        con.execute("""UPDATE oposiciones SET administracion='Ayuntamiento de Cerdedo (Pontevedra)',
+            fecha_boe='2015-06-01', municipio=NULL, municipio_codigo_ine=NULL, provincia='Pontevedra',
+            comunidad_autonoma='Galicia', ambito='LOCAL', tipo_entidad='MUNICIPAL' WHERE oposicion_id=1""")
+        con.commit()
+    finally:
+        con.close()
+    migracion.migrar_v5_v6_municipios_historicos(ruta, tmp_path / "v6")
+    assert recalcular_geografia.recalcular(ruta, tmp_path / "recalculo")["filas_cambiadas"] >= 1
+    con = base_datos.conectar(ruta, readonly=True)
+    try:
+        assert con.execute("""SELECT o.municipio,o.municipio_codigo_ine,h.codigo_ine
+                             FROM oposiciones o JOIN municipios_historicos h USING(municipio_historico_id)
+                             WHERE o.oposicion_id=1""").fetchone() == ("Cerdedo", None, "36011")
+    finally:
+        con.close()
+    assert recalcular_geografia.recalcular(ruta, tmp_path / "recalculo")["filas_cambiadas"] == 0
 
 
 def test_etapa_insular_v5_carga_catalogo_y_solo_decisiones_aprobadas(tmp_path):

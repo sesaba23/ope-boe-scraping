@@ -46,6 +46,50 @@ def test_aliases_municipales_v52_son_explicitos_y_provinciales(texto, municipio,
     r = resolver(texto)
     assert (r.municipio, r.codigo_ine, r.confianza, r.evidencia) == (municipio, codigo, "ALTA", "AYUNTAMIENTO")
 
+
+@pytest.mark.parametrize("texto,municipio,codigo", [
+    ("Ayuntamiento de Arcos de la Llana (Burgos)", "Arcos", "09023"),
+    ("Ayuntamiento de Bidegoian (Gipuzkoa)", "Bidania-Goiatz", "20024"),
+    ("Ayuntamiento de Bretó de la Ribera (Zamora)", "Bretó", "49025"),
+    ("Ayuntamiento de Markina (Bizkaia)", "Markina-Xemein", "48060"),
+    ("Ayuntamiento de Paracuellos de la Vega (Cuenca)", "Paracuellos", "16150"),
+    ("Ayuntamiento de Villadecanes (León)", "Toral de los Vados", "24206"),
+])
+def test_aliases_municipales_v53_conservan_codigo_ine(texto, municipio, codigo):
+    r = resolver(texto)
+    assert (r.municipio, r.codigo_ine, r.confianza, r.evidencia) == (municipio, codigo, "ALTA", "AYUNTAMIENTO")
+
+
+def test_ciutadella_acepta_contexto_insular_compatible_sin_relajar_conflictos():
+    r = resolver("Ayuntamiento de Ciutadella (Menorca)")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.confianza, r.evidencia) == (
+        "Ciutadella de Menorca", "07015", "Illes Balears", "Illes Balears", "ALTA", "AYUNTAMIENTO"
+    )
+    assert resolver("Ayuntamiento de Ciutadella (Mallorca)").evidencia == "CONFLICTO"
+
+
+@pytest.mark.parametrize("administracion,fecha,codigo", [
+    ("Ayuntamiento de Cerdedo (Pontevedra)", "2015-06-01", "36011"),
+    ("Ayuntamiento de Cotobade (Pontevedra)", "2015-06-01", "36012"),
+])
+def test_municipios_historicos_solo_resuelven_en_su_intervalo(administracion, fecha, codigo):
+    r = resolver(administracion, fecha_boe=fecha)
+    assert (r.municipio, r.codigo_ine, r.codigo_historico, r.evidencia) == (
+        "Cerdedo" if codigo == "36011" else "Cotobade", "", codigo, "MUNICIPIO_HISTORICO"
+    )
+
+
+def test_cerdedo_historico_no_se_proyecta_fuera_de_vigencia_ni_sin_fecha():
+    for fecha in ("2020-01-01", ""):
+        r = resolver("Ayuntamiento de Cerdedo (Pontevedra)", fecha_boe=fecha)
+        assert r.codigo_historico == "" and r.codigo_ine == ""
+    assert resolver("Ayuntamiento de Cerdedo (A Coruña)", fecha_boe="2015-01-01").codigo_historico == ""
+
+
+def test_cerdedo_cotobade_posterior_sigue_siendo_municipio_vigente():
+    r = resolver("Ayuntamiento de Cerdedo-Cotobade (Pontevedra)", fecha_boe="2020-01-01")
+    assert (r.municipio, r.codigo_ine, r.codigo_historico) == ("Cerdedo-Cotobade", "36902", "")
+
 def test_diputacion_y_destino_no_cambian_ambito():
     assert resolver("Diputación Foral de Gipuzkoa").provincia=="Gipuzkoa"
     r=resolver("Ministerio de Justicia","Fiscalía Provincial de Girona")
