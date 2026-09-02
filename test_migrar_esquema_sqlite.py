@@ -5,6 +5,7 @@ import pytest
 
 import base_datos
 import migrar_esquema_sqlite as migracion
+import recalcular_geografia
 
 
 def _base_v2(ruta, puestos=("Ingeniero/a Técnico/a Industrial", "Arquitecto")):
@@ -137,6 +138,33 @@ def _base_v4(ruta):
                      publicacion, "1", municipio or None, provincia, comunidad))
     con.commit(); con.close()
     return ruta
+
+
+def test_recalculo_alias_municipal_persiste_fk_ine_en_la_primera_pasada(tmp_path):
+    ruta = _base_v4(tmp_path / "boe.db")
+    migracion.migrar_v4_v5(ruta, tmp_path / "migracion")
+    migracion.migrar_v5_territorios_insulares(ruta, tmp_path / "islas")
+    con = base_datos.conectar(ruta)
+    try:
+        con.execute("""UPDATE oposiciones SET administracion='Ayuntamiento de Alaguàs (Valencia)',
+                      municipio=NULL, provincia='Valencia/València', comunidad_autonoma='Comunitat Valenciana',
+                      ambito='LOCAL', tipo_entidad='MUNICIPAL', evidencia_geografica='', confianza_geografica='NO_ENCONTRADO'
+                      WHERE oposicion_id=1""")
+        con.commit()
+    finally:
+        con.close()
+    primero = recalcular_geografia.recalcular(ruta, tmp_path / "recalculo")
+    con = base_datos.conectar(ruta, readonly=True)
+    try:
+        assert con.execute("""SELECT municipio,municipio_codigo_ine,provincia,provincia_id,
+                                     comunidad_autonoma,comunidad_id,evidencia_geografica
+                              FROM oposiciones WHERE oposicion_id=1""").fetchone() == (
+            "Alaquàs", "46005", "Valencia/València", "46", "Comunitat Valenciana", 11, "AYUNTAMIENTO"
+        )
+    finally:
+        con.close()
+    assert primero["filas_cambiadas"] >= 1
+    assert recalcular_geografia.recalcular(ruta, tmp_path / "recalculo")["filas_cambiadas"] == 0
 
 
 def test_migracion_v4_v5_importa_geografia_administrativa_y_preserva_textos(tmp_path):

@@ -22,6 +22,30 @@ def test_parentesis_institucional_se_conserva_y_proexa_es_local():
 def test_conflicto_alta_no_se_persiste():
     r=resolver("Ayuntamiento de Soneja (Madrid)"); assert r.confianza=="AMBIGUA"
 
+
+def test_organismo_autonomo_municipal_extrae_solo_el_municipio_previo():
+    r = resolver("Ayuntamiento de Coria-Organismo Autónomo «Residencia Club de Ancianos» (Cáceres)")
+    assert (r.municipio, r.codigo_ine, r.provincia, r.comunidad_autonoma, r.evidencia) == (
+        "Coria", "10067", "Cáceres", "Extremadura", "AYUNTAMIENTO"
+    )
+    # Un descriptor parecido no autoriza a convertir una entidad supramunicipal
+    # en el municipio que pudiera aparecer en su denominación.
+    assert resolver("Mancomunidad de Coria-Organismo Autónomo (Cáceres)").municipio == ""
+
+
+@pytest.mark.parametrize("texto,municipio,codigo", [
+    ("Ayuntamiento de Villanueva de Castellón (Valencia)", "Castelló", "46257"),
+    ("Ayuntamiento de Les Llosses (Girona)", "Llosses, Les", "17096"),
+    ("Ayuntamiento de San Pedro de Pinatar (Murcia)", "San Pedro del Pinatar", "30036"),
+    ("Ayuntamiento de Santa Marta de los Barros (Badajoz)", "Santa Marta", "06121"),
+    ("Ayuntamiento de Oropesa y Corchuela (Toledo)", "Oropesa", "45125"),
+    ("Ayuntamiento de Castril de la Peña (Granada)", "Castril", "18046"),
+    ("Ayuntamiento de Otura (Granada)", "Villa de Otura", "18149"),
+])
+def test_aliases_municipales_v52_son_explicitos_y_provinciales(texto, municipio, codigo):
+    r = resolver(texto)
+    assert (r.municipio, r.codigo_ine, r.confianza, r.evidencia) == (municipio, codigo, "ALTA", "AYUNTAMIENTO")
+
 def test_diputacion_y_destino_no_cambian_ambito():
     assert resolver("Diputación Foral de Gipuzkoa").provincia=="Gipuzkoa"
     r=resolver("Ministerio de Justicia","Fiscalía Provincial de Girona")

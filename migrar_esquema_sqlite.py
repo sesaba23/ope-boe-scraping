@@ -270,9 +270,20 @@ def comunidad_autonoma_canon(con, comunidad, comunidad_id):
     return comunidad
 
 
-def normalizar_referencias_administrativas(con, municipio, provincia, comunidad):
+def normalizar_referencias_administrativas(con, municipio, provincia, comunidad, municipio_codigo_ine=None, provincia_id_anterior=None, comunidad_id_anterior=None):
     """Calcula FK y textos canónicos para una oposición, sin fuzzy matching."""
     codigo_ine, provincia_id, comunidad_id = referencias_administrativas(con, municipio, provincia, comunidad)
+    if not codigo_ine and municipio_codigo_ine:
+        anterior = con.execute("SELECT codigo_ine,provincia_id,comunidad_id FROM municipios WHERE codigo_ine=?", (municipio_codigo_ine,)).fetchone()
+        if anterior:
+            provincia_ok = not provincia or provincia_administrativa_canon(con, provincia, anterior[1], anterior[2]) == provincia
+            comunidad_ok = not comunidad or comunidad_autonoma_canon(con, comunidad, anterior[2]) == comunidad
+            if provincia_ok and comunidad_ok:
+                codigo_ine, provincia_id, comunidad_id = anterior
+    if not provincia_id and provincia_id_anterior and con.execute("SELECT 1 FROM provincias WHERE provincia_id=?", (provincia_id_anterior,)).fetchone():
+        provincia_id = provincia_id_anterior
+    if not comunidad_id and comunidad_id_anterior and con.execute("SELECT 1 FROM comunidades_autonomas WHERE comunidad_id=?", (comunidad_id_anterior,)).fetchone():
+        comunidad_id = comunidad_id_anterior
     return (codigo_ine, provincia_administrativa_canon(con, provincia, provincia_id, comunidad_id),
             comunidad_autonoma_canon(con, comunidad, comunidad_id), provincia_id, comunidad_id)
 

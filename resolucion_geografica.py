@@ -274,6 +274,18 @@ def resolver_administracion_geografia(administracion, puesto="", *, _catalogo=No
     patron=re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+(?:de(?:l| la)?|d['’])\s+(.+?)(?:\s*\(|\s*,|$)",admin,re.I)
     if patron:
         nombre=patron.group(1).strip()
+        # Algunos anuncios nombran un organismo dependiente inmediatamente
+        # después del ayuntamiento. Se extrae sólo el municipio que precede a
+        # un descriptor institucional explícito; no aplica a entidades de
+        # ámbito supramunicipal ni a topónimos libres.
+        nombre = re.sub(
+            r"\s*(?:[-—]|,)\s*(?:organismo\s+aut[oó]nomo|patronato|instituto|gerencia|agencia|fundaci[oó]n|servicio)\b.*$",
+            "", nombre, flags=re.I,
+        )
+        nombre = re.sub(
+            r"\s+(?:organismo\s+aut[oó]nomo|patronato|instituto|gerencia|agencia|fundaci[oó]n|servicio)\s+municipal\b.*$",
+            "", nombre, flags=re.I,
+        )
         if re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+de\s+la\s+", admin, re.I): nombre="La "+nombre
         elif re.match(r"^(?:ayuntamiento|ajuntament|concello)\s+del\s+", admin, re.I): nombre="El "+nombre
         m=c.municipio(nombre, provincia)

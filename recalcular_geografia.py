@@ -37,21 +37,40 @@ def propuestas_universidades(con):
 def propuestas(con):
     resultado=[]
     es_v5 = "municipio_codigo_ine" in {x[1] for x in con.execute("PRAGMA table_info(oposiciones)")}
-    for oid,admin,puesto,*actual in con.execute("SELECT oposicion_id,administracion,puesto,"+",".join(CAMPOS)+" FROM oposiciones"):
+    columnas = list(CAMPOS)
+    if es_v5:
+        columnas += ["municipio_codigo_ine", "provincia_id", "comunidad_id"]
+    for oid,admin,puesto,*actual in con.execute("SELECT oposicion_id,administracion,puesto,"+",".join(columnas)+" FROM oposiciones"):
+        actual_texto = actual[:len(CAMPOS)]
         if es_v5 and admin == "Universidades" and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}:
             continue
         r=resolver_administracion_geografia(admin,puesto)
         # La ausencia de evidencia nueva nunca borra una ubicación histórica.
-        municipio = r.municipio or actual[3]
-        provincia = r.provincia or actual[4]
-        comunidad = r.comunidad_autonoma or actual[5]
+        municipio = r.municipio or actual_texto[3]
+        provincia = r.provincia or actual_texto[4]
+        comunidad = r.comunidad_autonoma or actual_texto[5]
+        referencias = ()
         if es_v5:
-            _, provincia, comunidad, _, _ = normalizar_referencias_administrativas(
+            codigo_anterior, provincia_id_anterior, comunidad_id_anterior = actual[len(CAMPOS):]
+            referencias = normalizar_referencias_administrativas(
                 con, municipio, provincia, comunidad,
+                # El código emitido por una regla exacta (incluido alias) se
+                # valida contra el maestro; no es un fallback ciego.
+                r.codigo_ine or codigo_anterior,
+                provincia_id_anterior, comunidad_id_anterior,
             )
+            codigo, provincia, comunidad, provincia_id, comunidad_id = referencias
         geo = (municipio, provincia, comunidad)
         valores=(r.administracion_normalizada,r.ambito,r.tipo_entidad,*geo,r.confianza,r.evidencia,r.version_catalogo)
-        cambios={c:v for c,v,a in zip(CAMPOS,valores,actual) if v != a}
+        cambios={c:v for c,v,a in zip(CAMPOS,valores,actual_texto) if v != a}
+        if es_v5:
+            for campo, valor, anterior in zip(
+                ("municipio_codigo_ine", "provincia_id", "comunidad_id"),
+                (codigo, provincia_id, comunidad_id),
+                actual[len(CAMPOS):],
+            ):
+                if valor != anterior:
+                    cambios[campo] = valor
         if cambios: resultado.append((oid,cambios,r))
     return resultado
 def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run=False):
@@ -72,8 +91,8 @@ def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run
             for oid,cam,_ in cambios:
                 con.execute("UPDATE oposiciones SET "+",".join(f"{c}=?" for c in cam)+" WHERE oposicion_id=?",(*cam.values(),oid))
             if meta.get("schema_version") == "5":
-                for oid,admin,puesto,mun,prov,com in con.execute("SELECT oposicion_id,administracion,puesto,municipio,provincia,comunidad_autonoma FROM oposiciones"):
-                    refs=normalizar_referencias_administrativas(con,mun,prov,com)
+                for oid,admin,puesto,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior in con.execute("SELECT oposicion_id,administracion,puesto,municipio,provincia,comunidad_autonoma,municipio_codigo_ine,provincia_id,comunidad_id FROM oposiciones"):
+                    refs=normalizar_referencias_administrativas(con,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior)
                     codigo, provincia, comunidad, provincia_id, comunidad_id = refs
                     con.execute("""UPDATE oposiciones SET municipio_codigo_ine=?,provincia=?,comunidad_autonoma=?,
                                    provincia_id=?,comunidad_id=? WHERE oposicion_id=?""",
