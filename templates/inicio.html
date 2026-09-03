@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}BuscadorBOE · Convocatorias de empleo público{% endblock %}
+{% block content %}
+<section class="portal-hero"><div class="site-shell">
+    <p class="portal-kicker">Histórico local del BOE</p>
+    <h1>Busca y analiza convocatorias de empleo público.</h1>
+    <p>Consulta las oposiciones publicadas en el Boletín Oficial del Estado con información administrativa y geográfica.</p>
+    <a class="portal-button portal-button--primary" href="{{ url_for('oposiciones') }}">Buscar oposiciones</a>
+</div></section>
+<section class="site-shell portal-section"><div class="portal-cards">
+    <a class="portal-card" href="{{ url_for('oposiciones') }}"><h2>Oposiciones</h2><p>Busca convocatorias por puesto, administración, territorio y otros criterios.</p><span>Consultar oposiciones →</span></a>
+    <a class="portal-card" href="{{ url_for('pagina_estadisticas') }}"><h2>Estadísticas</h2><p>Analiza la evolución y distribución de las convocatorias publicadas.</p><span>Ver estadísticas →</span></a>
+    <a class="portal-card" href="{{ url_for('mapas') }}"><h2>Mapas</h2><p>Explora geográficamente las oposiciones y plazas publicadas.</p><span>Explorar mapas →</span></a>
+</div></section>
+{% endblock %}

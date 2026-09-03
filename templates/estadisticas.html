@@ -1,12 +1,9 @@
-<!doctype html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Estadísticas de convocatorias BOE</title>
+{% extends "base.html" %}
+{% block title %}Estadísticas · BuscadorBOE{% endblock %}
+{% block extra_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estadisticas.css') }}">
-</head>
-<body>
+{% endblock %}
+{% block content %}
     <header class="cabecera">
         <div class="contenedor">
             <p class="etiqueta">Histórico local del BOE</p>
@@ -15,7 +12,7 @@
         </div>
     </header>
 
-    <main class="contenedor contenido-principal">
+    <div class="contenedor contenido-principal">
         <section class="panel panel-filtros" aria-labelledby="titulo-filtros">
             <div class="encabezado-panel">
                 <div>
@@ -126,9 +123,10 @@
                 </article>
             </div>
         </section>
-    </main>
+    </div>
 
+{% endblock %}
+{% block extra_js %}
     <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
-</body>
-</html>
+{% endblock %}

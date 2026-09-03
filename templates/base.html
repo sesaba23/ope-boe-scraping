@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}BuscadorBOE{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/portal.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-shell site-header__content">
+            <a class="site-brand" href="{{ url_for('inicio') }}">BuscadorBOE</a>
+            <button class="site-menu-button" type="button" aria-expanded="false" aria-controls="site-navigation">
+                <span class="visually-hidden">Abrir navegación</span><span aria-hidden="true">☰</span>
+            </button>
+            <nav id="site-navigation" class="site-navigation" aria-label="Principal">
+                <a href="{{ url_for('inicio') }}"{% if seccion_activa == 'inicio' %} aria-current="page"{% endif %}>Inicio</a>
+                <a href="{{ url_for('oposiciones') }}"{% if seccion_activa == 'oposiciones' %} aria-current="page"{% endif %}>Oposiciones</a>
+                <a href="{{ url_for('pagina_estadisticas') }}"{% if seccion_activa == 'estadisticas' %} aria-current="page"{% endif %}>Estadísticas</a>
+                <a href="{{ url_for('cobertura') }}"{% if seccion_activa == 'cobertura' %} aria-current="page"{% endif %}>Cobertura</a>
+                <a href="{{ url_for('mapas') }}"{% if seccion_activa == 'mapas' %} aria-current="page"{% endif %}>Mapas</a>
+            </nav>
+        </div>
+    </header>
+    <main>{% block content %}{% endblock %}</main>
+    <footer class="site-footer"><div class="site-shell">Datos públicos del Boletín Oficial del Estado.</div></footer>
+    <script src="{{ url_for('static', filename='js/portal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/actualizacion.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

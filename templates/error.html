@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Página no encontrada · BuscadorBOE{% endblock %}
+{% block content %}
+<section class="site-shell portal-section"><div class="portal-empty"><p class="portal-kicker">Error {{ codigo }}</p><h1>Página no encontrada</h1><p>{{ mensaje }}</p><a class="portal-button" href="{{ url_for('inicio') }}">Volver al inicio</a></div></section>
+{% endblock %}

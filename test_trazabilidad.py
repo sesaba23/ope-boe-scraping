@@ -6,6 +6,7 @@ import pytest
 import preparar_archivo_datos
 from trazabilidad import (
     VERSION_EXTRACTOR,
+    analisis_actualizado,
     añadir_trazabilidad_convocatorias,
     enriquecer_historico_oposiciones,
     extraer_publicacion_id,
@@ -51,6 +52,11 @@ def test_version_anterior_necesita_reprocesamiento_con_comparacion_numerica():
     assert necesita_reprocesamiento("1", "2")
     assert necesita_reprocesamiento("2", "10")
     assert not necesita_reprocesamiento("10", "2")
+
+
+def test_analisis_actualizado_sigue_separado_de_la_cobertura_historica():
+    assert not analisis_actualizado("historico-experimental-2004", "1")
+    assert analisis_actualizado("1", "1")
 
 
 def test_enriquece_historico_sin_modificar_columnas_ni_dataframe_original():

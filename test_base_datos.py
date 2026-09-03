@@ -129,6 +129,55 @@ def test_lectura_selectiva_por_rango_preserva_texto_y_null(tmp_path):
     assert fila["Fecha_boe"] == "20260101"
 
 
+@pytest.mark.parametrize("fechas", [("2024-05-11", "2026-09-01"), ("2024-05-11", "2025-05-17", "2026-09-01")])
+def test_persistencia_fechas_discretas_no_renumera_registros_intermedios(tmp_path, fechas):
+    ruta = tmp_path / "discretas.db"
+    conexion = base_datos.conectar(ruta)
+    base_datos.crear_esquema(conexion)
+    base_datos.crear_indices(conexion)
+    for indice, fecha in enumerate(("2024-05-11", "2025-06-01", "2026-09-01"), start=1):
+        lote = _lote(f"BOE-A-2026-{indice}")
+        lote["Publicaciones"].loc[0, "Fecha_BOE"] = fecha
+        lote["Oposiciones"].loc[0, "Fecha_boe"] = fecha.replace("-", "")
+        lote["Cobertura"].loc[0, "Fecha"] = fecha
+        with base_datos.transaccion(conexion):
+            base_datos.insertar_publicaciones(conexion, lote["Publicaciones"])
+            base_datos.insertar_oposiciones(conexion, lote["Oposiciones"])
+            base_datos.actualizar_cobertura(conexion, lote["Cobertura"])
+    base_datos.guardar_metadata(conexion, data_version=1)
+    conexion.commit(); conexion.close()
+
+    antes = base_datos.conectar(ruta, readonly=True).execute(
+        "SELECT oposicion_id,publicacion_id,fecha_boe FROM oposiciones WHERE fecha_boe = '2025-06-01'"
+    ).fetchall()
+    datos = base_datos.cargar_para_lectura(ruta, min(fechas), max(fechas), fechas=fechas)
+    datos["Cobertura"].loc[:, "Fecha_ultima_consulta"] = "2026-09-03 00:00:00"
+    resultado = base_datos.persistir_lote_principal(
+        ruta, datos, min(fechas), max(fechas), tmp_path / "backups", fechas=fechas,
+    )
+    conexion = base_datos.conectar(ruta, readonly=True)
+    despues = conexion.execute(
+        "SELECT oposicion_id,publicacion_id,fecha_boe FROM oposiciones WHERE fecha_boe = '2025-06-01'"
+    ).fetchall()
+    assert resultado["cambios"] is True
+    assert antes == despues
+    assert conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0] == 3
+    assert conexion.execute("SELECT count(*) FROM publicaciones WHERE fecha_boe = '2025-06-01'").fetchone()[0] == 1
+    assert conexion.execute("SELECT count(*) FROM cobertura WHERE fecha = '2025-06-01'").fetchone()[0] == 1
+    conexion.close()
+
+
+def test_guardar_metadata_conserva_schema_version_existente(tmp_path):
+    ruta = tmp_path / "schema6.db"
+    conexion = base_datos.conectar(ruta)
+    base_datos.crear_esquema(conexion)
+    base_datos.guardar_metadata(conexion, schema_version=6, data_version=17)
+    base_datos.guardar_metadata(conexion, data_version=18)
+    conexion.commit()
+    assert dict(conexion.execute("SELECT clave,valor FROM metadata"))["schema_version"] == "6"
+    conexion.close()
+
+
 def test_lote_historico_ignora_timestamps_de_auditoria(tmp_path):
     ruta = _base_con_lote(tmp_path)
     conexion = base_datos.conectar(ruta)

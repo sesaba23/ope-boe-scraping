@@ -294,9 +294,16 @@ def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None, sch
     ahora = datetime.now().isoformat(timespec="seconds")
     if data_version is None:
         data_version = int(existente.get("data_version", "0"))
+    if schema_version is None:
+        # Los esquemas vigentes se conservan en escrituras normales. Los
+        # valores heredados 2/3 siguen promoviendo al esquema compatible 5,
+        # como hacía el flujo previo a schema 6.
+        schema_version = existente.get("schema_version")
+        if schema_version not in {VERSION_ESQUEMA, "6"}:
+            schema_version = VERSION_ESQUEMA
     source_hash = source_excel_hash or existente.get("migration_source_hash")
     pares = [
-        ("schema_version", str(schema_version or VERSION_ESQUEMA)),
+        ("schema_version", str(schema_version)),
         ("data_version", str(data_version)),
         ("updated_at", ahora), ("created_at", existente.get("created_at", ahora)),
     ]
@@ -350,9 +357,21 @@ def _dataframe(conexion, consulta, columnas, parametros=()):
     return pd.DataFrame(conexion.execute(consulta, parametros).fetchall(), columns=columnas)
 
 
-def cargar_para_lectura(ruta_bd, fecha_inicio, fecha_fin):
-    """Carga solo el histórico imprescindible durante el procesamiento de un rango."""
+def cargar_para_lectura(ruta_bd, fecha_inicio, fecha_fin, *, fechas=None):
+    """Carga el histórico afectado por un rango o una lista discreta de fechas."""
     inicio, fin = _iso_rango(fecha_inicio), _iso_rango(fecha_fin)
+    fechas_iso = sorted({_iso_rango(fecha) for fecha in fechas or ()})
+    if fechas_iso:
+        marcas = ",".join("?" for _ in fechas_iso)
+        condicion_oposiciones = f"fecha_boe IN ({marcas})"
+        condicion_publicaciones = f"fecha_boe IN ({marcas})"
+        condicion_cobertura = f"fecha IN ({marcas})"
+        parametros = tuple(fechas_iso)
+    else:
+        condicion_oposiciones = "fecha_boe BETWEEN ? AND ?"
+        condicion_publicaciones = "fecha_boe BETWEEN ? AND ?"
+        condicion_cobertura = "fecha BETWEEN ? AND ?"
+        parametros = (inicio, fin)
     conexion = conectar(ruta_bd, readonly=True)
     try:
         return {
@@ -360,9 +379,9 @@ def cargar_para_lectura(ruta_bd, fecha_inicio, fecha_fin):
             "Búsquedas": _dataframe(conexion, "SELECT codigo FROM busquedas", ["Código"]),
             # Fecha_boe pertenece a la clave funcional: fuera del intervalo no puede
             # existir un duplicado de una convocatoria del intervalo.
-            "Oposiciones": _dataframe(conexion, """SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones WHERE fecha_boe BETWEEN ? AND ?""", ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"], (inicio, fin)),
-            "Publicaciones": _dataframe(conexion, "SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones WHERE fecha_boe BETWEEN ? AND ?", ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias", "Departamento_BOE", "Administracion_resuelta", "Familia_administrativa", "Estado_resolucion", "Metodo_resolucion", "Confianza_resolucion", "Version_resolucion"], (inicio, fin)),
-            "Cobertura": _dataframe(conexion, "SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura WHERE fecha BETWEEN ? AND ?", ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"], (inicio, fin)),
+            "Oposiciones": _dataframe(conexion, f"""SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones WHERE {condicion_oposiciones}""", ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"], parametros),
+            "Publicaciones": _dataframe(conexion, f"SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones WHERE {condicion_publicaciones}", ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias", "Departamento_BOE", "Administracion_resuelta", "Familia_administrativa", "Estado_resolucion", "Metodo_resolucion", "Confianza_resolucion", "Version_resolucion"], parametros),
+            "Cobertura": _dataframe(conexion, f"SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura WHERE {condicion_cobertura}", ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"], parametros),
             # Sólo hay 33 filas; se conserva la semántica de append del libro.
             "Log-errores": _dataframe(conexion, "SELECT fecha,tipo_error,enlace_web FROM log_errores", ["Fecha", "Tipo de error", "Enlace Web"]),
         }
@@ -398,6 +417,42 @@ def crear_backup(ruta_bd, directorio="backups/sqlite"):
     finally:
         origen.close()
     return destino
+
+
+def marcar_incoherencias_historicas_verificadas(ruta_bd, fechas, *, directorio_backup="backups/sqlite"):
+    """Cierra discrepancias BOE ya verificadas sin tocar el histórico asociado."""
+    fechas = tuple(dict.fromkeys(fechas))
+    if not fechas:
+        return {"cambios": False, "backup": None, "data_version": None}
+    validar_base_principal(ruta_bd)
+    marcadores = ",".join("?" for _ in fechas)
+    lectura = conectar(ruta_bd, readonly=True)
+    try:
+        metadata = dict(lectura.execute("SELECT clave,valor FROM metadata"))
+        estados = lectura.execute(
+            f"SELECT fecha,estado,numero_publicaciones FROM cobertura WHERE fecha IN ({marcadores})",
+            fechas,
+        ).fetchall()
+    finally:
+        lectura.close()
+    if len(estados) != len(fechas) or any(fila[1] != "consultado" or fila[2] != 0 for fila in estados):
+        raise EspejoSQLiteError("Las incoherencias a verificar no están en el estado BOE esperado")
+    backup = crear_backup(ruta_bd, directorio_backup)
+    conexion = conectar(ruta_bd)
+    try:
+        with transaccion(conexion):
+            resultado = conexion.execute(
+                f"UPDATE cobertura SET estado = ? WHERE fecha IN ({marcadores})",
+                ("incoherencia_historica_verificada", *fechas),
+            )
+            if resultado.rowcount != len(fechas):
+                raise EspejoSQLiteError("No se han marcado exactamente las incoherencias solicitadas")
+            guardar_metadata(conexion, data_version=int(metadata["data_version"]) + 1)
+            if integrity_check(conexion) != ["ok"] or foreign_key_check(conexion):
+                raise EspejoSQLiteError("Las invariantes SQLite fallaron antes de COMMIT")
+        return {"cambios": True, "backup": str(backup), "data_version": int(metadata["data_version"]) + 1}
+    finally:
+        conexion.close()
 
 
 def _funciones_migracion():
@@ -489,8 +544,11 @@ def _fingerprint_df(df, hoja):
     return _fingerprint(_registros_excel({hoja: df}, hoja)[0])
 
 
-def _hay_cambios_principales(conexion, dataframes, inicio, fin):
-    actuales = cargar_para_lectura(conexion.execute("PRAGMA database_list").fetchone()[2], inicio, fin)
+def _hay_cambios_principales(conexion, dataframes, inicio, fin, fechas=None):
+    actuales = cargar_para_lectura(
+        conexion.execute("PRAGMA database_list").fetchone()[2], inicio, fin,
+        fechas=fechas,
+    )
     for hoja in ("Oposiciones", "Publicaciones", "Cobertura"):
         if _fingerprint_df(actuales[hoja], hoja) != _fingerprint_df(dataframes[hoja], hoja):
             return True
@@ -501,7 +559,8 @@ def _hay_cambios_principales(conexion, dataframes, inicio, fin):
     return False
 
 
-def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin, directorio_backup="backups/sqlite"):
+def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin,
+                             directorio_backup="backups/sqlite", fechas=None):
     """Persiste el lote final SQLite sin depender de ningún XLSX.
 
     Oposiciones se reemplazan sólo en el rango: Fecha_boe integra la clave
@@ -513,9 +572,10 @@ def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin, direc
         dataframes["Oposiciones"]
     )
     inicio, fin = _iso_rango(fecha_inicio), _iso_rango(fecha_fin)
+    fechas_iso = sorted({_iso_rango(fecha) for fecha in fechas or ()})
     conexion = conectar(ruta_bd)
     try:
-        if not _hay_cambios_principales(conexion, dataframes, inicio, fin):
+        if not _hay_cambios_principales(conexion, dataframes, inicio, fin, fechas_iso):
             return {"cambios": False, "backup": None, "data_version": int(dict(conexion.execute("SELECT clave,valor FROM metadata"))["data_version"])}
     finally:
         conexion.close()
@@ -523,7 +583,14 @@ def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin, direc
     conexion = conectar(ruta_bd)
     try:
         with transaccion(conexion):
-            conexion.execute("DELETE FROM oposiciones WHERE fecha_boe BETWEEN ? AND ?", (inicio, fin))
+            if fechas_iso:
+                marcas = ",".join("?" for _ in fechas_iso)
+                conexion.execute(
+                    f"DELETE FROM oposiciones WHERE fecha_boe IN ({marcas})",
+                    fechas_iso,
+                )
+            else:
+                conexion.execute("DELETE FROM oposiciones WHERE fecha_boe BETWEEN ? AND ?", (inicio, fin))
             insertar_publicaciones_upsert(conexion, dataframes["Publicaciones"])
             insertar_oposiciones(conexion, dataframes["Oposiciones"])
             insertar_busquedas_sin_duplicar(conexion, dataframes["Búsquedas"])

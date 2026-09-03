@@ -343,7 +343,9 @@ def enriquecer_filas_sin_coordenadas(df):
         if datos_municipio:
             for columna in columnas_geograficas:
                 valor_actual = df_enriquecido.at[indice, columna]
-                if pd.isna(valor_actual) or str(valor_actual).strip() == "":
+                if columna in datos_municipio and (
+                    pd.isna(valor_actual) or str(valor_actual).strip() == ""
+                ):
                     df_enriquecido.at[indice, columna] = datos_municipio[columna]
 
     return df_enriquecido

@@ -7,6 +7,7 @@ from openpyxl import Workbook, load_workbook
 import preparar_archivo_datos
 from cobertura import (
     COLUMNAS_COBERTURA,
+    cobertura_indice_reutilizable,
     normalizar_cobertura,
     puede_reutilizar_cobertura,
     registrar_cobertura,
@@ -199,8 +200,8 @@ def _publicaciones(cantidad, version="1", estado="sin_coincidencias"):
     [
         (pd.DataFrame(), False),
         (_cobertura("error"), False),
-        (_cobertura(version="legacy"), False),
-        (_cobertura(version="1"), False),
+        (_cobertura(version="legacy"), True),
+        (_cobertura(version="1"), True),
         (_cobertura("sin_edicion", "2", 0), True),
         (_cobertura("consultado", "2", 0), True),
         (_cobertura("sin_edicion", "1", 1), False),
@@ -232,9 +233,9 @@ def test_numero_de_publicaciones_locales_debe_coincidir(locales, esperado):
     )
 
 
-@pytest.mark.parametrize("version", ["legacy", "0", ""])
-def test_publicacion_con_version_no_compatible_impide_reutilizar(version):
-    assert not puede_reutilizar_cobertura(
+@pytest.mark.parametrize("version", ["historico-experimental-2004", "legacy", "0", ""])
+def test_version_de_analisis_no_invalida_cobertura_indice(version):
+    assert puede_reutilizar_cobertura(
         "2026-08-10",
         _cobertura(numero=1),
         _publicaciones(1, version=version),
@@ -242,18 +243,27 @@ def test_publicacion_con_version_no_compatible_impide_reutilizar(version):
     )
 
 
-def test_con_coincidencias_exige_fila_en_oposiciones():
+def test_cobertura_indice_no_exige_oposiciones_ya_que_es_analisis_separado():
     publicaciones = _publicaciones(1, estado="con_coincidencias")
 
-    assert not puede_reutilizar_cobertura(
+    assert puede_reutilizar_cobertura(
         "2026-08-10", _cobertura(numero=1), publicaciones, pd.DataFrame()
     )
-    assert puede_reutilizar_cobertura(
-        "2026-08-10",
-        _cobertura(numero=1),
-        publicaciones,
-        pd.DataFrame({"Publicacion_ID": ["BOE-A-2026-1000"]}),
+
+
+def test_historico_sin_edicion_con_publicaciones_es_contradictorio():
+    publicaciones = _publicaciones(1, version="historico-experimental-2004")
+    assert not cobertura_indice_reutilizable(
+        "2026-08-10", _cobertura("sin_edicion", "historico-experimental-2004", 0), publicaciones
     )
+
+
+def test_version_futura_no_invalida_cobertura_y_no_etiqueta_publicacion():
+    publicaciones = _publicaciones(1, version="historico-experimental-2004")
+    assert cobertura_indice_reutilizable(
+        "2026-08-10", _cobertura("consultado", "historico-experimental-2004", 1), publicaciones
+    )
+    assert publicaciones.loc[0, "Version_extractor"] == "historico-experimental-2004"
 
 
 def test_sin_coincidencias_no_exige_fila_en_oposiciones():
@@ -331,3 +341,16 @@ def test_reutilizacion_no_modifica_ningun_dataframe():
 
     for dataframe, copia in zip((cobertura, publicaciones, oposiciones), copias):
         pd.testing.assert_frame_equal(dataframe, copia)
+
+
+def test_incoherencia_historica_verificada_es_reutilizable_sin_fingir_coherencia():
+    publicaciones = _publicaciones(1)
+
+    assert cobertura_indice_reutilizable(
+        "2026-08-10",
+        _cobertura("incoherencia_historica_verificada", numero=0),
+        publicaciones,
+    )
+    assert not cobertura_indice_reutilizable(
+        "2026-08-10", _cobertura("consultado", numero=0), publicaciones
+    )

@@ -19,6 +19,16 @@ def necesita_reprocesamiento(version_publicacion, version_actual=VERSION_EXTRACT
     return version_guardada < version_objetivo
 
 
+def analisis_actualizado(version_publicacion, version_actual=VERSION_EXTRACTOR):
+    """Indica si el contenido fue analizado con la versión objetivo.
+
+    Esta semántica se mantiene separada de la cobertura del índice BOE: una
+    fecha puede estar correctamente consultada y, aun así, requerir reanálisis
+    local de sus publicaciones.
+    """
+    return not necesita_reprocesamiento(version_publicacion, version_actual)
+
+
 def comparar_versiones(version_publicacion, version_actual=VERSION_EXTRACTOR):
     """Compara versiones enteras: -1 anterior, 0 igual, 1 posterior o None inválida."""
     version_guardada = _convertir_version(version_publicacion)

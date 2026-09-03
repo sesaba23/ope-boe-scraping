@@ -5,7 +5,8 @@ import impresiones
 import preparar_archivo_datos
 import base_datos
 from boe_api import ErrorAPIBOE, extraer_publicaciones_2b_api, obtener_sumario_api
-from cobertura import puede_reutilizar_cobertura, registrar_cobertura, normalizar_cobertura
+from cobertura import (crear_verificador_cobertura_indice, registrar_cobertura,
+                       normalizar_cobertura)
 from trazabilidad import añadir_trazabilidad_convocatorias
 from trazabilidad import extraer_publicacion_id
 from publicaciones import (
@@ -249,7 +250,57 @@ def _descubrir_indice_api_con_fallback(
         return consultar_html(url_html)
 
 
-def _ejecutar_aplicacion():
+def _lista_fechas_iso(fecha_inicio, fecha_fin):
+    inicio = datetime.strptime(str(fecha_inicio), "%Y-%m-%d")
+    fin = datetime.strptime(str(fecha_fin), "%Y-%m-%d")
+    if inicio > fin:
+        raise ValueError("La fecha inicial no puede ser posterior a la final")
+    fechas_intervalo = []
+    while inicio <= fin:
+        fechas_intervalo.append(inicio.strftime("%Y/%m/%d"))
+        inicio += pd.Timedelta(days=1)
+    return fechas_intervalo
+
+
+def actualizar_intervalo(fecha_inicio, fecha_fin, *, ruta_bd="datos/boe.db", on_progress=None):
+    """Ejecuta el pipeline productivo actual sin interacción de terminal.
+
+    La función no contiene extracción nueva: reutiliza exactamente índice,
+    cobertura, publicaciones, normalización y persistencia de ``plazasboe``.
+    """
+    return actualizar_fechas(
+        _lista_fechas_iso(fecha_inicio, fecha_fin), ruta_bd=ruta_bd,
+        on_progress=on_progress,
+    )
+
+
+def actualizar_fechas(fechas_pendientes, *, ruta_bd="datos/boe.db", on_progress=None):
+    """Actualiza exclusivamente las fechas pendientes ya decididas por cobertura."""
+    fechas_normalizadas = sorted({str(fecha).replace("-", "/") for fecha in fechas_pendientes})
+    if not fechas_normalizadas:
+        return {"persistencia": None, "estados_indices": {}}
+    return _ejecutar_aplicacion(
+        texto_busqueda="", fechas_explicitamente=fechas_normalizadas,
+        ruta_bd=ruta_bd, on_progress=on_progress, generar_mapa=False,
+    )
+
+
+def _notificar_progreso(on_progress, *, fase, actual, total, mensaje, fecha=None):
+    """Expone el mismo contador que consume cada ``tqdm`` del pipeline.
+
+    La CLI mantiene sus barras tal cual; la web recibe sus contadores y fases
+    sin calcular una métrica paralela basada en días pendientes.
+    """
+    if on_progress is not None:
+        on_progress({
+            "fase": fase, "actual": actual, "total": total,
+            "mensaje": mensaje, "fecha": fecha,
+        })
+
+
+def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=None,
+                         fechas_explicitamente=None,
+                         ruta_bd="datos/boe.db", on_progress=None, generar_mapa=True):
     tiempo_inicio = time.time()
 
     # Un ejemplo cualquiera de la dirección de la sección 'oposiciones y concursos'
@@ -259,24 +310,34 @@ def _ejecutar_aplicacion():
     URL_COMPONENTES = urlparse(URL_BASE_OPOSICIONES)
     # URL base que da acceso al calendario del BOE
     URL_BASE = "https://www.boe.es/boe/dias/"
-    texto_busqueda = ""  # guarda el texto de búsqueda introducido por el usuario
+    modo_programatico = fechas_explicitamente is not None or fecha_inicio is not None or fecha_fin is not None
+    if fechas_explicitamente is None and modo_programatico and (fecha_inicio is None or fecha_fin is None):
+        raise ValueError("La actualización programática requiere ambas fechas")
+    texto_busqueda = texto_busqueda or ""  # guarda el texto de búsqueda introducido por el usuario
 
     """ Código para solicitar al usuario la fecha de inicio y fin de la búsqueda
        y comprobar que son válidas """
     fecha_actual = fechas.fecha_hoy()  # Obtener la fecha actual
 
-    if len(sys.argv) >= 2:
+    if not modo_programatico and len(sys.argv) >= 2:
         texto_busqueda = " ".join(str(x) for x in sys.argv[1:])
 
     # Llamar a la función para solicitar al usuario las opciones de búsqueda y validar las fechas
-    texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
-        texto_busqueda, fecha_actual, fechas
-    )
+    if fechas_explicitamente is not None:
+        lista_fechas = list(fechas_explicitamente)
+        fecha_inicio, fecha_fin = lista_fechas[0], lista_fechas[-1]
+    elif modo_programatico:
+        lista_fechas = _lista_fechas_iso(fecha_inicio, fecha_fin)
+    else:
+        texto_busqueda, fecha_inicio, fecha_fin, lista_fechas = solicitar_fechas_y_validar(
+            texto_busqueda, fecha_actual, fechas
+        )
 
     # SQLite es la fuente de verdad. La validación es ligera y no depende del XLSX.
-    base_datos.validar_base_principal("datos/boe.db")
+    base_datos.validar_base_principal(ruta_bd)
     dataframes_dict = base_datos.cargar_para_lectura(
-        "datos/boe.db", lista_fechas[0], lista_fechas[-1]
+        ruta_bd, lista_fechas[0], lista_fechas[-1],
+        fechas=lista_fechas if fechas_explicitamente is not None else None,
     )
 
     """df_busquedas almacena el histórico de búsquedas para evitar volver a buscar en el BOE
@@ -286,6 +347,9 @@ def _ejecutar_aplicacion():
     df_log_errores = dataframes_dict["Log-errores"]
     df_publicaciones = dataframes_dict.get("Publicaciones", pd.DataFrame())
     df_cobertura = dataframes_dict.get("Cobertura", pd.DataFrame())
+    cobertura_reutilizable = crear_verificador_cobertura_indice(
+        df_cobertura, df_publicaciones
+    )
 
     if df_busquedas.empty:
         df_busquedas = pd.DataFrame({"Código": []})  # Inicializar con una estructura básica
@@ -318,13 +382,13 @@ def _ejecutar_aplicacion():
     indices_resueltos_fallback = 0
     enlaces_vistos = set()
     fichas_oposiciones = {}
-    for fecha_indice, url in barra:
-        if puede_reutilizar_cobertura(
-            fecha_indice,
-            df_cobertura,
-            df_publicaciones,
-            df_opo_guardadas,
-        ):
+    for indice_actual, (fecha_indice, url) in enumerate(barra, start=1):
+        _notificar_progreso(
+            on_progress, fase="indices", actual=indice_actual,
+            total=len(urls_dias), mensaje="Actualizando datos del BOE…",
+            fecha=fecha_indice.replace("/", "-"),
+        )
+        if cobertura_reutilizable(fecha_indice):
             indices_reutilizados += 1
             continue
         indices_consultados_http += 1
@@ -399,7 +463,12 @@ def _ejecutar_aplicacion():
         colour="green",
         dynamic_ncols=True,
     )
-    for enlace in barra:
+    total_publicaciones = len(enlaces_oposiciones)
+    for publicaciones_actual, enlace in enumerate(barra, start=1):
+        _notificar_progreso(
+            on_progress, fase="publicaciones", actual=publicaciones_actual,
+            total=total_publicaciones, mensaje="Analizando publicaciones…",
+        )
         # Metadatos del sumario disponibles para pasos posteriores; el Paso 2
         # no altera aún extracción, administración ni persistencia final.
         metadatos_sumario = fichas_oposiciones.get(enlace, {})
@@ -617,7 +686,8 @@ def _ejecutar_aplicacion():
         "Cobertura": df_cobertura,
     }
     resultado_persistencia = base_datos.persistir_lote_principal(
-        "datos/boe.db", lote_definitivo, lista_fechas[0], lista_fechas[-1]
+        ruta_bd, lote_definitivo, lista_fechas[0], lista_fechas[-1],
+        fechas=lista_fechas if fechas_explicitamente is not None else None,
     )
     print(
         "SQLITE: sin cambios" if not resultado_persistencia["cambios"] else
@@ -643,8 +713,12 @@ def _ejecutar_aplicacion():
                 print(
                     f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
                 )
+            if modo_programatico:
+                raise RuntimeError("El BOE no publicó procesos selectivos en el periodo solicitado")
             sys.exit(0)
         print(f"\n{Fore.RED}❌ No se pudo consultar el BOE para el periodo seleccionado.{Fore.RESET}")
+        if modo_programatico:
+            raise RuntimeError("No se pudo consultar el BOE para el periodo solicitado")
         sys.exit(1)
 
     # Filtrar el DataFrame por el texto de búsqueda introducido por el usuario y
@@ -667,7 +741,7 @@ def _ejecutar_aplicacion():
     )
 
     # Mostramos en un mapa web los municipios encontrados en la búsqueda
-    if not df_filtrado_por_patron.empty:
+    if generar_mapa and not df_filtrado_por_patron.empty:
         generar_mapa_municipios(df_filtrado_por_patron)
 
     print(f"Publicaciones descargadas: {publicaciones_descargadas}")
@@ -695,6 +769,11 @@ def _ejecutar_aplicacion():
         print(
             f"\n{Fore.YELLOW}⌛🕒 Tiempo total de ejecución: {horas} h {minutos} min {segundos} s{Fore.RESET}"
         )
+    return {"persistencia": resultado_persistencia, "estados_indices": estados_indices,
+            "indices_consultados_http": indices_consultados_http,
+            "indices_reutilizados": indices_reutilizados,
+            "publicaciones_analizadas": publicaciones_analizadas,
+            "publicaciones_descargadas": publicaciones_descargadas}
 
 
 def main():

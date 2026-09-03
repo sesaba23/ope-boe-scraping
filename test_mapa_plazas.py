@@ -248,6 +248,24 @@ def test_enriquecimiento_deja_igual_administracion_no_resoluble():
     pd.testing.assert_frame_equal(resultado, df)
 
 
+def test_enriquecimiento_admite_resolucion_sin_coordenadas(monkeypatch):
+    df = pd.DataFrame([{
+        "Administración": "Entidad municipal", "Municipio": pd.NA,
+        "Provincia": pd.NA, "Latitud": pd.NA, "Longitud": pd.NA,
+        "Habitantes": pd.NA,
+    }])
+    monkeypatch.setattr(
+        mapa_plazas, "buscar_municipio",
+        lambda *_: {"Municipio": "Municipio", "Provincia": "Provincia"},
+    )
+
+    resultado = enriquecer_filas_sin_coordenadas(df)
+
+    assert resultado.loc[0, "Municipio"] == "Municipio"
+    assert resultado.loc[0, "Provincia"] == "Provincia"
+    assert pd.isna(resultado.loc[0, "Latitud"])
+
+
 def test_enriquecimiento_no_realiza_peticiones_http(monkeypatch):
     monkeypatch.setattr(
         requests,
