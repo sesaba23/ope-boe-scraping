@@ -1,6 +1,7 @@
 """Consultas de lectura para los consumidores SQLite de BOE."""
 from pathlib import Path
 import sqlite3
+import calendar
 from math import ceil
 from datetime import date, datetime, timedelta
 
@@ -108,11 +109,12 @@ def cobertura_mes(ruta_bd, *, anio, mes):
     inicio = date(int(anio), int(mes), 1)
     siguiente = date(inicio.year + (inicio.month == 12), 1 if inicio.month == 12 else inicio.month + 1, 1)
     clasificar = _clasificador_cobertura(ruta_bd)
-    dias, actual = [], inicio
+    dias = [{"vacio": True} for _ in range(calendar.monthrange(inicio.year, inicio.month)[0])]
+    actual = inicio
     while actual < siguiente:
         resultado = clasificar(actual)
         fila = resultado.pop("fila")
-        dias.append({"fecha": actual.isoformat(), **resultado,
+        dias.append({"fecha": actual.isoformat(), "vacio": False, **resultado,
                      "estado": fila["Estado"] if fila else None,
                      "version_extractor": fila["Version_extractor"] if fila else None,
                      "fecha_ultima_consulta": fila["Fecha_ultima_consulta"] if fila else None,
@@ -125,7 +127,7 @@ def cobertura_mes(ruta_bd, *, anio, mes):
 def detalle_cobertura_dia(ruta_bd, *, fecha):
     fecha = _fecha_iso(fecha)
     for dia in cobertura_mes(ruta_bd, anio=fecha.year, mes=fecha.month)["dias"]:
-        if dia["fecha"] == fecha.isoformat():
+        if not dia.get("vacio") and dia["fecha"] == fecha.isoformat():
             return dia
     raise ValueError("Fecha no válida")
 
@@ -287,8 +289,8 @@ def buscar_sugerencias_puesto(ruta_bd="datos/boe.db", texto=None, *, limite=12):
         raise ValueError("limite debe ser un entero positivo") from error
     clausulas, parametros = [], []
     for termino in terminos:
-        clausulas.append("(lower(puesto) LIKE lower(?) OR lower(COALESCE(puesto_normalizado,'')) LIKE lower(?))")
-        parametros.extend((f"%{termino}%", f"%{termino}%"))
+        clausulas.append("lower(COALESCE(NULLIF(puesto_normalizado,''), puesto)) LIKE lower(?)")
+        parametros.append(f"%{termino}%")
     conexion = _conexion(ruta_bd)
     try:
         filas = conexion.execute(
@@ -368,8 +370,8 @@ def buscar_oposiciones(
             parametros.append(f"%{termino}%")
     if texto:
         for termino in _terminos_parciales(texto):
-            clausulas.append("(lower(puesto) LIKE lower(?) OR lower(COALESCE(puesto_normalizado,'')) LIKE lower(?))")
-            parametros.extend((f"%{termino}%", f"%{termino}%"))
+            clausulas.append("lower(COALESCE(NULLIF(puesto_normalizado,''), puesto)) LIKE lower(?)")
+            parametros.append(f"%{termino}%")
 
     where = " WHERE " + " AND ".join(clausulas) if clausulas else ""
     seleccion = """oposicion_id,fecha_boe,puesto,puesto_normalizado,num_plazas,

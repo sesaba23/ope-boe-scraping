@@ -42,7 +42,7 @@ h2 { margin-bottom: 0; font-size: 1.1rem; }
 
 #formulario-filtros {
     display: grid;
-    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     align-items: end;
     gap: 16px;
 }

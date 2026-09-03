@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import re
 
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_intervalo
 
@@ -165,7 +165,10 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             abort(503, description=str(error))
         if oposicion is None:
             abort(404)
-        return render_template("detalle_oposicion.html", seccion_activa="oposiciones", oposicion=oposicion)
+        volver = request.args.get("volver", "")
+        if not volver.startswith("/oposiciones"):
+            volver = url_for("oposiciones")
+        return render_template("detalle_oposicion.html", seccion_activa="oposiciones", oposicion=oposicion, volver=volver)
 
     @app.get("/api/filtros/provincias")
     def api_provincias():
