@@ -302,13 +302,19 @@ def test_estado_completado_legacy_se_compara_en_dry_run_sin_modificarlo(tmp_path
                             "backup": "historico.xlsx", "sha256_excel_antes": "antes"})
     from procesamiento_historico import guardar_estado
     guardar_estado(ruta, estado_original)
+    estado_persistido = ruta.read_bytes()
     monkeypatch.setattr(cargador, "enriquecer_filas_sin_coordenadas", lambda df: df)
     ruta_bd = _base_temporal(tmp_path)
+    bd_persistida = ruta_bd.read_bytes()
+    metadata_antes = base_datos.validar_base_principal(ruta_bd)
     resultado = cargador.aplicar("2004-01-01", "2004-01-01", ruta_bd=ruta_bd,
                                  directorio=tmp_path, dry_run=True)
     assert resultado["dry_run"] is True
     assert (resultado["convocatorias_validas"], resultado["filas_anadir"], resultado["duplicados"]) == (1, 1, 0)
-    assert cargar_estado(ruta, "2004-01-01", "2004-01-01") == estado_original
+    assert ruta.read_bytes() == estado_persistido
+    assert ruta_bd.read_bytes() == bd_persistida
+    assert base_datos.validar_base_principal(ruta_bd)["data_version"] == metadata_antes["data_version"]
+    assert resultado.get("backup") is None
 
 
 def test_aplicar_no_completa_el_estado_si_falla_la_transaccion(tmp_path, monkeypatch):

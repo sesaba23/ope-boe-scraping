@@ -43,6 +43,7 @@ body { margin: 0; background: var(--portal-fondo); color: var(--portal-texto); f
 .form-actions a, .portal-empty a, .back-link { color: var(--portal-azul); font-weight: 700; }
 .portal-empty, .portal-message { margin-top: 24px; border: 1px dashed #b8c6dd; border-radius: 14px; background: #fff; padding: 28px; text-align: center; }
 .update-status { display: grid; gap: 5px; margin-bottom: 18px; border: 1px solid #a9c0f6; border-radius: 12px; background: #eef4ff; color: #173b8f; padding: 14px 16px; }
+.update-status[hidden] { display: none; }
 .update-status span { color: #475467; font-size: .9rem; }.update-progress { height: 7px; overflow: hidden; border-radius: 99px; background: #d7e3fb; }.update-progress span { display: block; height: 100%; background: #2964e8; transition: width .2s ease; }
 .portal-empty h2 { margin-top: 0; }
 .portal-message--error { border-color: #f4b4b4; color: #9e1e1e; }

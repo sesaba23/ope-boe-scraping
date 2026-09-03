@@ -100,6 +100,22 @@ def test_buscador_inicial_no_carga_resultados_y_busqueda_conserva_filtros(client
     assert 'href="/oposiciones?pagina=1' not in html or True
 
 
+def test_ver_todas_reutiliza_busqueda_paginada_y_el_submit_vacio_la_activa(cliente):
+    html = cliente.get("/oposiciones?ver_todas=1&tamano_pagina=2").get_data(as_text=True)
+    assert "resultados encontrados" in html
+    assert 'name="ver_todas" value="1"' in html
+    javascript = cliente.get("/static/js/oposiciones.js").get_data(as_text=True)
+    assert 'datos.set("ver_todas", "1")' in javascript
+    assert 'navegarResultados(datos)' in javascript
+
+
+def test_barra_actualizacion_respeta_hidden_hasta_que_haya_trabajo(cliente):
+    css = cliente.get("/static/css/portal.css").get_data(as_text=True)
+    html = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+    assert ".update-status[hidden] { display: none; }" in css
+    assert 'class="update-status" hidden' in html
+
+
 def test_buscador_detalle_y_apis_territoriales(cliente):
     detalle = cliente.get("/oposiciones/1")
     assert detalle.status_code == 200

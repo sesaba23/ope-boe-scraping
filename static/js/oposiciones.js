@@ -89,6 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (formulario && estado) {
         formulario.addEventListener("submit", evento => {
             const datos = new FormData(formulario);
+            const tieneFiltros = [...datos.entries()].some(([nombre, valor]) =>
+                !["municipio_exacto", "municipio_provincia_exacto"].includes(nombre) && String(valor).trim());
+            if (!tieneFiltros) {
+                evento.preventDefault(); datos.set("ver_todas", "1"); navegarResultados(datos); return;
+            }
             if (!datos.get("fecha_desde")) return;
             evento.preventDefault(); iniciarActualizacion();
         });
