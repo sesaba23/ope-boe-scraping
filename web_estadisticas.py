@@ -82,7 +82,8 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             respuesta = gestion_base.comparar_manifest_local(app.config["RUTA_BD"], consulta["manifest"])
             respuesta["estado"] = "publicada"
             return jsonify(respuesta)
-        except Exception as error:
+        except Exception:
+            app.logger.exception("No se pudo comprobar la copia publicada")
             return jsonify({"error": "No se pudo comprobar la copia publicada."}), 502
 
     @app.post("/api/administracion/base-datos/confirmar-publicacion")

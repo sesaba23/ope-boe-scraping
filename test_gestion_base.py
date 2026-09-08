@@ -197,6 +197,34 @@ def test_base_antigua_sin_migracion_no_se_modifica(tmp_path):
  estado=gestion_base.asegurar_base_local(p)
  assert estado['requiere_actualizacion'] and p.read_bytes()==antes
 
+
+def test_comparar_base_antigua_no_relaja_manifest_de_publicacion(tmp_path, monkeypatch):
+ local = db(tmp_path / "local")
+ con = sqlite3.connect(local)
+ con.execute("UPDATE metadata SET valor='2' WHERE clave='schema_version'")
+ con.execute("UPDATE metadata SET valor='4' WHERE clave='data_version'")
+ con.commit(); con.close()
+ publicada = db(tmp_path / "publicada")
+ con = sqlite3.connect(publicada)
+ con.execute("UPDATE metadata SET valor='25' WHERE clave='data_version'")
+ con.commit(); con.close()
+ manifest_publicado = gestion_base.crear_manifest(publicada)
+
+ with pytest.raises(gestion_base.GestionBaseError, match="Schema incompatible: 2"):
+  gestion_base.crear_manifest(local)
+
+ comparacion = gestion_base.comparar_manifest_local(local, manifest_publicado)
+ assert comparacion["local"]["schema_version"] == 2
+ assert comparacion["local"]["data_version"] == 4
+ assert comparacion["publicada"]["schema_version"] == 6
+ assert comparacion["publicada"]["data_version"] == 25
+ assert "posterior" in comparacion["mensaje"]
+
+ monkeypatch.setattr(gestion_base, "leer_manifest_remoto", lambda *_args, **_kwargs: manifest_publicado)
+ preparada = gestion_base.preparar_actualizacion_github(local, "x/y")
+ assert preparada["estado"] == "preparada"
+ assert preparada["local"]["schema_version"] == 2
+
 def test_migracion_sin_ruta_deja_base_intacta(tmp_path):
  p=db(tmp_path); con=sqlite3.connect(p); con.execute("UPDATE metadata SET valor='4' WHERE clave='schema_version'"); con.commit(); con.close(); antes=p.read_bytes()
  with pytest.raises(gestion_base.GestionBaseError): gestion_base.migrar_si_necesario(p)

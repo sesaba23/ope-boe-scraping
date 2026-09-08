@@ -769,6 +769,29 @@ def test_api_administracion_prepara_y_consulta_manifest(cliente, monkeypatch, ru
     assert publicada.status_code == 200 and "idénticas" in publicada.get_json()["mensaje"]
 
 
+def test_api_version_publicada_admite_base_local_antigua(cliente, monkeypatch, ruta_bd, tmp_path):
+    import gestion_base
+    conexion = base_datos.conectar(ruta_bd)
+    base_datos.guardar_metadata(conexion, schema_version=2, data_version=4)
+    conexion.commit(); conexion.close()
+    publicada = tmp_path / "publicada.db"
+    conexion = base_datos.conectar(publicada)
+    base_datos.crear_esquema(conexion)
+    base_datos.guardar_metadata(conexion, schema_version=6, data_version=25)
+    conexion.commit(); conexion.close()
+    manifest = gestion_base.crear_manifest(publicada)
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "consultar_copia_publicada", lambda _: {"estado": "publicada", "manifest": manifest})
+
+    respuesta = cliente.post("/api/administracion/base-datos/version-publicada")
+
+    assert respuesta.status_code == 200
+    datos = respuesta.get_json()
+    assert datos["local"]["schema_version"] == 2 and datos["local"]["data_version"] == 4
+    assert datos["publicada"]["schema_version"] == 6 and datos["publicada"]["data_version"] == 25
+    assert "posterior" in datos["mensaje"]
+
+
 def test_api_administracion_error_remoto_controlado(cliente, monkeypatch):
     import gestion_base
     monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")

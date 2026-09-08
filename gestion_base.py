@@ -153,6 +153,26 @@ def estado_local(ruta: str | Path) -> dict:
             "publicaciones": publicaciones, "oposiciones": oposiciones}
 
 
+def inspeccionar_base_local(ruta: str | Path) -> dict:
+    """Describe una base existente sin exigir que pueda publicarse.
+
+    La pantalla de administración debe poder comparar una instalación antigua
+    con la copia publicada para ofrecer su actualización.  La validación de
+    compatibilidad para publicar sigue siendo responsabilidad de
+    :func:`crear_manifest`.
+    """
+    ruta = Path(ruta)
+    estado = verificar_integridad(ruta)
+    return {
+        "schema_version": estado["schema_version"],
+        "data_version": estado["data_version"],
+        "sha256": _sha256(ruta),
+        "size_bytes": ruta.stat().st_size,
+        "integrity": estado["integrity"],
+        "foreign_keys": estado["foreign_keys"],
+    }
+
+
 def crear_manifest(ruta: str | Path, *, publicado_en: datetime | None = None) -> dict:
     ruta = Path(ruta)
     estado = verificar_integridad(ruta)
@@ -342,7 +362,9 @@ def leer_manifest_remoto(repo: str, *, opener=_abrir_https) -> dict:
         raise GestionBaseError("No se pudo consultar la copia publicada.") from error
 
 def comparar_manifest_local(ruta: str | Path, remoto: dict) -> dict:
-    local = crear_manifest(ruta)
+    # Una comparación es una operación de inspección: también debe servir para
+    # instalaciones antiguas que todavía no pueden publicarse.
+    local = inspeccionar_base_local(ruta)
     remoto = validar_manifest(remoto)
     if local["sha256"] == remoto["sha256"]:
         mensaje = "La base local y la copia publicada son idénticas."
