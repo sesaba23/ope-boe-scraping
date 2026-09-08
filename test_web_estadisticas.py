@@ -742,3 +742,79 @@ def test_modulo_web_no_importa_plazasboe(monkeypatch):
     monkeypatch.setattr(builtins, "__import__", importar_sin_plazasboe)
 
     importlib.reload(web_estadisticas)
+
+
+def test_administracion_base_muestra_textos_y_no_verifica_al_cargar(cliente, monkeypatch):
+    import gestion_base
+    monkeypatch.setattr(gestion_base, "verificar_integridad", lambda *_: (_ for _ in ()).throw(AssertionError("no automática")))
+    respuesta = cliente.get("/administracion/base-datos")
+    assert respuesta.status_code == 200
+    assert b"Verificar integridad" in respuesta.data
+    assert b"No descarga ni modifica" in respuesta.data
+    assert b'id="estado-publicacion"' in respuesta.data
+    assert b"hidden" in respuesta.data
+
+
+def test_api_administracion_prepara_y_consulta_manifest(cliente, monkeypatch, ruta_bd):
+    import gestion_base
+    conexion = base_datos.conectar(ruta_bd)
+    base_datos.guardar_metadata(conexion, schema_version=6)
+    conexion.commit(); conexion.close()
+    manifest = gestion_base.crear_manifest(ruta_bd)
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "consultar_copia_publicada", lambda _: {"estado": "publicada", "manifest": manifest})
+    preparada = cliente.post("/api/administracion/base-datos/preparar-publicacion")
+    publicada = cliente.post("/api/administracion/base-datos/version-publicada")
+    assert preparada.status_code == 200 and preparada.get_json()["confirmacion_requerida"]
+    assert publicada.status_code == 200 and "idénticas" in publicada.get_json()["mensaje"]
+
+
+def test_api_administracion_error_remoto_controlado(cliente, monkeypatch):
+    import gestion_base
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "consultar_copia_publicada", lambda _: (_ for _ in ()).throw(gestion_base.GestionBaseError("inválido")))
+    respuesta = cliente.post("/api/administracion/base-datos/version-publicada")
+    assert respuesta.status_code == 502
+
+
+def test_api_administracion_sin_release_no_es_error(cliente, monkeypatch):
+    import gestion_base
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "consultar_copia_publicada", lambda _: {"estado": "no_publicada", "mensaje": "Todavía no existe ninguna copia publicada de la base de datos."})
+    respuesta = cliente.post("/api/administracion/base-datos/version-publicada")
+    assert respuesta.status_code == 200
+    assert "Todavía no existe" in respuesta.get_json()["mensaje"]
+
+
+def test_api_administracion_publicacion_incompleta(cliente, monkeypatch):
+    import gestion_base
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "consultar_copia_publicada", lambda _: {"estado": "publicacion_incompleta", "mensaje": "incompleta"})
+    respuesta = cliente.post("/api/administracion/base-datos/version-publicada")
+    assert respuesta.status_code == 200 and respuesta.get_json()["estado"] == "publicacion_incompleta"
+
+
+def test_script_administracion_distingue_estado_terminal_y_oculta_spinner():
+    script = Path("static/js/administracion_base.js").read_text(encoding="utf-8")
+    assert 'job.terminal' in script
+    assert 'spinner.hidden = terminal' in script
+    assert 'if (terminal) stopPolling()' in script
+
+
+def test_script_actualizacion_muestra_exito_final_con_duracion_congelada():
+    script = Path("static/js/actualizacion_base_github.js").read_text(encoding="utf-8")
+    css = Path("static/css/portal.css").read_text(encoding="utf-8")
+    assert 'Actualización completada en ${job.transcurrido_segundos} segundos' in script
+    assert 'admin-status--success' in script and '.admin-status--success' in css
+    assert 'spinner.hidden=terminal' in script
+    assert 'job.error ||' in script
+
+
+def test_api_prepara_actualizacion_sin_iniciarla(cliente, monkeypatch, ruta_bd):
+    import gestion_base
+    conexion = base_datos.conectar(ruta_bd); base_datos.guardar_metadata(conexion, schema_version=6); conexion.commit(); conexion.close()
+    manifest = gestion_base.crear_manifest(ruta_bd)
+    monkeypatch.setattr(gestion_base, "repositorio_configurado", lambda: "x/y")
+    monkeypatch.setattr(gestion_base, "preparar_actualizacion_github", lambda *_: {"estado": "preparada", "local": manifest, "publicada": manifest, "mensaje": "misma"})
+    respuesta = cliente.post("/api/administracion/base-datos/preparar-actualizacion")
+    assert respuesta.status_code == 200 and respuesta.get_json()["confirmacion_requerida"]

@@ -20,6 +20,7 @@
                 <a href="{{ url_for('pagina_estadisticas') }}"{% if seccion_activa == 'estadisticas' %} aria-current="page"{% endif %}>Estadísticas</a>
                 <a href="{{ url_for('cobertura') }}"{% if seccion_activa == 'cobertura' %} aria-current="page"{% endif %}>Cobertura</a>
                 <a href="{{ url_for('mapas') }}"{% if seccion_activa == 'mapas' %} aria-current="page"{% endif %}>Mapas</a>
+                <a href="{{ url_for('administracion_base_datos') }}"{% if seccion_activa == 'administracion' %} aria-current="page"{% endif %}>Administración</a>
             </nav>
         </div>
     </header>

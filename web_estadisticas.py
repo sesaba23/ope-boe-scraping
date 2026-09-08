@@ -21,6 +21,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
     ruta_fijada = Path(ruta_bd or Path.cwd() / "datos/boe.db").expanduser()
     app.config["RUTA_BD"] = ruta_fijada.resolve()
     app.config["GESTOR_ACTUALIZACIONES"] = gestor_actualizaciones or GestorActualizaciones(app.config["RUTA_BD"])
+    import gestion_base
+    app.config["GESTOR_PUBLICACION"] = gestion_base.GestorPublicacion()
+    app.config["GESTOR_ACTUALIZACION_BASE"] = gestion_base.GestorActualizacionBase()
 
     @app.get("/")
     def inicio():
@@ -41,6 +44,82 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
         except (ErrorConsultaSQLite, ValueError) as error:
             return render_template("error.html", seccion_activa="cobertura", codigo=400, mensaje=str(error)), 400
         return render_template("cobertura.html", seccion_activa="cobertura", resumen=resumen, calendario=calendario)
+
+    @app.get("/administracion/base-datos")
+    def administracion_base_datos():
+        import gestion_base
+        ruta = app.config["RUTA_BD"]
+        try:
+            estado = gestion_base.estado_local(ruta)
+        except Exception as error:
+            return render_template("error.html", seccion_activa="administracion", codigo=503, mensaje=str(error)), 503
+        return render_template("administracion_base_datos.html", seccion_activa="administracion", estado=estado)
+
+    @app.post("/api/administracion/base-datos/verificar")
+    def api_verificar_base_datos():
+        import gestion_base
+        try:
+            return jsonify(gestion_base.verificar_integridad(app.config["RUTA_BD"]))
+        except gestion_base.GestionBaseError as error:
+            return jsonify({"error": str(error)}), 400
+
+    @app.post("/api/administracion/base-datos/preparar-publicacion")
+    def api_preparar_publicacion():
+        import gestion_base
+        try:
+            return jsonify({"confirmacion_requerida": True, "manifest": gestion_base.crear_manifest(app.config["RUTA_BD"])})
+        except gestion_base.GestionBaseError as error:
+            return jsonify({"error": str(error)}), 400
+
+    @app.post("/api/administracion/base-datos/version-publicada")
+    def api_version_publicada():
+        try:
+            import gestion_base
+            consulta = gestion_base.consultar_copia_publicada(gestion_base.repositorio_configurado())
+            if consulta["estado"] != "publicada":
+                return jsonify(consulta)
+            respuesta = gestion_base.comparar_manifest_local(app.config["RUTA_BD"], consulta["manifest"])
+            respuesta["estado"] = "publicada"
+            return jsonify(respuesta)
+        except Exception as error:
+            return jsonify({"error": "No se pudo comprobar la copia publicada."}), 502
+
+    @app.post("/api/administracion/base-datos/confirmar-publicacion")
+    def api_confirmar_publicacion():
+        try:
+            import gestion_base
+            trabajo, creado = app.config["GESTOR_PUBLICACION"].iniciar(app.config["RUTA_BD"], gestion_base.repositorio_configurado())
+            return jsonify({"creado": creado, "trabajo": trabajo.serializar()}), 202
+        except Exception as error:
+            return jsonify({"error": "No se pudo iniciar la publicación."}), 400
+
+    @app.get("/api/administracion/base-datos/publicacion")
+    def api_estado_publicacion():
+        estado = app.config["GESTOR_PUBLICACION"].obtener()
+        return jsonify(estado or {"estado": "sin_trabajo"})
+
+    @app.post("/api/administracion/base-datos/preparar-actualizacion")
+    def api_preparar_actualizacion_base():
+        import gestion_base
+        try:
+            comparacion = gestion_base.preparar_actualizacion_github(app.config["RUTA_BD"], gestion_base.repositorio_configurado())
+            return jsonify({"confirmacion_requerida": True, **comparacion})
+        except gestion_base.GestionBaseError as error:
+            return jsonify({"error": str(error)}), 400
+
+    @app.post("/api/administracion/base-datos/confirmar-actualizacion")
+    def api_confirmar_actualizacion_base():
+        import gestion_base
+        try:
+            trabajo, creado = app.config["GESTOR_ACTUALIZACION_BASE"].iniciar(app.config["RUTA_BD"], gestion_base.repositorio_configurado())
+            return jsonify({"creado": creado, "trabajo": trabajo.serializar()}), 202
+        except gestion_base.GestionBaseError as error:
+            return jsonify({"error": str(error)}), 409
+
+    @app.get("/api/administracion/base-datos/actualizacion")
+    def api_estado_actualizacion_base():
+        estado = app.config["GESTOR_ACTUALIZACION_BASE"].obtener()
+        return jsonify(estado or {"estado": "sin_trabajo"})
 
     @app.get("/oposiciones")
     def oposiciones():
@@ -307,6 +386,8 @@ app = crear_app()
 
 if __name__ == "__main__":
     argumentos = _analizar_argumentos()
+    import gestion_base
+    gestion_base.asegurar_base_local(argumentos.bd)
     if argumentos.host == "0.0.0.0":
         print(f"Acceso LAN habilitado. Accede desde otro dispositivo mediante http://IP_LOCAL_DEL_SERVIDOR:{argumentos.port}")
     crear_app(argumentos.bd).run(host=argumentos.host, port=argumentos.port, debug=False)
