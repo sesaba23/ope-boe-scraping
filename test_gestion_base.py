@@ -183,6 +183,18 @@ def test_repositorio_ssh_y_https_se_extrae_sin_confundir_nombre():
  for remoto in ('git@github.com:owner/proyecto.git\n', 'https://github.com/owner/proyecto.git\n'):
   assert gestion_base.repositorio_configurado(runner=lambda *a, remoto=remoto, **k: Resultado(stdout=remoto)) == 'owner/proyecto'
 
+
+def test_repositorio_sin_origin_usa_remoto_github_disponible():
+ def runner(args, **kw):
+  return Resultado(stdout='ope-boe-scraping\n') if args == ['git', 'remote'] else Resultado(stdout='git@github.com:owner/proyecto.git\n')
+ assert gestion_base.repositorio_configurado(runner=runner) == 'owner/proyecto'
+
+
+def test_base_antigua_sin_migracion_no_se_modifica(tmp_path):
+ p=db(tmp_path); con=sqlite3.connect(p); con.execute("UPDATE metadata SET valor='2' WHERE clave='schema_version'"); con.execute("UPDATE metadata SET valor='4' WHERE clave='data_version'"); con.commit(); con.close(); antes=p.read_bytes()
+ estado=gestion_base.asegurar_base_local(p)
+ assert estado['requiere_actualizacion'] and p.read_bytes()==antes
+
 def test_migracion_sin_ruta_deja_base_intacta(tmp_path):
  p=db(tmp_path); con=sqlite3.connect(p); con.execute("UPDATE metadata SET valor='4' WHERE clave='schema_version'"); con.commit(); con.close(); antes=p.read_bytes()
  with pytest.raises(gestion_base.GestionBaseError): gestion_base.migrar_si_necesario(p)

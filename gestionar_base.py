@@ -6,7 +6,7 @@ import gestion_base
 def main():
     p=argparse.ArgumentParser(); p.add_argument("accion", choices=("verificar","publicar","manifest","actualizar")); p.add_argument("--bd", default="datos/boe.db"); p.add_argument("--repo"); p.add_argument("--confirmar", action="store_true")
     a=p.parse_args()
-    repo = a.repo or gestion_base.repositorio_configurado()
+    repo = a.repo or (gestion_base.repositorio_configurado() if a.accion in {"publicar", "actualizar"} else None)
     if a.accion == "actualizar":
         comparacion = gestion_base.preparar_actualizacion_github(a.bd, repo)
         print(json.dumps(comparacion, ensure_ascii=False, indent=2))

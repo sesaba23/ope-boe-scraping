@@ -306,17 +306,28 @@ def consultar_copia_publicada(repo: str, *, runner=subprocess.run) -> dict:
         return {"estado": "publicacion_incompleta", "mensaje": "Existe una publicación en GitHub, pero todavía no contiene una copia completa de la base de datos."}
 
 def repositorio_configurado(*, runner=subprocess.run) -> str:
-    resultado = runner(["git", "remote", "get-url", "origin"], capture_output=True, text=True)
-    texto = getattr(resultado, "stdout", "").strip()
-    coincidencia = re.search(r"github\.com[:/]([^/]+/[^/.]+)(?:\.git)?$", texto)
-    if not coincidencia: raise GestionBaseError("No se pudo determinar el repositorio GitHub de origin")
-    return coincidencia.group(1)
+    remotos = runner(["git", "remote"], capture_output=True, text=True)
+    nombres = [nombre.strip() for nombre in getattr(remotos, "stdout", "").splitlines() if nombre.strip()]
+    ordenados = (["origin"] if "origin" in nombres else []) + sorted(nombre for nombre in nombres if nombre != "origin")
+    for nombre in ordenados:
+        resultado = runner(["git", "remote", "get-url", nombre], capture_output=True, text=True)
+        texto = getattr(resultado, "stdout", "").strip()
+        coincidencia = re.search(r"github\.com[:/]([^/]+/[^/.]+)(?:\.git)?$", texto)
+        if coincidencia:
+            return coincidencia.group(1)
+    raise GestionBaseError("No se pudo determinar un repositorio GitHub configurado")
 
 def asegurar_base_local(ruta: str | Path, *, repo: str | None = None, opener=_abrir_https) -> dict:
     ruta = Path(ruta)
-    if not ruta.exists():
+    existente = ruta.exists()
+    if not existente:
         instalar_descarga_inicial(ruta, repo or repositorio_configurado(), opener=opener)
-    return migrar_si_necesario(ruta)
+    try:
+        return migrar_si_necesario(ruta)
+    except GestionBaseError as error:
+        if existente and "No hay migración explícita" in str(error):
+            return {"requiere_actualizacion": True, **verificar_integridad(ruta)}
+        raise
 
 
 def leer_manifest_remoto(repo: str, *, opener=_abrir_https) -> dict:

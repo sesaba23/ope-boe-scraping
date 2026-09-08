@@ -51,6 +51,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
         ruta = app.config["RUTA_BD"]
         try:
             estado = gestion_base.estado_local(ruta)
+            estado["requiere_actualizacion"] = estado["schema_version"] < gestion_base.SCHEMA_REQUERIDO
         except Exception as error:
             return render_template("error.html", seccion_activa="administracion", codigo=503, mensaje=str(error)), 503
         return render_template("administracion_base_datos.html", seccion_activa="administracion", estado=estado)
