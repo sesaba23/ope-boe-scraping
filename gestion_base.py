@@ -296,10 +296,10 @@ def descargar_manifest_publicado(repo: str, *, runner=subprocess.run) -> dict:
             raise GestionBaseError("La información de la copia publicada no es válida.") from error
 
 
-def consultar_copia_publicada(repo: str, *, runner=subprocess.run) -> dict:
-    """Estado estructurado para la interfaz; nunca inicia una sincronización."""
+def consultar_copia_publicada(repo: str, *, opener=_abrir_https) -> dict:
+    """Estado estructurado de sólo lectura; no requiere GitHub CLI."""
     try:
-        return {"estado": "publicada", "manifest": descargar_manifest_publicado(repo, runner=runner)}
+        return {"estado": "publicada", "manifest": leer_manifest_remoto(repo, opener=opener)}
     except ReleaseNoEncontrada:
         return {"estado": "no_publicada", "mensaje": "Todavía no existe ninguna copia publicada de la base de datos."}
     except PublicacionIncompleta:

@@ -146,30 +146,32 @@ def test_remote_manifest_distinto_no_valida_publicacion(tmp_path):
   gestion_base.publicar_base(p, 'x/y', runner=gh, verificar_remoto=lambda _: remoto)
 
 
-def test_consulta_release_inexistente_es_estado_normal():
- estado = gestion_base.consultar_copia_publicada('x/y', runner=GhSimulado())
+def test_consulta_release_inexistente_es_estado_normal(monkeypatch):
+ monkeypatch.setattr(gestion_base, 'leer_manifest_remoto', lambda *a, **k: (_ for _ in ()).throw(gestion_base.ReleaseNoEncontrada()))
+ estado = gestion_base.consultar_copia_publicada('x/y')
  assert estado['estado'] == 'no_publicada'
  assert 'Todavía no existe' in estado['mensaje']
 
 
-def test_consulta_release_sin_manifest_es_incompleta():
- gh = GhSimulado(existe=True)
- estado = gestion_base.consultar_copia_publicada('x/y', runner=gh)
+def test_consulta_release_sin_manifest_es_incompleta(monkeypatch):
+ monkeypatch.setattr(gestion_base, 'leer_manifest_remoto', lambda *a, **k: (_ for _ in ()).throw(gestion_base.PublicacionIncompleta()))
+ estado = gestion_base.consultar_copia_publicada('x/y')
  assert estado['estado'] == 'publicacion_incompleta'
 
 
-def test_consulta_release_con_manifest_valido_y_repositorio_redirigido(tmp_path):
+def test_consulta_release_con_manifest_valido_y_repositorio_redirigido(tmp_path, monkeypatch):
  p = db(tmp_path); manifest = gestion_base.crear_manifest(p)
- gh = GhSimulado(existe=True, manifest=manifest); gh.assets = [('manifest.json', 1)]
- estado = gestion_base.consultar_copia_publicada('owner/nombre-anterior', runner=gh)
+ llamadas=[]
+ monkeypatch.setattr(gestion_base, 'leer_manifest_remoto', lambda repo, **k: llamadas.append(repo) or manifest)
+ estado = gestion_base.consultar_copia_publicada('owner/nombre-anterior')
  assert estado['estado'] == 'publicada' and estado['manifest']['sha256'] == manifest['sha256']
- assert any('--repo' in llamada and llamada[llamada.index('--repo') + 1] == 'owner/nombre-anterior' for llamada in gh.llamadas)
+ assert llamadas == ['owner/nombre-anterior']
 
 
-def test_manifest_remoto_invalido_es_error_controlado():
- gh = GhSimulado(existe=True, manifest={'formato': 'incorrecto'}); gh.assets = [('manifest.json', 1)]
+def test_manifest_remoto_invalido_es_error_controlado(monkeypatch):
+ monkeypatch.setattr(gestion_base, 'leer_manifest_remoto', lambda *a, **k: (_ for _ in ()).throw(gestion_base.GestionBaseError('La información de la copia publicada no es válida.')))
  with pytest.raises(gestion_base.GestionBaseError, match='no es válida'):
-  gestion_base.consultar_copia_publicada('x/y', runner=gh)
+  gestion_base.consultar_copia_publicada('x/y')
 
 
 @pytest.mark.parametrize('stderr', ['permission denied', 'network timeout'])
