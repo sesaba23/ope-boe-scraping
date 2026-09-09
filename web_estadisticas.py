@@ -2,8 +2,9 @@ import argparse
 from datetime import datetime, timedelta
 from pathlib import Path
 import re
+from urllib.parse import parse_qsl, urlsplit
 
-from flask import Flask, abort, jsonify, render_template, request, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
 
 from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_intervalo
 
@@ -11,9 +12,51 @@ from consultas_boe import (
     ErrorConsultaSQLite, buscar_municipios, buscar_oposiciones,
     buscar_sugerencias_puesto, metadata, obtener_oposicion,
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
-    resumen_cobertura,
+    resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
 )
 from estadisticas import calcular_estadisticas_sqlite
+
+
+_FILTROS_RETORNO_OPOSICIONES = (
+    "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
+    "comunidad_autonoma", "provincia", "municipio", "municipio_exacto",
+    "municipio_provincia_exacto", "tipo_entidad", "sistema", "turno",
+    "escala", "subescala", "clase",
+)
+_ORDENES_RETORNO_OPOSICIONES = {
+    "fecha_desc", "fecha_asc", "puesto_asc", "administracion_asc", "plazas_desc",
+}
+
+
+def _url_retorno_oposiciones(argumentos):
+    """Reconstruye un destino interno con filtros y estado visual permitidos."""
+    parametros = {
+        nombre: valor for nombre in _FILTROS_RETORNO_OPOSICIONES
+        if (valor := (argumentos.get(nombre) or "").strip())
+    }
+    try:
+        pagina = int(argumentos.get("pagina", 0))
+    except (TypeError, ValueError):
+        pagina = 0
+    if pagina > 0:
+        parametros["pagina"] = pagina
+    if argumentos.get("tamano_pagina") in {"25", "50", "100"}:
+        parametros["tamano_pagina"] = argumentos["tamano_pagina"]
+    if argumentos.get("orden") in _ORDENES_RETORNO_OPOSICIONES:
+        parametros["orden"] = argumentos["orden"]
+    if argumentos.get("ver_todas") == "1":
+        parametros["ver_todas"] = "1"
+    if argumentos.get("vista") == "mapa":
+        parametros["vista"] = "mapa"
+    if argumentos.get("sin_coordenadas") == "1":
+        parametros["sin_coordenadas"] = "1"
+        try:
+            pagina_sin_coordenadas = int(argumentos.get("pagina_sin_coordenadas", 1))
+        except (TypeError, ValueError):
+            pagina_sin_coordenadas = 1
+        if pagina_sin_coordenadas > 0:
+            parametros["pagina_sin_coordenadas"] = pagina_sin_coordenadas
+    return url_for("oposiciones", **parametros)
 
 
 def crear_app(ruta_bd=None, gestor_actualizaciones=None):
@@ -24,6 +67,20 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
     import gestion_base
     app.config["GESTOR_PUBLICACION"] = gestion_base.GestorPublicacion()
     app.config["GESTOR_ACTUALIZACION_BASE"] = gestion_base.GestorActualizacionBase()
+
+    def filtros_oposiciones_desde_request():
+        """Lee una sola vez los filtros lógicos compartidos por listado y mapa."""
+        nombres = (
+            "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
+            "comunidad_autonoma", "provincia", "municipio", "tipo_entidad",
+            "sistema", "turno", "escala", "subescala", "clase",
+        )
+        filtros = {nombre: (request.args.get(nombre) or "").strip() for nombre in nombres}
+        exactos = {
+            "municipio_exacto": (request.args.get("municipio_exacto") or "").strip(),
+            "municipio_provincia_exacto": (request.args.get("municipio_provincia_exacto") or "").strip(),
+        }
+        return filtros, exactos
 
     @app.get("/")
     def inicio():
@@ -125,14 +182,10 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
 
     @app.get("/oposiciones")
     def oposiciones():
-        nombres = (
-            "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
-            "comunidad_autonoma", "provincia", "municipio", "tipo_entidad",
-            "sistema", "turno", "escala", "subescala", "clase",
-        )
-        filtros = {nombre: (request.args.get(nombre) or "").strip() for nombre in nombres}
-        municipio_exacto = (request.args.get("municipio_exacto") or "").strip()
-        municipio_provincia_exacto = (request.args.get("municipio_provincia_exacto") or "").strip()
+        filtros, exactos = filtros_oposiciones_desde_request()
+        municipio_exacto = exactos["municipio_exacto"]
+        municipio_provincia_exacto = exactos["municipio_provincia_exacto"]
+        vista_mapa = request.args.get("vista") == "mapa"
         orden = request.args.get("orden", "fecha_desc")
         try:
             pagina = max(1, int(request.args.get("pagina", 1)))
@@ -147,7 +200,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
                 app.config["RUTA_BD"], comunidad_autonoma=filtros["comunidad_autonoma"] or None,
                 provincia=filtros["provincia"] or None, municipio=filtros["municipio"] or None,
             )
-            hay_criterio = request.args.get("ver_todas") == "1" or any(filtros.values())
+            hay_criterio = request.args.get("ver_todas") == "1" or any(filtros.values()) or vista_mapa
             es_navegacion = any(nombre in request.args for nombre in ("pagina", "orden", "tamano_pagina"))
             decision_actualizacion = determinar_actualizacion_intervalo(
                 app.config["RUTA_BD"], fecha_desde=filtros["fecha_desde"] or None,
@@ -175,15 +228,61 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             query_actual["municipio_provincia_exacto"] = municipio_provincia_exacto
         if request.args.get("ver_todas") == "1":
             query_actual["ver_todas"] = "1"
+        if vista_mapa:
+            query_actual["vista"] = "mapa"
         avanzados = ("tipo_entidad", "municipio", "sistema", "turno", "escala", "subescala", "clase")
         return render_template(
             "oposiciones.html", seccion_activa="oposiciones", filtros=filtros,
             opciones=opciones, resultados=resultados, error=None, hay_criterio=hay_criterio,
             orden=orden, tamano_pagina=tamano_pagina, query_actual=query_actual,
+            volver_detalle=_url_retorno_oposiciones(request.args),
             avanzados_activos=any(filtros[nombre] for nombre in avanzados),
             actualizacion_pendiente=pendientes_actualizacion,
             advertencia_actualizacion=request.args.get("actualizacion") == "error",
         )
+
+    @app.get("/api/oposiciones/mapa")
+    def api_oposiciones_mapa():
+        filtros, exactos = filtros_oposiciones_desde_request()
+        try:
+            inicio = _validar_fecha(filtros["fecha_desde"] or None, "fecha_desde")
+            final = _validar_fecha(filtros["fecha_hasta"] or None, "fecha_hasta")
+            if inicio and final and inicio > final:
+                raise ValueError("La fecha desde no puede ser posterior a la fecha hasta.")
+            return jsonify(resumen_mapa_oposiciones(
+                app.config["RUTA_BD"], **{nombre: valor or None for nombre, valor in filtros.items()},
+                municipio_exacto=exactos["municipio_exacto"] or None,
+                municipio_provincia_exacto=exactos["municipio_provincia_exacto"] or None,
+            ))
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+        except ErrorConsultaSQLite:
+            return jsonify({"error": "No se pudo consultar la base de datos."}), 503
+        except Exception:
+            app.logger.exception("No se pudo preparar el resumen geográfico de oposiciones")
+            return jsonify({"error": "No se pudo preparar el resumen geográfico."}), 500
+
+    @app.get("/api/oposiciones/sin-coordenadas")
+    def api_oposiciones_sin_coordenadas():
+        filtros, exactos = filtros_oposiciones_desde_request()
+        try:
+            inicio = _validar_fecha(filtros["fecha_desde"] or None, "fecha_desde")
+            final = _validar_fecha(filtros["fecha_hasta"] or None, "fecha_hasta")
+            if inicio and final and inicio > final:
+                raise ValueError("La fecha desde no puede ser posterior a la fecha hasta.")
+            return jsonify(buscar_oposiciones_sin_coordenadas(
+                app.config["RUTA_BD"], **{nombre: valor or None for nombre, valor in filtros.items()},
+                municipio_exacto=exactos["municipio_exacto"] or None,
+                municipio_provincia_exacto=exactos["municipio_provincia_exacto"] or None,
+                pagina=request.args.get("pagina", 1), tamano=request.args.get("tamano", 50),
+            ))
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+        except ErrorConsultaSQLite:
+            return jsonify({"error": "No se pudo consultar la base de datos."}), 503
+        except Exception:
+            app.logger.exception("No se pudo consultar las oposiciones sin coordenadas")
+            return jsonify({"error": "No se pudieron consultar las oposiciones sin coordenadas."}), 500
 
     @app.post("/api/actualizar-busqueda")
     def api_actualizar_busqueda():
@@ -246,8 +345,10 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             abort(503, description=str(error))
         if oposicion is None:
             abort(404)
-        volver = request.args.get("volver", "")
-        if not volver.startswith("/oposiciones"):
+        destino = urlsplit(request.args.get("volver", ""))
+        if not destino.scheme and not destino.netloc and destino.path == "/oposiciones":
+            volver = _url_retorno_oposiciones(dict(parse_qsl(destino.query, keep_blank_values=True)))
+        else:
             volver = url_for("oposiciones")
         return render_template("detalle_oposicion.html", seccion_activa="oposiciones", oposicion=oposicion, volver=volver)
 
@@ -288,7 +389,13 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
 
     @app.get("/mapas")
     def mapas():
-        return render_template("mapas.html", seccion_activa="mapas")
+        filtros, exactos = filtros_oposiciones_desde_request()
+        parametros = {
+            **{nombre: valor for nombre, valor in filtros.items() if valor},
+            **{nombre: valor for nombre, valor in exactos.items() if valor},
+            "vista": "mapa",
+        }
+        return redirect(url_for("oposiciones", **parametros))
 
     @app.get("/api/estadisticas")
     def api_estadisticas():

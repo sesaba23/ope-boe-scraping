@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 import subprocess
 import time
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 import pandas as pd
 import pytest
 import base_datos
-from consultas_boe import oposiciones
+from consultas_boe import buscar_oposiciones, oposiciones
 
 import web_estadisticas
 from actualizacion_boe import GestorActualizaciones
@@ -77,7 +78,7 @@ def test_pagina_principal_devuelve_html(cliente):
     assert b'src="/static/js/portal.js"' in respuesta.data
 
 
-@pytest.mark.parametrize("ruta", ["/oposiciones", "/estadisticas", "/mapas"])
+@pytest.mark.parametrize("ruta", ["/oposiciones", "/estadisticas"])
 def test_rutas_principales_del_portal_devuelven_html(cliente, ruta):
     assert cliente.get(ruta).status_code == 200
 
@@ -128,6 +129,52 @@ def test_buscador_detalle_y_apis_territoriales(cliente):
     assert cliente.get("/api/filtros/puestos?q=Inge").get_json()["puestos"] == ["Ingeniero Industrial"]
 
 
+def test_detalle_reconstruye_un_retorno_interno_con_filtros_navegacion_y_estado_visual(cliente):
+    contexto = {
+        "texto": "Técnico Ñ / &", "fecha_desde": "2025-01-01", "fecha_hasta": "2025-12-31",
+        "provincia": "Madrid", "municipio_exacto": "Madrid", "municipio_provincia_exacto": "Madrid",
+        "turno": "Libre", "pagina": "3", "tamano_pagina": "50", "orden": "fecha_desc",
+        "ver_todas": "1", "vista": "mapa", "sin_coordenadas": "1",
+        "pagina_sin_coordenadas": "2", "ajeno": "no debe pasar",
+    }
+    volver = "/oposiciones?" + urlencode(contexto)
+    html = cliente.get("/oposiciones/1?" + urlencode({"volver": volver})).get_data(as_text=True)
+    enlace = html.split('class="back-link" href="', 1)[1].split('"', 1)[0].replace("&amp;", "&")
+    destino = urlsplit(enlace)
+
+    assert destino.path == "/oposiciones"
+    assert parse_qs(destino.query) == {
+        "texto": ["Técnico Ñ / &"], "fecha_desde": ["2025-01-01"], "fecha_hasta": ["2025-12-31"],
+        "provincia": ["Madrid"], "municipio_exacto": ["Madrid"], "municipio_provincia_exacto": ["Madrid"],
+        "turno": ["Libre"], "pagina": ["3"], "tamano_pagina": ["50"], "orden": ["fecha_desc"],
+        "ver_todas": ["1"], "vista": ["mapa"], "sin_coordenadas": ["1"],
+        "pagina_sin_coordenadas": ["2"],
+    }
+
+
+def test_detalle_descarta_destinos_externos_y_parametros_no_permitidos(cliente):
+    directo = cliente.get("/oposiciones/1").get_data(as_text=True)
+    externo = cliente.get("/oposiciones/1?volver=https%3A%2F%2Fejemplo.test%2F").get_data(as_text=True)
+    desconocido = cliente.get("/oposiciones/1?volver=%2Foposiciones%3Forden%3Bdrop%3D1").get_data(as_text=True)
+
+    assert 'class="back-link" href="/oposiciones"' in directo
+    assert 'class="back-link" href="/oposiciones"' in externo
+    assert 'class="back-link" href="/oposiciones"' in desconocido
+
+
+def test_enlace_detalle_del_listado_transporta_contexto_permitido(cliente):
+    html = cliente.get("/oposiciones?texto=Ingeniero&provincia=Madrid&pagina=2&orden=fecha_desc&vista=mapa").get_data(as_text=True)
+    detalle = html.split('class="portal-button portal-button--small" href="', 1)[1].split('"', 1)[0].replace("&amp;", "&")
+    volver = parse_qs(urlsplit(detalle).query)["volver"][0]
+    destino = urlsplit(volver)
+
+    assert destino.path == "/oposiciones"
+    assert parse_qs(destino.query) == {
+        "texto": ["Ingeniero"], "provincia": ["Madrid"], "pagina": ["2"],
+        "orden": ["fecha_desc"], "vista": ["mapa"],
+    }
+
+
 def test_buscador_avanzado_orden_y_tamano(cliente):
     respuesta = cliente.get("/oposiciones?sistema=Concurso&orden=puesto_asc&tamano_pagina=50")
     html = respuesta.get_data(as_text=True)
@@ -148,6 +195,198 @@ def test_buscador_municipio_texto_y_autocompletado_accesible(cliente):
     assert "setTimeout(consultar, 250)" in javascript
     assert 'evento.key === "ArrowDown"' in javascript
     assert 'evento.key === "Escape"' in javascript
+
+
+def _respuesta_mapa_prueba():
+    return {
+        "resumen": {"convocatorias": 1, "plazas": 2, "municipios": 1, "geolocalizadas": 1, "sin_coordenadas": 0},
+        "municipios": [{"codigo_ine": "51001", "municipio": "Ceuta Ñ", "provincia": None,
+                        "comunidad_autonoma": "Ceuta", "latitud": 35.9, "longitud": -5.3,
+                        "convocatorias": 1, "plazas": 2}],
+    }
+
+
+def test_api_mapa_existe_devuelve_contrato_json_y_serializa_null_unicode(cliente, monkeypatch):
+    import web_estadisticas as web
+    monkeypatch.setattr(web, "resumen_mapa_oposiciones", lambda *_args, **_kwargs: _respuesta_mapa_prueba())
+    respuesta = cliente.get("/api/oposiciones/mapa")
+    assert respuesta.status_code == 200 and respuesta.content_type.startswith("application/json")
+    datos = respuesta.get_json()
+    assert datos == _respuesta_mapa_prueba()
+    assert datos["municipios"][0]["provincia"] is None
+
+
+@pytest.mark.parametrize("parametro,valor", [
+    ("texto", "Ingeniero"), ("fecha_desde", "2025-01-01"), ("fecha_hasta", "2025-12-31"),
+    ("comunidad_autonoma", "Andalucía"), ("provincia", "Madrid"), ("municipio", "Mad"),
+    ("municipio_exacto", "Madrid"), ("municipio_provincia_exacto", "Madrid"),
+    ("administracion", "Administración A"), ("ambito", "LOCAL"), ("tipo_entidad", "MUNICIPAL"),
+    ("sistema", "Oposición"), ("turno", "Libre"), ("escala", "E1"),
+    ("subescala", "S1"), ("clase", "C1"),
+])
+def test_api_mapa_admite_los_mismos_filtros_logicos(cliente, monkeypatch, parametro, valor):
+    import web_estadisticas as web
+    recibidos = {}
+    monkeypatch.setattr(web, "resumen_mapa_oposiciones", lambda *_args, **kwargs: recibidos.update(kwargs) or _respuesta_mapa_prueba())
+    respuesta = cliente.get("/api/oposiciones/mapa", query_string={parametro: f"  {valor}  "})
+    assert respuesta.status_code == 200
+    assert recibidos[parametro] == valor
+
+
+def test_api_mapa_equivale_al_listado_e_ignora_navegacion_y_actualizacion(cliente, monkeypatch, ruta_bd):
+    monkeypatch.setattr(web_estadisticas, "determinar_actualizacion_intervalo", lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("no debe consultar cobertura")))
+    filtros = {"texto": "Ingeniero", "provincia": "Madrid", "pagina": "99", "tamano_pagina": "1",
+               "orden": "plazas_desc", "ver_todas": "1", "actualizacion": "error"}
+    respuesta = cliente.get("/api/oposiciones/mapa", query_string=filtros)
+    assert respuesta.status_code == 200
+    assert respuesta.get_json()["resumen"]["convocatorias"] == buscar_oposiciones(
+        ruta_bd, texto="Ingeniero", provincia="Madrid"
+    )["total"]
+
+
+def test_api_mapa_vacio_y_errores_controlados(cliente, monkeypatch):
+    vacia = cliente.get("/api/oposiciones/mapa", query_string={"texto": "inexistente"})
+    assert vacia.status_code == 200
+    assert vacia.get_json() == {"resumen": {"convocatorias": 0, "plazas": 0, "municipios": 0, "geolocalizadas": 0, "sin_coordenadas": 0}, "municipios": []}
+    fecha_invalida = cliente.get("/api/oposiciones/mapa?fecha_desde=01/01/2025")
+    assert fecha_invalida.status_code == 400 and "error" in fecha_invalida.get_json()
+    monkeypatch.setattr(web_estadisticas, "resumen_mapa_oposiciones", lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("/ruta/secreta")))
+    error = cliente.get("/api/oposiciones/mapa")
+    assert error.status_code == 500 and "/ruta/secreta" not in error.get_json()["error"]
+
+
+def test_api_sin_coordenadas_devuelve_contrato_paginado_y_no_activa_cobertura(cliente, monkeypatch):
+    monkeypatch.setattr(web_estadisticas, "determinar_actualizacion_intervalo",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("no debe consultar cobertura")))
+    respuesta = cliente.get("/api/oposiciones/sin-coordenadas?tamano=1&vista=mapa")
+    datos = respuesta.get_json()
+
+    assert respuesta.status_code == 200
+    assert set(datos) == {"total", "pagina", "tamano", "paginas", "resultados"}
+    assert (datos["total"], datos["pagina"], datos["tamano"], datos["paginas"]) == (2, 1, 1, 2)
+    assert len(datos["resultados"]) == 1
+    assert {"oposicion_id", "puesto", "num_plazas", "fecha_boe", "administracion",
+            "comunidad_autonoma", "provincia", "municipio", "municipio_codigo_ine",
+            "enlace", "publicacion_id", "motivo_sin_coordenadas"} <= set(datos["resultados"][0])
+    assert datos["resultados"][0]["motivo_sin_coordenadas"] == "sin_codigo_ine"
+
+
+def test_api_sin_coordenadas_admite_filtros_y_errores_controlados(cliente, monkeypatch):
+    filtrada = cliente.get("/api/oposiciones/sin-coordenadas?texto=Ingeniero&pagina=1&tamano=50")
+    assert filtrada.status_code == 200 and filtrada.get_json()["total"] == 1
+    assert cliente.get("/api/oposiciones/sin-coordenadas?pagina=0").status_code == 400
+    assert cliente.get("/api/oposiciones/sin-coordenadas?tamano=101").status_code == 400
+    assert cliente.get("/api/oposiciones/sin-coordenadas?fecha_desde=01/01/2025").status_code == 400
+    monkeypatch.setattr(web_estadisticas, "buscar_oposiciones_sin_coordenadas",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(web_estadisticas.ErrorConsultaSQLite("no disponible")))
+    assert cliente.get("/api/oposiciones/sin-coordenadas").status_code == 503
+    monkeypatch.setattr(web_estadisticas, "buscar_oposiciones_sin_coordenadas",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("/detalle/interno")))
+    error = cliente.get("/api/oposiciones/sin-coordenadas")
+    assert error.status_code == 500 and "/detalle/interno" not in error.get_json()["error"]
+
+
+def test_oposiciones_integra_pestanas_de_listado_y_mapa_sin_duplicar_filtros(cliente, monkeypatch):
+    monkeypatch.setattr(web_estadisticas, "resumen_mapa_oposiciones",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("no debe invocarse al renderizar")))
+    html = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+
+    assert 'id="pestana-listado"' in html and 'aria-selected="true"' in html
+    assert 'id="pestana-mapa"' in html and 'aria-selected="false"' in html
+    assert 'id="panel-listado"' in html
+    assert 'id="panel-mapa"' in html and 'hidden' in html.split('id="panel-mapa"', 1)[1][:180]
+    assert 'id="mapa-oposiciones"' in html
+    assert html.count('class="search-form portal-panel portal-panel--wide"') == 1
+    assert "results-table" in html
+    assert 'static/js/oposiciones_mapa.js' in html
+    assert 'leaflet@1.9.4' in html and 'leaflet.markercluster@1.5.3' in html
+
+
+def test_mapas_redirige_al_mapa_integrado_y_conserva_filtros(cliente):
+    respuesta = cliente.get("/mapas?provincia=Madrid&orden=fecha_desc")
+
+    assert respuesta.status_code == 302
+    assert respuesta.headers["Location"] == "/oposiciones?provincia=Madrid&vista=mapa"
+
+
+def test_menu_ya_no_ofrece_mapas_y_enlace_directo_abre_mapa_sin_consulta_servidor(cliente, monkeypatch):
+    monkeypatch.setattr(web_estadisticas, "resumen_mapa_oposiciones",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("no debe invocarse al renderizar")))
+    inicio = cliente.get("/").get_data(as_text=True)
+    html_normal = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+    html_mapa = cliente.get("/oposiciones?provincia=Madrid&vista=mapa").get_data(as_text=True)
+    javascript = cliente.get("/static/js/oposiciones_mapa.js").get_data(as_text=True)
+
+    navegacion = inicio.split('<nav id="site-navigation"', 1)[1].split("</nav>", 1)[0]
+    assert ">Mapas<" not in navegacion and ">Oposiciones<" in navegacion
+    assert 'href="/oposiciones?vista=mapa"' in inicio
+    assert 'id="pestana-listado"' in html_normal and 'aria-selected="true"' in html_normal
+    assert 'id="pestana-mapa"' in html_mapa and 'data-results-panel="mapa" hidden' in html_mapa
+    assert 'get("vista") === "mapa"' in javascript
+    assert 'urlApi("/api/oposiciones/mapa", parametrosFiltros())' in javascript
+
+
+def test_javascript_mapa_carga_diferida_conserva_filtros_y_no_inyecta_html(cliente):
+    javascript = cliente.get("/static/js/oposiciones_mapa.js").get_data(as_text=True)
+
+    assert 'urlApi("/api/oposiciones/mapa", parametrosFiltros())' in javascript
+    assert "const permitidos = new Set" in javascript
+    assert '"municipio_provincia_exacto"' in javascript
+    assert "if (mapaCargado)" in javascript
+    assert 'Cargando mapa...' not in javascript  # El estado visible pertenece al HTML accesible.
+    assert "mostrarCarga(true)" in javascript and "mostrarCarga(false)" in javascript
+    assert "mapa.invalidateSize()" in javascript
+    assert "mapa.fitBounds" in javascript and "mapa.setView(limites.getCenter(), 12)" in javascript
+    assert "window.L.markerClusterGroup" in javascript
+    assert ".textContent =" in javascript
+    assert ".innerHTML" not in javascript
+
+
+def test_panel_sin_coordenadas_esta_oculto_y_no_se_consulta_al_renderizar(cliente, monkeypatch):
+    monkeypatch.setattr(web_estadisticas, "buscar_oposiciones_sin_coordenadas",
+                        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("no debe invocarse al renderizar")))
+    html = cliente.get("/oposiciones?ver_todas=1&vista=mapa").get_data(as_text=True)
+
+    assert 'id="mapa-sin-coordenadas"' in html and 'aria-controls="panel-sin-coordenadas"' in html
+    assert 'id="panel-sin-coordenadas"' in html and 'hidden' in html.split('id="panel-sin-coordenadas"', 1)[1][:180]
+    assert 'id="sin-coordenadas-cargando"' in html
+    assert 'id="sin-coordenadas-resultados"' in html
+    assert 'id="sin-coordenadas-anterior"' in html and 'id="sin-coordenadas-siguiente"' in html
+    assert 'id="sin-coordenadas-cerrar"' in html and 'id="sin-coordenadas-reintentar"' in html
+
+
+def test_javascript_panel_sin_coordenadas_es_diferido_seguro_y_paginado(cliente):
+    javascript = cliente.get("/static/js/oposiciones_mapa.js").get_data(as_text=True)
+
+    assert 'urlApi("/api/oposiciones/mapa", parametrosFiltros())' in javascript
+    assert 'urlApi("/api/oposiciones/sin-coordenadas", parametros)' in javascript
+    assert 'parametros.set("pagina", String(pagina))' in javascript
+    assert 'parametros.set("tamano", "50")' in javascript
+    assert 'botonSinCoordenadas.addEventListener("click"' in javascript
+    assert "cacheSinCoordenadas.has(pagina)" in javascript
+    assert 'sin_codigo_ine: "Municipio no identificado"' in javascript
+    assert 'codigo_ine_no_resuelto: "Código municipal no reconocido"' in javascript
+    assert 'municipio_sin_coordenadas: "Municipio sin coordenadas"' in javascript
+    assert "Localización no disponible" in javascript
+    assert "anteriorSinCoordenadas.disabled" in javascript
+    assert "siguienteSinCoordenadas.disabled" in javascript
+    assert '"/oposiciones/" + encodeURIComponent' in javascript
+    assert ".innerHTML" not in javascript
+
+
+def test_javascript_restaura_panel_y_hace_scroll_respetando_reduced_motion(cliente):
+    javascript = cliente.get("/static/js/oposiciones_mapa.js").get_data(as_text=True)
+
+    assert "const parametrosRetorno = () =>" in javascript
+    assert 'parametros.set("vista", "mapa")' in javascript
+    assert 'parametros.set("sin_coordenadas", "1")' in javascript
+    assert 'parametros.set("pagina_sin_coordenadas", String(paginaActualSinCoordenadas))' in javascript
+    assert 'scrollIntoView({behavior: reducirMovimiento ? "auto" : "smooth", block: "start"})' in javascript
+    assert 'matchMedia?.("(prefers-reduced-motion: reduce)")' in javascript
+    assert "panelSinCoordenadas.hidden = false;\n        desplazarPanelSinCoordenadas();" in javascript
+    assert 'estadoVisual.get("sin_coordenadas") === "1"' in javascript
+    assert "abrirSinCoordenadas(Number.isInteger(paginaRestaurada)" in javascript
+    assert '"?volver=" + encodeURIComponent(volver)' in javascript
 
 
 def test_argumentos_servidor_lan_mantienen_debug_desactivado():

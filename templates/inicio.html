@@ -10,6 +10,6 @@
 <section class="site-shell portal-section"><div class="portal-cards">
     <a class="portal-card" href="{{ url_for('oposiciones') }}"><h2>Oposiciones</h2><p>Busca convocatorias por puesto, administración, territorio y otros criterios.</p><span>Consultar oposiciones →</span></a>
     <a class="portal-card" href="{{ url_for('pagina_estadisticas') }}"><h2>Estadísticas</h2><p>Analiza la evolución y distribución de las convocatorias publicadas.</p><span>Ver estadísticas →</span></a>
-    <a class="portal-card" href="{{ url_for('mapas') }}"><h2>Mapas</h2><p>Explora geográficamente las oposiciones y plazas publicadas.</p><span>Explorar mapas →</span></a>
+    <a class="portal-card" href="{{ url_for('oposiciones', vista='mapa') }}"><h2>Mapa de oposiciones</h2><p>Explora geográficamente las oposiciones y plazas publicadas.</p><span>Explorar mapa →</span></a>
 </div></section>
 {% endblock %}

@@ -33,6 +33,14 @@ _TAMANO_PAGINA_MAXIMO = 100
 FECHA_INICIO_COBERTURA = date(2004, 1, 1)
 
 
+def _condicion_geolocalizable(alias_municipio="m"):
+    return f"{alias_municipio}.latitud IS NOT NULL AND {alias_municipio}.longitud IS NOT NULL"
+
+
+def _condicion_sin_coordenadas(alias_municipio="m"):
+    return f"{alias_municipio}.latitud IS NULL OR {alias_municipio}.longitud IS NULL"
+
+
 def _fecha_iso(valor):
     if isinstance(valor, date):
         return valor
@@ -331,26 +339,17 @@ def obtener_oposicion(ruta_bd="datos/boe.db", oposicion_id=None):
         conexion.close()
 
 
-def buscar_oposiciones(
-    ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
-    administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
-    municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
-    tipo_entidad=None, sistema=None, turno=None, escala=None,
-    subescala=None, clase=None, pagina=1, tamano_pagina=25, orden="fecha_desc",
+def _condiciones_busqueda(
+    *, texto=None, fecha_desde=None, fecha_hasta=None, administracion=None,
+    ambito=None, comunidad_autonoma=None, provincia=None, municipio=None,
+    municipio_exacto=None, municipio_provincia_exacto=None, tipo_entidad=None,
+    sistema=None, turno=None, escala=None, subescala=None, clase=None,
 ):
-    """Busca oposiciones desde SQLite con filtros exactos y paginación segura.
+    """Construye el ``WHERE`` parametrizado común de las búsquedas web y CLI.
 
-    La función devuelve datos neutros para que terminal y web compartan la
-    misma consulta sin incorporar lógica de presentación.
+    No incluye ordenación ni paginación: otros consumidores de la misma
+    búsqueda podrán reutilizarlo sin alterar la semántica del listado.
     """
-    if orden not in _ORDEN_BUSQUEDA:
-        raise ValueError(f"Orden no permitido: {orden}")
-    try:
-        pagina = max(1, int(pagina))
-        tamano_pagina = min(_TAMANO_PAGINA_MAXIMO, max(1, int(tamano_pagina)))
-    except (TypeError, ValueError) as error:
-        raise ValueError("pagina y tamano_pagina deben ser enteros positivos") from error
-
     clausulas, parametros = [], []
     for valor, columna, operador in (
         (fecha_desde, "fecha_boe", ">="), (fecha_hasta, "fecha_boe", "<="),
@@ -372,8 +371,38 @@ def buscar_oposiciones(
         for termino in _terminos_parciales(texto):
             clausulas.append("lower(COALESCE(NULLIF(puesto_normalizado,''), puesto)) LIKE lower(?)")
             parametros.append(f"%{termino}%")
+    return (" WHERE " + " AND ".join(clausulas) if clausulas else ""), parametros
 
-    where = " WHERE " + " AND ".join(clausulas) if clausulas else ""
+
+def buscar_oposiciones(
+    ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
+    administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
+    municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
+    tipo_entidad=None, sistema=None, turno=None, escala=None,
+    subescala=None, clase=None, pagina=1, tamano_pagina=25, orden="fecha_desc",
+):
+    """Busca oposiciones desde SQLite con filtros exactos y paginación segura.
+
+    La función devuelve datos neutros para que terminal y web compartan la
+    misma consulta sin incorporar lógica de presentación.
+    """
+    if orden not in _ORDEN_BUSQUEDA:
+        raise ValueError(f"Orden no permitido: {orden}")
+    try:
+        pagina = max(1, int(pagina))
+        tamano_pagina = min(_TAMANO_PAGINA_MAXIMO, max(1, int(tamano_pagina)))
+    except (TypeError, ValueError) as error:
+        raise ValueError("pagina y tamano_pagina deben ser enteros positivos") from error
+
+    where, parametros = _condiciones_busqueda(
+        texto=texto, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta,
+        administracion=administracion, ambito=ambito,
+        comunidad_autonoma=comunidad_autonoma, provincia=provincia,
+        municipio=municipio, municipio_exacto=municipio_exacto,
+        municipio_provincia_exacto=municipio_provincia_exacto,
+        tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
+        escala=escala, subescala=subescala, clase=clase,
+    )
     seleccion = """oposicion_id,fecha_boe,puesto,puesto_normalizado,num_plazas,
         administracion,administracion_normalizada,ambito,tipo_entidad,
         comunidad_autonoma,provincia,municipio,sistema,turno,escala,subescala,
@@ -397,6 +426,138 @@ def buscar_oposiciones(
         "total": total, "pagina": pagina, "tamano_pagina": tamano_pagina,
         "total_paginas": total_paginas,
         "orden": orden,
+    }
+
+
+def resumen_mapa_oposiciones(
+    ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
+    administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
+    municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
+    tipo_entidad=None, sistema=None, turno=None, escala=None,
+    subescala=None, clase=None,
+):
+    """Agrupa todos los resultados filtrados por municipio maestro e INE.
+
+    La función no pagina: el listado y el mapa comparten el mismo ``WHERE``,
+    pero el segundo necesita representar el conjunto completo de resultados.
+    """
+    where, parametros = _condiciones_busqueda(
+        texto=texto, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta,
+        administracion=administracion, ambito=ambito,
+        comunidad_autonoma=comunidad_autonoma, provincia=provincia,
+        municipio=municipio, municipio_exacto=municipio_exacto,
+        municipio_provincia_exacto=municipio_provincia_exacto,
+        tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
+        escala=escala, subescala=subescala, clase=clase,
+    )
+    condicion_geolocalizable = _condicion_geolocalizable()
+    where_geolocalizable = (
+        f"{where} AND {condicion_geolocalizable}"
+        if where else f" WHERE {condicion_geolocalizable}"
+    )
+    conexion = _conexion(ruta_bd)
+    try:
+        total, plazas, geolocalizadas = conexion.execute(
+            f"""SELECT COUNT(o.oposicion_id), COALESCE(SUM(o.num_plazas), 0),
+                       COALESCE(SUM(CASE WHEN {condicion_geolocalizable} THEN 1 ELSE 0 END), 0)
+                FROM oposiciones AS o
+                LEFT JOIN municipios AS m ON m.codigo_ine = o.municipio_codigo_ine{where}""",
+            parametros,
+        ).fetchone()
+        filas = conexion.execute(
+            f"""SELECT o.municipio_codigo_ine, m.nombre, p.nombre, ca.nombre,
+                       m.latitud, m.longitud, COUNT(o.oposicion_id), SUM(o.num_plazas)
+                FROM oposiciones AS o
+                JOIN municipios AS m ON m.codigo_ine = o.municipio_codigo_ine
+                LEFT JOIN provincias AS p ON p.provincia_id = m.provincia_id
+                JOIN comunidades_autonomas AS ca ON ca.comunidad_id = m.comunidad_id
+                {where_geolocalizable}
+                GROUP BY o.municipio_codigo_ine, m.nombre, p.nombre, ca.nombre, m.latitud, m.longitud
+                ORDER BY COUNT(o.oposicion_id) DESC, m.nombre COLLATE NOCASE ASC, o.municipio_codigo_ine ASC""",
+            parametros,
+        ).fetchall()
+    finally:
+        conexion.close()
+    municipios = [
+        {
+            "codigo_ine": fila[0], "municipio": fila[1], "provincia": fila[2],
+            "comunidad_autonoma": fila[3], "latitud": fila[4], "longitud": fila[5],
+            "convocatorias": fila[6], "plazas": fila[7],
+        }
+        for fila in filas
+    ]
+    return {
+        "resumen": {
+            "convocatorias": total, "plazas": plazas, "municipios": len(municipios),
+            "geolocalizadas": geolocalizadas, "sin_coordenadas": total - geolocalizadas,
+        },
+        "municipios": municipios,
+    }
+
+
+def buscar_oposiciones_sin_coordenadas(
+    ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
+    administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
+    municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
+    tipo_entidad=None, sistema=None, turno=None, escala=None,
+    subescala=None, clase=None, pagina=1, tamano=50,
+):
+    """Devuelve paginadas las convocatorias no geolocalizables del mapa."""
+    try:
+        pagina, tamano = int(pagina), int(tamano)
+    except (TypeError, ValueError) as error:
+        raise ValueError("pagina y tamano deben ser enteros positivos") from error
+    if pagina < 1 or not 1 <= tamano <= _TAMANO_PAGINA_MAXIMO:
+        raise ValueError(f"pagina debe ser positiva y tamano debe estar entre 1 y {_TAMANO_PAGINA_MAXIMO}")
+
+    where, parametros = _condiciones_busqueda(
+        texto=texto, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta,
+        administracion=administracion, ambito=ambito,
+        comunidad_autonoma=comunidad_autonoma, provincia=provincia,
+        municipio=municipio, municipio_exacto=municipio_exacto,
+        municipio_provincia_exacto=municipio_provincia_exacto,
+        tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
+        escala=escala, subescala=subescala, clase=clase,
+    )
+    condicion_sin_coordenadas = _condicion_sin_coordenadas()
+    where_sin_coordenadas = (
+        f"{where} AND ({condicion_sin_coordenadas})"
+        if where else f" WHERE ({condicion_sin_coordenadas})"
+    )
+    seleccion = """o.oposicion_id,COALESCE(NULLIF(o.puesto_normalizado,''), o.puesto) AS puesto,
+        o.num_plazas,o.fecha_boe,o.administracion,o.comunidad_autonoma,o.provincia,
+        o.municipio,o.municipio_codigo_ine,o.enlace,o.publicacion_id,
+        CASE
+            WHEN o.municipio_codigo_ine IS NULL OR o.municipio_codigo_ine = '' THEN 'sin_codigo_ine'
+            WHEN m.codigo_ine IS NULL THEN 'codigo_ine_no_resuelto'
+            ELSE 'municipio_sin_coordenadas'
+        END AS motivo_sin_coordenadas"""
+    conexion = _conexion(ruta_bd)
+    try:
+        total = conexion.execute(
+            f"SELECT COUNT(o.oposicion_id) FROM oposiciones AS o LEFT JOIN municipios AS m ON m.codigo_ine = o.municipio_codigo_ine{where_sin_coordenadas}",
+            parametros,
+        ).fetchone()[0]
+        paginas = ceil(total / tamano) if total else 0
+        pagina = min(pagina, paginas) if paginas else 1
+        offset = (pagina - 1) * tamano
+        filas = conexion.execute(
+            f"""SELECT {seleccion}
+                FROM oposiciones AS o LEFT JOIN municipios AS m ON m.codigo_ine = o.municipio_codigo_ine
+                {where_sin_coordenadas}
+                ORDER BY o.fecha_boe DESC, o.oposicion_id DESC LIMIT ? OFFSET ?""",
+            [*parametros, tamano, offset],
+        ).fetchall()
+    finally:
+        conexion.close()
+    columnas = [
+        "oposicion_id", "puesto", "num_plazas", "fecha_boe", "administracion",
+        "comunidad_autonoma", "provincia", "municipio", "municipio_codigo_ine",
+        "enlace", "publicacion_id", "motivo_sin_coordenadas",
+    ]
+    return {
+        "total": total, "pagina": pagina, "tamano": tamano, "paginas": paginas,
+        "resultados": [dict(zip(columnas, fila)) for fila in filas],
     }
 
 
