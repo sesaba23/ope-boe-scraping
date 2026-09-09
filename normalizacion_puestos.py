@@ -66,6 +66,18 @@ CANONES = {
     "trabajador social": "Trabajador Social",
 }
 
+# Familias profesionales aprobadas en Fase 4.  Estas reglas se mantienen
+# separadas de los cánones ortotipográficos: eliminan sólo variación de una
+# misma categoría y nunca rangos, especialidades o descriptores dudosos.
+FAMILIAS_PUESTO_CANONICAS = {
+    "policia_local": "Policía Local",
+    "auxiliar_administrativo": "Auxiliar Administrativo",
+    "administrativo": "Administrativo",
+}
+RANGOS_POLICIA_LOCAL = re.compile(r"\b(?:inspector|subinspector|oficial|jefe|comisario|intendente)\b")
+EXCLUSION_AUXILIAR_ADMINISTRATIVO = re.compile(r"\b(?:servicios administrativos|administracion especial|tecnico auxiliar)\b")
+EXCLUSION_ADMINISTRATIVO = re.compile(r"\b(?:auxiliar|tecnico|servicios administrativos|personal administrativo)\b")
+
 
 @dataclass(frozen=True)
 class ReglaTitulacion:
@@ -128,11 +140,35 @@ def _clave(texto):
     return re.sub(r"\s+", " ", sin_acentos).strip()
 
 
+def _preparar_texto(texto):
+    """Aplica la limpieza ortotipográfica común previa a cualquier decisión."""
+    if texto is None:
+        return None
+    resultado = unicodedata.normalize("NFKC", str(texto))
+    resultado = resultado.translate(str.maketrans({"\u2013": "-", "\u2014": "-", "\u2212": "-"}))
+    resultado = re.sub(r"\s+", " ", resultado).strip()
+    if not resultado:
+        return None
+    resultado = re.sub(r"\s*/\s*", "/", resultado)
+    resultado = re.sub(r"\s*([,;:])\s*", r"\1 ", resultado)
+    return re.sub(r"\s+", " ", resultado).strip()
+
+
 def _normalizar_genero(texto):
+    """Normaliza género hasta un punto fijo en una única invocación.
+
+    Algunas reglas producen una forma que satisface otra regla anterior de la
+    lista (por ejemplo, ``Técnica/a`` → ``Técnico/a`` → ``Técnico``). Repetir
+    el conjunto hasta estabilizarlo evita que una segunda llamada pública al
+    normalizador siga modificando el resultado.
+    """
     resultado = texto
-    for patron, reemplazo in REGLAS_GENERO:
-        resultado = re.sub(rf"(?i)\b(?:{patron})(?!\w)", reemplazo, resultado)
-    return resultado
+    while True:
+        anterior = resultado
+        for patron, reemplazo in REGLAS_GENERO:
+            resultado = re.sub(rf"(?i)\b(?:{patron})(?!\w)", reemplazo, resultado)
+        if resultado == anterior:
+            return resultado
 
 
 def _recuperar_grafia(texto):
@@ -162,19 +198,47 @@ def _normalizar_titulacion(texto):
     return None
 
 
-def normalizar_puesto(texto):
-    """Devuelve un canon conservador basado exclusivamente en ``texto``."""
+def clasificar_familia_puesto(texto):
+    """Clasifica las familias Fase 4 sin decidir equivalencias dudosas.
+
+    Devuelve ``(familia, clasificación, canon, motivo)``.  El motor sólo usa
+    los casos ``alta_confianza``; el resto se expone para auditoría y tests.
+    """
+    texto = _preparar_texto(texto)
+    clave = _clave(texto or "")
+    if re.search(r"\bpolicia(?:s)? local(?:es)?\b", clave):
+        if RANGOS_POLICIA_LOCAL.search(clave) or re.search(r"\b(?:tecnico|coordinador)\b", clave):
+            return "policia_local", "excluida", None, "rango o categoría profesional distinta"
+        if re.fullmatch(r"(?:agentes?(?: de(?: la)?)? )?policia(?:s)? local(?:es)?", clave):
+            return "policia_local", "alta_confianza", FAMILIAS_PUESTO_CANONICAS["policia_local"], "denominación base o agente equivalente"
+        return "policia_local", "dudosa", None, "contiene Policía Local con texto accesorio no validado"
+    # Precedencia obligatoria: nunca dejar que Auxiliar caiga en Administrativo.
+    if re.search(r"\bauxiliar(?:es)? administrativ", clave):
+        if EXCLUSION_AUXILIAR_ADMINISTRATIVO.search(clave):
+            return "auxiliar_administrativo", "excluida", None, "categoría auxiliar profesional distinta"
+        patron = r"^(?:plaza(?:s)? de |personal )?auxiliar(?:es)? administrativ(?:o|a|os|as|o/a|a/o|os/as|as/os)(?:\b(?!/)|\s+de )"
+        if re.match(patron, clave):
+            return "auxiliar_administrativo", "alta_confianza", FAMILIAS_PUESTO_CANONICAS["auxiliar_administrativo"], "auxiliar administrativo con género/plural o descriptor permitido"
+        return "auxiliar_administrativo", "dudosa", None, "orden o contexto no validado"
+    if re.search(r"\badministrativ", clave):
+        if EXCLUSION_ADMINISTRATIVO.search(clave):
+            return "administrativo", "excluida", None, "no es la categoría de Administrativo"
+        patron = r"^(?:plaza(?:s)? de )?administrativ(?:o|a|os|as|o/a|a/o|os/as|as/os)(?:\b(?!/)|\s+de )"
+        if re.match(patron, clave):
+            return "administrativo", "alta_confianza", FAMILIAS_PUESTO_CANONICAS["administrativo"], "administrativo con género/plural o descriptor permitido"
+        return "administrativo", "dudosa", None, "texto administrativo sin categoría inequívoca"
+    return None, None, None, None
+
+
+def _normalizar_puesto_una_vez(texto):
+    """Aplica una pasada del pipeline sobre una representación preparada."""
+    texto = _preparar_texto(texto)
     if texto is None:
         return None
-    texto = unicodedata.normalize("NFKC", str(texto))
-    texto = texto.translate(str.maketrans({"\u2013": "-", "\u2014": "-", "\u2212": "-"}))
-    texto = re.sub(r"\s+", " ", texto).strip()
     clave_original = _clave(texto)
-    if not texto:
-        return None
-    texto = re.sub(r"\s*/\s*", "/", texto)
-    texto = re.sub(r"\s*([,;:])\s*", r"\1 ", texto)
-    texto = re.sub(r"\s+", " ", texto).strip()
+    _, clasificacion_familia, canon_familia, _ = clasificar_familia_puesto(texto)
+    if clasificacion_familia == "alta_confianza":
+        return canon_familia
     variante_no_aprobada = (
         "ingeniera/o tecnica/o industrial " in clave_original
         or "ingeniera/o tecnico industrial " in clave_original
@@ -182,7 +246,11 @@ def normalizar_puesto(texto):
     titulacion = None if variante_no_aprobada else _normalizar_titulacion(texto)
     if titulacion:
         return titulacion
-    texto = _normalizar_genero(texto)
+    # Esta formulación de género compuesta está excluida expresamente de la
+    # equivalencia de titulaciones. Tampoco se reduce ortotipográficamente, o
+    # una pasada posterior perdería el contexto de exclusión y la absorbería.
+    if not variante_no_aprobada:
+        texto = _normalizar_genero(texto)
     texto = _recuperar_grafia(texto)
 
     clave = _clave(texto)
@@ -198,3 +266,26 @@ def normalizar_puesto(texto):
     if patron_nucleo.search(texto):
         return patron_nucleo.sub(nucleo, texto, count=1)
     return texto
+
+
+def normalizar_puesto(texto):
+    """Devuelve un canon conservador y estable basado en ``texto``.
+
+    Algunas transformaciones ortotipográficas habilitan una regla posterior
+    (por ejemplo, recuperan una grafía o completan una forma de género). Se
+    ejecuta el pipeline hasta que no haya cambios, de modo que la salida de la
+    API pública nunca requiera una segunda llamada para estabilizarse.
+    """
+    resultado = _preparar_texto(texto)
+    if resultado is None:
+        return None
+    vistos = set()
+    while resultado not in vistos:
+        vistos.add(resultado)
+        siguiente = _normalizar_puesto_una_vez(resultado)
+        if siguiente == resultado:
+            return resultado
+        resultado = siguiente
+    # Las reglas son reductoras; esta salvaguarda evita un bucle silencioso si
+    # una futura regla introdujera una oscilación.
+    return resultado

@@ -1,4 +1,4 @@
-"""Recalcula explícitamente Puesto_normalizado en una base SQLite v3."""
+"""Recalcula explícitamente ``puesto_normalizado`` en schemas compatibles."""
 
 import argparse
 from collections import Counter
@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 import base_datos
-from normalizacion_puestos import normalizar_puesto
+from normalizacion_puestos import clasificar_familia_puesto, normalizar_puesto
 
 
 def _leer(ruta_bd):
@@ -14,8 +14,8 @@ def _leer(ruta_bd):
     try:
         metadata = dict(conexion.execute("SELECT clave,valor FROM metadata"))
         columnas = {fila[1].casefold() for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
-        if metadata.get("schema_version") not in {"3", "4", "5"} or "puesto_normalizado" not in columnas:
-            raise RuntimeError("El recálculo requiere schema_version 3 o 4 con Puesto_normalizado")
+        if metadata.get("schema_version") not in {"3", "4", "5", "6"} or "puesto_normalizado" not in columnas:
+            raise RuntimeError("El recálculo requiere schema_version 3, 4, 5 o 6 con Puesto_normalizado")
         filas = conexion.execute(
             "SELECT oposicion_id,puesto,puesto_normalizado FROM oposiciones ORDER BY oposicion_id"
         ).fetchall()
@@ -28,12 +28,15 @@ def _plan(filas):
     cambios = []
     antes = Counter()
     despues = Counter()
+    familias = Counter()
     for oposicion_id, puesto, actual in filas:
         nuevo = normalizar_puesto(puesto)
         antes[actual] += 1
         despues[nuevo] += 1
         if nuevo != actual:
             cambios.append((nuevo, oposicion_id, puesto, actual))
+            familia, clasificacion, _, _ = clasificar_familia_puesto(puesto)
+            familias[familia if clasificacion == "alta_confianza" else "fuera_objetivo"] += 1
     frecuencia = Counter(nuevo for nuevo, _, _, _ in cambios)
     return cambios, {
         "filas_examinadas": len(filas),
@@ -46,6 +49,7 @@ def _plan(filas):
             {"canon": canon, "filas": cantidad}
             for canon, cantidad in frecuencia.most_common(20)
         ],
+        "cambios_por_familia": dict(familias),
     }
 
 

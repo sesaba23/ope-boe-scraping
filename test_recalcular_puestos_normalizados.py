@@ -90,5 +90,17 @@ def test_rechaza_schema_distinto_de_v3(tmp_path):
     conexion = sqlite3.connect(ruta)
     conexion.execute("UPDATE metadata SET valor='2' WHERE clave='schema_version'")
     conexion.commit(); conexion.close()
-    with pytest.raises(RuntimeError, match="schema_version 3"):
+    with pytest.raises(RuntimeError, match="schema_version 3, 4, 5 o 6"):
         modulo.recalcular(ruta, tmp_path / "backups", dry_run=True)
+
+
+def test_schema_6_admite_recalculo(tmp_path):
+    ruta = tmp_path / "base.db"; _base(ruta)
+    conexion = sqlite3.connect(ruta)
+    conexion.execute("UPDATE metadata SET valor='6' WHERE clave='schema_version'")
+    conexion.commit(); conexion.close()
+
+    resultado = modulo.recalcular(ruta, tmp_path / "backups", dry_run=True)
+
+    assert resultado["schema_version"] == "6"
+    assert resultado["filas_que_cambiarian"] == 1
