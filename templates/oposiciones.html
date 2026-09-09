@@ -64,6 +64,7 @@
     <div class="portal-empty"><h2>Encuentra tu próxima convocatoria</h2><p>Introduce un término o aplica uno o varios filtros. También puedes <a href="{{ url_for('oposiciones', ver_todas=1) }}">ver todas las oposiciones</a> paginadas.</p></div>
     {% else %}
     {% if advertencia_actualizacion %}<p class="portal-message portal-message--error">No se pudo completar la actualización del BOE. Se muestran los datos disponibles en la base de datos.</p>{% endif %}
+    <div class="results-export-controls" aria-label="Exportar resultados"><span>Exportar resultados</span><a class="portal-button" href="{{ url_for('exportar_oposiciones_xlsx', **query_exportacion) }}">Excel</a><a class="portal-button portal-button--secondary" href="{{ url_for('exportar_oposiciones_csv', **query_exportacion) }}">CSV</a></div>
     <div class="results-tabs" role="tablist" aria-label="Visualización de resultados">
         <button id="pestana-listado" class="results-tab" type="button" role="tab" aria-selected="true" aria-controls="panel-listado" data-results-tab="listado">Listado</button>
         <button id="pestana-mapa" class="results-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-mapa" data-results-tab="mapa">Mapa</button>

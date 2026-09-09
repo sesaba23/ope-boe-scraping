@@ -1,11 +1,17 @@
 import builtins
+import html
 import importlib
+from io import BytesIO
 import json
 from pathlib import Path
+import re
 import subprocess
+from threading import Event
 import time
 from urllib.parse import parse_qs, urlencode, urlsplit
+import zipfile
 
+import openpyxl
 import pandas as pd
 import pytest
 import base_datos
@@ -13,6 +19,7 @@ from consultas_boe import buscar_oposiciones, oposiciones
 
 import web_estadisticas
 from actualizacion_boe import GestorActualizaciones
+from gestion_exportacion import GestorExportacionXlsx
 
 
 @pytest.fixture
@@ -961,6 +968,88 @@ def test_api_no_modifica_sqlite(cliente, ruta_bd):
     assert ruta_bd.read_bytes() == contenido_antes
 
 
+def test_rutas_exportacion_directa_descargan_datasets_y_no_cachean(cliente):
+    zip_completo = cliente.get("/administracion/base-datos/exportar.zip")
+    assert zip_completo.status_code == 200
+    assert zip_completo.mimetype == "application/zip"
+    assert "attachment;" in zip_completo.headers["Content-Disposition"]
+    assert zip_completo.headers["Cache-Control"] == "no-store"
+    with zipfile.ZipFile(BytesIO(zip_completo.data)) as archivo:
+        assert archivo.namelist() == [
+            "busquedas.csv", "oposiciones.csv", "log_errores.csv",
+            "publicaciones.csv", "cobertura.csv",
+        ]
+
+    csv = cliente.get("/oposiciones/exportar.csv?texto=Ingeniero&pagina=9&vista=mapa")
+    xlsx = cliente.get("/oposiciones/exportar.xlsx?texto=Ingeniero&tamano_pagina=1&ver_todas=1")
+    assert csv.status_code == xlsx.status_code == 200
+    assert csv.mimetype == "text/csv"
+    assert xlsx.mimetype == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    desde_csv = pd.read_csv(BytesIO(csv.data), sep=";", encoding="utf-8-sig")
+    desde_xlsx = pd.read_excel(BytesIO(xlsx.data))
+    pd.testing.assert_frame_equal(desde_csv, desde_xlsx, check_dtype=False)
+    assert len(desde_csv) == buscar_oposiciones(cliente.application.config["RUTA_BD"], texto="Ingeniero")["total"]
+
+
+def test_rutas_exportacion_filtrada_aceptan_cero_resultados_y_orden_invalido(cliente):
+    csv = cliente.get("/oposiciones/exportar.csv?texto=sin-resultados")
+    xlsx = cliente.get("/oposiciones/exportar.xlsx?texto=sin-resultados")
+    assert csv.status_code == xlsx.status_code == 200
+    assert pd.read_csv(BytesIO(csv.data), sep=";", encoding="utf-8-sig").empty
+    assert openpyxl.load_workbook(BytesIO(xlsx.data))["Oposiciones"].max_row == 1
+    invalido = cliente.get("/oposiciones/exportar.csv?orden=DROP")
+    assert invalido.status_code == 400 and "Orden no permitido" in invalido.get_json()["error"]
+
+
+def test_exportacion_web_neutraliza_formula_sin_modificar_sqlite(cliente):
+    ruta = cliente.application.config["RUTA_BD"]
+    conexion = base_datos.conectar(ruta)
+    try:
+        conexion.execute("UPDATE oposiciones SET puesto = '=SUM(1;1)' WHERE oposicion_id = 1")
+        conexion.commit()
+    finally:
+        conexion.close()
+    respuesta = cliente.get("/oposiciones/exportar.csv")
+    assert "'=SUM(1;1)" in pd.read_csv(
+        BytesIO(respuesta.data), sep=";", encoding="utf-8-sig"
+    )["Puesto"].tolist()
+    conexion = base_datos.conectar(ruta, readonly=True)
+    try:
+        assert conexion.execute("SELECT puesto FROM oposiciones WHERE oposicion_id = 1").fetchone()[0] == "=SUM(1;1)"
+    finally:
+        conexion.close()
+
+
+def test_exportacion_xlsx_completa_es_background_y_descargable(ruta_bd):
+    iniciado, continuar = Event(), Event()
+
+    def exportador(_, salida):
+        iniciado.set()
+        continuar.wait(1)
+        Path(salida).write_bytes(b"xlsx-completo")
+
+    gestor = GestorExportacionXlsx(exportador)
+    app = web_estadisticas.crear_app(ruta_bd, gestor_exportacion_xlsx=gestor)
+    app.config["TESTING"] = True
+    cliente_local = app.test_client()
+    inicio = cliente_local.post("/api/administracion/base-datos/exportacion")
+    assert inicio.status_code == 202 and inicio.get_json()["creado"] and iniciado.wait(1)
+    repetido = cliente_local.post("/api/administracion/base-datos/exportacion")
+    assert repetido.get_json()["creado"] is False
+    assert cliente_local.get("/administracion/base-datos/exportar.xlsx").status_code == 409
+    continuar.set()
+    limite = time.monotonic() + 2
+    while time.monotonic() < limite:
+        estado = cliente_local.get("/api/administracion/base-datos/exportacion").get_json()
+        if estado["estado"] == "completada":
+            break
+        time.sleep(0.01)
+    assert estado["estado"] == "completada"
+    descarga = cliente_local.get("/administracion/base-datos/exportar.xlsx")
+    assert descarga.status_code == 200 and descarga.data == b"xlsx-completo"
+    assert descarga.headers["Cache-Control"] == "no-store"
+
+
 def test_importar_modulo_no_arranca_servidor(monkeypatch):
     ejecuciones = []
     monkeypatch.setattr("flask.Flask.run", lambda *args, **kwargs: ejecuciones.append(1))
@@ -992,6 +1081,77 @@ def test_administracion_base_muestra_textos_y_no_verifica_al_cargar(cliente, mon
     assert b"No descarga ni modifica" in respuesta.data
     assert b'id="estado-publicacion"' in respuesta.data
     assert b"hidden" in respuesta.data
+
+
+def test_administracion_muestra_controles_de_exportacion_y_script_aislado(cliente):
+    html_pagina = cliente.get("/administracion/base-datos").get_data(as_text=True)
+    assert "Exportar base de datos" in html_pagina
+    assert "Preparar Excel" in html_pagina
+    assert 'id="enlace-descargar-exportacion-xlsx"' in html_pagina
+    assert 'aria-disabled="true"' in html_pagina
+    assert 'href="/administracion/base-datos/exportar.xlsx"' not in html_pagina
+    assert "Primero debes preparar el Excel antes de poder descargarlo." in html_pagina
+    assert 'role="tooltip"' in html_pagina
+    assert "/administracion/base-datos/exportar.zip" in html_pagina
+    assert "CSV (.zip)" in html_pagina
+    assert "aria-live=\"polite\"" in html_pagina
+    assert "js/administracion_exportacion.js" in html_pagina
+    script = Path("static/js/administracion_exportacion.js").read_text(encoding="utf-8")
+    assert 'setInterval(consultar, 2000)' in script
+    assert "if (!polling)" in script
+    assert ".textContent" in script
+    assert ".innerHTML" not in script
+    assert "Volver a preparar un Excel" in script and "Reintentar" in script
+    assert "Excel preparado" in script
+    assert "deshabilitarDescarga" in script and "habilitarDescarga" in script
+    assert 'enlace.dataset.url' in script
+    assert 'evento.preventDefault()' in script
+    css = cliente.get("/static/css/portal.css").get_data(as_text=True)
+    assert ".excel-export-actions" in css
+    assert ".export-download-tooltip" in css
+    assert ".admin-status--success" in css
+    assert "prefers-reduced-motion: reduce" in css
+
+
+def test_estado_completado_de_exportacion_reconstruye_descarga_y_mensaje(cliente):
+    script = Path("static/js/administracion_exportacion.js").read_text(encoding="utf-8")
+    inicio_completada = script.index('if (actual === "completada")')
+    bloque_completada = script[inicio_completada:script.index("enlace.hidden", inicio_completada) if "enlace.hidden" in script[inicio_completada:] else len(script)]
+    assert 'boton.textContent = "Volver a preparar un Excel"' in bloque_completada
+    assert "habilitarDescarga()" in bloque_completada
+    assert 'mostrar("Excel preparado", {exito: true})' in bloque_completada
+    assert "detenerPolling()" in bloque_completada
+
+
+def _parametros_exportacion(html_pagina, extension):
+    coincidencia = re.search(rf'href="([^"]*/oposiciones/exportar\.{extension}\?[^"]*)"', html_pagina)
+    assert coincidencia
+    return parse_qs(urlsplit(html.unescape(coincidencia.group(1))).query)
+
+
+def test_controles_exportacion_oposiciones_conservan_filtros_logicos_no_estado_visual(cliente):
+    respuesta = cliente.get(
+        "/oposiciones?texto=Ingeniero&provincia=Madrid&municipio_exacto=Madrid&"
+        "municipio_provincia_exacto=Madrid&orden=puesto_asc&pagina=3&tamano_pagina=50&"
+        "ver_todas=1&vista=mapa&sin_coordenadas=1&pagina_sin_coordenadas=2"
+    )
+    html_pagina = respuesta.get_data(as_text=True)
+    for extension in ("csv", "xlsx"):
+        parametros = _parametros_exportacion(html_pagina, extension)
+        assert parametros == {
+            "texto": ["Ingeniero"], "provincia": ["Madrid"],
+            "municipio_exacto": ["Madrid"], "municipio_provincia_exacto": ["Madrid"],
+            "orden": ["puesto_asc"],
+        }
+    assert "Exportar resultados" in html_pagina
+
+
+def test_controles_exportacion_siguen_visibles_con_cero_resultados_y_mapa(cliente):
+    vacia = cliente.get("/oposiciones?texto=sin-resultados")
+    mapa = cliente.get("/oposiciones?texto=Ingeniero&vista=mapa")
+    assert "/oposiciones/exportar.csv?texto=sin-resultados" in html.unescape(vacia.get_data(as_text=True))
+    parametros = _parametros_exportacion(mapa.get_data(as_text=True), "csv")
+    assert parametros == {"texto": ["Ingeniero"], "orden": ["fecha_desc"]}
 
 
 def test_api_administracion_prepara_y_consulta_manifest(cliente, monkeypatch, ruta_bd):

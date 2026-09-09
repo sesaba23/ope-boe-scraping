@@ -1,11 +1,13 @@
 import json
 
+import openpyxl
 import pandas as pd
 import pytest
 
 import base_datos
 import exportar_excel
 import migrar_excel_sqlite as migracion
+import servicio_exportacion
 
 
 def test_fingerprint_exportacion_equivale_vacios_xlsx_solo_en_campos_v5():
@@ -154,3 +156,74 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
     assert hojas["Oposiciones"].loc[0, "Puesto_normalizado"] == "Auxiliar"
     assert pd.isna(hojas["Oposiciones"].loc[0, "Administración"])
     assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "2026-01-01"
+
+
+def test_motor_exportacion_preserva_formato_y_neutraliza_formulas(tmp_path, monkeypatch):
+    """La protección solo altera textos peligrosos en la copia para XLSX."""
+    monkeypatch.chdir(tmp_path)
+    origen = tmp_path / "historico.xlsx"
+    destino = tmp_path / "datos" / "boe.db"
+    salida = tmp_path / "exportado.xlsx"
+    _crear_excel(origen, administracion="Ayuntamiento de Ñuñoa")
+    migracion.migrar(origen, destino, progreso=False)
+    conexion = base_datos.conectar(destino)
+    try:
+        conexion.execute(
+            "UPDATE oposiciones SET puesto=?, puesto_normalizado=?",
+            ("=SUMA(1;1)", "Técnico Ñ"),
+        )
+        conexion.commit()
+    finally:
+        conexion.close()
+
+    datasets, _ = servicio_exportacion.cargar_datos_exportacion_completa(destino)
+    assert list(datasets) == list(exportar_excel.CONTRATOS)
+    assert datasets["Oposiciones"].loc[0, "Puesto"] == "=SUMA(1;1)"
+    informe = servicio_exportacion.exportar_base_xlsx(destino, salida)
+    assert informe["correcta"]
+    assert informe["proteccion_formula_injection"]
+    with pytest.raises(FileExistsError):
+        servicio_exportacion.exportar_base_xlsx(destino, salida)
+    informe_sobrescrito = servicio_exportacion.exportar_base_xlsx(
+        destino, salida, sobrescribir=True
+    )
+    assert informe_sobrescrito["backup"]
+
+    libro = openpyxl.load_workbook(salida, data_only=False)
+    hoja = libro["Oposiciones"]
+    encabezados = [celda.value for celda in hoja[1]]
+    puesto = hoja.cell(2, encabezados.index("Puesto") + 1)
+    enlace = hoja.cell(2, encabezados.index("Enlace") + 1)
+    assert puesto.value == "'=SUMA(1;1)"
+    assert puesto.data_type == "s"
+    assert enlace.hyperlink.target == "https://x"
+    assert libro.active.title == "Oposiciones"
+    assert libro["Búsquedas"].sheet_state == "hidden"
+    assert hoja.freeze_panes == "A2"
+    assert hoja.auto_filter.ref == hoja.dimensions
+
+    conexion = base_datos.conectar(destino, readonly=True)
+    try:
+        assert conexion.execute("SELECT puesto FROM oposiciones").fetchone()[0] == "=SUMA(1;1)"
+    finally:
+        conexion.close()
+
+
+def test_sanitizacion_formula_no_modifica_numeros_fechas_ni_textos_normales():
+    valores = ["=1+1", "+texto", "-texto", "@texto", "texto", 7, None]
+    assert [servicio_exportacion.sanitizar_valor_formula(valor) for valor in valores] == [
+        "'=1+1", "'+texto", "'-texto", "'@texto", "texto", 7, None,
+    ]
+
+
+def test_cli_exportacion_conserva_argumentos_y_sobrescribir(monkeypatch, capsys):
+    llamadas = []
+
+    def exportar_falso(bd, salida, *, sobrescribir):
+        llamadas.append((bd, salida, sobrescribir))
+        return {"correcta": True}
+
+    monkeypatch.setattr(exportar_excel, "exportar", exportar_falso)
+    exportar_excel.main(["--bd", "origen.db", "--salida", "salida.xlsx", "--sobrescribir"])
+    assert llamadas == [("origen.db", "salida.xlsx", True)]
+    assert json.loads(capsys.readouterr().out) == {"correcta": True}

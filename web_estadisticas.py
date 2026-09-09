@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 from urllib.parse import parse_qsl, urlsplit
 
-from flask import Flask, abort, jsonify, redirect, render_template, request, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
 
 from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_intervalo
 
@@ -15,6 +15,8 @@ from consultas_boe import (
     resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
 )
 from estadisticas import calcular_estadisticas_sqlite
+from gestion_exportacion import GestorExportacionXlsx
+import servicio_exportacion
 
 
 _FILTROS_RETORNO_OPOSICIONES = (
@@ -59,7 +61,7 @@ def _url_retorno_oposiciones(argumentos):
     return url_for("oposiciones", **parametros)
 
 
-def crear_app(ruta_bd=None, gestor_actualizaciones=None):
+def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx=None):
     app = Flask(__name__)
     ruta_fijada = Path(ruta_bd or Path.cwd() / "datos/boe.db").expanduser()
     app.config["RUTA_BD"] = ruta_fijada.resolve()
@@ -67,6 +69,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
     import gestion_base
     app.config["GESTOR_PUBLICACION"] = gestion_base.GestorPublicacion()
     app.config["GESTOR_ACTUALIZACION_BASE"] = gestion_base.GestorActualizacionBase()
+    app.config["GESTOR_EXPORTACION_XLSX"] = gestor_exportacion_xlsx or GestorExportacionXlsx()
 
     def filtros_oposiciones_desde_request():
         """Lee una sola vez los filtros lógicos compartidos por listado y mapa."""
@@ -81,6 +84,37 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             "municipio_provincia_exacto": (request.args.get("municipio_provincia_exacto") or "").strip(),
         }
         return filtros, exactos
+
+    def filtros_exportacion_desde_request():
+        """Valida los mismos filtros lógicos que el listado, sin paginación."""
+        filtros, exactos = filtros_oposiciones_desde_request()
+        inicio = _validar_fecha(filtros["fecha_desde"] or None, "fecha_desde")
+        final = _validar_fecha(filtros["fecha_hasta"] or None, "fecha_hasta")
+        if inicio and final and inicio > final:
+            raise ValueError("La fecha desde no puede ser posterior a la fecha hasta.")
+        return {
+            **{nombre: valor or None for nombre, valor in filtros.items()},
+            "municipio_exacto": exactos["municipio_exacto"] or None,
+            "municipio_provincia_exacto": exactos["municipio_provincia_exacto"] or None,
+            "orden": request.args.get("orden", "fecha_desc"),
+        }
+
+    def respuesta_descarga_temporal(ruta, nombre, mimetype):
+        """Envía un temporal propio y lo elimina cuando Flask cierra la respuesta."""
+        respuesta = send_file(ruta, as_attachment=True, download_name=nombre, mimetype=mimetype)
+        respuesta.headers["Cache-Control"] = "no-store"
+        respuesta.call_on_close(lambda: Path(ruta).unlink(missing_ok=True))
+        return respuesta
+
+    def ruta_temporal_exportacion(sufijo):
+        import os
+        import tempfile
+
+        descriptor, nombre = tempfile.mkstemp(prefix="boe-exportacion-", suffix=sufijo)
+        os.close(descriptor)
+        ruta = Path(nombre)
+        ruta.unlink(missing_ok=True)
+        return ruta
 
     @app.get("/")
     def inicio():
@@ -112,6 +146,45 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
         except Exception as error:
             return render_template("error.html", seccion_activa="administracion", codigo=503, mensaje=str(error)), 503
         return render_template("administracion_base_datos.html", seccion_activa="administracion", estado=estado)
+
+    @app.get("/administracion/base-datos/exportar.zip")
+    def exportar_base_csv():
+        ruta = ruta_temporal_exportacion(".zip")
+        try:
+            servicio_exportacion.exportar_base_csv_zip(app.config["RUTA_BD"], ruta)
+            return respuesta_descarga_temporal(
+                ruta, f"boe_base_completa_{datetime.today():%Y%m%d}.zip", "application/zip"
+            )
+        except ErrorConsultaSQLite:
+            ruta.unlink(missing_ok=True)
+            return jsonify({"error": "La base de datos no está disponible."}), 503
+        except Exception:
+            ruta.unlink(missing_ok=True)
+            app.logger.exception("No se pudo exportar la base completa como ZIP")
+            return jsonify({"error": "No se pudo preparar la exportación."}), 500
+
+    @app.post("/api/administracion/base-datos/exportacion")
+    def api_iniciar_exportacion_base_xlsx():
+        trabajo, creado = app.config["GESTOR_EXPORTACION_XLSX"].iniciar(app.config["RUTA_BD"])
+        return jsonify({"creado": creado, "trabajo": trabajo.serializar()}), 202
+
+    @app.get("/api/administracion/base-datos/exportacion")
+    def api_estado_exportacion_base_xlsx():
+        estado = app.config["GESTOR_EXPORTACION_XLSX"].obtener()
+        return jsonify(estado or {"estado": "sin_trabajo"})
+
+    @app.get("/administracion/base-datos/exportar.xlsx")
+    def descargar_exportacion_base_xlsx():
+        ruta = app.config["GESTOR_EXPORTACION_XLSX"].archivo_preparado()
+        if ruta is None:
+            return jsonify({"error": "La exportación XLSX completa todavía no está preparada."}), 409
+        respuesta = send_file(
+            ruta, as_attachment=True,
+            download_name=f"boe_base_completa_{datetime.today():%Y%m%d}.xlsx",
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        respuesta.headers["Cache-Control"] = "no-store"
+        return respuesta
 
     @app.post("/api/administracion/base-datos/verificar")
     def api_verificar_base_datos():
@@ -230,16 +303,70 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None):
             query_actual["ver_todas"] = "1"
         if vista_mapa:
             query_actual["vista"] = "mapa"
+        query_exportacion = {
+            **{nombre: filtros[nombre] for nombre in _FILTROS_RETORNO_OPOSICIONES if filtros.get(nombre)},
+            "orden": orden,
+        }
+        if municipio_exacto:
+            query_exportacion["municipio_exacto"] = municipio_exacto
+        if municipio_provincia_exacto:
+            query_exportacion["municipio_provincia_exacto"] = municipio_provincia_exacto
         avanzados = ("tipo_entidad", "municipio", "sistema", "turno", "escala", "subescala", "clase")
         return render_template(
             "oposiciones.html", seccion_activa="oposiciones", filtros=filtros,
             opciones=opciones, resultados=resultados, error=None, hay_criterio=hay_criterio,
             orden=orden, tamano_pagina=tamano_pagina, query_actual=query_actual,
+            query_exportacion=query_exportacion,
             volver_detalle=_url_retorno_oposiciones(request.args),
             avanzados_activos=any(filtros[nombre] for nombre in avanzados),
             actualizacion_pendiente=pendientes_actualizacion,
             advertencia_actualizacion=request.args.get("actualizacion") == "error",
         )
+
+    @app.get("/oposiciones/exportar.csv")
+    def exportar_oposiciones_csv():
+        ruta = ruta_temporal_exportacion(".csv")
+        try:
+            parametros = filtros_exportacion_desde_request()
+            servicio_exportacion.exportar_oposiciones_filtradas_csv(
+                app.config["RUTA_BD"], ruta, **parametros
+            )
+            return respuesta_descarga_temporal(
+                ruta, f"oposiciones_{datetime.today():%Y%m%d}.csv", "text/csv"
+            )
+        except ValueError as error:
+            ruta.unlink(missing_ok=True)
+            return jsonify({"error": str(error)}), 400
+        except ErrorConsultaSQLite:
+            ruta.unlink(missing_ok=True)
+            return jsonify({"error": "La base de datos no está disponible."}), 503
+        except Exception:
+            ruta.unlink(missing_ok=True)
+            app.logger.exception("No se pudieron exportar las oposiciones como CSV")
+            return jsonify({"error": "No se pudo preparar la exportación."}), 500
+
+    @app.get("/oposiciones/exportar.xlsx")
+    def exportar_oposiciones_xlsx():
+        ruta = ruta_temporal_exportacion(".xlsx")
+        try:
+            parametros = filtros_exportacion_desde_request()
+            servicio_exportacion.exportar_oposiciones_filtradas_xlsx(
+                app.config["RUTA_BD"], ruta, **parametros
+            )
+            return respuesta_descarga_temporal(
+                ruta, f"oposiciones_{datetime.today():%Y%m%d}.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+        except ValueError as error:
+            ruta.unlink(missing_ok=True)
+            return jsonify({"error": str(error)}), 400
+        except ErrorConsultaSQLite:
+            ruta.unlink(missing_ok=True)
+            return jsonify({"error": "La base de datos no está disponible."}), 503
+        except Exception:
+            ruta.unlink(missing_ok=True)
+            app.logger.exception("No se pudieron exportar las oposiciones como XLSX")
+            return jsonify({"error": "No se pudo preparar la exportación."}), 500
 
     @app.get("/api/oposiciones/mapa")
     def api_oposiciones_mapa():

@@ -287,7 +287,7 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
         max_length = 0
         col_letter = get_column_letter(col[0].column)
         header = str(col[0].value).strip().lower()
-        if header == "enlace":
+        if header in {"enlace", "enlace boe"}:
             col_enlace = col[0].column  # Guardar el índice de la columna Enlace
         for cell in col:
             try:
@@ -304,14 +304,18 @@ def formatear_hoja_oposiciones(nombre_archivo="BOE-oposiciones.xlsx"):
 
     # Formatear columna "Habitantes" como número sin decimales y con separador de miles
     for idx, cell in enumerate(ws[1], 1):
-        if str(cell.value).strip().lower() in {"habitantes", "num_plazas"}:
+        if str(cell.value).strip().lower() in {
+            "habitantes", "num_plazas", "número de plazas"
+        }:
             for row in ws.iter_rows(
                 min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row
             ):
                 for c in row:
                     c.number_format = "#,##0"
     for idx, cell in enumerate(ws[1], 1):
-        if str(cell.value).strip().lower() in {"fecha_boe", "fecha_boe_original", "fecha_analisis"}:
+        if str(cell.value).strip().lower() in {
+            "fecha_boe", "fecha_boe_original", "fecha_analisis", "fecha boe"
+        }:
             for row in ws.iter_rows(min_row=2, min_col=idx, max_col=idx, max_row=ws.max_row):
                 for c in row:
                     c.number_format = "@"

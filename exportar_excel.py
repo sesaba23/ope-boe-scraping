@@ -1,130 +1,68 @@
-"""Exporta SQLite a un Excel de interoperabilidad, sin usar Excel como entrada."""
+"""Adaptador CLI para exportar la base SQLite a un Excel interoperable."""
 import argparse
-from datetime import date, datetime
-import hashlib
 import json
-import os
 from pathlib import Path
-import shutil
-import tempfile
-import time
 
-import pandas as pd
-
-import base_datos
-from migrar_excel_sqlite import _fingerprint, _registros_excel
+import servicio_exportacion as servicio
 
 
-CONTRATOS = {
-    "Búsquedas": ("SELECT codigo FROM busquedas ORDER BY codigo", ["Código"]),
-    "Oposiciones": ("", ["Oposicion_ID","Publicacion_ID","Fecha_boe","Fecha_boe_original","Puesto","Puesto_normalizado","Num_plazas","Administración","Administración_normalizada","Ambito","Tipo_entidad","Comunidad_Autónoma","Provincia","Municipio","Sistema","Turno","Escala","Subescala","Clase","Publicación","Latitud","Longitud","Habitantes","Version_extractor","Fecha_analisis","Confianza_geografica","Evidencia_geografica","Version_resolutor","Enlace"]),
-    "Log-errores": ("SELECT fecha,tipo_error,enlace_web FROM log_errores ORDER BY error_id", ["Fecha","Tipo de error","Enlace Web"]),
-    "Publicaciones": ("""SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones ORDER BY fecha_boe,publicacion_id""", ["Publicacion_ID","Enlace","Fecha_BOE","Titulo_original","Fecha_ultimo_analisis","Version_extractor","Estado_analisis","Coincidencias","Departamento_BOE","Administracion_resuelta","Familia_administrativa","Estado_resolucion","Metodo_resolucion","Confianza_resolucion","Version_resolucion"]),
-    "Cobertura": ("SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura ORDER BY fecha", ["Fecha","Estado","Version_extractor","Fecha_ultima_consulta","Numero_publicaciones"]),
-}
-
-MAPA_OPOSICIONES = {
-    "Oposicion_ID": "oposicion_id", "Publicacion_ID": "publicacion_id", "Fecha_boe": "fecha_boe",
-    "Fecha_boe_original": "fecha_boe_original", "Puesto": "puesto", "Puesto_normalizado": "puesto_normalizado",
-    "Num_plazas": "num_plazas", "Administración": "administracion", "Administración_normalizada": "administracion_normalizada",
-    "Ambito": "ambito", "Tipo_entidad": "tipo_entidad", "Comunidad_Autónoma": "comunidad_autonoma",
-    "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
-    "Escala": "escala", "Subescala": "subescala", "Clase": "clase", "Publicación": "publicacion",
-    "Latitud": "latitud", "Longitud": "longitud", "Habitantes": "habitantes", "Version_extractor": "version_extractor",
-    "Fecha_analisis": "fecha_analisis", "Confianza_geografica": "confianza_geografica",
-    "Evidencia_geografica": "evidencia_geografica", "Version_resolutor": "version_resolutor", "Enlace": "enlace",
-}
-
-def _contratos(con):
-    contratos = dict(CONTRATOS)
-    existentes = {fila[1] for fila in con.execute("PRAGMA table_info(oposiciones)")}
-    columnas = [nombre for nombre in CONTRATOS["Oposiciones"][1] if MAPA_OPOSICIONES[nombre] in existentes]
-    seleccion = ",".join(MAPA_OPOSICIONES[nombre] for nombre in columnas)
-    contratos["Oposiciones"] = (f"SELECT {seleccion} FROM oposiciones ORDER BY fecha_boe,enlace,puesto,oposicion_id", columnas)
-    return contratos
+# Se mantienen los nombres públicos históricos para scripts y pruebas externas.
+CONTRATOS = servicio.CONTRATOS
+MAPA_OPOSICIONES = servicio.MAPA_OPOSICIONES
 
 
 def cargar_sqlite(ruta):
-    if not Path(ruta).exists():
-        raise FileNotFoundError("SQLite no disponible. Ejecute migrar_excel_sqlite.py.")
-    con = base_datos.conectar(ruta, readonly=True)
-    try:
-        if con.execute("PRAGMA quick_check").fetchone()[0] != "ok" or base_datos.foreign_key_check(con):
-            raise RuntimeError("SQLite no supera las comprobaciones de integridad")
-        tablas = {fila[0] for fila in con.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        if {"metadata", "busquedas", "oposiciones", "log_errores", "publicaciones", "cobertura"} - tablas:
-            raise RuntimeError("SQLite no contiene el esquema requerido")
-        contratos = _contratos(con)
-        return {nombre: pd.DataFrame(con.execute(sql).fetchall(), columns=cols) for nombre, (sql, cols) in contratos.items()}, dict(con.execute("SELECT clave,valor FROM metadata"))
-    finally:
-        con.close()
+    """Compatibilidad: carga los datasets funcionales sin escribir SQLite."""
+    return servicio.cargar_datos_exportacion_completa(ruta)
 
 
-def _fingerprint_hoja(df, nombre):
-    # Excel devuelve las fechas como Timestamp aunque SQLite las conserva como
-    # texto ISO. La auditoría compara el valor lógico, no su representación.
-    if nombre == "Oposiciones" and "Fecha_boe" in df:
-        df = df.copy()
-        fechas = pd.to_datetime(df["Fecha_boe"], errors="coerce")
-        df["Fecha_boe"] = fechas.dt.strftime("%Y-%m-%d").where(fechas.notna(), df["Fecha_boe"])
-        for columna in ("Administración_normalizada", "Provincia", "Municipio", "Evidencia_geografica"):
-            if columna in df:
-                df[columna] = df[columna].replace("", None)
-    return _fingerprint(_registros_excel({nombre: df}, nombre)[0])
+def _fingerprint_hoja(dataframe, nombre):
+    return servicio._fingerprint_hoja(dataframe, nombre)
 
 
 def auditar(dataframes, ruta_excel):
-    leidas = pd.read_excel(ruta_excel, sheet_name=list(CONTRATOS))
-    tablas, diferencias = {}, []
-    global_ = hashlib.sha256()
-    for nombre, esperado in dataframes.items():
-        real = leidas[nombre].reindex(columns=esperado.columns)
-        a, b = _fingerprint_hoja(esperado, nombre), _fingerprint_hoja(real, nombre)
-        tablas[nombre] = {"filas_sqlite": len(esperado), "filas_excel": len(real), "columnas": esperado.columns.tolist(), "fingerprint_sqlite": a, "fingerprint_excel": b, "equivalente": a == b and len(esperado) == len(real)}
-        global_.update(f"{nombre}:{a}:{b}\n".encode())
-        if not tablas[nombre]["equivalente"]: diferencias.append(nombre)
-    return {"tablas": tablas, "fingerprint_global": global_.hexdigest(), "diferencias": diferencias, "correcta": not diferencias}
+    return servicio.auditar_xlsx(dataframes, ruta_excel)
 
 
 def _backup(ruta, directorio="backups/exportacion_excel"):
-    directorio = Path(directorio); directorio.mkdir(parents=True, exist_ok=True)
-    destino = directorio / f"{ruta.stem}_pre_exportacion_{datetime.now():%Y%m%d_%H%M%S_%f}.xlsx"
-    shutil.copy2(ruta, destino)
-    if destino.read_bytes() != ruta.read_bytes():
-        destino.unlink(missing_ok=True); raise RuntimeError("El backup Excel no coincide")
-    return destino
+    return servicio._backup_xlsx(ruta, directorio)
+
+
+def _guardar_informe(informe):
+    informes = Path("informes/exportacion_excel")
+    informes.mkdir(parents=True, exist_ok=True)
+    contenido = json.dumps(informe, ensure_ascii=False, indent=2) + "\n"
+    (informes / "auditoria_exportacion_excel.json").write_text(
+        contenido, encoding="utf-8"
+    )
+    (informes / "auditoria_exportacion_excel.md").write_text(
+        "# Auditoría exportación Excel\n\n" + contenido, encoding="utf-8"
+    )
 
 
 def exportar(ruta_bd="datos/boe.db", salida="BOE-oposiciones.xlsx", *, sobrescribir=False):
-    salida = Path(salida)
-    if salida.exists() and not sobrescribir:
-        raise FileExistsError(f"El destino existe: {salida}. Use --sobrescribir.")
-    dataframes, metadata = cargar_sqlite(ruta_bd)
-    salida.parent.mkdir(parents=True, exist_ok=True)
-    backup = _backup(salida) if salida.exists() else None
-    inicio = time.perf_counter(); temporal = None
-    try:
-        descriptor, nombre = tempfile.mkstemp(prefix=f".{salida.stem}-", suffix=".tmp.xlsx", dir=salida.parent)
-        os.close(descriptor); temporal = Path(nombre)
-        with pd.ExcelWriter(temporal, engine="openpyxl") as writer:
-            for nombre_hoja, df in dataframes.items():
-                df.to_excel(writer, sheet_name=nombre_hoja, index=False)
-        from preparar_archivo_datos import formatear_hoja_oposiciones
-        formatear_hoja_oposiciones(temporal)
-        informe = auditar(dataframes, temporal)
-        if not informe["correcta"]: raise RuntimeError(f"Auditoría fallida: {informe['diferencias']}")
-        os.replace(temporal, salida); temporal = None
-    finally:
-        if temporal is not None: temporal.unlink(missing_ok=True)
-    informe.update({"fecha": datetime.now().isoformat(timespec="seconds"), "origen_sqlite": str(ruta_bd), "schema_version": metadata.get("schema_version"), "data_version": metadata.get("data_version"), "destino_excel": str(salida), "duracion_s": round(time.perf_counter()-inicio,3), "tamano_bytes": salida.stat().st_size, "backup": str(backup) if backup else None})
-    informes = Path("informes/exportacion_excel"); informes.mkdir(parents=True, exist_ok=True)
-    (informes/"auditoria_exportacion_excel.json").write_text(json.dumps(informe,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    (informes/"auditoria_exportacion_excel.md").write_text("# Auditoría exportación Excel\n\n"+json.dumps(informe,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    """Conserva el contrato CLI histórico delegando en el motor compartido."""
+    informe = servicio.exportar_base_xlsx(ruta_bd, salida, sobrescribir=sobrescribir)
+    _guardar_informe(informe)
     return informe
 
 
 def main(argv=None):
-    p=argparse.ArgumentParser(description=__doc__); p.add_argument("--bd",default="datos/boe.db"); p.add_argument("--salida",default="BOE-oposiciones.xlsx"); p.add_argument("--sobrescribir",action="store_true"); a=p.parse_args(argv)
-    print(json.dumps(exportar(a.bd,a.salida,sobrescribir=a.sobrescribir),ensure_ascii=False,indent=2))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--bd", default="datos/boe.db")
+    parser.add_argument("--salida", default="BOE-oposiciones.xlsx")
+    parser.add_argument("--sobrescribir", action="store_true")
+    argumentos = parser.parse_args(argv)
+    print(
+        json.dumps(
+            exportar(
+                argumentos.bd, argumentos.salida, sobrescribir=argumentos.sobrescribir
+            ),
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
-if __name__ == "__main__": main()
+
+if __name__ == "__main__":
+    main()
