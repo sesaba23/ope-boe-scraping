@@ -12,7 +12,7 @@ from normalizacion_puestos import clasificar_familia_puesto, normalizar_puesto
 def _leer(ruta_bd):
     conexion = base_datos.conectar(ruta_bd, readonly=True)
     try:
-        metadata = dict(conexion.execute("SELECT clave,valor FROM metadata"))
+        metadata = base_datos.leer_metadata(conexion)
         columnas = {fila[1].casefold() for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
         if metadata.get("schema_version") not in {"3", "4", "5", "6"} or "puesto_normalizado" not in columnas:
             raise RuntimeError("El recálculo requiere schema_version 3, 4, 5 o 6 con Puesto_normalizado")
@@ -74,7 +74,7 @@ def recalcular(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite", *, dr
         with base_datos.transaccion(conexion):
             # La validación se repite bajo el bloqueo de escritura para evitar
             # aplicar un plan calculado sobre un estado concurrentemente distinto.
-            metadata_bloqueada = dict(conexion.execute("SELECT clave,valor FROM metadata"))
+            metadata_bloqueada = base_datos.leer_metadata(conexion)
             if metadata_bloqueada != metadata:
                 raise RuntimeError("La base cambió durante la preparación del recálculo")
             conexion.executemany(

@@ -87,7 +87,7 @@ def propuestas(con):
 def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run=False):
     ruta=Path(ruta_bd); con=base_datos.conectar(ruta,readonly=True)
     try:
-        meta=dict(con.execute("SELECT clave,valor FROM metadata"))
+        meta=base_datos.leer_metadata(con)
         if meta.get("schema_version") not in {"4", "5", "6"}: raise RuntimeError("El recálculo requiere schema_version 4, 5 o 6")
         cambios=propuestas(con)
         universitarios=propuestas_universidades(con) if meta.get("schema_version") in {"5", "6"} and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} else []

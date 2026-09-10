@@ -101,7 +101,7 @@ def cargar_datos_exportacion_completa(ruta_bd="datos/boe.db"):
             nombre: pd.DataFrame(conexion.execute(sql).fetchall(), columns=columnas)
             for nombre, (sql, columnas) in contratos.items()
         }
-        return datasets, dict(conexion.execute("SELECT clave,valor FROM metadata"))
+        return datasets, base_datos.leer_metadata(conexion)
     finally:
         conexion.close()
 

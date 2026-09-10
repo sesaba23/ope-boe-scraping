@@ -6,12 +6,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const mensaje = document.querySelector("#mensaje-cobertura"), detalle = document.querySelector("#detalle-cobertura");
     const mostrar = (texto, detalleTexto = "", porcentaje = 0) => { estado.hidden = false; document.querySelector("#estado-actualizacion-mensaje").textContent = texto; document.querySelector("#estado-actualizacion-detalle").textContent = detalleTexto; document.querySelector("#estado-actualizacion-barra").style.width = `${porcentaje}%`; };
     const restaurar = () => { boton.disabled = false; };
+    const crearElemento = (etiqueta, texto) => {
+        const elemento = document.createElement(etiqueta);
+        elemento.textContent = texto;
+        return elemento;
+    };
+    const anadirDetalle = (lista, etiqueta, valor) => {
+        lista.append(crearElemento("dt", etiqueta), crearElemento("dd", valor));
+    };
+    const mostrarDetalle = dato => {
+        const titulo = crearElemento("h2", dato.fecha);
+        const lista = document.createElement("dl");
+        anadirDetalle(lista, "Estado almacenado", dato.estado || "—");
+        anadirDetalle(lista, "Estado calculado", dato.estado_visual.replaceAll("_", " "));
+        anadirDetalle(lista, "Cubierto", dato.cubierto ? "Sí" : "No");
+        anadirDetalle(lista, "Versión extractor", dato.version_extractor || "—");
+        anadirDetalle(lista, "Última consulta", dato.fecha_ultima_consulta || "—");
+        anadirDetalle(lista, "Publicaciones según BOE", dato.numero_publicaciones ?? "—");
+        anadirDetalle(lista, "Publicaciones conservadas en SQLite", dato.publicaciones_sqlite ?? "—");
+        if (dato.motivo) anadirDetalle(lista, "Motivo", dato.motivo);
+        detalle.replaceChildren(titulo, lista);
+    };
+    const mostrarErrorDetalle = texto => detalle.replaceChildren(
+        crearElemento("h2", "Detalle diario"), crearElemento("p", texto)
+    );
     document.querySelectorAll(".coverage-day").forEach(dia => dia.addEventListener("click", async () => {
         try {
             const respuesta = await fetch(`/api/cobertura/dia?fecha=${encodeURIComponent(dia.dataset.fecha)}`); const dato = await respuesta.json();
             if (!respuesta.ok) throw new Error(dato.error || "No se pudo obtener el detalle.");
-            detalle.innerHTML = `<h2>${dato.fecha}</h2><dl><dt>Estado almacenado</dt><dd>${dato.estado || "—"}</dd><dt>Estado calculado</dt><dd>${dato.estado_visual.replaceAll("_", " ")}</dd><dt>Cubierto</dt><dd>${dato.cubierto ? "Sí" : "No"}</dd><dt>Versión extractor</dt><dd>${dato.version_extractor || "—"}</dd><dt>Última consulta</dt><dd>${dato.fecha_ultima_consulta || "—"}</dd><dt>Publicaciones según BOE</dt><dd>${dato.numero_publicaciones ?? "—"}</dd><dt>Publicaciones conservadas en SQLite</dt><dd>${dato.publicaciones_sqlite ?? "—"}</dd>${dato.motivo ? `<dt>Motivo</dt><dd>${dato.motivo}</dd>` : ""}</dl>`;
-        } catch (error) { detalle.innerHTML = `<h2>Detalle diario</h2><p>${error.message}</p>`; }
+            mostrarDetalle(dato);
+        } catch (error) { mostrarErrorDetalle(error.message); }
     }));
     boton.addEventListener("click", async () => {
         boton.disabled = true; mensaje.textContent = "";

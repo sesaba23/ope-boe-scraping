@@ -1,0 +1,229 @@
+import json
+
+import openpyxl
+import pandas as pd
+import pytest
+
+import base_datos
+import exportar_excel
+import migrar_excel_sqlite as migracion
+import servicio_exportacion
+
+
+def test_fingerprint_exportacion_equivale_vacios_xlsx_solo_en_campos_v5():
+    columnas = exportar_excel.CONTRATOS["Oposiciones"][1]
+    base = {columna: None for columna in columnas}
+    base.update({"Fecha_boe": "2026-09-01", "Provincia": "", "Municipio": "",
+                 "Administración_normalizada": "", "Evidencia_geografica": ""})
+    sqlite = pd.DataFrame([base])
+    excel = sqlite.copy()
+    for columna in ("Administración_normalizada", "Provincia", "Municipio", "Evidencia_geografica"):
+        excel[columna] = float("nan")
+    assert exportar_excel._fingerprint_hoja(sqlite, "Oposiciones") == exportar_excel._fingerprint_hoja(excel, "Oposiciones")
+    excel.loc[0, "Provincia"] = "Madrid"
+    assert exportar_excel._fingerprint_hoja(sqlite, "Oposiciones") != exportar_excel._fingerprint_hoja(excel, "Oposiciones")
+
+
+def _crear_excel(ruta, *, administracion=None, municipio=None, provincia=None):
+    busquedas = pd.DataFrame({"Código": ["codigo"]})
+    publicaciones = pd.DataFrame({
+        "Publicacion_ID": ["BOE-A-1"], "Enlace": ["https://x"],
+        "Fecha_BOE": ["1 de enero de 2026"], "Titulo_original": [None],
+        "Fecha_ultimo_analisis": ["2026-01-01T10:00:00"], "Version_extractor": ["1"],
+        "Estado_analisis": ["con_coincidencias"], "Coincidencias": [1],
+    })
+    oposiciones = pd.DataFrame({
+        "Num_plazas": ["la"], "Puesto": ["Auxiliar"], "Administración": [administracion],
+        "Escala": ["--"], "Subescala": ["--"], "Clase": ["--"], "Sistema": ["--"],
+        "Turno": ["--"], "Fecha_boe": ["20260101"], "Publicación": [None],
+        "Enlace": ["https://x"], "Municipio": [municipio], "Provincia": [provincia],
+        "Latitud": [None], "Longitud": [None], "Habitantes": [None],
+        "Publicacion_ID": ["BOE-A-1"], "Version_extractor": ["1"],
+        "Fecha_analisis": [None],
+    })
+    cobertura = pd.DataFrame({"Fecha": ["2026-01-01"], "Estado": ["consultado"], "Version_extractor": ["1"], "Fecha_ultima_consulta": ["2026-01-01 10:00:00"], "Numero_publicaciones": [1]})
+    errores = pd.DataFrame({"Fecha": ["2026-01-01 10:00:00"], "Tipo de error": ["prueba"], "Enlace Web": ["https://e"]})
+    with pd.ExcelWriter(ruta, engine="openpyxl") as escritor:
+        busquedas.to_excel(escritor, sheet_name="Búsquedas", index=False)
+        oposiciones.to_excel(escritor, sheet_name="Oposiciones", index=False)
+        errores.to_excel(escritor, sheet_name="Log-errores", index=False)
+        publicaciones.to_excel(escritor, sheet_name="Publicaciones", index=False)
+        cobertura.to_excel(escritor, sheet_name="Cobertura", index=False)
+
+
+def test_migracion_fixture_es_atomica_y_auditable(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    excel, destino = tmp_path / "origen.xlsx", tmp_path / "datos" / "boe.db"
+    _crear_excel(excel)
+    resultado = migracion.migrar(excel, destino, progreso=False)
+    assert destino.exists()
+    assert resultado["conteos"] == {"publicaciones": 1, "oposiciones": 1, "busquedas": 1, "cobertura": 1, "log_errores": 1}
+    assert resultado["informe"]["correcta"]
+    assert resultado["informe"]["semantica"]["num_plazas_no_enteros"] == ["TEXT:2:la"]
+    assert (tmp_path / "informes/migracion_sqlite/auditoria_migracion_sqlite.json").exists()
+    conexion = base_datos.conectar(destino)
+    assert conexion.execute("SELECT fecha_boe, fecha_boe_original, administracion FROM oposiciones").fetchone() == ("2026-01-01", "20260101", None)
+
+
+def test_no_reemplaza_base_existente_ni_deja_destino_ante_error(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    excel, destino = tmp_path / "origen.xlsx", tmp_path / "datos" / "boe.db"
+    _crear_excel(excel)
+    destino.parent.mkdir()
+    destino.write_bytes(b"conservar")
+    with pytest.raises(FileExistsError):
+        migracion.migrar(excel, destino, progreso=False)
+    assert destino.read_bytes() == b"conservar"
+    destino.unlink()
+    hojas = migracion.leer_excel(excel)
+    hojas["Oposiciones"].loc[0, "Publicacion_ID"] = "BOE-A-inexistente"
+    monkeypatch.setattr(migracion, "leer_excel", lambda _: hojas)
+    with pytest.raises(Exception):
+        migracion.migrar(excel, destino, progreso=False)
+    assert not destino.exists()
+
+
+def test_base_v5_nueva_carga_catalogos_y_referencias_administrativas(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    excel, destino = tmp_path / "origen.xlsx", tmp_path / "datos" / "boe.db"
+    _crear_excel(excel, municipio="Palma", provincia="Mallorca")
+    migracion.migrar(excel, destino, progreso=False)
+    con = base_datos.conectar(destino, readonly=True)
+    try:
+        fila = con.execute("""SELECT o.municipio,o.provincia,m.codigo_ine,p.nombre,c.nombre
+                              FROM oposiciones o
+                              LEFT JOIN municipios m ON m.codigo_ine=o.municipio_codigo_ine
+                              LEFT JOIN provincias p ON p.provincia_id=o.provincia_id
+                              LEFT JOIN comunidades_autonomas c ON c.comunidad_id=o.comunidad_id""").fetchone()
+        assert fila == ("Palma", "Mallorca", "07040", "Illes Balears", "Illes Balears")
+    finally:
+        con.close()
+
+
+def test_fingerprint_detecta_diferencia(tmp_path):
+    excel = tmp_path / "origen.xlsx"
+    _crear_excel(excel)
+    hojas = migracion.leer_excel(excel)
+    conexion = base_datos.conectar(tmp_path / "boe.db")
+    base_datos.crear_esquema(conexion)
+    migracion.importar(conexion, hojas, progreso=False)
+    conexion.execute("UPDATE busquedas SET codigo='otro'")
+    informe = migracion.auditar(hojas, conexion)
+    assert not informe["correcta"]
+    assert not informe["tablas"]["Búsquedas"]["equivalente"]
+
+
+def test_normalizar_fechas():
+    assert migracion.normalizar_fecha("20260102") == "2026-01-02"
+    assert migracion.normalizar_fecha("2 de enero de 2026") == "2026-01-02"
+
+
+def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    origen = tmp_path / "historico.xlsx"
+    destino = tmp_path / "datos" / "boe.db"
+    salida = tmp_path / "exportado.xlsx"
+    _crear_excel(origen)
+
+    migracion.migrar(origen, destino, progreso=False)
+    conexion = base_datos.conectar(destino, readonly=True)
+    try:
+        metadata = dict(conexion.execute("SELECT clave, valor FROM metadata"))
+        tablas = {
+            fila[0]
+            for fila in conexion.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )
+        }
+        assert metadata["schema_version"] == "5"
+        assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
+        assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas
+        assert conexion.execute("SELECT count(*) FROM comunidades_autonomas").fetchone()[0] == 19
+        assert conexion.execute("SELECT count(*) FROM provincias").fetchone()[0] == 50
+        assert base_datos.integrity_check(conexion) == ["ok"]
+        assert base_datos.foreign_key_check(conexion) == []
+    finally:
+        conexion.close()
+
+    informe = exportar_excel.exportar(destino, salida)
+    hojas = pd.read_excel(salida, sheet_name=None, dtype={"Num_plazas": str})
+    assert informe["correcta"]
+    assert list(hojas) == list(exportar_excel.CONTRATOS)
+    assert hojas["Oposiciones"].columns.tolist() == list(
+        exportar_excel.CONTRATOS["Oposiciones"][1]
+    )
+    assert hojas["Oposiciones"].loc[0, "Num_plazas"] == "la"
+    assert hojas["Oposiciones"].loc[0, "Puesto_normalizado"] == "Auxiliar"
+    assert pd.isna(hojas["Oposiciones"].loc[0, "Administración"])
+    assert str(hojas["Oposiciones"].loc[0, "Fecha_boe"]) == "2026-01-01"
+
+
+def test_motor_exportacion_preserva_formato_y_neutraliza_formulas(tmp_path, monkeypatch):
+    """La protección solo altera textos peligrosos en la copia para XLSX."""
+    monkeypatch.chdir(tmp_path)
+    origen = tmp_path / "historico.xlsx"
+    destino = tmp_path / "datos" / "boe.db"
+    salida = tmp_path / "exportado.xlsx"
+    _crear_excel(origen, administracion="Ayuntamiento de Ñuñoa")
+    migracion.migrar(origen, destino, progreso=False)
+    conexion = base_datos.conectar(destino)
+    try:
+        conexion.execute(
+            "UPDATE oposiciones SET puesto=?, puesto_normalizado=?",
+            ("=SUMA(1;1)", "Técnico Ñ"),
+        )
+        conexion.commit()
+    finally:
+        conexion.close()
+
+    datasets, _ = servicio_exportacion.cargar_datos_exportacion_completa(destino)
+    assert list(datasets) == list(exportar_excel.CONTRATOS)
+    assert datasets["Oposiciones"].loc[0, "Puesto"] == "=SUMA(1;1)"
+    informe = servicio_exportacion.exportar_base_xlsx(destino, salida)
+    assert informe["correcta"]
+    assert informe["proteccion_formula_injection"]
+    with pytest.raises(FileExistsError):
+        servicio_exportacion.exportar_base_xlsx(destino, salida)
+    informe_sobrescrito = servicio_exportacion.exportar_base_xlsx(
+        destino, salida, sobrescribir=True
+    )
+    assert informe_sobrescrito["backup"]
+
+    libro = openpyxl.load_workbook(salida, data_only=False)
+    hoja = libro["Oposiciones"]
+    encabezados = [celda.value for celda in hoja[1]]
+    puesto = hoja.cell(2, encabezados.index("Puesto") + 1)
+    enlace = hoja.cell(2, encabezados.index("Enlace") + 1)
+    assert puesto.value == "'=SUMA(1;1)"
+    assert puesto.data_type == "s"
+    assert enlace.hyperlink.target == "https://x"
+    assert libro.active.title == "Oposiciones"
+    assert libro["Búsquedas"].sheet_state == "hidden"
+    assert hoja.freeze_panes == "A2"
+    assert hoja.auto_filter.ref == hoja.dimensions
+
+    conexion = base_datos.conectar(destino, readonly=True)
+    try:
+        assert conexion.execute("SELECT puesto FROM oposiciones").fetchone()[0] == "=SUMA(1;1)"
+    finally:
+        conexion.close()
+
+
+def test_sanitizacion_formula_no_modifica_numeros_fechas_ni_textos_normales():
+    valores = ["=1+1", "+texto", "-texto", "@texto", "texto", 7, None]
+    assert [servicio_exportacion.sanitizar_valor_formula(valor) for valor in valores] == [
+        "'=1+1", "'+texto", "'-texto", "'@texto", "texto", 7, None,
+    ]
+
+
+def test_cli_exportacion_conserva_argumentos_y_sobrescribir(monkeypatch, capsys):
+    llamadas = []
+
+    def exportar_falso(bd, salida, *, sobrescribir):
+        llamadas.append((bd, salida, sobrescribir))
+        return {"correcta": True}
+
+    monkeypatch.setattr(exportar_excel, "exportar", exportar_falso)
+    exportar_excel.main(["--bd", "origen.db", "--salida", "salida.xlsx", "--sobrescribir"])
+    assert llamadas == [("origen.db", "salida.xlsx", True)]
+    assert json.loads(capsys.readouterr().out) == {"correcta": True}

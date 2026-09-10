@@ -289,8 +289,13 @@ def hash_archivo(ruta):
     return digest.hexdigest()
 
 
+def leer_metadata(conexion):
+    """Devuelve metadata como diccionario, sin conversión ni validación."""
+    return dict(conexion.execute("SELECT clave,valor FROM metadata"))
+
+
 def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None, schema_version=None):
-    existente = dict(conexion.execute("SELECT clave,valor FROM metadata"))
+    existente = leer_metadata(conexion)
     ahora = datetime.now().isoformat(timespec="seconds")
     if data_version is None:
         data_version = int(existente.get("data_version", "0"))
@@ -325,7 +330,7 @@ def validar_base_principal(ruta_bd):
     conexion = conectar(ruta_bd, readonly=True)
     try:
         try:
-            filas = dict(conexion.execute("SELECT clave,valor FROM metadata"))
+            filas = leer_metadata(conexion)
             if conexion.execute("PRAGMA quick_check").fetchone()[0] != "ok":
                 raise EspejoSQLiteError("SQLite no supera quick_check.")
         except sqlite3.OperationalError as error:
@@ -393,6 +398,21 @@ class EspejoSQLiteError(RuntimeError):
     """La escritura espejo no pudo completar una sincronización verificable."""
 
 
+def copiar_sqlite_consistente(origen, destino):
+    """Copia una SQLite en un destino autónomo, sin validarlo ni publicarlo."""
+    origen = Path(origen)
+    destino = Path(destino)
+    fuente = conectar(origen, readonly=True)
+    copia = conectar(destino)
+    try:
+        fuente.backup(copia)
+        copia.commit()
+        copia.execute("PRAGMA journal_mode=DELETE")
+    finally:
+        copia.close()
+        fuente.close()
+
+
 def crear_backup(ruta_bd, directorio="backups/sqlite"):
     """Crea un backup consistente con la API SQLite y lo verifica."""
     ruta_bd = Path(ruta_bd)
@@ -402,20 +422,18 @@ def crear_backup(ruta_bd, directorio="backups/sqlite"):
     destino_dir.mkdir(parents=True, exist_ok=True)
     marca = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     destino = destino_dir / f"{ruta_bd.stem}_{marca}.db"
-    origen = conectar(ruta_bd, readonly=True)
-    copia = conectar(destino)
     try:
-        origen.backup(copia)
-        if integrity_check(copia) != ["ok"] or foreign_key_check(copia):
+        copiar_sqlite_consistente(ruta_bd, destino)
+        verificacion = conectar(destino, readonly=True)
+        try:
+            valido = integrity_check(verificacion) == ["ok"] and not foreign_key_check(verificacion)
+        finally:
+            verificacion.close()
+        if not valido:
             raise EspejoSQLiteError("El backup SQLite no supera sus comprobaciones de integridad")
     except Exception:
-        copia.close()
         destino.unlink(missing_ok=True)
         raise
-    else:
-        copia.close()
-    finally:
-        origen.close()
     return destino
 
 
@@ -428,7 +446,7 @@ def marcar_incoherencias_historicas_verificadas(ruta_bd, fechas, *, directorio_b
     marcadores = ",".join("?" for _ in fechas)
     lectura = conectar(ruta_bd, readonly=True)
     try:
-        metadata = dict(lectura.execute("SELECT clave,valor FROM metadata"))
+        metadata = leer_metadata(lectura)
         estados = lectura.execute(
             f"SELECT fecha,estado,numero_publicaciones FROM cobertura WHERE fecha IN ({marcadores})",
             fechas,
@@ -576,7 +594,7 @@ def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin,
     conexion = conectar(ruta_bd)
     try:
         if not _hay_cambios_principales(conexion, dataframes, inicio, fin, fechas_iso):
-            return {"cambios": False, "backup": None, "data_version": int(dict(conexion.execute("SELECT clave,valor FROM metadata"))["data_version"])}
+            return {"cambios": False, "backup": None, "data_version": int(leer_metadata(conexion)["data_version"])}
     finally:
         conexion.close()
     backup = crear_backup(ruta_bd, directorio_backup)
@@ -596,7 +614,7 @@ def persistir_lote_principal(ruta_bd, dataframes, fecha_inicio, fecha_fin,
             insertar_busquedas_sin_duplicar(conexion, dataframes["Búsquedas"])
             actualizar_cobertura_upsert(conexion, dataframes["Cobertura"])
             insertar_errores_sin_duplicar(conexion, dataframes["Log-errores"])
-            metadata = dict(conexion.execute("SELECT clave,valor FROM metadata"))
+            metadata = leer_metadata(conexion)
             guardar_metadata(conexion, data_version=int(metadata["data_version"]) + 1)
             if integrity_check(conexion) != ["ok"] or foreign_key_check(conexion):
                 raise EspejoSQLiteError("Las invariantes SQLite fallaron antes de COMMIT")
@@ -702,7 +720,7 @@ def persistir_lote_historico(ruta_bd, oposiciones_nuevas, publicaciones, cobertu
     )
     conexion = conectar(ruta_bd, readonly=True)
     try:
-        version = int(dict(conexion.execute("SELECT clave,valor FROM metadata"))["data_version"])
+        version = int(leer_metadata(conexion)["data_version"])
     finally:
         conexion.close()
     if not hay_cambios:

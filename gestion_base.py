@@ -114,7 +114,7 @@ def _sha256(ruta: Path) -> str:
 def _metadata(ruta: Path) -> dict:
     con = sqlite3.connect(f"file:{ruta}?mode=ro", uri=True)
     try:
-        return dict(con.execute("SELECT clave, valor FROM metadata"))
+        return base_datos.leer_metadata(con)
     finally:
         con.close()
 
@@ -125,7 +125,7 @@ def verificar_integridad(ruta: str | Path) -> dict:
     try:
         integrity = con.execute("PRAGMA integrity_check").fetchone()[0]
         fk = con.execute("PRAGMA foreign_key_check").fetchall()
-        metadata = dict(con.execute("SELECT clave, valor FROM metadata"))
+        metadata = base_datos.leer_metadata(con)
     finally:
         con.close()
     if integrity != "ok" or fk:
@@ -142,7 +142,7 @@ def estado_local(ruta: str | Path) -> dict:
     ruta = Path(ruta)
     con = sqlite3.connect(f"file:{ruta}?mode=ro", uri=True)
     try:
-        metadata = dict(con.execute("SELECT clave, valor FROM metadata"))
+        metadata = base_datos.leer_metadata(con)
         publicaciones = con.execute("SELECT COUNT(*) FROM publicaciones").fetchone()[0]
         oposiciones = con.execute("SELECT COUNT(*) FROM oposiciones").fetchone()[0]
     finally:
@@ -441,9 +441,7 @@ def actualizar_base_desde_github(ruta: str | Path, repo: str, *, opener=_abrir_h
         marca = datetime.now().strftime("%Y%m%d_%H%M%S")
         backup_dir = Path(directorio_backup); backup_dir.mkdir(parents=True, exist_ok=True)
         backup = backup_dir / f"boe_pre_actualizacion_github_{marca}.db"
-        origen = sqlite3.connect(f"file:{destino}?mode=ro", uri=True); copia = sqlite3.connect(backup)
-        try: origen.backup(copia)
-        finally: copia.close(); origen.close()
+        base_datos.copiar_sqlite_consistente(destino, backup)
         verificar_integridad(backup)
         if progreso: progreso("Instalando la nueva base...")
         temporal.replace(destino); reemplazada = True

@@ -23,6 +23,10 @@ datos/*.db-wal
 backups/sqlite/
 backups/exportacion_excel/
 backups/snapshots/
+/backups/aislamiento_pruebas/
+/backups/enriquecimiento_administraciones/
+/backups/procesamiento_historico/
+/backups/reprocesamiento_legacy/
 
 # Exportaciones generadas
 BOE-oposiciones_exportado.xlsx
@@ -32,3 +36,14 @@ informes/exportacion_excel/
 informes/migracion_sqlite/
 informes/normalizacion_puestos/
 informes/geografia/
+
+# Artefactos regenerables de auditoría y exportación
+/BOE-oposiciones_ITI.xlsx
+/mapa_municipios.html
+/puestos_sin_coordenadas.html
+/informes/normalizacion_puestos_*.json
+/informes/reconciliacion_geografica_alta_confianza*.json
+/informes/resolucion_texto_boe_dry_run.json
+/informes/sin_coordenadas_*.json
+/informes/procesamiento_historico_2004/tmp*
+/logs/

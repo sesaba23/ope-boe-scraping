@@ -3,7 +3,17 @@
   let polling = null;
   const post = async (path) => { const r = await fetch(`${root}/${path}`, {method:"POST"}); const data = await r.json(); if (!r.ok) throw new Error(data.error || "No se pudo completar la operación."); return data; };
   const parar = () => { if (polling) { clearInterval(polling); polling = null; } };
-  const resumen = (nodo, local, publicada) => { nodo.innerHTML = `<dt>Base actual</dt><dd>Estructura ${local.schema_version}; datos ${local.data_version}; ${local.size_bytes} bytes; ${local.sha256}</dd><dt>Copia publicada</dt><dd>Estructura ${publicada.schema_version}; datos ${publicada.data_version}; ${publicada.size_bytes} bytes; ${publicada.sha256}</dd>`; };
+  const resumen = (nodo, local, publicada) => {
+    const filas = [
+      ["Base actual", `Estructura ${local.schema_version}; datos ${local.data_version}; ${local.size_bytes} bytes; ${local.sha256}`],
+      ["Copia publicada", `Estructura ${publicada.schema_version}; datos ${publicada.data_version}; ${publicada.size_bytes} bytes; ${publicada.sha256}`],
+    ];
+    nodo.replaceChildren(...filas.flatMap(([etiqueta, valor]) => {
+      const termino = document.createElement("dt"), descripcion = document.createElement("dd");
+      termino.textContent = etiqueta; descripcion.textContent = valor;
+      return [termino, descripcion];
+    }));
+  };
   const refrescar = async () => { const r = await fetch(`${root}/actualizacion`), job = await r.json(), box = id("estado-actualizacion"), spinner = box.querySelector(".admin-spinner"), texto = box.querySelector("span:last-child"); if (job.estado === "sin_trabajo") { box.hidden=true; parar(); return; } const terminal = job.terminal || ["completado","error","cancelado"].includes(job.estado), correcto = job.estado === "completado"; box.hidden=false; spinner.hidden=terminal; box.classList.toggle("admin-status--success", correcto); texto.textContent=correcto ? `Actualización completada en ${job.transcurrido_segundos} segundos` : (job.error || `${job.fase} Tiempo transcurrido: ${job.transcurrido_segundos}s.`); if (terminal) parar(); };
   document.addEventListener("click", async (event) => {
     const action = event.target.closest("[data-accion]")?.dataset.accion; if (!action) return;

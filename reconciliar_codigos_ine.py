@@ -36,7 +36,7 @@ def _hash(ruta):
 
 
 def _metadata(con):
-    return dict(con.execute("SELECT clave, valor FROM metadata"))
+    return base_datos.leer_metadata(con)
 
 
 def seleccionar_candidatos(con):

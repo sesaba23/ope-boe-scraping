@@ -564,6 +564,6 @@ def buscar_oposiciones_sin_coordenadas(
 def metadata(ruta_bd="datos/boe.db"):
     conexion = _conexion(ruta_bd)
     try:
-        return dict(conexion.execute("SELECT clave,valor FROM metadata"))
+        return base_datos.leer_metadata(conexion)
     finally:
         conexion.close()

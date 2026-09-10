@@ -939,7 +939,7 @@ def migrar_v5_alias_sedes_administrativas(ruta_bd="datos/boe.db", directorio_bac
 def _estado(ruta_bd):
     conexion = base_datos.conectar(ruta_bd, readonly=True)
     try:
-        metadata = dict(conexion.execute("SELECT clave, valor FROM metadata"))
+        metadata = base_datos.leer_metadata(conexion)
         columnas = [fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")]
         return metadata, columnas
     finally:
@@ -997,7 +997,7 @@ def migrar_v2_v3(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
 
     verificacion = base_datos.conectar(ruta_bd, readonly=True)
     try:
-        metadata_final = dict(verificacion.execute("SELECT clave, valor FROM metadata"))
+        metadata_final = base_datos.leer_metadata(verificacion)
         auditoria = {
             "integrity_check": base_datos.integrity_check(verificacion),
             "foreign_key_check": base_datos.foreign_key_check(verificacion),

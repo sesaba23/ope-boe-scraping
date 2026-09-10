@@ -20,7 +20,7 @@ def propuestas(conexion):
 def recalcular(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite", dry_run=False):
     ruta=Path(ruta_bd); con=base_datos.conectar(ruta,readonly=True)
     try:
-        meta=dict(con.execute("SELECT clave,valor FROM metadata"))
+        meta=base_datos.leer_metadata(con)
         if meta.get("schema_version") not in {"4", "5"}:
             raise RuntimeError("El recálculo requiere schema_version 4 o 5")
         cambios=propuestas(con)

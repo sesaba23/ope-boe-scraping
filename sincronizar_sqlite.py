@@ -90,7 +90,7 @@ def inspeccionar(ruta_bd="datos/boe.db"):
                 raise ErrorSincronizacion(
                     f"Esquema incompleto; faltan tablas: {sorted(faltantes)}"
                 )
-            metadata = dict(conexion.execute("SELECT clave, valor FROM metadata"))
+            metadata = base_datos.leer_metadata(conexion)
             conteos = {
                 tabla: conexion.execute(f'SELECT count(*) FROM "{tabla}"').fetchone()[0]
                 for tabla in TABLAS
@@ -237,14 +237,7 @@ def _copiar_con_backup_sqlite(origen, destino):
     origen = Path(origen).resolve()
     destino = Path(destino).resolve()
     destino.parent.mkdir(parents=True, exist_ok=True)
-    fuente = base_datos.conectar(origen, readonly=True)
-    copia = sqlite3.connect(destino)
-    try:
-        fuente.backup(copia)
-        copia.commit()
-    finally:
-        copia.close()
-        fuente.close()
+    base_datos.copiar_sqlite_consistente(origen, destino)
 
 
 def snapshot(
