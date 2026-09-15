@@ -7,6 +7,8 @@ from datetime import date, datetime, timedelta
 
 import pandas as pd
 
+_OPCIONES_FILTROS_CACHE = {}
+
 import base_datos
 from cobertura import (
     ESTADO_INCOHERENCIA_HISTORICA_VERIFICADA,
@@ -19,7 +21,7 @@ class ErrorConsultaSQLite(RuntimeError):
     """La base productiva no está disponible para consultas."""
 
 
-COLUMNAS_ESTADISTICAS = ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Provincia", "Municipio", "Ambito", "Sistema", "Turno", "Fecha_boe"]
+COLUMNAS_ESTADISTICAS = ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Comunidad_autonoma", "Provincia", "Municipio", "Ambito", "Sistema", "Turno", "Fecha_boe"]
 COLUMNAS_MAPA = ["Num_plazas", "Puesto", "Administración", "Sistema", "Fecha_boe_original", "Enlace", "Latitud", "Longitud", "Habitantes", "Municipio", "Provincia"]
 
 _ORDEN_BUSQUEDA = {
@@ -167,6 +169,7 @@ def oposiciones(ruta_bd="datos/boe.db", *, columnas=COLUMNAS_ESTADISTICAS, **fil
     """Devuelve solo las columnas y filas solicitadas, en una conexión read-only."""
     mapa = {"Num_plazas": "num_plazas", "Puesto": "puesto",
             "Puesto_normalizado": "COALESCE(puesto_normalizado, puesto)", "Administración": "COALESCE(administracion_normalizada, administracion)",
+            "Comunidad_autonoma": "comunidad_autonoma",
             "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
             "Fecha_boe": "fecha_boe", "Fecha_boe_original": "fecha_boe_original",
             "Enlace": "enlace", "Latitud": "latitud",
@@ -186,10 +189,16 @@ def oposiciones(ruta_bd="datos/boe.db", *, columnas=COLUMNAS_ESTADISTICAS, **fil
 def opciones_filtros(ruta_bd="datos/boe.db"):
     conexion = _conexion(ruta_bd)
     try:
+        meta = dict(conexion.execute("SELECT clave, valor FROM metadata"))
+        clave_cache = (str(Path(ruta_bd).resolve()), meta.get("data_version"))
+        if clave_cache in _OPCIONES_FILTROS_CACHE:
+            return {clave: list(valores) for clave, valores in _OPCIONES_FILTROS_CACHE[clave_cache].items()}
         resultado = {}
         for clave, columna in (("provincias", "provincia"), ("ambitos", "ambito"), ("sistemas", "sistema"), ("turnos", "turno")):
             filas = conexion.execute(f"SELECT DISTINCT {columna} FROM oposiciones WHERE {columna} IS NOT NULL AND trim({columna}) NOT IN ('', '--', 'no disponible') ORDER BY {columna} COLLATE NOCASE").fetchall()
             resultado[clave] = [fila[0] for fila in filas]
+        resultado["puestos"] = sorted((fila[0] for fila in conexion.execute("SELECT DISTINCT COALESCE(puesto_normalizado, puesto) FROM oposiciones WHERE COALESCE(puesto_normalizado, puesto) IS NOT NULL AND trim(COALESCE(puesto_normalizado, puesto)) NOT IN ('', '--', 'no disponible')")), key=str.casefold)
+        _OPCIONES_FILTROS_CACHE[clave_cache] = {clave: list(valores) for clave, valores in resultado.items()}
         return resultado
     finally:
         conexion.close()

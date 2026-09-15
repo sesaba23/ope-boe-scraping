@@ -56,6 +56,7 @@ REGLAS_GENERO = (
 # Equivalencias semánticas explícitas. Las claves se calculan después de las
 # transformaciones ortotipográficas y de género seguras.
 CANONES = {
+    "ayudantes de instituciones penitenciarias por el sistema general de acceso libre": "Ayudantes de Instituciones Penitenciarias",
     "administrativo": "Administrativo",
     "arquitecto": "Arquitecto",
     "arquitecto tecnico": "Arquitecto Técnico",
@@ -64,6 +65,42 @@ CANONES = {
     "ingeniero tecnico industrial": "Ingeniero Técnico Industrial",
     "tecnico de administracion general": "Técnico de Administración General",
     "trabajador social": "Trabajador Social",
+}
+REGLAS_TECNICOS_INFORMATICOS = {
+    "Técnico Informático": {"tecnico informatico", "tecnico/a informatico", "tecnico/a informatico/a"},
+    "Técnico Auxiliar de Informática": {"tecnico auxiliar de informatica", "tecnico/a auxiliar de informatica"},
+    "Técnico Medio de Informática": {"tecnico medio de informatica", "tecnico/a medio de informatica", "tecnico/a medio/a de informatica"},
+    "Técnico Superior de Informática": {"tecnico superior de informatica", "tecnico/a superior de informatica"},
+    "Técnico Superior Informático": {"tecnico superior informatico", "tecnico/a superior informatico", "tecnico/a superior informatico/a"},
+}
+REGLAS_ENFERMERIA = {
+    "Enfermero": {"enfermero", "enfermera", "enfermero/a", "enfermera/o", "enfermero-a"},
+}
+REGLAS_LIMPIEZA = {
+    "Operario de Limpieza": {"operario de limpieza", "operario/a de limpieza"},
+    "Peón de Limpieza": {"peon de limpieza", "peon/a de limpieza"},
+    "Encargado de Limpieza": {"encargado de limpieza", "encargado/a de limpieza"},
+    "Empleado de Limpieza": {"empleado de limpieza", "empleado/a de limpieza"},
+}
+REGLAS_CONDUCTORES = {"Conductor": {"conductor", "conductora", "conductor/a", "conductora/o", "conductor-a"}}
+REGLAS_PSICOLOGIA = {
+    # Sólo la denominación individual completa. Especialidades, condición
+    # sanitaria, categoría, cuerpo, mando y puestos compuestos quedan fuera.
+    "Psicólogo": {"psicologo", "psicologa", "psicologo/a", "psicologa/o", "psicologo-a"},
+}
+REGLAS_TRABAJO_SOCIAL = {
+    "Trabajador Social": {"trabajador social", "trabajadora social", "trabajador/a social", "trabajadora/or social", "trabajador-a social"},
+}
+REGLAS_COCINA = {"Cocinero": {"cocinero", "cocinera", "cocinero/a", "cocinera/o", "cocinero-a"}}
+TILDES_ORTOGRAFICAS_SEGURAS = {
+    "tecnico": "técnico", "tecnica": "técnica", "tecnicos": "técnicos", "tecnicas": "técnicas",
+    "medico": "médico", "medica": "médica", "psicologo": "psicólogo", "psicologa": "psicóloga",
+    "informatico": "informático", "informatica": "informática", "administracion": "administración",
+    "gestion": "gestión", "direccion": "dirección", "educacion": "educación", "formacion": "formación",
+    "investigacion": "investigación", "intervencion": "intervención", "atencion": "atención", "prevencion": "prevención",
+    "proteccion": "protección", "comunicacion": "comunicación", "programacion": "programación", "inspeccion": "inspección",
+    "produccion": "producción", "conservacion": "conservación", "instalacion": "instalación", "explotacion": "explotación",
+    "construccion": "construcción", "electrico": "eléctrico", "electronico": "electrónico", "mecanico": "mecánico", "clinico": "clínico",
 }
 
 # Familias profesionales aprobadas en Fase 4.  Estas reglas se mantienen
@@ -74,7 +111,30 @@ FAMILIAS_PUESTO_CANONICAS = {
     "auxiliar_administrativo": "Auxiliar Administrativo",
     "administrativo": "Administrativo",
 }
-RANGOS_POLICIA_LOCAL = re.compile(r"\b(?:inspector|subinspector|oficial|jefe|comisario|intendente)\b")
+MARCADORES_POLICIA_LOCAL = re.compile(r"\bpolicia(?:s)? (?:local(?:es)?|municipal(?:es)?)\b")
+MARCADORES_GUARDIA_URBANA = re.compile(r"\bguardia urbana\b")
+EXCLUSIONES_POLICIA_LOCAL = re.compile(
+    r"\b(?:auxiliar\w*|administrativ\w*|tecnic\w*|coordinador\w*|"
+    r"recepcionista\w*|vigilante\w*|seguridad|nacional\w*|autonomic\w*|"
+    r"portuari\w*|cauces|otros cuerpos|plantilla de policia)\b"
+)
+# De más específica a más general.  Cada categoría se reconoce antes de que
+# el puesto pueda caer en la categoría base Policía Local.
+CATEGORIAS_POLICIA_LOCAL = (
+    ("Superintendente", r"\bsuperintendente\b"),
+    ("Intendente Mayor", r"\bintendente(?:/ta)? (?:mayor|major)\b"),
+    ("Intendente", r"\bintendente(?:/ta)?\b"),
+    ("Inspector", r"\binspector(?:/a)?\b"),
+    ("Subinspector", r"\bsubinspector(?:/a)?\b"),
+    ("Suboficial", r"\bsuboficial(?:/a)?\b"),
+    ("Sargento", r"\bsargento\b"),
+    ("Cabo", r"\bcabo\b"),
+    ("Caporal", r"\bcaporal(?:/a)?\b"),
+    ("Oficial", r"\boficial(?:/a)?\b"),
+    ("Jefe", r"\bjefe\b"),
+    ("Agente Primero", r"\bagente primero\b"),
+    ("Agente", r"\bagente(?:s)?\b"),
+)
 EXCLUSION_AUXILIAR_ADMINISTRATIVO = re.compile(r"\b(?:servicios administrativos|administracion especial|tecnico auxiliar)\b")
 EXCLUSION_ADMINISTRATIVO = re.compile(r"\b(?:auxiliar|tecnico|servicios administrativos|personal administrativo)\b")
 
@@ -198,6 +258,32 @@ def _normalizar_titulacion(texto):
     return None
 
 
+def clasificar_policia_local(texto):
+    """Clasifica de forma textual y conservadora puestos de Policía Local.
+
+    Es la única fuente de decisión para producción y para el dry-run de Fase
+    7. No usa datos geográficos ni contexto externo: ``Policía`` aislado y
+    Guardia Urbana se dejan deliberadamente fuera de automatización.
+    """
+    texto = _preparar_texto(texto)
+    clave = _clave(texto or "")
+    if not ("polic" in clave or MARCADORES_GUARDIA_URBANA.search(clave)):
+        return None, None, None, None
+    if EXCLUSIONES_POLICIA_LOCAL.search(clave):
+        return "EXCLUIDA", None, None, "menciona policía como destino o cuerpo distinto"
+    if MARCADORES_GUARDIA_URBANA.search(clave):
+        return "DUDOSA", None, "Guardia Urbana", "Guardia Urbana queda fuera de esta fase"
+    if not MARCADORES_POLICIA_LOCAL.search(clave):
+        return "DUDOSA", None, None, "mención policial sin cuerpo local o municipal inequívoco"
+    for categoria, patron in CATEGORIAS_POLICIA_LOCAL:
+        if re.search(patron, clave):
+            # Agente es la denominación base aprobada; el resto mantiene su
+            # categoría para impedir absorciones de rango.
+            canon = "Policía Local" if categoria == "Agente" else f"{categoria} de Policía Local"
+            return "SEGURA", canon, categoria, "cuerpo local o municipal y categoría inequívoca"
+    return "SEGURA", "Policía Local", "Policía Local", "cuerpo local o municipal inequívoco"
+
+
 def clasificar_familia_puesto(texto):
     """Clasifica las familias Fase 4 sin decidir equivalencias dudosas.
 
@@ -206,12 +292,16 @@ def clasificar_familia_puesto(texto):
     """
     texto = _preparar_texto(texto)
     clave = _clave(texto or "")
-    if re.search(r"\bpolicia(?:s)? local(?:es)?\b", clave):
-        if RANGOS_POLICIA_LOCAL.search(clave) or re.search(r"\b(?:tecnico|coordinador)\b", clave):
-            return "policia_local", "excluida", None, "rango o categoría profesional distinta"
-        if re.fullmatch(r"(?:agentes?(?: de(?: la)?)? )?policia(?:s)? local(?:es)?", clave):
-            return "policia_local", "alta_confianza", FAMILIAS_PUESTO_CANONICAS["policia_local"], "denominación base o agente equivalente"
-        return "policia_local", "dudosa", None, "contiene Policía Local con texto accesorio no validado"
+    clase_policia, canon_policia, _, motivo_policia = clasificar_policia_local(texto)
+    # Una exclusión sin marcador local/municipal (por ejemplo, "Administrativo
+    # de Policía") no debe impedir que las familias ya aprobadas de
+    # Administrativo sigan actuando. Sí conservamos la exclusión cuando el
+    # propio texto menciona Policía Local/Municipal.
+    if clase_policia and (
+        clase_policia != "EXCLUIDA" or MARCADORES_POLICIA_LOCAL.search(clave)
+    ):
+        clasificacion = {"SEGURA": "alta_confianza", "DUDOSA": "dudosa", "EXCLUIDA": "excluida"}[clase_policia]
+        return "policia_local", clasificacion, canon_policia, motivo_policia
     # Precedencia obligatoria: nunca dejar que Auxiliar caiga en Administrativo.
     if re.search(r"\bauxiliar(?:es)? administrativ", clave):
         if EXCLUSION_AUXILIAR_ADMINISTRATIVO.search(clave):
@@ -230,12 +320,337 @@ def clasificar_familia_puesto(texto):
     return None, None, None, None
 
 
+def _normalizar_docencia_musical(texto):
+    """Devuelve el canon musical aprobado o ``None``.
+
+    Mantiene deliberadamente las especialidades y distingue Conservatorio y
+    Escuela de Música. Se replica el conjunto conservador auditado en 9H-4.
+    """
+    valor = texto.casefold()
+    if not re.search(r"profesor|maestro", valor):
+        return None
+    if re.search(r"\bmonitor|\bauxiliar|t[eé]cnico|m[uú]sico|instrumentista|director(?![-/ ]profesor)", valor):
+        return None
+    musical = r"m[uú]sica|musical|conservatorio|escuela.*m[uú]sica|banda|piano|guitarra|viol[ií]n|viola|violonchelo|contrabajo|flauta|clarinete|oboe|fagot|saxof[oó]n|trompeta|tromb[oó]n|trompa|tuba|percusi[oó]n|bater[ií]a|acorde[oó]n|arpa|[oó]rgano|canto|solfeo|lenguaje musical|\bcomposici[oó]n\b|direcci[oó]n de (?:orquesta|banda)|armon[ií]a"
+    if not re.search(musical, valor):
+        return None
+    especialidades = r"piano|guitarra|viol[ií]n|viola|violonchelo|contrabajo|flauta|clarinete|oboe|fagot|saxof[oó]n|trompeta|tromb[oó]n|trompa|tuba|percusi[oó]n|bater[ií]a|acorde[oó]n|arpa|[oó]rgano|canto|solfeo|lenguaje musical|\bcomposici[oó]n\b|armon[ií]a|m[uú]sica y movimiento|m[uú]sica moderna"
+    encontrada = re.findall(especialidades, valor, re.I)
+    centro = "Conservatorio" if "conservatorio" in valor else (
+        "Escuela de Música" if re.search(r"escuela(?: municipal)? de m[uú]sica", valor) else None
+    )
+    if centro and encontrada:
+        return f"Profesor de {centro} - {encontrada[0].title()}"
+    if encontrada:
+        return f"Profesor de Música - {encontrada[0].title()}"
+    if centro:
+        return f"Profesor de {centro}"
+    if re.fullmatch(r"profesor(?:/a|a)?(?:es)?(?: de)? m[uú]sica(?: de la plantilla de personal laboral fijo(?:-discontinuo)?)?", valor):
+        return "Profesor de Música"
+    return None
+
+
+def _normalizar_docencia_artistica_no_musical(texto):
+    """Aplica únicamente el conjunto cerrado aprobado en 9J-2.
+
+    Las expresiones son intencionadamente completas (no se usa similitud ni
+    coincidencia por ID), de modo que una nueva variante no entra en
+    producción sin pasar primero por una auditoría.
+    """
+    valor = texto.casefold()
+    if not re.search(r"danza|pintura|diseño|cerámica", valor):
+        return None
+    if re.search(r"\bmonitor|\bt[eé]cnico|\bauxiliar|\boficial|\bayudante|\banimador|\bdirector", valor):
+        return None
+    if re.fullmatch(r"personal fijo-discontinuo docente de danza escuela de música", valor):
+        return "Profesor de Danza"
+    if re.fullmatch(r"profesorado de danza", valor):
+        return "Profesor de Danza"
+    if re.fullmatch(r"maestro de pintura perteneciente a la escala de administración especial", valor):
+        return "Profesor de Pintura"
+    if re.fullmatch(r"maestra/o de formación \(especialidad pintura\)", valor):
+        return "Profesor de Pintura"
+    if re.fullmatch(r"profesorado escuela municipal de arte y diseño de formación y orientación laboral de la plantilla de", valor):
+        return "Profesor de Diseño"
+    if re.fullmatch(r"maestro de taller en el centro ocupacional «el molinet» \(cerámica\)", valor):
+        return "Otras especialidades artísticas explícitas"
+    return None
+
+
+def _normalizar_universidad_funcionarial(texto):
+    """Reduce únicamente denominaciones inequívocas de cuerpos universitarios.
+
+    Se excluyen expresamente frases que mezclan cuerpos, categorías laborales o
+    información de una plaza concreta; esas denominaciones deben conservarse.
+    """
+    clave = _clave(texto)
+    if re.search(r"contratad|ayudante|asociad|laboral|investigador|visitante|sustitut", clave):
+        return None
+    if re.search(r"profesor(?:es|as)? titulares?.*catedr|catedr.*profesor(?:es|as)? titulares?", clave):
+        return None
+    patrones = (
+        (r"(?:catedratic(?:o|a|os|as)|catedr[aá]tico/a|catedr[aá]ticas y catedr[aá]ticos|profesorado catedratic(?:o|a)|catedra(?:s)?)[ ]+de universidad(?:[ .]|$)", "Catedráticos de Universidad"),
+        (r"(?:profesor(?:es|as)? titulares?|profesorado titular|profesor o profesora titular|profesor/a titular|profesoras y profesores titulares)[ ]+de universidad(?:[ .]|$)", "Profesores Titulares de Universidad"),
+    )
+    for patron, canon in patrones:
+        if re.fullmatch(patron, clave):
+            return canon
+    # Encabezados de convocatoria que explicitan el cuerpo entre paréntesis.
+    if re.fullmatch(r"cuerpos docentes universitarios \(catedratic(?:o|a|o/a) de universidad\)(?: mediante promocion interna)?", clave):
+        return "Catedráticos de Universidad"
+    if re.fullmatch(r"cuerpos docentes universitarios \(profesor(?:es|as)? titulares? de universidad\)", clave):
+        return "Profesores Titulares de Universidad"
+    return None
+
+
+def _normalizar_cuerpo_maestros(texto):
+    clave = _clave(texto)
+    if re.search(r'industrial|obras?|taller|mantenimiento|electric|limpieza|jardinero|arsenal|capataz|laboral|infantil|musica|danza|arte', clave):
+        return None
+    if re.fullmatch(r'(?:funcionarios docentes (?:en|del|correspondientes al) )?(?:los )?cuerpos? de maestros(?: \(\d+\))?', clave):
+        return 'Maestros'
+    if re.fullmatch(r'maestros?(?: \(codigo 597\))?', clave):
+        return 'Maestros'
+    return None
+
+
+def _normalizar_maestro_educacion_infantil(texto):
+    """Canoniza sólo variantes completas de Maestro de Educación Infantil."""
+    clave = _clave(texto)
+    patron = r"maestr(?:o/a|a/o|a|o)(?:-a)? (?:(?:de|en) )?educacion infantil"
+    if re.fullmatch(patron, clave) or re.fullmatch(r"maestr(?:o/a|a/o|a|o) educacion infantil", clave):
+        return "Maestro de Educación Infantil"
+    if clave in {
+        "maestro/maestra en educacion infantil",
+        "maestro-a de educacion infantil",
+        "maestro o maestra de educacion infantil",
+    }:
+        return "Maestro de Educación Infantil"
+    return None
+
+
+def _normalizar_maestro_educacion_fisica(texto):
+    """Canoniza únicamente las dos variantes validadas de Educación Física."""
+    clave = _clave(texto)
+    if clave in {"maestro de educacion fisica", "maestro/a de educacion fisica"}:
+        return "Maestro de Educación Física"
+    return None
+
+
+def _normalizar_bomberos(texto):
+    """Canoniza sólo literales completos auditados de Bomberos.
+
+    Conserva la distinción profesional Bombero/Bombero-Conductor y no toca
+    mandos, especialidades ni puestos compuestos.
+    """
+    clave = _clave(texto)
+    if clave in {"bombero", "bombero/a"}:
+        return "Bombero"
+    if clave in {
+        "bombero conductor", "bombero-conductor",
+        "bombero/a conductor/a", "bombero/a-conductor/a",
+    }:
+        return "Bombero-Conductor"
+    return None
+
+
+def _normalizar_bibliotecas_archivos(texto):
+    """Canoniza sólo variantes completas validadas de Biblioteca.
+
+    No alcanza Archivo, Museos, escalas, auxiliares técnicos, ayudantes ni
+    puestos con mando o funciones combinadas.
+    """
+    clave = _clave(texto)
+    if clave in {"bibliotecario", "bibliotecario/a", "bibliotecaria", "bibliotecaria/o"}:
+        return "Bibliotecario"
+    if clave in {"auxiliar de biblioteca", "auxiliar biblioteca"}:
+        return "Auxiliar de Biblioteca"
+    return None
+
+
+def _normalizar_tecnicos_informaticos(texto):
+    """Canoniza únicamente cinco conjuntos informáticos auditados y cerrados.
+
+    Cada literal mantiene su nivel y su formulación (``de`` frente a ``en``),
+    evitando convertir sistemas, redes, programación, cuerpos o escalas en un
+    técnico genérico.
+    """
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_TECNICOS_INFORMATICOS.items() if clave in variantes), None)
+
+
+def _normalizar_enfermeria(texto):
+    """Canoniza sólo variantes completas de género de Enfermero.
+
+    DUE, ATS, auxiliares, especialidades, mandos y expresiones compuestas se
+    excluyen deliberadamente: su equivalencia requiere evidencia contextual.
+    """
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_ENFERMERIA.items() if clave in variantes), None)
+
+
+def _normalizar_limpieza(texto):
+    """Aplica sólo conjuntos completos que conservan categoría y mando."""
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_LIMPIEZA.items() if clave in variantes), None)
+
+def _normalizar_conductores(texto):
+    """Sólo conductor/a aislado; vehículos, rangos y compuestos se preservan."""
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_CONDUCTORES.items() if clave in variantes), None)
+
+
+def _normalizar_psicologia(texto):
+    """Canoniza sólo variantes completas de género del puesto Psicólogo.
+
+    No usa prefijos ni subcadenas: Psicología Clínica, sanitario, educativa,
+    técnica, facultativa, escalas, mandos y composiciones se preservan.
+    """
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_PSICOLOGIA.items() if clave in variantes), None)
+
+
+def _normalizar_trabajo_social(texto):
+    """Sólo formas completas del puesto individual; no asistentes ni técnicos."""
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_TRABAJO_SOCIAL.items() if clave in variantes), None)
+
+
+def _normalizar_cocina(texto):
+    """Sólo cocinero/a aislado; categorías, ámbitos, mandos y compuestos no entran."""
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_COCINA.items() if clave in variantes), None)
+
+
+def _normalizar_ortografia_puesto(texto):
+    """Corrige sólo tokens OA auditables y la primera letra alfabética."""
+    def tilde(coincidencia):
+        palabra = coincidencia.group(0)
+        correccion = TILDES_ORTOGRAFICAS_SEGURAS.get(palabra.lower())
+        return correccion.capitalize() if correccion and palabra[0].isupper() else (correccion or palabra)
+    resultado = re.sub(r"\b[\wáéíóúüñÁÉÍÓÚÜÑ]+\b", tilde, texto)
+    for indice, caracter in enumerate(resultado):
+        if caracter.isalpha():
+            return resultado[:indice] + caracter.upper() + resultado[indice + 1:]
+    return resultado
+
+
+def _normalizar_educador_infantil(texto):
+    """Canoniza sólo fórmulas completas de Educador Infantil.
+
+    No absorbe referencias a centro, relación laboral ni categorías como
+    técnico, auxiliar, monitor, maestro o dirección.
+    """
+    clave = _clave(texto)
+    patron = r"educador(?:/a|-a|a)?(?: de)?(?: educacion)? infantil"
+    if re.fullmatch(patron, clave) or re.fullmatch(
+        r"educador(?:/a|-a|a)? \(infantil\)", clave
+    ):
+        return "Educador Infantil"
+    return None
+
+
+def _normalizar_tecnico_educacion_infantil(texto):
+    """Canoniza categorías técnicas completas sin fusionar sus niveles."""
+    clave = _clave(texto)
+    reglas = (
+        (r"tecnico(?:/a|-a|a)? de educacion infantil", "Técnico de Educación Infantil"),
+        (r"tecnico(?:/a|-a|a)? superior de educacion infantil", "Técnico Superior de Educación Infantil"),
+        (r"tecnico(?:/a|-a|a)? especialista en educacion infantil", "Técnico Especialista en Educación Infantil"),
+    )
+    for patron, canon in reglas:
+        if re.fullmatch(patron, clave):
+            return canon
+    return None
+
+
+def _normalizar_secundaria_explicita(texto):
+    """Solo variantes completas del cuerpo, sin especialidad ni mezcla."""
+    clave = _clave(texto)
+    if re.fullmatch(r"profesor de ensenanza secundaria", clave):
+        return "Profesores de Enseñanza Secundaria"
+    if re.fullmatch(r"profesores de ensenanza secundaria \(codigo 590\) situadas en las ciudades de ceuta y melilla", clave):
+        return "Profesores de Enseñanza Secundaria"
+    return None
+
+
 def _normalizar_puesto_una_vez(texto):
     """Aplica una pasada del pipeline sobre una representación preparada."""
     texto = _preparar_texto(texto)
     if texto is None:
         return None
     clave_original = _clave(texto)
+    # Docencia musical aprobada en Fase 7, paso 9H-4. La regla exige una
+    # función docente explícita y conserva centro e instrumento/especialidad.
+    # Músicos, instrumentistas, directores y personal de apoyo quedan fuera.
+    musical = _normalizar_docencia_musical(texto)
+    if musical:
+        return musical
+    artistica = _normalizar_docencia_artistica_no_musical(texto)
+    if artistica:
+        return artistica
+    universitaria = _normalizar_universidad_funcionarial(texto)
+    if universitaria:
+        return universitaria
+    maestros = _normalizar_cuerpo_maestros(texto)
+    if maestros:
+        return maestros
+    maestro_infantil = _normalizar_maestro_educacion_infantil(texto)
+    if maestro_infantil:
+        return maestro_infantil
+    maestro_fisica = _normalizar_maestro_educacion_fisica(texto)
+    if maestro_fisica:
+        return maestro_fisica
+    bomberos = _normalizar_bomberos(texto)
+    if bomberos:
+        return bomberos
+    bibliotecas = _normalizar_bibliotecas_archivos(texto)
+    if bibliotecas:
+        return bibliotecas
+    tecnicos_informaticos = _normalizar_tecnicos_informaticos(texto)
+    if tecnicos_informaticos:
+        return tecnicos_informaticos
+    enfermeria = _normalizar_enfermeria(texto)
+    if enfermeria:
+        return enfermeria
+    limpieza = _normalizar_limpieza(texto)
+    if limpieza:
+        return limpieza
+    conductores = _normalizar_conductores(texto)
+    if conductores:
+        return conductores
+    psicologia = _normalizar_psicologia(texto)
+    if psicologia:
+        return psicologia
+    trabajo_social = _normalizar_trabajo_social(texto)
+    if trabajo_social:
+        return trabajo_social
+    cocina = _normalizar_cocina(texto)
+    if cocina:
+        return cocina
+    educador_infantil = _normalizar_educador_infantil(texto)
+    if educador_infantil:
+        return educador_infantil
+    tecnico_infantil = _normalizar_tecnico_educacion_infantil(texto)
+    if tecnico_infantil:
+        return tecnico_infantil
+    secundaria = _normalizar_secundaria_explicita(texto)
+    if secundaria:
+        return secundaria
+    # Cuerpos docentes inequívocos.  Se limitan a formulaciones explícitas;
+    # no se infiere docencia por ámbito o por la palabra «profesor» aislada.
+    reglas_docentes = (
+        (r"^(?:funcionarios docentes del )?(?:cuerpo de )?maestros$", "Maestros"),
+        (r"^funcionarios docentes para el cuerpo de maestros$", "Maestros"),
+        (r"^(?:funcionarios docentes del )?(?:cuerpo de )?profesores? de ensenanza secundaria$", "Profesores de Enseñanza Secundaria"),
+        (r"^(?:funcionarios docentes del )?(?:cuerpo de )?profesores? tecnicos? de formacion profesional$", "Profesores Técnicos de Formación Profesional"),
+        (r"^(?:funcionarios docentes del )?(?:cuerpo de )?profesores? de escuelas oficiales de idiomas$", "Profesores de Escuelas Oficiales de Idiomas"),
+        (r"^catedraticos? de universidad$", "Catedráticos de Universidad"),
+        (r"^profesores? titulares? de universidad$", "Profesores Titulares de Universidad"),
+    )
+    for patron, canon in reglas_docentes:
+        if re.fullmatch(patron, clave_original, re.I):
+            return canon
     _, clasificacion_familia, canon_familia, _ = clasificar_familia_puesto(texto)
     if clasificacion_familia == "alta_confianza":
         return canon_familia
@@ -284,7 +699,7 @@ def normalizar_puesto(texto):
         vistos.add(resultado)
         siguiente = _normalizar_puesto_una_vez(resultado)
         if siguiente == resultado:
-            return resultado
+            return _normalizar_ortografia_puesto(resultado)
         resultado = siguiente
     # Las reglas son reductoras; esta salvaguarda evita un bucle silencioso si
     # una futura regla introdujera una oscilación.

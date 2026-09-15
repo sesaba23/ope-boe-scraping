@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Política de privacidad · BuscadorBOE{% endblock %}
+{% block content %}
+<section class="site-page"><div class="site-shell portal-section"><div class="portal-panel">
+    <h1>Política de privacidad</h1><p class="portal-note">Contenido provisional pendiente de completar.</p>
+    <!-- EDITAR: fecha de última actualización --><p><strong>Última actualización:</strong> [FECHA DE ÚLTIMA ACTUALIZACIÓN]</p>
+    {% for titulo in ['Responsable','Datos tratados','Finalidad','Base jurídica','Conservación','Destinatarios','Derechos','Contacto'] %}<h2>{{ titulo }}</h2><p>{% if titulo in ['Responsable','Contacto'] %}[NOMBRE DE LA EMPRESA] · [EMAIL DE CONTACTO]{% else %}[TEXTO DE PRIVACIDAD PENDIENTE DE COMPLETAR]{% endif %}</p>{% endfor %}
+</div></div></section>
+{% endblock %}

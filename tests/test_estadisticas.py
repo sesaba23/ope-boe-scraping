@@ -232,6 +232,46 @@ def test_calcular_agrupa_provincias_e_incluye_sin_provincia():
     assert provincias == {"Sin provincia": 10, "Madrid": 2}
 
 
+def test_plazas_por_comunidad_incluye_todas_ordenadas_y_excluye_ausentes():
+    filas = []
+    for indice, plazas in enumerate(range(10, 1, -1)):
+        filas.append({
+            "Fecha_boe": "2025-01-01", "Num_plazas": plazas,
+            "Puesto": "Puesto", "Administración": "Entidad", "Provincia": "Madrid",
+            "Comunidad_autonoma": f"Comunidad {indice}",
+        })
+    filas.append({
+        "Fecha_boe": "2025-01-01", "Num_plazas": 100,
+        "Puesto": "Sin comunidad", "Administración": "Entidad", "Provincia": "Madrid",
+        "Comunidad_autonoma": None,
+    })
+
+    resultado = calcular_estadisticas(normalizar_datos(pd.DataFrame(filas)))
+
+    assert resultado["plazas_por_comunidad"] == [
+        {"comunidad": f"Comunidad {indice}", "plazas": plazas}
+        for indice, plazas in enumerate(range(10, 1, -1))
+    ]
+    assert all(fila["comunidad"] != "Resto" for fila in resultado["plazas_por_comunidad"])
+    assert sum(fila["plazas"] for fila in resultado["plazas_por_comunidad"]) == 54
+
+
+def test_plazas_por_comunidad_no_crea_resto_vacio_y_conserva_ciudades_autonomas():
+    datos = pd.DataFrame([
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 3, "Puesto": "A", "Administración": "A", "Provincia": None, "Comunidad_autonoma": "Ceuta"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 2, "Puesto": "B", "Administración": "B", "Provincia": None, "Comunidad_autonoma": "Melilla"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 4, "Puesto": "C", "Administración": "C", "Provincia": "Las Palmas", "Comunidad_autonoma": "Canarias"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 1, "Puesto": "D", "Administración": "D", "Provincia": "Illes Balears", "Comunidad_autonoma": "Illes Balears"},
+    ])
+
+    resultado = calcular_estadisticas(normalizar_datos(datos))
+
+    assert resultado["plazas_por_comunidad"] == [
+        {"comunidad": "Canarias", "plazas": 4}, {"comunidad": "Ceuta", "plazas": 3},
+        {"comunidad": "Melilla", "plazas": 2}, {"comunidad": "Illes Balears", "plazas": 1},
+    ]
+
+
 def test_provincias_con_cero_plazas_tras_filtrar_no_aparecen():
     filtrados = filtrar_datos(normalizar_datos(_datos()), puesto="médico")
 
@@ -265,13 +305,28 @@ def test_contadores_ignoran_vacios_sin_provincia_y_grupos_sin_plazas():
     assert resultado["total_administraciones"] == 2
 
 
-def test_evolucion_mensual_esta_ordenada_y_suma_plazas():
+def test_evolucion_anual_esta_ordenada_suma_plazas_y_completa_los_anios_intermedios():
     resultado = calcular_estadisticas(normalizar_datos(_datos()))
 
-    assert resultado["evolucion_mensual"] == [
-        {"mes": "2025-01", "plazas": 5},
-        {"mes": "2025-02", "plazas": 0},
+    assert resultado["evolucion_anual"] == [
+        {"anio": 2025, "plazas": 5},
     ]
+
+
+def test_evolucion_anual_usa_extremos_reales_suma_plazas_y_rellena_huecos():
+    datos = pd.DataFrame([
+        {"Fecha_boe": "2024-01-01", "Num_plazas": 2, "Puesto": "A", "Administración": "A", "Provincia": "Madrid"},
+        {"Fecha_boe": "2026-01-01", "Num_plazas": 7, "Puesto": "B", "Administración": "B", "Provincia": "Sevilla"},
+    ])
+
+    resultado = calcular_estadisticas(normalizar_datos(datos))
+
+    assert resultado["evolucion_anual"] == [
+        {"anio": 2024, "plazas": 2},
+        {"anio": 2025, "plazas": 0},
+        {"anio": 2026, "plazas": 7},
+    ]
+    assert sum(fila["plazas"] for fila in resultado["evolucion_anual"]) == resultado["total_plazas"]
 
 
 def test_calcular_estadisticas_admite_dataframe_vacio():
@@ -289,7 +344,10 @@ def test_calcular_estadisticas_admite_dataframe_vacio():
         "top_administraciones": [],
         "top_puestos": [],
         "plazas_por_provincia": [],
-        "evolucion_mensual": [],
+        "plazas_por_comunidad": [],
+        "evolucion_anual": [],
+        "plazas_por_mes": [{"mes": mes, "nombre": nombre, "plazas": 0} for mes, nombre in enumerate(("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"), 1)],
+        "evolucion_anual_puestos": {"mode": "top5", "puesto": None, "years": [], "series": []},
         "calidad_datos": {
             "fecha_no_utilizable": 0,
             "numero_plazas_no_utilizable": 0,
@@ -332,3 +390,30 @@ def test_calcular_estadisticas_no_modifica_dataframe_original():
     calcular_estadisticas(original)
 
     pd.testing.assert_frame_equal(original, copia)
+
+
+def test_plazas_por_mes_siempre_contiene_los_doce_meses_en_orden():
+    resultado = calcular_estadisticas(normalizar_datos(_datos()))
+    assert [fila["mes"] for fila in resultado["plazas_por_mes"]] == list(range(1, 13))
+    assert resultado["plazas_por_mes"][0]["plazas"] == 5
+    assert resultado["plazas_por_mes"][1]["plazas"] == 0
+
+
+def test_evolucion_anual_puestos_seleccionado_rellena_huecos():
+    datos = normalizar_datos(pd.DataFrame([
+        {"Fecha_boe": "2024-01-01", "Num_plazas": 2, "Puesto": "A"},
+        {"Fecha_boe": "2026-01-01", "Num_plazas": 7, "Puesto": "A"},
+    ]))
+    evolucion = calcular_estadisticas(datos, puesto_seleccionado="A")["evolucion_anual_puestos"]
+    assert evolucion == {"mode": "selected", "puesto": "A", "years": [2024, 2025, 2026],
+                         "series": [{"label": "A", "values": [2, 0, 7]}]}
+
+
+def test_evolucion_anual_puestos_top5_ordena_empates_por_nombre():
+    datos = normalizar_datos(pd.DataFrame([
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 3, "Puesto": "B"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 3, "Puesto": "A"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 1, "Puesto": "C"},
+    ]))
+    series = calcular_estadisticas(datos)["evolucion_anual_puestos"]["series"]
+    assert [fila["label"] for fila in series] == ["A", "B", "C"]

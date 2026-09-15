@@ -1,5 +1,5 @@
 """Planificación y ejecución en memoria de actualizaciones BOE para el portal."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 import logging
 from threading import Lock, Thread
@@ -76,6 +76,7 @@ class TrabajoActualizacion:
     fase: str | None = None
     inicio_monotonic: float | None = None
     inicio_fase_monotonic: float | None = None
+    fechas_completadas: list = field(default_factory=list)
 
     def serializar(self):
         total = self.total or len(self.fechas)
@@ -93,9 +94,10 @@ class TrabajoActualizacion:
             if tiempo_fase >= 1:
                 restante = max(0, round(tiempo_fase * (self.total - self.actual) / self.actual))
         return {"id": self.trabajo_id, "estado": self.estado, "fecha_actual": self.fecha_actual,
-                "fechas_totales": fechas_totales, "fechas_completadas": self.completadas,
+                "fechas_totales": fechas_totales, "fechas_completadas_count": self.completadas,
                 "actual": self.actual, "total": total,
                 "porcentaje": round(100 * self.actual / total) if total else 100,
+                "fechas_completadas": list(self.fechas_completadas),
                 "mensaje": self.mensaje, "error": self.error, "fase": self.fase,
                 "transcurrido_segundos": transcurrido,
                 "restante_estimado_segundos": restante}
@@ -145,7 +147,13 @@ class GestorActualizaciones:
                 trabajo.fecha_actual = evento.get("fecha")
                 trabajo.actual = max(0, int(evento.get("actual", 0)))
                 trabajo.total = max(0, int(evento.get("total", 0)))
-                trabajo.completadas = min(len(trabajo.fechas), trabajo.actual)
+                if evento.get("fecha_completada"):
+                    fecha = evento.get("fecha")
+                    if fecha and not any(x.get("fecha") == fecha for x in trabajo.fechas_completadas):
+                        trabajo.fechas_completadas.append({"fecha": fecha, "resultado": evento.get("resultado", "actualizada")})
+                    trabajo.completadas = len(trabajo.fechas_completadas)
+                else:
+                    trabajo.completadas = min(len(trabajo.fechas), trabajo.actual)
                 trabajo.mensaje = evento.get("mensaje") or "Actualizando datos del BOE…"
         try:
             with self._lock:
@@ -169,5 +177,52 @@ class GestorActualizaciones:
 
 
 def _actualizar_productivo(fechas, ruta_bd, progreso):
-    from plazasboe import actualizar_fechas
-    return actualizar_fechas(fechas, ruta_bd=ruta_bd, on_progress=progreso)
+    """Despacha cada fecha al extractor que le corresponde.
+
+    Las fechas históricas se ejecutan individualmente mediante el flujo
+    transaccional histórico; las modernas conservan el pipeline productivo.
+    Así se mantiene la atomicidad por fecha y el gate defensivo del flujo
+    moderno continúa activo.
+    """
+    from plazasboe import actualizar_fechas, seleccionar_extractor
+    resultados = []
+    for fecha in fechas:
+        if seleccionar_extractor(fecha) == "historico":
+            resultado = _actualizar_historico(fecha, ruta_bd, progreso)
+        else:
+            resultado = actualizar_fechas([fecha], ruta_bd=ruta_bd, on_progress=progreso)
+        resultados.append(resultado)
+        # Este evento se emite únicamente después de que el extractor haya
+        # retornado: la fecha ya ha completado su persistencia (o reutilización).
+        if progreso:
+            progreso({"fase": "fecha_completada", "actual": len(resultados),
+                      "total": len(fechas), "fecha": str(fecha).replace("/", "-"),
+                      "fecha_completada": True,
+                      "resultado": "sin_procesos" if isinstance(resultado, dict) and resultado.get("sin_procesos_selectivos") else "actualizada"})
+    return resultados
+
+
+def _actualizar_historico(fecha, ruta_bd, progreso):
+    """Adaptador web mínimo al flujo histórico transaccional existente."""
+    import cargar_historico_boe as historico
+    from plazasboe import ejecutar_flujo_historico
+
+    iso = str(fecha).replace("/", "-")
+    directorio = "informes/procesamiento_historico_2004"
+
+    def descubrir():
+        return historico.descubrir(iso, iso)
+
+    def procesar(ficha):
+        clasificacion, filas = historico.procesar_publicacion(ficha)
+        return {"clasificacion": clasificacion, "convocatorias": filas}
+
+    def commit(estado):
+        resultado = historico.aplicar(
+            iso, iso, ruta_bd=ruta_bd, directorio=directorio,
+        )
+        return resultado
+
+    return ejecutar_flujo_historico(
+        iso, iso, descubrir=descubrir, procesar=procesar, commit=commit,
+    )

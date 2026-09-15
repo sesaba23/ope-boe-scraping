@@ -1,0 +1,112 @@
+{
+  "paso": "8.12D-2",
+  "arquitectura": "despacho por fecha: historico -> ejecutar_flujo_historico; moderno -> actualizar_fechas",
+  "fechas_prueba": [
+    "2004/01/01",
+    "2025/06/28",
+    "2026/09/12"
+  ],
+  "despacho_orden_directo": [
+    {
+      "extractor": "historico",
+      "fechas": [
+        "2004/01/01"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2025/06/28"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2026/09/12"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    }
+  ],
+  "despacho_orden_inverso": [
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2026/09/12"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2025/06/28"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    },
+    {
+      "extractor": "historico",
+      "fechas": [
+        "2004/01/01"
+      ],
+      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+    }
+  ],
+  "atomicidad": "cada fecha se invoca como unidad independiente; un error se propaga y detiene el despacho posterior",
+  "progreso": "se reutiliza el callback existente; sin porcentaje inventado",
+  "sha_copia_antes": "c6beb16d1af934396c6994dd8320b3219361d2bed52b2452f8eded46442a8dc7",
+  "sha_copia_despues": "c6beb16d1af934396c6994dd8320b3219361d2bed52b2452f8eded46442a8dc7",
+  "copia_inmutable": true,
+  "estado_antes": {
+    "schema_version": "6",
+    "data_version": "50",
+    "integrity_check": "ok",
+    "foreign_key_check": []
+  },
+  "estado_despues": {
+    "schema_version": "6",
+    "data_version": "50",
+    "integrity_check": "ok",
+    "foreign_key_check": []
+  },
+  "resultado_directo": [
+    {
+      "extractor": "historico",
+      "fechas": [
+        "2004/01/01"
+      ]
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2025/06/28"
+      ]
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2026/09/12"
+      ]
+    }
+  ],
+  "resultado_inverso": [
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2026/09/12"
+      ]
+    },
+    {
+      "extractor": "moderno",
+      "fechas": [
+        "2025/06/28"
+      ]
+    },
+    {
+      "extractor": "historico",
+      "fechas": [
+        "2004/01/01"
+      ]
+    }
+  ]
+}

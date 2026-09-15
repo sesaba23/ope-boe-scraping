@@ -101,6 +101,10 @@ def test_mapa_de_rutas_publicas_y_metodos_se_mantiene_estable(ruta_bd):
 
     assert rutas == {
         ("/", ("GET",)),
+        ("/acerca-de", ("GET",)),
+        ("/contacto", ("GET",)),
+        ("/terminos-y-condiciones", ("GET",)),
+        ("/politica-de-privacidad", ("GET",)),
         ("/cobertura", ("GET",)),
         ("/administracion/base-datos", ("GET",)),
         ("/administracion/base-datos/exportar.zip", ("GET",)),
@@ -132,6 +136,30 @@ def test_mapa_de_rutas_publicas_y_metodos_se_mantiene_estable(ruta_bd):
         ("/api/filtros/puestos", ("GET",)),
         ("/api/estadisticas", ("GET",)),
     }
+
+
+@pytest.mark.parametrize("ruta, textos", [
+    ("/acerca-de", ("Acerca de BuscadorBOE", "sesaba23", "[NOMBRE DE LA EMPRESA]")),
+    ("/contacto", ("Contacto", "[EMAIL DE CONTACTO]", "[DIRECCIÓN POSTAL]")),
+    ("/terminos-y-condiciones", ("Términos y condiciones", "[TEXTO LEGAL PENDIENTE DE COMPLETAR]")),
+    ("/politica-de-privacidad", ("Política de privacidad", "[TEXTO DE PRIVACIDAD PENDIENTE DE COMPLETAR]")),
+])
+def test_paginas_informativas_y_footer_profesional(cliente, ruta, textos):
+    respuesta = cliente.get(ruta)
+    html = respuesta.get_data(as_text=True)
+    assert respuesta.status_code == 200
+    for texto in textos:
+        assert texto in html
+    assert '<footer class="site-footer">' in html
+    assert 'href="/terminos-y-condiciones"' in html
+    assert 'href="/politica-de-privacidad"' in html
+
+
+def test_navegacion_principal_incluye_acerca_y_contacto(cliente):
+    html = cliente.get("/").get_data(as_text=True)
+    assert 'href="/acerca-de"' in html
+    assert 'href="/contacto"' in html
+    assert 'aria-label="Información legal y de contacto"' in html
 
 
 def test_recursos_comunes_del_portal_estan_disponibles(cliente):
@@ -609,12 +637,18 @@ def test_pagina_contiene_filtros_indicadores_y_graficos(cliente):
     assert 'id="grafico-administraciones"' not in html
     assert 'id="grafico-puestos"' not in html
     assert 'id="grafico-provincias"' in html
+    assert 'id="grafico-comunidades"' in html
     assert 'id="grafico-evolucion"' in html
+    assert 'id="grafico-meses"' in html
+    assert 'id="grafico-puestos-anual"' in html
     assert "Cargando datos..." in html
     assert 'id="sin-resultados"' in html
     assert 'id="aviso-calidad"' in html
     assert "Calidad de los datos históricos" in html
     assert "afectan únicamente" in html
+    assert "Evolución anual de plazas" in html
+    assert "Plazas convocadas por mes" in html
+    assert html.index("Evolución anual de plazas") < html.index("Plazas por comunidad autónoma") < html.index("Plazas por provincia")
 
 
 def test_pagina_carga_chart_css_y_javascript_desde_recursos_locales(cliente):
@@ -730,8 +764,18 @@ const serializar = selector => obtenerElemento(selector).children.map(fila => ({
 }));
 const llamadasTrasRankings = llamadasChart.length;
 vm.runInContext('renderizarRanking("ranking-vacio", [], "puesto", 10)', contexto);
+vm.runInContext('crearGraficoEvolucionAnual([{anio: 2025, plazas: 8}])', contexto);
+vm.runInContext('crearGraficoComunidades([{comunidad: "Madrid", plazas: 8}, {comunidad: "Andalucía", plazas: 2}])', contexto);
 vm.runInContext('crearGraficoProvincias([{provincia: "Madrid", plazas: 8}])', contexto);
-vm.runInContext('crearGraficoEvolucion([{mes: "2025-01", plazas: 8}])', contexto);
+const tooltipProvincia = vm.runInContext(
+    'etiquetaTooltip({dataset: {data: [8]}, dataIndex: 0, parsed: {x: 0, y: 8}})', contexto
+);
+const tooltipAnual = vm.runInContext(
+    'tituloTooltipAnual([{label: "2025"}])', contexto
+);
+const tooltipComunidad = vm.runInContext(
+    'etiquetaTooltipConPorcentaje({dataset: {data: [8, 2]}, dataIndex: 0})', contexto
+);
 const calidadCero = {fecha_no_utilizable: 0, numero_plazas_no_utilizable: 0,
     puesto_no_utilizable: 0, provincia_no_disponible: 0,
     administracion_no_disponible: 0, sistema_no_disponible: 0,
@@ -747,6 +791,14 @@ process.stdout.write(JSON.stringify({
     vacio: obtenerElemento("#ranking-vacio").children[0].textContent,
     llamadasTrasRankings,
     tiposChart: llamadasChart.map(llamada => llamada.type),
+    evolucionLabels: llamadasChart[0].data.labels,
+    evolucionDatos: llamadasChart[0].data.datasets[0].data,
+    comunidadesLabels: llamadasChart[1].data.labels,
+    comunidadesDatos: llamadasChart[1].data.datasets[0].data,
+    comunidadesColores: llamadasChart[1].data.datasets[0].backgroundColor,
+    tooltipProvincia,
+    tooltipAnual,
+    tooltipComunidad,
     calidadOcultaConCeros,
     calidadVisible: !obtenerElemento("#aviso-calidad").hidden,
     calidadTextos: obtenerElemento("#lista-calidad").children.map(x => x.textContent)
@@ -802,7 +854,15 @@ def test_rankings_vacios_y_uso_de_chart_js():
 
     assert datos["vacio"] == "Sin resultados"
     assert datos["llamadasTrasRankings"] == 0
-    assert datos["tiposChart"] == ["bar", "line"]
+    assert datos["tiposChart"] == ["bar", "pie", "bar"]
+    assert datos["evolucionLabels"] == ["2025"]
+    assert datos["evolucionDatos"] == [8]
+    assert datos["tooltipProvincia"] == "Plazas: 8"
+    assert datos["tooltipAnual"] == "Año: 2025"
+    assert datos["comunidadesLabels"] == ["Madrid", "Andalucía"]
+    assert datos["comunidadesDatos"] == [8, 2]
+    assert len(datos["comunidadesColores"]) == 2
+    assert datos["tooltipComunidad"] == "Plazas: 8 (80 %)"
 
 
 def test_calidad_frontend_oculta_ceros_y_muestra_metricas_independientes():
@@ -833,7 +893,10 @@ def test_api_devuelve_el_esquema_esperado(cliente):
         "top_administraciones",
         "top_puestos",
         "plazas_por_provincia",
-        "evolucion_mensual",
+        "plazas_por_comunidad",
+        "evolucion_anual",
+        "plazas_por_mes",
+        "evolucion_anual_puestos",
         "calidad_datos",
         "archivo",
     }
@@ -849,6 +912,7 @@ def test_api_devuelve_el_esquema_esperado(cliente):
         "ambitos": [],
         "sistemas": ["Concurso", "Oposición"],
         "turnos": ["Discapacidad", "Libre"],
+        "puestos": ["Auxiliar Administrativo", "Ingeniero Industrial"],
     }
     assert respuesta.get_json()["calidad_datos"] == {
         "fecha_no_utilizable": 0,
@@ -861,6 +925,15 @@ def test_api_devuelve_el_esquema_esperado(cliente):
         "municipio_no_disponible": 2,
         "ambito_indeterminado": 2,
     }
+    assert respuesta.get_json()["evolucion_anual"] == [{"anio": 2025, "plazas": 5}]
+    assert respuesta.get_json()["plazas_por_provincia"] == [
+        {"provincia": "Sevilla", "plazas": 3},
+        {"provincia": "Madrid", "plazas": 2},
+    ]
+    assert respuesta.get_json()["plazas_por_comunidad"] == [
+        {"comunidad": "Andalucía", "plazas": 3},
+        {"comunidad": "Comunidad de Madrid", "plazas": 2},
+    ]
 
 
 def test_consulta_estadistica_expone_fecha_canonica_y_original_por_separado(ruta_bd):
@@ -1000,7 +1073,8 @@ def test_api_devuelve_cero_y_listas_vacias_si_no_hay_resultados(cliente):
     assert datos["top_administraciones"] == []
     assert datos["top_puestos"] == []
     assert datos["plazas_por_provincia"] == []
-    assert datos["evolucion_mensual"] == []
+    assert datos["plazas_por_comunidad"] == []
+    assert datos["evolucion_anual"] == []
 
 
 def test_api_no_modifica_sqlite(cliente, ruta_bd):

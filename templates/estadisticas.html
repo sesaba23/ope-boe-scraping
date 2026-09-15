@@ -107,18 +107,41 @@
                     <h2>Top 10 puestos con más plazas</h2>
                     <div id="ranking-puestos" class="ranking" aria-live="polite"></div>
                 </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Evolución anual de plazas</h2>
+                    <div class="contenedor-grafico grafico-evolucion">
+                        <canvas id="grafico-evolucion"></canvas>
+                    </div>
+                </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Plazas convocadas por mes</h2>
+                    <p class="texto-grafico">Agrupa las plazas del periodo filtrado por mes de publicación para mostrar cuándo se concentra la actividad.</p>
+                    <div class="contenedor-grafico"><canvas id="grafico-meses" aria-label="Plazas convocadas por mes"></canvas></div>
+                </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Evolución anual de plazas por puesto</h2>
+                    <p id="estado-comparacion-puestos" class="texto-grafico" aria-live="polite">Muestra el puesto seleccionado o los cinco puestos con más plazas del conjunto filtrado.</p>
+                    <div class="comparador-puestos">
+                        <div class="comparador-selectores" aria-label="Puestos comparativos">
+                            {% for indice in range(1, 6) %}
+                            <div class="campo"><label for="comparar_{{ indice }}">Comparar con {{ indice }}</label><select id="comparar_{{ indice }}" name="comparar_{{ indice }}"><option value="">— Ninguno —</option></select></div>
+                            {% endfor %}
+                        </div>
+                        <div class="contenedor-grafico"><canvas id="grafico-puestos-anual" aria-label="Evolución anual de plazas por puesto"></canvas></div>
+                    </div>
+                </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Plazas por comunidad autónoma</h2>
+                    <div class="contenedor-grafico">
+                        <canvas id="grafico-comunidades"></canvas>
+                    </div>
+                </article>
                 <article class="panel panel-grafico panel-ancho panel-provincias">
                     <h2>Plazas por provincia</h2>
                     <div class="desplazamiento-grafico">
                         <div class="contenedor-grafico grafico-provincias">
                             <canvas id="grafico-provincias"></canvas>
                         </div>
-                    </div>
-                </article>
-                <article class="panel panel-grafico panel-ancho">
-                    <h2>Evolución mensual de plazas</h2>
-                    <div class="contenedor-grafico grafico-evolucion">
-                        <canvas id="grafico-evolucion"></canvas>
                     </div>
                 </article>
             </div>

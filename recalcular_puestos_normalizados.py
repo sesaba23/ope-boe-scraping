@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 
 import base_datos
-from normalizacion_puestos import clasificar_familia_puesto, normalizar_puesto
+from normalizacion_contextual_puestos import normalizar_puesto_efectivo
+from normalizacion_puestos import clasificar_familia_puesto
 
 
 def _leer(ruta_bd):
@@ -17,7 +18,9 @@ def _leer(ruta_bd):
         if metadata.get("schema_version") not in {"3", "4", "5", "6"} or "puesto_normalizado" not in columnas:
             raise RuntimeError("El recálculo requiere schema_version 3, 4, 5 o 6 con Puesto_normalizado")
         filas = conexion.execute(
-            "SELECT oposicion_id,puesto,puesto_normalizado FROM oposiciones ORDER BY oposicion_id"
+            """SELECT oposicion_id, puesto, puesto_normalizado, administracion,
+                      ambito, tipo_entidad, escala, subescala, sistema, municipio, provincia
+                 FROM oposiciones ORDER BY oposicion_id"""
         ).fetchall()
         return metadata, filas
     finally:
@@ -29,8 +32,12 @@ def _plan(filas):
     antes = Counter()
     despues = Counter()
     familias = Counter()
-    for oposicion_id, puesto, actual in filas:
-        nuevo = normalizar_puesto(puesto)
+    for fila in filas:
+        oposicion_id, puesto, actual = fila[0], fila[1], fila[2]
+        nuevo = normalizar_puesto_efectivo(
+            puesto, administracion=fila[3], ambito=fila[4], tipo_entidad=fila[5],
+            escala=fila[6], subescala=fila[7], sistema=fila[8], municipio=fila[9], provincia=fila[10],
+        ).normalizado
         antes[actual] += 1
         despues[nuevo] += 1
         if nuevo != actual:

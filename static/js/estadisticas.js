@@ -9,7 +9,14 @@ const dashboard = document.querySelector("#dashboard");
 const graficos = document.querySelector("#graficos");
 const sinResultados = document.querySelector("#sin-resultados");
 const instanciasGraficos = new Map();
+let comparadoresSeleccionados = ["", "", "", "", ""];
 const formatoNumero = new Intl.NumberFormat("es-ES");
+const coloresComunidades = [
+    "#f4a6a6", "#f7c59f", "#f9e79f", "#c8e6a0", "#9ed9c7",
+    "#9fd8ef", "#a9b7ef", "#c7a8e8", "#e1a6d8", "#f3b3c3",
+    "#f6c28b", "#d6e58d", "#8fd3c8", "#8fc7e8", "#a7a9e8",
+    "#c9a5df", "#e5a9c8", "#f1b0a8", "#b8d99a", "#9ed7d2",
+];
 
 formulario.addEventListener("submit", (evento) => {
     evento.preventDefault();
@@ -29,6 +36,7 @@ async function cargarEstadisticas() {
     new FormData(formulario).forEach((valor, clave) => {
         if (String(valor).trim()) parametros.set(clave, valor);
     });
+    comparadoresSeleccionados.forEach((valor) => { if (String(valor).trim()) parametros.append("comparar", valor); });
     const url = parametros.size ? `/api/estadisticas?${parametros}` : "/api/estadisticas";
 
     try {
@@ -72,6 +80,7 @@ function actualizarDashboard(datos) {
     estadoConsulta.hidden = true;
     dashboard.hidden = false;
     actualizarOpciones(datos.opciones, datos.filtros);
+    actualizarSelectoresComparacion(datos.opciones.puestos || [], datos.filtros.puesto);
     document.querySelector("#total-plazas").textContent = formatoNumero.format(datos.resumen.total_plazas);
     document.querySelector("#total-registros").textContent = formatoNumero.format(datos.resumen.total_registros);
     document.querySelector("#total-provincias").textContent = formatoNumero.format(datos.resumen.total_provincias);
@@ -93,8 +102,38 @@ function actualizarDashboard(datos) {
 function actualizarGraficos(datos) {
     renderizarRanking("ranking-administraciones", datos.top_administraciones, "administracion", 5);
     renderizarRanking("ranking-puestos", datos.top_puestos, "puesto", 10);
+    crearGraficoEvolucionAnual(datos.evolucion_anual);
+    crearGraficoMeses(datos.plazas_por_mes || []);
+    const evolucion = datos.evolucion_anual_puestos || {years: [], series: []};
+    crearGraficoPuestosAnual(evolucion);
+    const estado = document.querySelector("#estado-comparacion-puestos");
+    estado.textContent = evolucion.mode === "top5" ? "Mostrando los 5 puestos con más plazas" : evolucion.mode === "manual" ? `Comparando ${evolucion.series.length} puestos` : `Evolución de ${evolucion.series[0]?.label || "puesto seleccionado"}`;
+    crearGraficoComunidades(datos.plazas_por_comunidad);
     crearGraficoProvincias(datos.plazas_por_provincia);
-    crearGraficoEvolucion(datos.evolucion_mensual);
+}
+
+function actualizarSelectoresComparacion(opciones, principal) {
+    comparadoresSeleccionados = comparadoresSeleccionados.map((valor) => valor === principal ? "" : valor);
+    const ocupados = new Set(comparadoresSeleccionados.filter(Boolean));
+    for (let indice = 0; indice < 5; indice += 1) {
+        const select = document.querySelector(`#comparar_${indice + 1}`);
+        select.replaceChildren(new Option("— Ninguno —", ""));
+        opciones.forEach((valor) => {
+            const option = new Option(valor, valor);
+            option.disabled = valor === principal || (ocupados.has(valor) && valor !== comparadoresSeleccionados[indice]);
+            select.add(option);
+        });
+        select.value = comparadoresSeleccionados[indice] || "";
+        select.onchange = () => {
+            comparadoresSeleccionados[indice] = select.value;
+            const elegidos = comparadoresSeleccionados.filter(Boolean);
+            if (new Set(elegidos).size !== elegidos.length || (principal && elegidos.includes(principal))) {
+                comparadoresSeleccionados[indice] = "";
+                select.value = "";
+            }
+            cargarEstadisticas();
+        };
+    }
 }
 
 function actualizarOpciones(opciones, filtros) {
@@ -220,11 +259,36 @@ function crearGraficoProvincias(datos) {
     });
 }
 
-function crearGraficoEvolucion(datos) {
+function crearGraficoEvolucionAnual(datos) {
     reemplazarGrafico("evolucion", "grafico-evolucion", {
+        type: "bar",
+        data: {labels: datos.map((fila) => String(fila.anio)), datasets: [{label: "Plazas", data: datos.map((fila) => fila.plazas), backgroundColor: "#5b82dc", borderColor: "#2457d6", borderWidth: 1, borderRadius: 5, maxBarThickness: 42}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}, tooltip: {callbacks: {title: tituloTooltipAnual, label: etiquetaTooltip}}}, scales: {x: {ticks: {precision: 0}}, y: {beginAtZero: true, ticks: {precision: 0}}}},
+    });
+}
+
+function crearGraficoMeses(datos) {
+    reemplazarGrafico("meses", "grafico-meses", {
+        type: "bar",
+        data: {labels: datos.map((fila) => fila.nombre), datasets: [{label: "Plazas", data: datos.map((fila) => fila.plazas), backgroundColor: "#7b68c7", borderColor: "#55439c", borderWidth: 1, borderRadius: 5, maxBarThickness: 34}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}, tooltip: {callbacks: {label: etiquetaTooltip}}}, scales: {x: {ticks: {autoSkip: false, maxRotation: 45, minRotation: 0}}, y: {beginAtZero: true, ticks: {precision: 0}}}},
+    });
+}
+
+function crearGraficoPuestosAnual(datos) {
+    const colores = ["#2457d6", "#e17c35", "#3d9b6d", "#a34fa8", "#d24d62"];
+    reemplazarGrafico("puestos-anual", "grafico-puestos-anual", {
         type: "line",
-        data: {labels: datos.map((fila) => fila.mes), datasets: [{label: "Plazas", data: datos.map((fila) => fila.plazas), borderColor: "#2457d6", backgroundColor: "rgba(36, 87, 214, .12)", borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, tension: .2, fill: true}]},
-        options: {responsive: true, maintainAspectRatio: false, interaction: {intersect: false, mode: "index"}, plugins: {legend: {display: false}, valoresBarras: {mostrar: false}, tooltip: {callbacks: {label: etiquetaTooltip}}}, scales: {y: {beginAtZero: true, ticks: {precision: 0}}}},
+        data: {labels: (datos.years || []).map(String), datasets: (datos.series || []).map((serie, indice) => ({label: serie.label, data: serie.values, borderColor: colores[indice % colores.length], backgroundColor: colores[indice % colores.length], tension: 0.2, fill: false}))},
+        options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: {display: true, position: "bottom"}, tooltip: {callbacks: {title: tituloTooltipAnual, label: (contexto) => `${contexto.dataset.label}: ${formatoNumero.format(contexto.parsed.y)} plazas`}}}, scales: {x: {ticks: {precision: 0}}, y: {beginAtZero: true, ticks: {precision: 0}}}},
+    });
+}
+
+function crearGraficoComunidades(datos) {
+    reemplazarGrafico("comunidades", "grafico-comunidades", {
+        type: "pie",
+        data: {labels: datos.map((fila) => fila.comunidad), datasets: [{label: "Plazas", data: datos.map((fila) => fila.plazas), backgroundColor: coloresComunidades.slice(0, datos.length), borderColor: "#fff", borderWidth: 2}]},
+        options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: "bottom"}, tooltip: {callbacks: {label: etiquetaTooltipConPorcentaje}}}},
     });
 }
 
@@ -248,6 +312,17 @@ function destruirGraficos() {
 }
 
 function etiquetaTooltip(contexto) {
-    const valor = contexto.parsed.x ?? contexto.parsed.y;
+    const valor = contexto.dataset.data[contexto.dataIndex];
     return `Plazas: ${formatoNumero.format(valor)}`;
+}
+
+function tituloTooltipAnual(contextos) {
+    return `Año: ${contextos[0].label}`;
+}
+
+function etiquetaTooltipConPorcentaje(contexto) {
+    const valor = Number(contexto.dataset.data[contexto.dataIndex]);
+    const total = contexto.dataset.data.reduce((acumulado, plaza) => acumulado + Number(plaza), 0);
+    const porcentaje = total ? valor / total * 100 : 0;
+    return `Plazas: ${formatoNumero.format(valor)} (${porcentaje.toLocaleString("es-ES", {maximumFractionDigits: 1})} %)`;
 }

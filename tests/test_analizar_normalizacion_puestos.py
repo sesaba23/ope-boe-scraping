@@ -6,7 +6,7 @@ from normalizacion_puestos import normalizar_puesto
 
 def test_policia_local_y_rangos_se_distinguen():
     assert clasificar_puesto("Agente de Policía Local")[:3] == ("policia_local", "alta_confianza", "Policía Local")
-    assert clasificar_puesto("Inspector de Policía Local")[1] == "excluida"
+    assert clasificar_puesto("Inspector de Policía Local")[:3] == ("policia_local", "alta_confianza", "Inspector de Policía Local")
     assert clasificar_puesto("Agentes de la Policía Local")[:3] == ("policia_local", "alta_confianza", "Policía Local")
 
 

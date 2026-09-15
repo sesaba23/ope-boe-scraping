@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Términos y condiciones · BuscadorBOE{% endblock %}
+{% block content %}
+<section class="site-page"><div class="site-shell portal-section"><div class="portal-panel">
+    <h1>Términos y condiciones</h1><p class="portal-note">Contenido provisional pendiente de completar; no constituye asesoramiento jurídico ni condiciones definitivas.</p>
+    <!-- EDITAR: fecha de última actualización --><p><strong>Última actualización:</strong> [FECHA DE ÚLTIMA ACTUALIZACIÓN]</p>
+    {% for titulo in ['Titular del servicio','Objeto','Condiciones de uso','Responsabilidad','Propiedad intelectual','Modificaciones','Legislación aplicable'] %}<h2>{{ titulo }}</h2><p>[TEXTO LEGAL PENDIENTE DE COMPLETAR]</p>{% endfor %}
+</div></div></section>
+{% endblock %}

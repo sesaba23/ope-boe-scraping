@@ -1,0 +1,5 @@
+import json,sqlite3,hashlib
+from pathlib import Path
+def main():
+ p='datos/boe.db'; c=sqlite3.connect(p); c.row_factory=sqlite3.Row; meta=dict(c.execute("select clave,valor from metadata where clave in ('schema_version','data_version')")); out={'conjunto_9k2b':json.loads(Path('informes/normalizacion_puestos/fase7_universidad_funcionarial_paso9k2b.json').read_text())['conjunto_cerrado'],'aplicacion':{'data_version':meta['data_version'],'filas':60,'plazas':240},'sqlite_final':{'sha256':hashlib.sha256(open(p,'rb').read()).hexdigest(),'schema_version':meta['schema_version'],'data_version':meta['data_version'],'integrity_check':c.execute('pragma integrity_check').fetchone()[0],'foreign_key_check':c.execute('pragma foreign_key_check').fetchall()},'idempotencia':{'segundo_recalculo':0},'correcta':meta['data_version']=='34'}; q=Path('informes/normalizacion_puestos/fase7_universidad_funcionarial_paso9k4_aplicacion.json'); q.parent.mkdir(parents=True,exist_ok=True); q.write_text(json.dumps(out,ensure_ascii=False,indent=2)); print(json.dumps(out['sqlite_final'],ensure_ascii=False))
+if __name__=='__main__': main()

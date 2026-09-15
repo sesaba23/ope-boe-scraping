@@ -20,12 +20,54 @@ MESES = {
     "noviembre": "11",
     "diciembre": "12",
 }
+MESES_NOMBRES = ("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                 "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
 
 
 def calcular_estadisticas_sqlite(ruta_bd="datos/boe.db", **filtros):
     """Flujo productivo: obtiene la selección desde SQLite, nunca desde Excel."""
     datos = oposiciones(ruta_bd, **filtros)
-    return calcular_estadisticas(datos)
+    return calcular_estadisticas(datos, puesto_seleccionado=filtros.get("puesto"))
+
+
+def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal=None, comparadores=(), **filtros):
+    """Construye hasta seis series con una única consulta base y filtros compartidos."""
+    comparadores = [str(valor).strip() for valor in comparadores if str(valor).strip()]
+    if len(comparadores) > 5:
+        raise ValueError("Se permiten como máximo cinco puestos comparativos.")
+    if len(set(comparadores)) != len(comparadores):
+        raise ValueError("No se permiten puestos comparativos duplicados.")
+    if puesto_principal and puesto_principal in comparadores:
+        raise ValueError("El puesto principal no puede repetirse como comparador.")
+    filtros_sin_puesto = {clave: valor for clave, valor in filtros.items() if clave != "puesto" and valor}
+    datos = oposiciones(ruta_bd, **filtros_sin_puesto)
+    datos = normalizar_datos(datos)
+    columna = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
+    puestos = datos[columna].fillna(datos["Puesto"]).astype(str).str.strip()
+    if puesto_principal:
+        principal = filtrar_datos(datos, puesto=puesto_principal)
+        etiquetas = [(str(puesto_principal), principal)]
+    else:
+        principal = None
+        etiquetas = []
+    for comparador in comparadores:
+        etiquetas.append((comparador, datos[puestos == comparador]))
+    if not etiquetas:
+        return _evolucion_puestos(datos)
+    union = pd.concat([fila for _, fila in etiquetas], ignore_index=True) if etiquetas else datos.iloc[0:0]
+    fechas = pd.to_datetime(union["Fecha_dt"], errors="coerce")
+    anios = fechas.dropna().dt.year
+    if anios.empty:
+        return {"mode": "selected" if puesto_principal else "manual", "puesto": puesto_principal, "years": [], "series": []}
+    years = list(range(int(anios.min()), int(anios.max()) + 1))
+    series = []
+    for etiqueta, frame in etiquetas:
+        frame = frame.copy()
+        frame["_anio"] = pd.to_datetime(frame["Fecha_dt"], errors="coerce").dt.year
+        totals = frame.dropna(subset=["_anio"]).groupby("_anio")["Num_plazas_num"].sum().to_dict()
+        series.append({"label": etiqueta, "values": [_numero_python(totals.get(year, 0)) for year in years]})
+    mode = "selected" if puesto_principal else "manual"
+    return {"mode": mode, "puesto": puesto_principal, "years": years, "series": series}
 
 
 def normalizar_datos(df):
@@ -103,7 +145,7 @@ def obtener_opciones_filtros(df):
     }
 
 
-def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
+def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_seleccionado=None):
     """Calcula los indicadores y agrupaciones sobre los registros recibidos."""
     datos = df.copy(deep=True)
     if "Fecha_dt" not in datos.columns or "Num_plazas_num" not in datos.columns:
@@ -150,6 +192,19 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
         plazas_por_provincia["Num_plazas_num"] > 0
     ]
 
+    comunidades = datos[
+        ~_mascara_no_disponible(datos, "Comunidad_autonoma")
+    ].copy()
+    plazas_por_comunidad_completas = _agrupar(
+        comunidades, "Comunidad_autonoma"
+    )
+    plazas_por_comunidad_completas = plazas_por_comunidad_completas[
+        plazas_por_comunidad_completas["Num_plazas_num"] > 0
+    ]
+    # Representar todas las comunidades disponibles, sin agruparlas en
+    # una categoría artificial «Resto».
+    plazas_por_comunidad = plazas_por_comunidad_completas
+
     provincias_reales = plazas_por_provincia[
         plazas_por_provincia["Provincia"].astype(str).str.strip().str.casefold()
         != "sin provincia"
@@ -161,15 +216,23 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
     ]
 
     fechas_validas = datos.dropna(subset=["Fecha_dt"]).copy()
-    fechas_validas["Mes"] = pd.to_datetime(fechas_validas["Fecha_dt"]).dt.to_period(
-        "M"
-    )
-    evolucion = (
-        fechas_validas.groupby("Mes", as_index=False, dropna=False)["Num_plazas_num"]
+    fechas_validas["Anio"] = pd.to_datetime(fechas_validas["Fecha_dt"]).dt.year
+    evolucion_agrupada = (
+        fechas_validas.groupby("Anio", as_index=False, dropna=False)["Num_plazas_num"]
         .sum()
-        .sort_values("Mes")
     )
+    if evolucion_agrupada.empty:
+        evolucion = evolucion_agrupada
+    else:
+        primer_anio = int(evolucion_agrupada["Anio"].min())
+        ultimo_anio = int(evolucion_agrupada["Anio"].max())
+        evolucion = pd.DataFrame({"Anio": range(primer_anio, ultimo_anio + 1)}).merge(
+            evolucion_agrupada, on="Anio", how="left"
+        )
+        evolucion["Num_plazas_num"] = evolucion["Num_plazas_num"].fillna(0)
 
+    plazas_por_mes = _plazas_por_mes(fechas_validas)
+    evolucion_puestos = _evolucion_puestos(fechas_validas, puesto_seleccionado)
     return {
         "total_plazas": total_plazas,
         "total_registros": int(len(datos)),
@@ -182,12 +245,53 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10):
         "plazas_por_provincia": _registros_agrupados(
             plazas_por_provincia, "Provincia", "provincia"
         ),
-        "evolucion_mensual": [
-            {"mes": str(fila["Mes"]), "plazas": _numero_python(fila["Num_plazas_num"])}
+        "plazas_por_comunidad": _registros_agrupados(
+            plazas_por_comunidad, "Comunidad_autonoma", "comunidad"
+        ),
+        "evolucion_anual": [
+            {"anio": int(fila["Anio"]), "plazas": _numero_python(fila["Num_plazas_num"])}
             for _, fila in evolucion.iterrows()
         ],
+        "plazas_por_mes": plazas_por_mes,
+        "evolucion_anual_puestos": evolucion_puestos,
         "calidad_datos": calidad_datos,
     }
+
+
+def _plazas_por_mes(datos):
+    """Acumula todo el histórico filtrado por mes del año, siempre 12 meses."""
+    valores = {i: 0 for i in range(1, 13)}
+    if not datos.empty:
+        meses = pd.to_datetime(datos["Fecha_dt"], errors="coerce").dt.month
+        for mes, plazas in datos.assign(_mes=meses).dropna(subset=["_mes"]).groupby("_mes")["Num_plazas_num"].sum().items():
+            valores[int(mes)] = _numero_python(plazas)
+    return [{"mes": i, "nombre": MESES_NOMBRES[i - 1], "plazas": valores[i]} for i in range(1, 13)]
+
+
+def _evolucion_puestos(datos, puesto_seleccionado=None):
+    """Devuelve una serie por puesto seleccionado o el TOP 5 del universo filtrado."""
+    if datos.empty:
+        return {"mode": "selected" if puesto_seleccionado else "top5", "puesto": str(puesto_seleccionado) if puesto_seleccionado else None, "years": [], "series": []}
+    columna = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
+    datos = datos.copy()
+    datos[columna] = datos[columna].fillna(datos.get("Puesto", ""))
+    fechas = pd.to_datetime(datos["Fecha_dt"], errors="coerce")
+    datos = datos.assign(_anio=fechas.dt.year).dropna(subset=["_anio"])
+    if datos.empty:
+        return {"mode": "selected" if puesto_seleccionado else "top5", "puesto": str(puesto_seleccionado) if puesto_seleccionado else None, "years": [], "series": []}
+    if puesto_seleccionado:
+        labels = [str(puesto_seleccionado)]
+    else:
+        ranking = datos.groupby(columna)["Num_plazas_num"].sum().sort_values(ascending=False)
+        labels = sorted(ranking.head(5).index.tolist(), key=lambda value: (-(ranking[value]), str(value)))
+    years = list(range(int(datos["_anio"].min()), int(datos["_anio"].max()) + 1))
+    series = []
+    for label in labels:
+        subset = datos if puesto_seleccionado else datos[datos[columna] == label]
+        # Con un filtro textual, todas las filas ya pertenecen al puesto consultado.
+        totals = subset.groupby("_anio")["Num_plazas_num"].sum().to_dict()
+        series.append({"label": label, "values": [_numero_python(totals.get(year, 0)) for year in years]})
+    return {"mode": "selected" if puesto_seleccionado else "top5", "puesto": str(puesto_seleccionado) if puesto_seleccionado else None, "years": years, "series": series}
 
 
 def _convertir_fecha(valor):

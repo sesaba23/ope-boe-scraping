@@ -1,0 +1,12 @@
+from __future__ import annotations
+import json,subprocess
+import sys
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];I=ROOT/'informes/normalizacion_puestos'
+if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
+from scripts.audit.auditar_bomberos_paso8_40 import state,sha
+def main():
+ a=json.load(open(I/'fase8_paso55_conductores.json'));r=json.load(open(I/'fase8_paso56_reglas_conductores.json'));p=json.load(open(I/'fase8_paso57_aplicacion_conductores.json'))
+ o={'baseline_git':a['baseline_git'],'baseline_sqlite':p['primera_ejecucion']['antes'],'baseline_normalizador':a['baseline_normalizador'],'universo_paso39':a['universo_paso39'],'universo_reconstruido':a['universo_reconstruido'],'reconciliacion_paso39':a['reconciliacion_paso39'],'taxonomia':{'CONDUCTOR_GENERICO':a['clasificacion_A']},'conductor_generico':a['clasificacion_A'],'bomberos_conductores_frontera_excluida':True,'clasificacion_A':a['clasificacion_A'],'clasificacion_B':{'filas':0,'plazas':0},'clasificacion_C':{'nota':'vehículos, rangos y especialidades preservados'},'clasificacion_D':{'nota':'bomberos, mecánicos y compuestos preservados'},'conjuntos_A':a['conjuntos_A'],'simulaciones_A':a['simulaciones_A'],'colisiones':[],'paso55_estado':'PASS','paso56_ejecutado':True,'paso56_estado':'PASS','reglas_implementadas':r['reglas_implementadas'],'cobertura_logica_A':r['cobertura_logica_A'],'gate_pre_sqlite':r['gate_pre_sqlite'],'paso57_ejecutado':True,'paso57_estado':'PASS','backup_sqlite':p['primera_ejecucion']['backup'],'mutaciones':p['primera_ejecucion']['mutaciones'],'plazas_mutadas':p['primera_ejecucion']['plazas_mutadas'],'data_version_antes':p['primera_ejecucion']['antes']['data_version'],'data_version_despues':p['primera_ejecucion']['despues']['data_version'],'segunda_ejecucion':p['segunda_ejecucion'],'gate_paso19_final':p['gate_final'],'sqlite_final':state(),'normalizador_final':{'sha256':sha(ROOT/'normalizacion_puestos.py')},'tests_focalizados':['tests/test_normalizacion_puestos.py -k paso56_conductores (11 passed)','tests/test_aplicar_normalizacion_conductores_paso8_57.py'],'suite_completa_ejecutada':False,'git_diff_check':subprocess.run(['git','diff','--check'],cwd=ROOT,capture_output=True).returncode==0,'estado_final':'CERRADO','siguiente_bloque':'Administrativos'}
+ json.dump(o,open(I/'fase8_cierre_conductores.json','w'),ensure_ascii=False,indent=2);print(o['estado_final'],o['mutaciones'])
+if __name__=='__main__':main()

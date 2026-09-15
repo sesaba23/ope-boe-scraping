@@ -14,7 +14,7 @@ from consultas_boe import (
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
     resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
 )
-from estadisticas import calcular_estadisticas_sqlite
+from estadisticas import calcular_estadisticas_sqlite, calcular_comparacion_puestos_sqlite
 from gestion_exportacion import GestorExportacionXlsx
 import servicio_exportacion
 
@@ -119,6 +119,22 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
     @app.get("/")
     def inicio():
         return render_template("inicio.html", seccion_activa="inicio")
+
+    @app.get("/acerca-de")
+    def acerca_de():
+        return render_template("acerca_de.html", seccion_activa="acerca")
+
+    @app.get("/contacto")
+    def contacto():
+        return render_template("contacto.html", seccion_activa="contacto")
+
+    @app.get("/terminos-y-condiciones")
+    def terminos_condiciones():
+        return render_template("terminos_condiciones.html", seccion_activa=None)
+
+    @app.get("/politica-de-privacidad")
+    def politica_privacidad():
+        return render_template("politica_privacidad.html", seccion_activa=None)
 
     @app.get("/cobertura")
     def cobertura():
@@ -533,6 +549,12 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         ambito = request.args.get("ambito") or None
         sistema = request.args.get("sistema") or None
         turno = request.args.get("turno") or None
+        comparadores = request.args.getlist("comparar")
+        if not comparadores:
+            comparadores = [request.args.get(f"comparar_{indice}") for indice in range(1, 6)]
+        comparadores = [valor.strip() for valor in comparadores if valor and valor.strip()]
+        if len(comparadores) > 5 or len(set(comparadores)) != len(comparadores) or (puesto and puesto in comparadores):
+            return jsonify({"error": "Los puestos comparativos deben ser como máximo cinco, únicos y distintos del principal."}), 400
 
         try:
             inicio_dt = _validar_fecha(fecha_inicio, "fecha_inicio")
@@ -551,6 +573,10 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             estadisticas = calcular_estadisticas_sqlite(
                 ruta, desde=fecha_inicio, hasta=fecha_final, puesto=puesto,
                 provincia=provincia, ambito=ambito, sistema=sistema, turno=turno)
+            evolucion_comparada = calcular_comparacion_puestos_sqlite(
+                ruta, puesto_principal=puesto, comparadores=comparadores,
+                desde=fecha_inicio, hasta=fecha_final, provincia=provincia,
+                ambito=ambito, sistema=sistema, turno=turno)
             datos_metadata = metadata(ruta)
         except (ErrorConsultaSQLite, OSError, ValueError) as error:
             return jsonify({"error": f"No se pudieron cargar las estadísticas: {error}"}), 503
@@ -577,8 +603,11 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                 },
                 "top_administraciones": estadisticas["top_administraciones"],
                 "top_puestos": estadisticas["top_puestos"],
+                "plazas_por_comunidad": estadisticas["plazas_por_comunidad"],
                 "plazas_por_provincia": estadisticas["plazas_por_provincia"],
-                "evolucion_mensual": estadisticas["evolucion_mensual"],
+                "evolucion_anual": estadisticas["evolucion_anual"],
+                "plazas_por_mes": estadisticas["plazas_por_mes"],
+                "evolucion_anual_puestos": evolucion_comparada,
                 "calidad_datos": estadisticas["calidad_datos"],
                 "archivo": {
                     "nombre": ruta.name,

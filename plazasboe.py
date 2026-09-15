@@ -567,7 +567,10 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
                 momento_analisis = datetime.now()
                 coincidencias_publicacion = 0
                 convocatorias_publicacion = []
-                if seleccionar_extractor(fecha_boe) == "historico":
+                # La frontera histórico/moderno depende del día del índice
+                # solicitado, no de fechas secundarias que aparezcan en el
+                # texto de una publicación.
+                if seleccionar_extractor(fecha_indice) == "historico":
                     raise RuntimeError("La publicación histórica debe entrar por ejecutar_flujo_historico")
                 for contenido in contenidos:
                     try:
@@ -629,7 +632,7 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
                             titulo,
                             coincidencias_publicacion,
                             momento_analisis,
-                            VERSION_EXTRACTOR_HISTORICO if seleccionar_extractor(fecha_boe) == "historico" else None,
+                            VERSION_EXTRACTOR_HISTORICO if seleccionar_extractor(fecha_indice) == "historico" else None,
                             departamento_boe=metadatos_sumario.get("departamento", ""),
                             titulo_sumario=metadatos_sumario.get("titulo", ""),
                         ),
@@ -713,8 +716,15 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
                 print(
                     f"\n\n{Fore.RED}❌ Entre el {Fore.WHITE}{fecha_inicio}{Fore.RED} y {Fore.WHITE}{fecha_fin}{Fore.RED} no se ha publicado ningún proceso selectivo\n"
                 )
+            # En modo programático la consulta y la persistencia ya han
+            # concluido correctamente: cero procesos es un resultado válido
+            # (incluido un día sin edición), no un error del trabajo web.
             if modo_programatico:
-                raise RuntimeError("El BOE no publicó procesos selectivos en el periodo solicitado")
+                return {"persistencia": resultado_persistencia, "estados_indices": estados_indices,
+                        "indices_consultados_http": indices_consultados_http,
+                        "indices_reutilizados": indices_reutilizados,
+                        "publicaciones_analizadas": 0, "publicaciones_descargadas": 0,
+                        "sin_procesos_selectivos": True}
             sys.exit(0)
         print(f"\n{Fore.RED}❌ No se pudo consultar el BOE para el periodo seleccionado.{Fore.RESET}")
         if modo_programatico:

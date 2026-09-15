@@ -1,6 +1,6 @@
 import sqlite3
 
-from generar_informe_normalizacion_puestos_paso_2b import generar_informe
+from scripts.audit.generar_informe_normalizacion_puestos_paso_2b import generar_informe
 
 
 def test_informe_paso_2b_es_solo_lectura_y_expone_idempotencia(tmp_path):

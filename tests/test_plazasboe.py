@@ -1513,6 +1513,45 @@ def test_cobertura_dia_sin_publicaciones(monkeypatch, respuesta, estado_esperado
     assert fila["Numero_publicaciones"] == 0
 
 
+def test_actualizacion_programatica_sin_procesos_es_exito(monkeypatch):
+    """La web recibe éxito con cero procesos tras persistir cobertura válida."""
+    _configurar_consulta_boe(
+        monkeypatch,
+        lambda *args, **kwargs: _RespuestaHTTP("", 404),
+        ["2026/09/06"], "06/09/2026", "06/09/2026",
+    )
+    resultado = plazasboe._ejecutar_aplicacion(
+        fechas_explicitamente=["2026/09/06"], ruta_bd="copia.db", generar_mapa=False
+    )
+    assert resultado["sin_procesos_selectivos"] is True
+    assert resultado["estados_indices"]["sin_edicion"] == 1
+
+
+def test_fecha_secundaria_historica_no_activa_gate_en_indice_moderno(monkeypatch):
+    """Una fecha del documento no decide el extractor del índice moderno."""
+    enlace = "https://www.boe.es/diario_boe/txt.php?id=moderna"
+
+    class Respuesta:
+        def __init__(self, contenido): self.content = contenido.encode()
+        def raise_for_status(self): pass
+
+    def obtener(url, timeout):
+        if "index.php" in url:
+            return Respuesta(f'<a href="{enlace}">Publicación</a>')
+        return Respuesta('<div id="textoxslt">sin coincidencias</div>'
+                         '<div class="documento-tit">Documento</div>'
+                         '<div class="metadatos">1 de enero de 2004</div>')
+
+    _configurar_consulta_boe(monkeypatch, obtener, ["2026/09/12"],
+                             "12/09/2026", "12/09/2026")
+    monkeypatch.setattr(coincidencias, "extraer_convocatorias_local", lambda *a: [])
+    monkeypatch.setattr(coincidencias, "extraer_convocatorias_estatal", lambda *a: [])
+    resultado = plazasboe._ejecutar_aplicacion(
+        fechas_explicitamente=["2026/09/12"], ruta_bd="copia.db", generar_mapa=False
+    )
+    assert resultado["estados_indices"]["consultado"] == 1
+
+
 @pytest.mark.parametrize("estado_http", [429, 500])
 def test_cobertura_registra_error_http_del_indice(monkeypatch, estado_http):
     cobertura_guardada = []
