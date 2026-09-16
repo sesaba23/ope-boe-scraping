@@ -11,9 +11,15 @@ from scripts.audit.auditar_bomberos_paso8_40 import state,sha,git,summary
 from scripts.audit.auditar_criterio_dry_run_global_paso8_19 import auditar as gate
 DB=ROOT/'datos/boe.db';INF=ROOT/'informes/normalizacion_puestos';OUT=INF/'fase8_paso43_bibliotecas_archivos.json';CSV=INF/'fase8_paso43_bibliotecas_archivos_detalle.csv'
 C={'Bibliotecario':{'bibliotecario','bibliotecario/a','bibliotecaria','bibliotecaria/o'},'Auxiliar de Biblioteca':{'auxiliar de biblioteca','auxiliar biblioteca'}}
+def _source_ids():
+ p=INF/'fase8_paso43_bibliotecas_archivos_detalle.csv'
+ if not p.exists(): return None
+ with p.open(encoding='utf-8',newline='') as f:return {int(r['id']) for r in csv.DictReader(f) if r.get('id')}
 def select():
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
- try:return [dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)') if re.search(r'\bbibliotec|\barchivo',norm._clave(r['puesto'])) and r['puesto_normalizado'] in {r['puesto'],'Bibliotecario','Auxiliar de Biblioteca','Archivero'}]
+ try:
+  ids=_source_ids(); rows=[dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)')]
+  return [r for r in rows if (r['oposicion_id'] in ids if ids is not None else re.search(r'\bbibliotec|\barchivo',norm._clave(r['puesto'])) and r['puesto_normalizado'] in {r['puesto'],'Bibliotecario','Auxiliar de Biblioteca','Archivero'})]
  finally:c.close()
 def fam(k):
  if any(x in k for x in ('director','jefe','responsable','encargado','coordinador')):return 'MANDOS'

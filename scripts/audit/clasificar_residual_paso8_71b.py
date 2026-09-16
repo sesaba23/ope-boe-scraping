@@ -8,6 +8,16 @@ ROOT=Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
 from scripts.audit.auditar_bomberos_paso8_40 import state,sha,git
 INF=ROOT/'informes/normalizacion_puestos';OUT=INF/'fase8_paso71_clasificacion_residual.json';COV=INF/'fase8_paso71_cobertura_residual.json';CSV=INF/'fase8_paso71_familias_residuales.csv';RANK=INF/'fase8_paso71_ranking_familias.json'
+# Tokens que no identifican por sí mismos un puesto.  Se aplican únicamente
+# al escoger la clave de familia (nunca al texto bruto ni al normalizador).
+ARTICULOS_INICIALES={'la','las','el','los','una','un'}
+PREPOSICIONES_INICIALES={'de','del','en','para','por','con','sin','a','al'}
+MARCADORES_DOCUMENTALES={
+ 'plaza','plantilla','convocatoria','oferta','relacion','relación','misma',
+ 'mismo','especialidad','comprendidas','convocadas','siguientes','reservadas',
+ 'cuales','cual','instancias','bases','cobertura','autoridad','conserjerias',
+ 'conserjerías',
+}
 def num(x):
  try:return float(x or 0)
  except:return 0.0
@@ -17,13 +27,22 @@ def familia(p):
  if any(x in k for x in ('cuerpo','escala','subescala')):return 'CUERPOS_ESCALAS'
  if any(x in k for x in ('jefe','jefa','director','directora','coordinador','responsable')):return 'MANDOS_RESPONSABILIDAD'
  if any(x in k for x in (' y ','/','-')):return 'PUESTOS_COMPUESTOS'
- return k.split()[0].upper()
+ tokens=k.split()
+ if tokens and tokens[0] in PREPOSICIONES_INICIALES:
+  return 'SIN_CLAVE_PROFESIONAL'
+ while tokens and tokens[0] in ARTICULOS_INICIALES:
+  tokens.pop(0)
+ if not tokens or tokens[0] in MARCADORES_DOCUMENTALES:
+  return 'SIN_CLAVE_PROFESIONAL'
+ return tokens[0].upper()
 def ids_auditados():
  ids=set()
  for p in INF.glob('fase8_paso*.json'):
-  if 'paso70' in p.name or 'paso71' in p.name or 'cierre' in p.name: continue
+  if any(x in p.name for x in ('paso70','paso71','paso72','cierre')): continue
   try:r=json.loads(p.read_text())
   except Exception:continue
+  if not isinstance(r, dict):
+   continue
   if isinstance(r.get('filas'),list):
    ids.update(x.get('id',x.get('oposicion_id')) for x in r['filas'] if isinstance(x,dict) and x.get('id',x.get('oposicion_id')) is not None)
  return ids

@@ -156,10 +156,16 @@ def auditar() -> dict:
         )]
     finally:
         conexion.close()
-    seleccionadas = [fila for fila in todas if fila["oposicion_id"] not in ids_docencia and "psicolog" in norm._clave(fila["puesto"] or "") and (
-        fila["puesto"] == fila["puesto_normalizado"] or
-        (norm._clave(fila["puesto"]) in VARIANTES_GENERICAS and fila["puesto_normalizado"] == "Psicólogo")
-    )]
+    fuente = INF / "fase8_paso61_psicologia_detalle.csv"
+    if fuente.exists():
+        with fuente.open(encoding="utf-8", newline="") as f:
+            ids_fuente = {int(r["id"]) for r in csv.DictReader(f) if r.get("id")}
+        seleccionadas = [fila for fila in todas if fila["oposicion_id"] in ids_fuente]
+    else:
+        seleccionadas = [fila for fila in todas if fila["oposicion_id"] not in ids_docencia and "psicolog" in norm._clave(fila["puesto"] or "") and (
+            fila["puesto"] == fila["puesto_normalizado"] or
+            (norm._clave(fila["puesto"]) in VARIANTES_GENERICAS and fila["puesto_normalizado"] == "Psicólogo")
+        )]
     filas = [ficha(fila) for fila in seleccionadas]
     clases = {clase: [fila for fila in filas if fila["clasificacion"] == clase] for clase in "ABCD"}
     conexion = sqlite3.connect(DB)

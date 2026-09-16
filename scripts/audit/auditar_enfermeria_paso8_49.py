@@ -29,9 +29,15 @@ def seleccionar():
     conexion = sqlite3.connect(DB)
     conexion.row_factory = sqlite3.Row
     try:
-        return [dict(fila) for fila in conexion.execute(
+        filas = [dict(fila) for fila in conexion.execute(
             'select o.*, p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)'
-        ) if 'enfermer' in norm._clave(fila['puesto']) and fila['puesto_normalizado'] == fila['puesto']]
+        )]
+        fuente = INF / 'fase8_paso49_enfermeria_detalle.csv'
+        if fuente.exists():
+            with fuente.open(encoding='utf-8', newline='') as f:
+                ids = {int(r['id']) for r in csv.DictReader(f) if r.get('id')}
+            return [fila for fila in filas if fila['oposicion_id'] in ids]
+        return [fila for fila in filas if 'enfermer' in norm._clave(fila['puesto']) and fila['puesto_normalizado'] == fila['puesto']]
     finally:
         conexion.close()
 

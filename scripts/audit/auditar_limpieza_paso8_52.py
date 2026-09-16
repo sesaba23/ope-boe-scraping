@@ -13,7 +13,13 @@ DB=ROOT/'datos/boe.db'; INF=ROOT/'informes/normalizacion_puestos'; OUT=INF/'fase
 C={'Operario de Limpieza':{'operario de limpieza','operario/a de limpieza'},'Peón de Limpieza':{'peon de limpieza','peon/a de limpieza'},'Encargado de Limpieza':{'encargado de limpieza','encargado/a de limpieza'},'Empleado de Limpieza':{'empleado de limpieza','empleado/a de limpieza'}}
 def seleccionar():
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
- try:return [dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)') if 'limpieza' in norm._clave(r['puesto']) and r['puesto_normalizado']==r['puesto']]
+ try:
+  rows=[dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)')]
+  src=INF/'fase8_paso52_limpieza_detalle.csv'
+  if src.exists():
+   with src.open(encoding='utf-8',newline='') as f: ids={int(x['id']) for x in csv.DictReader(f) if x.get('id')}
+   return [r for r in rows if r['oposicion_id'] in ids]
+  return [r for r in rows if 'limpieza' in norm._clave(r['puesto']) and r['puesto_normalizado']==r['puesto']]
  finally:c.close()
 def familia(k,canon):
  if canon:return {'Operario de Limpieza':'OPERARIO_LIMPIEZA','Peón de Limpieza':'PEON_LIMPIEZA','Encargado de Limpieza':'MANDOS_RESPONSABLES','Empleado de Limpieza':'EMPLEADO_LIMPIEZA'}[canon]

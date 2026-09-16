@@ -50,5 +50,5 @@ def test_sqlite_y_normalizador_intactos():
     after = (db.stat().st_size, db.stat().st_mtime_ns, hashlib.sha256(db.read_bytes()).hexdigest())
     assert before == after
     assert result["sqlite_modificada"] is False
-    assert result["sqlite_precheck"]["data_version"] == "50"
+    assert result["sqlite_precheck"]["data_version"] == "62"
     assert result["normalizador_modificado"] is False

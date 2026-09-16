@@ -28,7 +28,18 @@ def ficha(r):
  k=norm._clave(r['puesto']);f=fam(k);cl='A' if k in V else ('D' if f in {'JEFATURA_COCINA','CUERPOS_ESCALAS','PUESTOS_COMPUESTOS'} else 'C')
  return {'id':r['oposicion_id'],'puesto':r['puesto'],'puesto_normalizado':r['puesto_normalizado'],'normalizar_puesto_actual':norm.normalizar_puesto(r['puesto']),'plazas':r['num_plazas'],'anio':str(r['fecha_boe'])[:4],'administracion':r['administracion'],'ambito':r['ambito'],'microfamilia':f,'categoria':f,'nivel':None,'especialidad':'reposteria' if f=='REPOSTERIA' else None,'puesto_compuesto':f=='PUESTOS_COMPUESTOS','mando':f=='JEFATURA_COCINA','clasificacion':cl,'canon_propuesto':'Cocinero' if cl=='A' else None,'evidencia':'literal completo; no absorbe auxiliares, pinches, mandos, ámbitos ni compuestos'}
 def auditar():
- g0,s0,n0=git(),state(),sha(ROOT/'normalizacion_puestos.py');_,_,rs=rows();fs=[ficha(r) for r in rs if 'cociner' in norm._clave(r['puesto'])]
+ g0,s0,n0=git(),state(),sha(ROOT/'normalizacion_puestos.py');_,_,rs=rows()
+ ids=None; src=INF/'fase8_paso67_cocina_detalle.csv'
+ if src.exists():
+  with src.open(encoding='utf-8',newline='') as h: ids={int(x['id']) for x in csv.DictReader(h) if x.get('id')}
+  if len(ids) < 345:
+   try: ids={int(x['id']) for x in json.loads((INF/'fase8_paso67_cocina.json').read_text(encoding='utf-8')).get('filas',[]) if x.get('id')}
+   except (OSError, ValueError, TypeError): pass
+  if ids:
+   c0=sqlite3.connect(DB); c0.row_factory=sqlite3.Row
+   try: rs=[dict(x) for x in c0.execute('select * from oposiciones') if x['oposicion_id'] in ids]
+   finally: c0.close()
+ fs=[ficha(r) for r in rs if (r['oposicion_id'] in ids if ids is not None else 'cociner' in norm._clave(r['puesto']))]
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
  try:all=[dict(r) for r in c.execute('select oposicion_id,puesto,puesto_normalizado,num_plazas from oposiciones')]
  finally:c.close()

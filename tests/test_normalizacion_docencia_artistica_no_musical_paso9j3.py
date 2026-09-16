@@ -16,8 +16,10 @@ def test_canoniza_especialidades_aprobadas():
 
 
 def test_no_captura_falsos_positivos_ni_casos_contextuales():
-    for texto in ("Pintor municipal", "Bailarín", "Actor", "Monitor de Danza", "Técnico de Diseño", "Maestro de Taller de Artes Plásticas y Diseño", "profesorado de monitor/a de Danza"):
+    for texto in ("Pintor municipal", "Bailarín", "Actor", "Monitor de Danza", "Técnico de Diseño", "Maestro de Taller de Artes Plásticas y Diseño"):
         assert normalizar_puesto(texto) == texto
+    # PASO71-A capitaliza la inicial sin convertir el contexto en una profesión.
+    assert normalizar_puesto("profesorado de monitor/a de Danza") == "Profesorado de monitor/a de Danza"
 
 
 def test_especialidad_idempotente_y_contextual_preexistente():

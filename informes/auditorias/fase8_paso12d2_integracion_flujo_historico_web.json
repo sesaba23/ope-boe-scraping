@@ -12,21 +12,21 @@
       "fechas": [
         "2004/01/01"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     },
     {
       "extractor": "moderno",
       "fechas": [
         "2025/06/28"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     },
     {
       "extractor": "moderno",
       "fechas": [
         "2026/09/12"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     }
   ],
   "despacho_orden_inverso": [
@@ -35,37 +35,37 @@
       "fechas": [
         "2026/09/12"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     },
     {
       "extractor": "moderno",
       "fechas": [
         "2025/06/28"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     },
     {
       "extractor": "historico",
       "fechas": [
         "2004/01/01"
       ],
-      "ruta": "/private/tmp/boe-paso8-12d2-uykl7b9i/boe.db"
+      "ruta": "/private/tmp/boe-paso8-12d2-4bhd5sqp/boe.db"
     }
   ],
   "atomicidad": "cada fecha se invoca como unidad independiente; un error se propaga y detiene el despacho posterior",
   "progreso": "se reutiliza el callback existente; sin porcentaje inventado",
-  "sha_copia_antes": "c6beb16d1af934396c6994dd8320b3219361d2bed52b2452f8eded46442a8dc7",
-  "sha_copia_despues": "c6beb16d1af934396c6994dd8320b3219361d2bed52b2452f8eded46442a8dc7",
+  "sha_copia_antes": "dc2cb9b60f93e9c51d9d96721cac0dd0960dcf1eb248f5e8161c4da7a5f093af",
+  "sha_copia_despues": "dc2cb9b60f93e9c51d9d96721cac0dd0960dcf1eb248f5e8161c4da7a5f093af",
   "copia_inmutable": true,
   "estado_antes": {
     "schema_version": "6",
-    "data_version": "50",
+    "data_version": "62",
     "integrity_check": "ok",
     "foreign_key_check": []
   },
   "estado_despues": {
     "schema_version": "6",
-    "data_version": "50",
+    "data_version": "62",
     "integrity_check": "ok",
     "foreign_key_check": []
   },

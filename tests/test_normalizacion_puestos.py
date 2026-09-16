@@ -107,6 +107,25 @@ def test_preprocesado_compartido_clasifica_slash_y_descriptor_de_personal():
 
 @pytest.mark.parametrize(
     ("entrada", "esperado"),
+    [("Oficial", "Oficial"), ("oficial", "Oficial"), ("Oficial/a", "Oficial"), ("oficial/a", "Oficial"),
+     ("Auxiliar", "Auxiliar"), ("auxiliar", "Auxiliar"), ("Agente", "Agente"), ("agente", "Agente")],
+)
+def test_paso73_primer_bloque_literales_a_aprobados(entrada, esperado):
+    assert normalizar_puesto(entrada) == esperado
+    assert normalizar_puesto(esperado) == esperado
+
+
+@pytest.mark.parametrize(
+    "entrada",
+    ["Oficial de Jardinería", "Oficial de Policía Local", "Agente Tributario", "Técnico de Medio Ambiente",
+     "Auxiliar Administrativo", "Agente Primero de Policía Local", "Ingeniero Técnico Industrial"],
+)
+def test_paso73_preserva_especialidades_niveles_y_destinos(entrada):
+    assert normalizar_puesto(entrada) == entrada
+
+
+@pytest.mark.parametrize(
+    ("entrada", "esperado"),
     [
         ("Policía Municipal", "Policía Local"),
         ("Agente de la Policía Municipal", "Policía Local"),

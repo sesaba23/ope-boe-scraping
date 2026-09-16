@@ -29,7 +29,18 @@ def ficha(r):
  k=norm._clave(r['puesto']); f=familia(k); c='A' if k in V else ('D' if f in {'MANDOS','CUERPOS_ESCALAS','PUESTOS_COMPUESTOS'} else 'C')
  return {'id':r['oposicion_id'],'puesto':r['puesto'],'puesto_normalizado':r['puesto_normalizado'],'normalizar_puesto_actual':norm.normalizar_puesto(r['puesto']),'plazas':r['num_plazas'],'anio':str(r['fecha_boe'])[:4],'administracion':r['administracion'],'ambito':r['ambito'],'escala':r['escala'],'subescala':r['subescala'],'clase':r['clase'],'microfamilia':f,'profesion_base':'Trabajador Social','especialidad':None,'nivel':'técnico' if f=='TECNICO_TRABAJO_SOCIAL' else None,'funcion':'mando' if f=='MANDOS' else None,'cuerpo_escala':f=='CUERPOS_ESCALAS','puesto_compuesto':f=='PUESTOS_COMPUESTOS','mando':f=='MANDOS','clasificacion':c,'canon_propuesto':'Trabajador Social' if c=='A' else None,'evidencia':'literal completo; asistentes, técnicos, ámbitos y compuestos no se equiparan'}
 def auditar():
- g0,s0,n0=git(),state(),sha(ROOT/'normalizacion_puestos.py');_,_,rs=rows(); fs=[ficha(r) for r in rs if 'trabajador social' in norm._clave(r['puesto']) or 'trabajadora social' in norm._clave(r['puesto'])]
+ g0,s0,n0=git(),state(),sha(ROOT/'normalizacion_puestos.py');_,_,rs=rows()
+ src=INF/'fase8_paso64_trabajo_social_detalle.csv'; ids=None
+ if src.exists():
+  with src.open(encoding='utf-8',newline='') as h: ids={int(x['id']) for x in csv.DictReader(h) if x.get('id')}
+  if len(ids) < 496:
+   try: ids={int(x['id']) for x in json.loads((INF/'fase8_paso64_trabajo_social.json').read_text(encoding='utf-8')).get('filas',[]) if x.get('id')}
+   except (OSError, ValueError, TypeError): pass
+  if ids:
+   c0=sqlite3.connect(DB); c0.row_factory=sqlite3.Row
+   try: rs=[dict(x) for x in c0.execute('select * from oposiciones') if x['oposicion_id'] in ids]
+   finally: c0.close()
+ fs=[ficha(r) for r in rs if (r['oposicion_id'] in ids if ids is not None else 'trabajador social' in norm._clave(r['puesto']) or 'trabajadora social' in norm._clave(r['puesto']))]
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
  try:allrows=[dict(r) for r in c.execute('select oposicion_id,puesto,puesto_normalizado,num_plazas from oposiciones')]
  finally:c.close()

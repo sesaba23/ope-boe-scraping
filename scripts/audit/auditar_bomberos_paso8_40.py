@@ -19,9 +19,15 @@ def state():
 def git():
  r=lambda *a:subprocess.check_output(['git',*a],cwd=ROOT,text=True).strip();return {'rama':r('branch','--show-current'),'head':r('rev-parse','HEAD'),'origin_main':r('rev-parse','origin/main'),'status_short':r('status','--short'),'diff_stat':r('diff','--stat')}
 def summary(rs):return {'filas':len(rs),'plazas':sum(float(r.get('plazas',r.get('num_plazas',0)) or 0) for r in rs),'ids':sorted(r.get('id',r.get('oposicion_id')) for r in rs),'denominaciones':len({r['puesto'] for r in rs}),'administraciones':sorted({r.get('administracion') or '' for r in rs}),'anios':sorted({str(r.get('anio',r.get('fecha_boe','')))[:4] for r in rs})}
+def _source_ids():
+ p=INF/'fase8_paso40_bomberos_detalle.csv'
+ if not p.exists(): return None
+ with p.open(encoding='utf-8',newline='') as f:return {int(r['id']) for r in csv.DictReader(f) if r.get('id')}
 def seleccionar():
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
- try:return [dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)') if re.search(r'\bbombero',norm._clave(r['puesto'])) and r['puesto_normalizado'] in {r['puesto'],'Bombero','Bombero-Conductor'}]
+ try:
+  ids=_source_ids(); rows=[dict(r) for r in c.execute('select o.*,p.titulo_original from oposiciones o left join publicaciones p using(publicacion_id)')]
+  return [r for r in rows if (r['oposicion_id'] in ids if ids is not None else re.search(r'\bbombero',norm._clave(r['puesto'])) and r['puesto_normalizado'] in {r['puesto'],'Bombero','Bombero-Conductor'})]
  finally:c.close()
 def micro(r):
  k=norm._clave(r['puesto'])

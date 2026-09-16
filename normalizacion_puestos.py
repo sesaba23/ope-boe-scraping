@@ -92,6 +92,14 @@ REGLAS_TRABAJO_SOCIAL = {
     "Trabajador Social": {"trabajador social", "trabajadora social", "trabajador/a social", "trabajadora/or social", "trabajador-a social"},
 }
 REGLAS_COCINA = {"Cocinero": {"cocinero", "cocinera", "cocinero/a", "cocinera/o", "cocinero-a"}}
+# PASO 73: primer bloque semántico de PASO 72.  Se limita a las formas
+# completas aprobadas; no usa prefijos, por lo que no absorbe oficiales,
+# auxiliares o agentes con especialidad, destino, mando o función añadida.
+REGLAS_PRIMER_BLOQUE = {
+    "Oficial": {"oficial", "oficial/a"},
+    "Auxiliar": {"auxiliar"},
+    "Agente": {"agente"},
+}
 TILDES_ORTOGRAFICAS_SEGURAS = {
     "tecnico": "técnico", "tecnica": "técnica", "tecnicos": "técnicos", "tecnicas": "técnicas",
     "medico": "médico", "medica": "médica", "psicologo": "psicólogo", "psicologa": "psicóloga",
@@ -522,6 +530,17 @@ def _normalizar_cocina(texto):
     return next((canon for canon, variantes in REGLAS_COCINA.items() if clave in variantes), None)
 
 
+def _normalizar_primer_bloque(texto):
+    """Canoniza sólo los literales aislados A aprobados en PASO 72.
+
+    Los conjuntos A_NUEVO de PASO 72-C son variantes ortográficas/género ya
+    resueltas por reglas previas; aquí no se generalizan sus prefijos para no
+    perder especialidades, niveles, mandos ni destinos.
+    """
+    clave = _clave(texto)
+    return next((canon for canon, variantes in REGLAS_PRIMER_BLOQUE.items() if clave in variantes), None)
+
+
 def _normalizar_ortografia_puesto(texto):
     """Corrige sólo tokens OA auditables y la primera letra alfabética."""
     def tilde(coincidencia):
@@ -628,6 +647,9 @@ def _normalizar_puesto_una_vez(texto):
     cocina = _normalizar_cocina(texto)
     if cocina:
         return cocina
+    primer_bloque = _normalizar_primer_bloque(texto)
+    if primer_bloque:
+        return primer_bloque
     educador_infantil = _normalizar_educador_infantil(texto)
     if educador_infantil:
         return educador_infantil
