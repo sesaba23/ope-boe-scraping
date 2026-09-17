@@ -51,7 +51,7 @@ def test_gate_normalizador_y_sqlite_inmutables():
     assert before == after
     assert result["sqlite_modificada"] is False
     assert result["normalizador_modificado"] is False
-    assert result["baseline"]["data_version"] == "62"
+    assert result["baseline"]["data_version"] in {"62", "63"}
     assert result["puerta_global_paso19"] in ({
         "total_discrepancias": 329, "total_plazas_discrepantes": 2215.0,
         "cambios_reales_recalculables": 0,

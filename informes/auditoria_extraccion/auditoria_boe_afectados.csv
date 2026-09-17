@@ -1,0 +1,26 @@
+boe,fecha_min,fecha_max,puestos_numericos,filas_total,otros_candidatos,filas_afectadas,fuente_oficial,revision_oficial,evidencia
+BOE-A-2004-21227,2004-12-17,2004-12-17,0,0,1,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2004-21227,COMPLETA,"HTML oficial revisado: 'Del total de las plazas' aparece en narrativa, no como denominación profesional."
+BOE-A-2019-7651,2019-05-23,2019-05-23,0,0,1,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2019-7651,COMPLETA,HTML oficial revisado: 'Del total de la convocatoria' es narrativa y el anexo contiene las plazas docentes.
+BOE-A-2020-10185,2020-09-03,2020-09-03,0,0,1,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2020-10185,COMPLETA,HTML oficial revisado: 'Del total de la convocatoria' es narrativa y el anexo contiene las plazas docentes.
+BOE-A-2021-14357,2021-09-01,2021-09-01,41,0,0,41,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-14357,COMPLETA,"HTML oficial revisado: las denominaciones (SERVICIO INTERIOR, OFICINA GENERICO, etc.) preceden a la columna Cuerpo con códigos 0919/0920."
+BOE-A-2021-3957,2021-03-13,2021-03-13,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-3957,COMPLETA,HTML oficial revisado: la denominación INSPECTOR/INSPECTORA DE TRABAJO Y S.S. precede al código de cuerpo 1502.
+BOE-A-2022-10576,2022-06-27,2022-06-27,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-10576,COMPLETA,"HTML oficial revisado: la tabla usa N.º orden, N.º plazas, Código puesto y Denominación; el 12 persistido es N.º orden."
+BOE-A-2022-10890,2022-07-01,2022-07-01,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-10890,COMPLETA,"HTML oficial revisado: la tabla usa N.º orden, N.º plazas, Código puesto y Denominación; el 13 persistido es N.º orden."
+BOE-A-2022-11535,2022-07-12,2022-07-12,3,0,0,3,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-11535,COMPLETA,HTML oficial revisado: las filas JURISTA/PSICOLOGO preceden a la columna Cuerpo 0902.
+BOE-A-2022-11655,2022-07-14,2022-07-14,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-11655,COMPLETA,"HTML oficial revisado: concurso específico del ICAC; el valor numérico aislado procede de una columna de identificación/código, no de una denominación."
+BOE-A-2022-16054,2022-10-03,2022-10-03,0,5,0,5,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-16054,COMPLETA,HTML oficial revisado
+BOE-A-2022-17860,2022-11-01,2022-11-01,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-17860,COMPLETA,HTML oficial revisado: ABOGADO/ABOGADA DEL ESTADO precede a Cuerpo 0903.
+BOE-A-2022-20930,2022-12-12,2022-12-12,0,1,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-20930,COMPLETA,HTML oficial revisado
+BOE-A-2022-21597,2022-12-20,2022-12-20,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-21597,COMPLETA,HTML oficial revisado: JEFE/JEFA DE EQUIPO INSPECCIÓN precede a Cuerpo 1502.
+BOE-A-2022-22774,2022-12-28,2022-12-28,0,6,0,6,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2022-22774,COMPLETA,HTML oficial revisado
+BOE-A-2025-18984,2025-09-25,2025-09-25,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-18984,COMPLETA,HTML oficial revisado: ABOGADO/ABOGADA DEL ESTADO precede a Cuerpo 0903.
+BOE-A-2025-22543,2025-11-07,2025-11-07,605,0,0,605,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-22543,COMPLETA,HTML oficial revisado (líneas de tabla): N.º orden | Puesto | Denominación; 50370641 | OFICINA DE JUSTICIA DE ADRA.
+BOE-A-2025-22547,2025-11-07,2025-11-07,123,0,0,123,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-22547,COMPLETA,HTML oficial revisado (líneas de tabla): N.º orden | Puesto | Denominación; 50373058 | SERVICIO COMÚN DE TRAMITACIÓN.
+BOE-A-2025-22549,2025-11-07,2025-11-07,75,0,0,75,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-22549,COMPLETA,HTML oficial revisado (líneas de tabla): N.º orden | Puesto | Denominación; 50374820 | Servicio común de tramitación.
+BOE-A-2025-25739,2025-12-16,2025-12-16,0,0,1,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-25739,COMPLETA,HTML oficial revisado: Técnico/a Medio de Gestión Plazas Generales es una denominación legítima (7 plazas).
+BOE-A-2025-4444,2025-03-06,2025-03-06,0,1,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-4444,COMPLETA,HTML oficial revisado: la tabla de especialidades contiene etiqueta de total; el registro total 1.268 es agregado.
+BOE-A-2026-14682,2026-07-07,2026-07-07,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-14682,COMPLETA,HTML oficial revisado: Código puesto precede a Denominación; Cuerpo 0013 no es el puesto.
+BOE-A-2026-1572,2026-01-23,2026-01-23,2,0,0,2,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1572,COMPLETA,HTML oficial revisado: ADMINISTRADOR/SUBDIRECTOR precede a Cuerpo 0902/0913.
+BOE-A-2026-16861,2026-08-03,2026-08-03,1,0,0,1,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-16861,COMPLETA,HTML oficial revisado: INTERVENTOR/INTERVENTORA DELEGADO JEFE DE AREA precede a Cuerpo 1603.
+BOE-A-2026-2840,2026-02-07,2026-02-07,2,0,0,2,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-2840,COMPLETA,HTML oficial revisado: ADMINISTRADOR/SUBDIRECTOR precede a Cuerpo 0902/0913.
+BOE-A-2026-9631,2026-05-04,2026-05-04,3,0,0,3,https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-9631,COMPLETA,HTML oficial revisado: GESTOR/A DE SERVICIOS precede a Cuerpo 0913/0921.

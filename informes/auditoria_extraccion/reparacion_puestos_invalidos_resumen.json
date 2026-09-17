@@ -1,0 +1,54 @@
+{
+  "modo": "apply",
+  "initial": {
+    "filas": 109041,
+    "plazas": 332549
+  },
+  "after": {
+    "filas": 109025,
+    "plazas": 325914
+  },
+  "numeric_plazas": 1123,
+  "total_plazas": 6611,
+  "narrative_plazas": 24,
+  "exceso_estadistico_totales": 6611,
+  "filas_reextraidas": 25,
+  "numeric_reconstructed": 863,
+  "espurios_absent": 16,
+  "idempotente": false,
+  "legitimate_id": 102427,
+  "backup": "/Users/sergio/Desarrollo/web-scraping/boe/backups/sqlite/boe_pre_fase9_puestos_invalidos_20260916T195522Z.db",
+  "sqlite_sha_inicial": "dc2cb9b60f93e9c51d9d96721cac0dd0960dcf1eb248f5e8161c4da7a5f093af",
+  "sqlite_sha_final": "a17a2801352212e64dc3df853fd9f3bf42724419dfcf0ce6c974b44a6c31c18e",
+  "reduccion_bruta_plazas": 6635,
+  "exceso_estadistico_confirmado": 6611,
+  "narrativas_duplicadas": false,
+  "gates": {
+    "universo_879": true,
+    "reconstruccion_863": true,
+    "espurios_16": true,
+    "legitimo_conservado": true,
+    "integridad": true,
+    "idempotencia": true
+  },
+  "suite_completa": {
+    "comando": ".venv/bin/pytest -q",
+    "passed": 1484,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "warnings": 1,
+    "duracion_segundos": 2043.19
+  },
+  "primera_aplicacion": {
+    "updates": 863,
+    "deletes": 16,
+    "data_version": "62→63",
+    "backup": "/Users/sergio/Desarrollo/web-scraping/boe/backups/sqlite/boe_pre_fase9_puestos_invalidos_20260916T195522Z.db"
+  },
+  "segunda_pasada": {
+    "updates": 0,
+    "deletes": 0,
+    "idempotente": true
+  }
+}

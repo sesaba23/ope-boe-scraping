@@ -1,0 +1,29 @@
+{
+  "orden": [
+    "FIX EXTRACTOR",
+    "REPARACIÓN SQLITE",
+    "REGENERACIÓN ESTADÍSTICAS",
+    "TESTS DE REGRESIÓN"
+  ],
+  "fix_extractor": {
+    "modulo": "extraer_tablas_xml_boe.py",
+    "reglas": [
+      "resolver Denominación/Puesto por encabezado explícito",
+      "descartar filas agregadas por semántica, posición y suma",
+      "validar denominación textual antes de persistir"
+    ],
+    "no_blacklist_por_id": true
+  },
+  "recuperacion": {
+    "preferida": "A_REEXTRACCION_AUTOMATICA",
+    "totales": "C_ELIMINACION_FILA_ESPURIA",
+    "numericos": "A_REEXTRACCION_AUTOMATICA",
+    "dudosos": "revisión documental antes de mutar"
+  },
+  "restricciones_de_esta_auditoria": [
+    "no modificar SQLite",
+    "no modificar extractor productivo",
+    "no borrar registros",
+    "no cambiar data_version"
+  ]
+}

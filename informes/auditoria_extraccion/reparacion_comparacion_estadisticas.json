@@ -1,0 +1,37 @@
+{
+  "filas": {
+    "antes": 109041,
+    "despues": 109025,
+    "diferencia": -16
+  },
+  "plazas": {
+    "antes": 332549,
+    "despues": 325914,
+    "diferencia": -6635
+  },
+  "puestos_numericos_afectados": {
+    "antes": 863,
+    "despues": 0,
+    "diferencia": -863
+  },
+  "filas_agregadas": {
+    "antes": 13,
+    "despues": 0,
+    "diferencia": -13
+  },
+  "filas_narrativas": {
+    "antes": 3,
+    "despues": 0,
+    "diferencia": -3
+  },
+  "candidato_legitimo": {
+    "antes": 1,
+    "despues": 1,
+    "diferencia": 0
+  },
+  "plazas_espurias_totales_eliminadas": 6611,
+  "plazas_narrativas_eliminadas_sin_doble_contabilizacion": 24,
+  "exceso_estadistico_confirmado": 6611,
+  "reduccion_bruta_sqlite": 6635,
+  "explicacion": "La suma estadística bruta baja 6.635: 6.611 son totales agregados duplicados y 24 son registros narrativos espurios no duplicados; el exceso confirmado por doble contabilización es 6.611."
+}

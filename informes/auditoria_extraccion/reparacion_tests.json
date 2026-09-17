@@ -1,0 +1,24 @@
+{
+  "comando": ".venv/bin/pytest -q tests/test_auditoria_puestos_invalidos_pre_fase9.py tests/test_extraer_tablas_xml_boe.py tests/test_analizar_xml_boe.py tests/test_corpus_historico_2004.py tests/test_estadisticas.py tests/test_normalizacion_puestos.py tests/test_puestos_end_to_end.py tests/test_base_datos.py tests/test_consultas_boe.py tests/test_recalcular_puestos_normalizados.py",
+  "passed": 404,
+  "failed": 0,
+  "warnings": 0,
+  "segunda_pasada_reparacion": {
+    "updates": 0,
+    "deletes": 0,
+    "idempotente": true
+  },
+  "segunda_pasada_reextraccion": {
+    "cambios_adicionales": 0,
+    "casos": 879
+  },
+  "suite_completa": {
+    "comando": ".venv/bin/pytest -q",
+    "passed": 1484,
+    "failed": 0,
+    "skipped": 0,
+    "xfailed": 0,
+    "warnings": 1,
+    "duracion_segundos": 2043.19
+  }
+}

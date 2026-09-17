@@ -19,12 +19,23 @@ DOCUMENTOS = {
 }
 CAMPOS_RESULTADO = ["Puesto", "Num_plazas", "Escala", "Turno", "Sistema"]
 EQUIVALENCIAS = {
-    "Puesto": {"puesto", "denominacion", "denominacion del puesto", "categoria", "cuerpo", "escala", "especialidad", "categoria cuerpo escala tipo"},
-    "Num_plazas": {"plazas", "numero de plazas", "num de plazas", "n de plazas", "n o plazas", "vacantes", "numero de vacantes", "numero vacantes", "plazas vacantes"},
+    # Código, cuerpo, escala, nivel y grupo son atributos del puesto, no su
+    # denominación.  Se mantienen fuera de este conjunto para evitar que una
+    # celda numérica desplace a la denominación profesional.
+    "Puesto": {"puesto", "puesto de trabajo", "denominacion", "denominacion del puesto", "denominacion del puesto de trabajo", "categoria", "especialidad", "clase", "categoria cuerpo escala tipo"},
+    "Num_plazas": {"plazas", "numero de plazas", "num de plazas", "n de plazas", "n o plazas", "n plazas", "vacantes", "numero de vacantes", "numero vacantes", "plazas vacantes"},
     "Escala": {"escala", "categoria cuerpo escala tipo"},
     "Turno": {"turno"},
     "Sistema": {"sistema", "sistema selectivo"},
 }
+
+_PUESTO_PRIORIDAD = (
+    "denominacion del puesto de trabajo", "denominacion del puesto",
+    "denominacion", "puesto de trabajo", "especialidad", "categoria",
+    "clase", "puesto",
+)
+_CABECERAS_NO_DENOMINACION = {"codigo", "codigo pt", "n orden", "nº orden", "numero de orden", "cuerpo", "escala", "nivel", "grupo"}
+_ETIQUETA_TOTAL = re.compile(r"^(?:(?:n(?:[.]?[º°o]|[uú]?mero)?)\s+)?total(?:\s+de)?(?:\s+las?)?\s+plazas?\.?$", re.I)
 
 
 def _local(etiqueta):
@@ -123,12 +134,45 @@ def parsear_tablas_xml(contenido):
 
 def identificar_columnas(encabezados):
     columnas = {}
-    for indice, encabezado in enumerate(encabezados):
-        clave = _clave_encabezado(encabezado)
+    claves = [_clave_encabezado(encabezado) for encabezado in encabezados]
+    # Si existe una denominación explícita, gana siempre sobre el encabezado
+    # genérico «Puesto» (que en concursos suele ser un código).
+    for clave in _PUESTO_PRIORIDAD:
+        if clave in claves:
+            columnas["Puesto"] = claves.index(clave)
+            break
+    if "Puesto" not in columnas:
+        # Las tablas oficiales suelen anteponer «Centro directivo» o
+        # «Centro» a la cabecera, sin cambiar el significado de
+        # «denominación puesto de trabajo».
+        for indice, clave in enumerate(claves):
+            if "denominacion" in clave and "puesto" in clave:
+                columnas["Puesto"] = indice
+                break
+    # Algunas convocatorias docentes sólo ofrecen la cabecera compuesta
+    # «Categoría/Cuerpo/Escala-Tipo». Se conserva como respaldo contextual,
+    # pero nunca desplaza una denominación explícita.
+    if "Puesto" not in columnas and "categoria cuerpo escala tipo" in claves:
+        columnas["Puesto"] = claves.index("categoria cuerpo escala tipo")
+    for indice, clave in enumerate(claves):
         for campo, equivalentes in EQUIVALENCIAS.items():
+            if campo == "Puesto":
+                continue
             if clave in equivalentes and campo not in columnas:
                 columnas[campo] = indice
     return columnas
+
+
+def _es_fila_agregada(fila, columnas):
+    """Reconoce etiquetas de total sólo cuando la fila tiene forma agregada."""
+    textos = [normalizar_texto(valor) for valor in fila if normalizar_texto(valor)]
+    if not textos or "Num_plazas" not in columnas:
+        return False
+    etiqueta = next((valor for valor in textos if _ETIQUETA_TOTAL.fullmatch(valor)), None)
+    if etiqueta is None:
+        return False
+    indice = columnas.get("Num_plazas")
+    return indice is not None and indice < len(fila) and _entero_positivo(fila[indice]) is not None
 
 
 def estructurar_grupos_tabla(tabla):
@@ -176,6 +220,8 @@ def extraer_resultados_tabla(tabla):
         return []
     resultados, contexto = [], None
     for fila in filas:
+        if _es_fila_agregada(fila, columnas):
+            continue
         valor = lambda campo: normalizar_texto(fila[columnas[campo]]) if campo in columnas and columnas[campo] < len(fila) else None
         puesto = valor("Puesto")
         # Totales y etiquetas genéricas de sección no son denominaciones

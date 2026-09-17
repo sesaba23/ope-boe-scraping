@@ -6,5 +6,5 @@ def test_auditoria_incremental_read_only(tmp_path):
  assert d['sqlite_real_modificada'] is False and 'fechas_completadas' in d['contrato_api']
  # The project baseline advances monotonically as later FASE 8 migrations land;
  # retain historical versions while accepting the current audited baseline.
- assert json.loads((tmp_path/'informe.json').read_text())['baseline']['data_version'] in {'47', '48', '49', '50', '62'}
+ assert json.loads((tmp_path/'informe.json').read_text())['baseline']['data_version'] in {'47', '48', '49', '50', '62', '63'}
  assert hashlib.sha256(p.read_bytes()).hexdigest()==antes

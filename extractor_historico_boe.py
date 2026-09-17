@@ -540,6 +540,11 @@ def extraer_campos_bloque(bloque):
         r"^\s*([A-ZÁÉÍÓÚÑ][^.;:\n]{2,80})\.\s*Personal\s+(?:funcionario|laboral)",
     )
     puesto = _buscar_primero(patrones_puesto, texto, "Puesto", lambda x: _normalizar(x), "MEDIA")
+    # «Del total de las plazas/convocatoria» es una frase narrativa, no una
+    # denominación.  Se descarta sólo la coincidencia completa para no
+    # eliminar nombres legítimos que contengan «plazas».
+    if puesto and re.fullmatch(r"del\s+total\s+de\s+(?:las\s+plazas|la\s+convocatoria)\.?", puesto["valor"], re.I):
+        puesto = None
     if puesto:
         evidencias.append(puesto)
     for campo, patron in (
@@ -579,6 +584,8 @@ def extraer_pares_denominacion_cantidad(bloque):
         if cantidad is None:
             continue
         puesto = _normalizar(hallazgo.group("puesto"))
+        if re.fullmatch(r"del\s+total\s+de\s+(?:las\s+plazas|la\s+convocatoria)\.?", puesto, re.I):
+            continue
         pares.append((puesto, cantidad, hallazgo.group(0)))
     return pares
 

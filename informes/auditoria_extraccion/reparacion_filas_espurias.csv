@@ -1,0 +1,17 @@
+id,boe,texto,plazas,tipo,duplicacion,motivo_eliminacion
+44634,BOE-A-2022-16054,N.º total de plazas.,1532,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+44643,BOE-A-2022-16054,N.º total de plazas.,44,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+44664,BOE-A-2022-16054,N.º total de plazas.,22,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+44673,BOE-A-2022-16054,N.º total de plazas.,1298,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+44690,BOE-A-2022-16054,N.º total de plazas.,260,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+47715,BOE-A-2022-20930,N.º total de plazas.,183,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51012,BOE-A-2022-22774,N.º total de plazas.,132,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51017,BOE-A-2022-22774,N.º total de plazas.,4,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51025,BOE-A-2022-22774,N.º total de plazas.,58,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51055,BOE-A-2022-22774,N.º total de plazas.,1113,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51060,BOE-A-2022-22774,N.º total de plazas.,9,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+51067,BOE-A-2022-22774,N.º total de plazas.,688,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+95102,BOE-A-2025-4444,N.º total de plazas.,1268,TOTAL_ROWS,SI,Fila agregada; sus componentes ya están persistidos
+4150,BOE-A-2004-21227,Del total de las plazas,16,NARRATIVE_ROW,NO,Narrativa capturada como puesto; no es denominación profesional
+31809,BOE-A-2019-7651,Del total de la convocatoria,2,NARRATIVE_ROW,NO,Narrativa capturada como puesto; no es denominación profesional
+34855,BOE-A-2020-10185,Del total de la convocatoria,6,NARRATIVE_ROW,NO,Narrativa capturada como puesto; no es denominación profesional
