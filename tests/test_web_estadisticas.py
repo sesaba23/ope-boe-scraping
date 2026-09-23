@@ -162,6 +162,73 @@ def test_navegacion_principal_incluye_acerca_y_contacto(cliente):
     assert 'aria-label="Información legal y de contacto"' in html
 
 
+def test_menu_principal_conserva_enlaces_y_contrato_accesible(cliente):
+    pagina = cliente.get("/").get_data(as_text=True)
+    boton = re.search(r'<button class="site-menu-button"[^>]*>(.*?)</button>', pagina, re.DOTALL)
+    navegacion = re.search(r'<nav id="site-navigation"[^>]*>(.*?)</nav>', pagina, re.DOTALL)
+
+    assert boton and navegacion
+    assert 'type="button"' in boton.group(0)
+    assert 'aria-expanded="false"' in boton.group(0)
+    assert 'aria-controls="site-navigation"' in boton.group(0)
+    assert 'aria-label="Abrir menú de navegación"' in boton.group(0)
+    assert re.sub(r"<[^>]+>", "", boton.group(1)).strip() == "☰"
+    assert 'aria-label="Principal"' in navegacion.group(0)
+    assert re.findall(r'<a\b', navegacion.group(1)) == ["<a"] * 7
+    for texto in ("Inicio", "Oposiciones", "Estadísticas", "Cobertura", "Administración", "Acerca de", "Contacto"):
+        assert f">{texto}</a>" in navegacion.group(1)
+
+
+@pytest.mark.parametrize("ruta, texto", [
+    ("/", "Inicio"),
+    ("/oposiciones", "Oposiciones"),
+    ("/estadisticas", "Estadísticas"),
+])
+def test_menu_principal_preserva_estado_activo(cliente, ruta, texto):
+    pagina = cliente.get(ruta).get_data(as_text=True)
+    navegacion = pagina.split('<nav id="site-navigation"', 1)[1].split("</nav>", 1)[0]
+    assert re.search(rf'aria-current="page"[^>]*>{re.escape(texto)}</a>', navegacion)
+
+
+def test_menu_responsive_tiene_breakpoint_independiente_y_fallback(cliente):
+    pagina = cliente.get("/").get_data(as_text=True)
+    css = cliente.get("/static/css/portal.css").get_data(as_text=True)
+
+    assert '<html lang="es" class="no-js">' in pagina
+    assert "@media (max-width: 960px)" in css
+    assert "@media (max-width: 720px)" in css
+    bloque_navegacion = css.split("@media (max-width: 960px)", 1)[1].split("@media (max-width: 720px)", 1)[0]
+    assert ".js .site-menu-button" in bloque_navegacion
+    assert ".js .site-navigation.is-open" in bloque_navegacion
+    assert "top: 100%" in bloque_navegacion
+    assert "max-height:" in bloque_navegacion and "overflow-y: auto" in bloque_navegacion
+    assert "overflow-x: hidden" not in css
+
+
+def test_componentes_secundarios_tienen_breakpoint_intermedio_de_tablet(cliente):
+    css = cliente.get("/static/css/portal.css").get_data(as_text=True)
+
+    assert "@media (max-width: 840px)" in css
+    bloque_tablet = css.split("@media (max-width: 840px)", 1)[1].split("@media (max-width: 720px)", 1)[0]
+    for selector in (".portal-cards", ".coverage-summary", ".coverage-layout", ".detail-grid", ".coverage-controls", ".export-options"):
+        assert selector in bloque_tablet
+    assert "overflow-x: hidden" not in bloque_tablet
+
+
+def test_menu_responsive_incluye_interaccion_de_teclado_y_reinicio(cliente):
+    javascript = cliente.get("/static/js/portal.js").get_data(as_text=True)
+
+    assert 'matchMedia("(min-width: 961px)")' in javascript
+    assert 'evento.key === "Escape"' in javascript
+    assert "botonMenu.focus()" in javascript
+    assert 'navegacion.querySelectorAll("a")' in javascript
+    assert "escritorio.matches" in javascript
+    assert 'window.addEventListener("resize", restablecerEnEscritorio)' in javascript
+    assert 'classList.replace("no-js", "js")' in javascript
+    assert "Abrir menú de navegación" in javascript
+    assert "Cerrar menú de navegación" in javascript
+
+
 def test_recursos_comunes_del_portal_estan_disponibles(cliente):
     assert cliente.get("/static/css/portal.css").status_code == 200
     assert cliente.get("/static/js/portal.js").status_code == 200

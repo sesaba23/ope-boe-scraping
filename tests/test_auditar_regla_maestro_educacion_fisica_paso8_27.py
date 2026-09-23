@@ -1,4 +1,5 @@
 import hashlib
+import sqlite3
 from pathlib import Path
 
 from normalizacion_puestos import normalizar_puesto
@@ -50,5 +51,8 @@ def test_sqlite_y_normalizador_intactos():
     after = (db.stat().st_size, db.stat().st_mtime_ns, hashlib.sha256(db.read_bytes()).hexdigest())
     assert before == after
     assert result["sqlite_modificada"] is False
-    assert result["sqlite_precheck"]["data_version"] in {"62", "63"}
+    with sqlite3.connect(db) as conexion:
+        metadata = dict(conexion.execute("SELECT clave, valor FROM metadata WHERE clave IN ('schema_version', 'data_version')"))
+    assert result["sqlite_precheck"]["schema_version"] == metadata["schema_version"]
+    assert result["sqlite_precheck"]["data_version"] == metadata["data_version"]
     assert result["normalizador_modificado"] is False

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import sqlite3
 from pathlib import Path
 
 from scripts.audit import auditar_funciones_docentes_compuestas_paso8_25 as audit
@@ -51,7 +52,10 @@ def test_gate_normalizador_y_sqlite_inmutables():
     assert before == after
     assert result["sqlite_modificada"] is False
     assert result["normalizador_modificado"] is False
-    assert result["baseline"]["data_version"] in {"62", "63"}
+    with sqlite3.connect(db) as conexion:
+        metadata = dict(conexion.execute("SELECT clave, valor FROM metadata WHERE clave IN ('schema_version', 'data_version')"))
+    assert result["baseline"]["schema_version"] == metadata["schema_version"]
+    assert result["baseline"]["data_version"] == metadata["data_version"]
     assert result["puerta_global_paso19"] in ({
         "total_discrepancias": 329, "total_plazas_discrepantes": 2215.0,
         "cambios_reales_recalculables": 0,

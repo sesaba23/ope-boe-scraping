@@ -12,7 +12,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from normalizacion_contextual_puestos import normalizar_puesto_efectivo
 
 BASELINE = Path("backups/sqlite/boe_20260912_162250_300318.db")
-ACTUAL = Path("datos/boe.db")
+# Este reconciliador verifica específicamente la transición histórica data 39→40.
+# La base operativa viva continúa evolucionando y no es un sustituto del snapshot.
+ACTUAL = Path("backups/sqlite/boe_20260912_181145_392696.db")
 SALIDA = Path("informes/normalizacion_puestos/fase8_paso11b_reconciliacion_baseline_logico.json")
 
 

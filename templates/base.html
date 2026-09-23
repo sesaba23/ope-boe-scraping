@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +11,8 @@
     <header class="site-header">
         <div class="site-shell site-header__content">
             <a class="site-brand" href="{{ url_for('inicio') }}">BuscadorBOE</a>
-            <button class="site-menu-button" type="button" aria-expanded="false" aria-controls="site-navigation">
-                <span class="visually-hidden">Abrir navegación</span><span aria-hidden="true">☰</span>
+            <button class="site-menu-button" type="button" aria-expanded="false" aria-controls="site-navigation" aria-label="Abrir menú de navegación">
+                <span aria-hidden="true">☰</span>
             </button>
             <nav id="site-navigation" class="site-navigation" aria-label="Principal">
                 <a href="{{ url_for('inicio') }}"{% if seccion_activa == 'inicio' %} aria-current="page"{% endif %}>Inicio</a>

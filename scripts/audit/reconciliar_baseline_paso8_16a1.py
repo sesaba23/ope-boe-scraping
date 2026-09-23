@@ -5,7 +5,9 @@ import hashlib, json, sqlite3, sys
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path: sys.path.insert(0, str(ROOT))
 NAMES = ['boe_20260912_191053_331663.db','boe_20260912_191105_794059.db','boe_20260912_191119_466523.db','boe_20260912_191135_326376.db','boe_20260912_191150_264766.db']
-PATHS = [ROOT/'backups/sqlite'/n for n in NAMES] + [ROOT/'datos/boe.db']
+# La cadena termina en el snapshot data 62 que documenta la transición 46→62.
+# No debe usar datos/boe.db: ese fichero sigue avanzando después de FASE 8.
+PATHS = [ROOT/'backups/sqlite'/n for n in NAMES] + [ROOT/'backups/sqlite'/'boe_pre_fase9_puestos_invalidos_20260916T195522Z.db']
 IGNORAR_MODIFICACIONES_POSTERIORES = {17263, 76794, 91232, 96837, 99076, 70412}
 REPARACION_PRE_FASE9 = {
     int(row.split(",", 1)[0])
