@@ -10,6 +10,7 @@ import pandas as pd
 _OPCIONES_FILTROS_CACHE = {}
 
 import base_datos
+from tipo_personal import TIPOS_PERSONAL
 from cobertura import (
     ESTADO_INCOHERENCIA_HISTORICA_VERIFICADA,
     ESTADOS_VALIDOS,
@@ -21,7 +22,7 @@ class ErrorConsultaSQLite(RuntimeError):
     """La base productiva no está disponible para consultas."""
 
 
-COLUMNAS_ESTADISTICAS = ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Comunidad_autonoma", "Provincia", "Municipio", "Ambito", "Sistema", "Turno", "Fecha_boe"]
+COLUMNAS_ESTADISTICAS = ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Comunidad_autonoma", "Provincia", "Municipio", "Ambito", "Sistema", "Turno", "Tipo_personal", "Fecha_boe"]
 COLUMNAS_MAPA = ["Num_plazas", "Puesto", "Administración", "Sistema", "Fecha_boe_original", "Enlace", "Latitud", "Longitud", "Habitantes", "Municipio", "Provincia"]
 
 _ORDEN_BUSQUEDA = {
@@ -150,8 +151,29 @@ def _conexion(ruta_bd):
         raise ErrorConsultaSQLite(f"SQLite no está disponible: {ruta_bd}") from error
 
 
+def _tiene_tipo_personal(conexion):
+    return any(fila[1] == "tipo_personal" for fila in conexion.execute("PRAGMA table_info(oposiciones)"))
+
+
+def _seleccion_tipo_personal(conexion, prefijo=""):
+    columna = f"{prefijo}tipo_personal" if _tiene_tipo_personal(conexion) else "NULL AS tipo_personal"
+    return columna
+
+
+def _validar_tipos_personal(valores):
+    if valores is None or valores == "":
+        return []
+    if isinstance(valores, str):
+        valores = [valores]
+    valores = [str(valor).strip() for valor in valores if str(valor).strip()]
+    invalidos = sorted(set(valores) - set(TIPOS_PERSONAL))
+    if invalidos:
+        raise ValueError("tipo_personal no válido: " + ", ".join(invalidos))
+    return list(dict.fromkeys(valores))
+
+
 def _filtros(desde=None, hasta=None, provincia=None, municipio=None, administracion=None,
-             puesto=None, sistema=None, turno=None, ambito=None):
+             puesto=None, sistema=None, turno=None, ambito=None, tipo_personal=None):
     clausulas, parametros = [], []
     for columna, valor, operador in (("fecha_boe", desde, ">="), ("fecha_boe", hasta, "<="),
                                      ("provincia", provincia, "="), ("municipio", municipio, "="),
@@ -162,6 +184,10 @@ def _filtros(desde=None, hasta=None, provincia=None, municipio=None, administrac
     if puesto:
         for palabra in str(puesto).split():
             clausulas.append("lower(puesto) LIKE lower(?)"); parametros.append(f"%{palabra}%")
+    tipos = _validar_tipos_personal(tipo_personal)
+    if tipos:
+        clausulas.append(f"tipo_personal IN ({','.join('?' for _ in tipos)})")
+        parametros.extend(tipos)
     return (" WHERE " + " AND ".join(clausulas) if clausulas else ""), parametros
 
 
@@ -173,13 +199,18 @@ def oposiciones(ruta_bd="datos/boe.db", *, columnas=COLUMNAS_ESTADISTICAS, **fil
             "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
             "Fecha_boe": "fecha_boe", "Fecha_boe_original": "fecha_boe_original",
             "Enlace": "enlace", "Latitud": "latitud",
-            "Longitud": "longitud", "Habitantes": "habitantes", "Ambito": "ambito"}
+            "Longitud": "longitud", "Habitantes": "habitantes", "Ambito": "ambito",
+            "Tipo_personal": "tipo_personal"}
     try:
+        conexion = _conexion(ruta_bd)
+        if "Tipo_personal" in columnas and not _tiene_tipo_personal(conexion):
+            mapa["Tipo_personal"] = "NULL"
         seleccion = ",".join(f"{mapa[c]} AS '{c}'" for c in columnas)
     except KeyError as error:
         raise ValueError(f"Columna de consulta no admitida: {error.args[0]}") from error
     where, parametros = _filtros(**filtros)
-    conexion = _conexion(ruta_bd)
+    if "conexion" not in locals():
+        conexion = _conexion(ruta_bd)
     try:
         return pd.read_sql_query(f"SELECT {seleccion} FROM oposiciones{where} ORDER BY fecha_boe,oposicion_id", conexion, params=parametros)
     finally:
@@ -198,6 +229,8 @@ def opciones_filtros(ruta_bd="datos/boe.db"):
             filas = conexion.execute(f"SELECT DISTINCT {columna} FROM oposiciones WHERE {columna} IS NOT NULL AND trim({columna}) NOT IN ('', '--', 'no disponible') ORDER BY {columna} COLLATE NOCASE").fetchall()
             resultado[clave] = [fila[0] for fila in filas]
         resultado["puestos"] = sorted((fila[0] for fila in conexion.execute("SELECT DISTINCT COALESCE(puesto_normalizado, puesto) FROM oposiciones WHERE COALESCE(puesto_normalizado, puesto) IS NOT NULL AND trim(COALESCE(puesto_normalizado, puesto)) NOT IN ('', '--', 'no disponible')")), key=str.casefold)
+        if _tiene_tipo_personal(conexion):
+            resultado["tipos_personal"] = list(TIPOS_PERSONAL)
         _OPCIONES_FILTROS_CACHE[clave_cache] = {clave: list(valores) for clave, valores in resultado.items()}
         return resultado
     finally:
@@ -231,6 +264,7 @@ def opciones_busqueda(ruta_bd="datos/boe.db", *, comunidad_autonoma=None, provin
                 ("subescalas", "subescala"), ("clases", "clase"),
             )
         }
+        resultado["tipos_personal"] = list(TIPOS_PERSONAL) if _tiene_tipo_personal(conexion) else []
         # Administración tiene miles de valores distintos: el formulario usa
         # texto libre y no los transporta todos al HTML.
         resultado["administraciones"] = []
@@ -330,13 +364,14 @@ def obtener_oposicion(ruta_bd="datos/boe.db", oposicion_id=None):
         return None
     conexion = _conexion(ruta_bd)
     try:
+        tipo = _seleccion_tipo_personal(conexion)
         cursor = conexion.execute(
             """SELECT oposicion_id,num_plazas,puesto,puesto_normalizado,administracion,
                       administracion_normalizada,ambito,tipo_entidad,comunidad_autonoma,
                       provincia,municipio,sistema,turno,escala,subescala,clase,fecha_boe,
                       fecha_boe_original,enlace,publicacion,confianza_geografica,
                       evidencia_geografica,version_extractor,version_resolutor,latitud,
-                      longitud,habitantes,municipio_codigo_ine
+                      longitud,habitantes,municipio_codigo_ine,""" + tipo + """
                FROM oposiciones WHERE oposicion_id = ?""", (oposicion_id,)
         )
         fila = cursor.fetchone()
@@ -352,7 +387,7 @@ def _condiciones_busqueda(
     *, texto=None, fecha_desde=None, fecha_hasta=None, administracion=None,
     ambito=None, comunidad_autonoma=None, provincia=None, municipio=None,
     municipio_exacto=None, municipio_provincia_exacto=None, tipo_entidad=None,
-    sistema=None, turno=None, escala=None, subescala=None, clase=None,
+    sistema=None, turno=None, escala=None, subescala=None, clase=None, tipo_personal=None,
 ):
     """Construye el ``WHERE`` parametrizado común de las búsquedas web y CLI.
 
@@ -380,6 +415,10 @@ def _condiciones_busqueda(
         for termino in _terminos_parciales(texto):
             clausulas.append("lower(COALESCE(NULLIF(puesto_normalizado,''), puesto)) LIKE lower(?)")
             parametros.append(f"%{termino}%")
+    tipos = _validar_tipos_personal(tipo_personal)
+    if tipos:
+        clausulas.append(f"tipo_personal IN ({','.join('?' for _ in tipos)})")
+        parametros.extend(tipos)
     return (" WHERE " + " AND ".join(clausulas) if clausulas else ""), parametros
 
 
@@ -388,7 +427,7 @@ def buscar_oposiciones(
     administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
     municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
     tipo_entidad=None, sistema=None, turno=None, escala=None,
-    subescala=None, clase=None, pagina=1, tamano_pagina=25, orden="fecha_desc",
+    subescala=None, clase=None, tipo_personal=None, pagina=1, tamano_pagina=25, orden="fecha_desc",
 ):
     """Busca oposiciones desde SQLite con filtros exactos y paginación segura.
 
@@ -411,13 +450,15 @@ def buscar_oposiciones(
         municipio_provincia_exacto=municipio_provincia_exacto,
         tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
         escala=escala, subescala=subescala, clase=clase,
+        tipo_personal=tipo_personal,
     )
     seleccion = """oposicion_id,fecha_boe,puesto,puesto_normalizado,num_plazas,
         administracion,administracion_normalizada,ambito,tipo_entidad,
-        comunidad_autonoma,provincia,municipio,sistema,turno,escala,subescala,
-        clase,enlace,publicacion,confianza_geografica,evidencia_geografica"""
+        comunidad_autonoma,provincia,municipio,sistema,turno,escala,subescala"""
     conexion = _conexion(ruta_bd)
     try:
+        seleccion += "," + _seleccion_tipo_personal(conexion)
+        seleccion += ",clase,enlace,publicacion,confianza_geografica,evidencia_geografica"
         total = conexion.execute(f"SELECT count(*) FROM oposiciones{where}", parametros).fetchone()[0]
         total_paginas = ceil(total / tamano_pagina) if total else 0
         if total_paginas:
@@ -443,7 +484,7 @@ def resumen_mapa_oposiciones(
     administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
     municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
     tipo_entidad=None, sistema=None, turno=None, escala=None,
-    subescala=None, clase=None,
+    subescala=None, clase=None, tipo_personal=None,
 ):
     """Agrupa todos los resultados filtrados por municipio maestro e INE.
 
@@ -458,6 +499,7 @@ def resumen_mapa_oposiciones(
         municipio_provincia_exacto=municipio_provincia_exacto,
         tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
         escala=escala, subescala=subescala, clase=clase,
+        tipo_personal=tipo_personal,
     )
     condicion_geolocalizable = _condicion_geolocalizable()
     where_geolocalizable = (
@@ -509,7 +551,7 @@ def buscar_oposiciones_sin_coordenadas(
     administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
     municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
     tipo_entidad=None, sistema=None, turno=None, escala=None,
-    subescala=None, clase=None, pagina=1, tamano=50,
+    subescala=None, clase=None, tipo_personal=None, pagina=1, tamano=50,
 ):
     """Devuelve paginadas las convocatorias no geolocalizables del mapa."""
     try:
@@ -527,6 +569,7 @@ def buscar_oposiciones_sin_coordenadas(
         municipio_provincia_exacto=municipio_provincia_exacto,
         tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
         escala=escala, subescala=subescala, clase=clase,
+        tipo_personal=tipo_personal,
     )
     condicion_sin_coordenadas = _condicion_sin_coordenadas()
     where_sin_coordenadas = (

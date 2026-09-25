@@ -21,6 +21,7 @@ datos/*.db-wal
 
 # Backups generados
 backups/sqlite/
+backups/tipo_personal/
 backups/exportacion_excel/
 backups/snapshots/
 /backups/aislamiento_pruebas/

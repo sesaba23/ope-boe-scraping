@@ -2,6 +2,7 @@ import re
 import unicodedata
 
 import pandas as pd
+from tipo_personal import TIPOS_PERSONAL
 
 from consultas_boe import oposiciones
 
@@ -96,6 +97,7 @@ def filtrar_datos(
     provincia=None,
     sistema=None,
     turno=None,
+    tipo_personal=None,
 ):
     """Filtra por fechas inclusivas y por todas las palabras indicadas en el puesto."""
     resultado = df.copy(deep=True)
@@ -125,24 +127,31 @@ def filtrar_datos(
         (provincia, "Provincia"),
         (sistema, "Sistema"),
         (turno, "Turno"),
-    ):
+        ):
         if valor:
             if columna not in resultado.columns:
                 raise ValueError(f"Falta la columna obligatoria: {columna}")
             resultado = resultado[
                 resultado[columna].fillna("").astype(str).str.strip() == valor
             ]
+    if tipo_personal:
+        valores = {tipo_personal} if isinstance(tipo_personal, str) else set(tipo_personal)
+        if "Tipo_personal" in resultado.columns:
+            resultado = resultado[resultado["Tipo_personal"].fillna("No determinado").isin(valores)]
+        else:
+            resultado = resultado.iloc[0:0]
 
     return resultado.copy()
 
 
 def obtener_opciones_filtros(df):
     """Devuelve valores válidos y ordenados para los filtros exactos."""
-    return {
+    resultado = {
         "provincias": _valores_validos(df, "Provincia"),
         "sistemas": _valores_validos(df, "Sistema"),
         "turnos": _valores_validos(df, "Turno"),
     }
+    return resultado
 
 
 def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_seleccionado=None):
@@ -233,7 +242,7 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
 
     plazas_por_mes = _plazas_por_mes(fechas_validas)
     evolucion_puestos = _evolucion_puestos(fechas_validas, puesto_seleccionado)
-    return {
+    resultado = {
         "total_plazas": total_plazas,
         "total_registros": int(len(datos)),
         "total_provincias": int(len(provincias_reales)),
@@ -256,6 +265,18 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
         "evolucion_anual_puestos": evolucion_puestos,
         "calidad_datos": calidad_datos,
     }
+    if "Tipo_personal" in datos.columns and datos["Tipo_personal"].notna().any():
+        resultado["distribucion_tipo_personal"] = _distribucion_tipo_personal(datos)
+    return resultado
+
+
+def _distribucion_tipo_personal(datos):
+    if "Tipo_personal" not in datos.columns:
+        conteos = {}
+    else:
+        conteos = datos["Tipo_personal"].fillna("No determinado").astype(str).value_counts().to_dict()
+    return [{"tipo_personal": categoria, "registros": int(conteos.get(categoria, 0))}
+            for categoria in TIPOS_PERSONAL]
 
 
 def _plazas_por_mes(datos):

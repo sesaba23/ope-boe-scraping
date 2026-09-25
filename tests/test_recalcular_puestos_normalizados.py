@@ -90,7 +90,7 @@ def test_rechaza_schema_distinto_de_v3(tmp_path):
     conexion = sqlite3.connect(ruta)
     conexion.execute("UPDATE metadata SET valor='2' WHERE clave='schema_version'")
     conexion.commit(); conexion.close()
-    with pytest.raises(RuntimeError, match="schema_version 3, 4, 5 o 6"):
+    with pytest.raises(RuntimeError, match="schema_version 3, 4, 5, 6 o 7"):
         modulo.recalcular(ruta, tmp_path / "backups", dry_run=True)
 
 

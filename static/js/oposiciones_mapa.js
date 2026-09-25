@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "texto", "fecha_desde", "fecha_hasta", "comunidad_autonoma", "provincia",
             "municipio", "municipio_exacto", "municipio_provincia_exacto", "administracion",
             "ambito", "tipo_entidad", "sistema", "turno", "escala", "subescala", "clase",
+            "tipo_personal",
         ]);
         const actuales = new URLSearchParams(window.location.search);
         const filtros = new URLSearchParams();

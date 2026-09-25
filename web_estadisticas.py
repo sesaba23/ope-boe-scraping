@@ -5,6 +5,8 @@ import re
 from urllib.parse import parse_qsl, urlsplit
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_file, url_for
+from werkzeug.datastructures import MultiDict
+from werkzeug.exceptions import BadRequest
 
 from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_intervalo
 
@@ -17,13 +19,14 @@ from consultas_boe import (
 from estadisticas import calcular_estadisticas_sqlite, calcular_comparacion_puestos_sqlite
 from gestion_exportacion import GestorExportacionXlsx
 import servicio_exportacion
+from tipo_personal import TIPOS_PERSONAL
 
 
 _FILTROS_RETORNO_OPOSICIONES = (
     "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
     "comunidad_autonoma", "provincia", "municipio", "municipio_exacto",
     "municipio_provincia_exacto", "tipo_entidad", "sistema", "turno",
-    "escala", "subescala", "clase",
+    "escala", "subescala", "clase", "tipo_personal",
 )
 _ORDENES_RETORNO_OPOSICIONES = {
     "fecha_desc", "fecha_asc", "puesto_asc", "administracion_asc", "plazas_desc",
@@ -32,10 +35,18 @@ _ORDENES_RETORNO_OPOSICIONES = {
 
 def _url_retorno_oposiciones(argumentos):
     """Reconstruye un destino interno con filtros y estado visual permitidos."""
-    parametros = {
-        nombre: valor for nombre in _FILTROS_RETORNO_OPOSICIONES
-        if (valor := (argumentos.get(nombre) or "").strip())
-    }
+    parametros = {}
+    for nombre in _FILTROS_RETORNO_OPOSICIONES:
+        valores = argumentos.getlist(nombre) if hasattr(argumentos, "getlist") else argumentos.get(nombre)
+        if nombre == "tipo_personal":
+            valores = valores if isinstance(valores, (list, tuple)) else ([valores] if valores else [])
+            valores = [valor.strip() for valor in valores if str(valor).strip() in TIPOS_PERSONAL]
+            if valores:
+                parametros[nombre] = valores
+            continue
+        valor = valores[0] if isinstance(valores, (list, tuple)) and valores else valores
+        if valor and str(valor).strip():
+            parametros[nombre] = str(valor).strip()
     try:
         pagina = int(argumentos.get("pagina", 0))
     except (TypeError, ValueError):
@@ -79,6 +90,11 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             "sistema", "turno", "escala", "subescala", "clase",
         )
         filtros = {nombre: (request.args.get(nombre) or "").strip() for nombre in nombres}
+        tipos = [valor.strip() for valor in request.args.getlist("tipo_personal") if valor.strip()]
+        invalidos = sorted(set(tipos) - set(TIPOS_PERSONAL))
+        if invalidos:
+            raise BadRequest("tipo_personal no válido: " + ", ".join(invalidos))
+        filtros["tipo_personal"] = list(dict.fromkeys(tipos))
         exactos = {
             "municipio_exacto": (request.args.get("municipio_exacto") or "").strip(),
             "municipio_provincia_exacto": (request.args.get("municipio_provincia_exacto") or "").strip(),
@@ -490,7 +506,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             abort(404)
         destino = urlsplit(request.args.get("volver", ""))
         if not destino.scheme and not destino.netloc and destino.path == "/oposiciones":
-            volver = _url_retorno_oposiciones(dict(parse_qsl(destino.query, keep_blank_values=True)))
+            volver = _url_retorno_oposiciones(MultiDict(parse_qsl(destino.query, keep_blank_values=True)))
         else:
             volver = url_for("oposiciones")
         return render_template("detalle_oposicion.html", seccion_activa="oposiciones", oposicion=oposicion, volver=volver)
@@ -549,6 +565,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         ambito = request.args.get("ambito") or None
         sistema = request.args.get("sistema") or None
         turno = request.args.get("turno") or None
+        tipo_personal = [valor for valor in request.args.getlist("tipo_personal") if valor]
         comparadores = request.args.getlist("comparar")
         if not comparadores:
             comparadores = [request.args.get(f"comparar_{indice}") for indice in range(1, 6)]
@@ -572,17 +589,17 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             opciones = opciones_filtros(ruta)
             estadisticas = calcular_estadisticas_sqlite(
                 ruta, desde=fecha_inicio, hasta=fecha_final, puesto=puesto,
-                provincia=provincia, ambito=ambito, sistema=sistema, turno=turno)
+                provincia=provincia, ambito=ambito, sistema=sistema, turno=turno,
+                tipo_personal=tipo_personal)
             evolucion_comparada = calcular_comparacion_puestos_sqlite(
                 ruta, puesto_principal=puesto, comparadores=comparadores,
                 desde=fecha_inicio, hasta=fecha_final, provincia=provincia,
-                ambito=ambito, sistema=sistema, turno=turno)
+                ambito=ambito, sistema=sistema, turno=turno, tipo_personal=tipo_personal)
             datos_metadata = metadata(ruta)
         except (ErrorConsultaSQLite, OSError, ValueError) as error:
             return jsonify({"error": f"No se pudieron cargar las estadísticas: {error}"}), 503
 
-        return jsonify(
-            {
+        respuesta = {
                 "filtros": {
                     "fecha_inicio": fecha_inicio,
                     "fecha_final": fecha_final,
@@ -591,6 +608,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                     "ambito": ambito,
                     "sistema": sistema,
                     "turno": turno,
+                    "tipo_personal": tipo_personal,
                 },
                 "opciones": opciones,
                 "resumen": {
@@ -614,7 +632,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                     "ultima_modificacion": datos_metadata.get("updated_at"),
                 },
             }
-        )
+        if "distribucion_tipo_personal" in estadisticas:
+            respuesta["distribucion_tipo_personal"] = estadisticas["distribucion_tipo_personal"]
+        return jsonify(respuesta)
 
     @app.errorhandler(404)
     def pagina_no_encontrada(error):

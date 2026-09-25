@@ -55,6 +55,10 @@
                         <option value="">Todas</option>
                     </select>
                 </div>
+                <fieldset class="campo campo-tipos-personal">
+                    <legend>Tipo de personal</legend>
+                    <div id="tipos-personal-filtros"></div>
+                </fieldset>
                 <div class="acciones">
                     <button id="aplicar-filtros" class="boton boton-principal" type="submit">Aplicar filtros</button>
                     <button id="limpiar-filtros" class="boton boton-secundario" type="button">Limpiar filtros</button>
@@ -106,6 +110,10 @@
                 <article class="panel panel-grafico">
                     <h2>Top 10 puestos con más plazas</h2>
                     <div id="ranking-puestos" class="ranking" aria-live="polite"></div>
+                </article>
+                <article class="panel panel-grafico panel-ancho">
+                    <h2>Distribución por tipo de personal</h2>
+                    <div id="distribucion-tipo-personal" class="ranking" aria-live="polite"></div>
                 </article>
                 <article class="panel panel-grafico panel-ancho">
                     <h2>Evolución anual de plazas</h2>

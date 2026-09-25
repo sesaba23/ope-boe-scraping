@@ -34,7 +34,7 @@ async function cargarEstadisticas() {
     cambiarEstadoCarga(true);
     const parametros = new URLSearchParams();
     new FormData(formulario).forEach((valor, clave) => {
-        if (String(valor).trim()) parametros.set(clave, valor);
+        if (String(valor).trim()) parametros.append(clave, valor);
     });
     comparadoresSeleccionados.forEach((valor) => { if (String(valor).trim()) parametros.append("comparar", valor); });
     const url = parametros.size ? `/api/estadisticas?${parametros}` : "/api/estadisticas";
@@ -110,6 +110,7 @@ function actualizarGraficos(datos) {
     estado.textContent = evolucion.mode === "top5" ? "Mostrando los 5 puestos con más plazas" : evolucion.mode === "manual" ? `Comparando ${evolucion.series.length} puestos` : `Evolución de ${evolucion.series[0]?.label || "puesto seleccionado"}`;
     crearGraficoComunidades(datos.plazas_por_comunidad);
     crearGraficoProvincias(datos.plazas_por_provincia);
+    renderizarRanking("distribucion-tipo-personal", datos.distribucion_tipo_personal || [], "tipo_personal", 7);
 }
 
 function actualizarSelectoresComparacion(opciones, principal) {
@@ -148,6 +149,19 @@ function actualizarOpciones(opciones, filtros) {
         valores.forEach((valor) => desplegable.add(new Option(valor, valor)));
         desplegable.value = seleccionado || "";
     });
+    const contenedor = document.querySelector("#tipos-personal-filtros");
+    const seleccionados = new Set(filtros.tipo_personal || []);
+    contenedor.replaceChildren();
+    (opciones.tipos_personal || []).forEach((valor) => {
+        const etiqueta = document.createElement("label");
+        const casilla = document.createElement("input");
+        casilla.type = "checkbox";
+        casilla.name = "tipo_personal";
+        casilla.value = valor;
+        casilla.checked = seleccionados.has(valor);
+        etiqueta.append(casilla, ` ${valor}`);
+        contenedor.append(etiqueta);
+    });
 }
 
 function actualizarMetadatos(datos) {
@@ -165,6 +179,7 @@ function actualizarMetadatos(datos) {
     if (datos.filtros.ambito) filtros.push(`Ámbito: ${datos.filtros.ambito}`);
     if (datos.filtros.sistema) filtros.push(`Sistema: ${datos.filtros.sistema}`);
     if (datos.filtros.turno) filtros.push(`Turno: ${datos.filtros.turno}`);
+    if ((datos.filtros.tipo_personal || []).length) filtros.push(`Tipo de personal: ${datos.filtros.tipo_personal.join(", ")}`);
     document.querySelector("#filtros-activos").textContent = filtros.length ? filtros.join(" · ") : "Sin filtros aplicados";
 }
 

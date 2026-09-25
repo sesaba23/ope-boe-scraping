@@ -1090,7 +1090,9 @@ def main(argv=None):
     parser.add_argument("--directorio-backup", default="backups/sqlite")
     args = parser.parse_args(argv)
     version = _estado(args.base_datos)[0].get("schema_version")
-    funciones = {"2": migrar_v2_v3, "3": migrar_v3_v4, "4": migrar_v4_v5, "5": migrar_v5_v6_municipios_historicos}
+    from migrar_tipo_personal import migrar as migrar_v6_v7_tipo_personal
+    funciones = {"2": migrar_v2_v3, "3": migrar_v3_v4, "4": migrar_v4_v5,
+                 "5": migrar_v5_v6_municipios_historicos, "6": migrar_v6_v7_tipo_personal}
     if version not in funciones:
         raise RuntimeError(f"No hay migración disponible desde schema_version {version!r}")
     print(json.dumps(funciones[version](args.base_datos, args.directorio_backup), ensure_ascii=False, indent=2))

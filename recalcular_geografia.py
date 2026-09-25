@@ -88,11 +88,11 @@ def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run
     ruta=Path(ruta_bd); con=base_datos.conectar(ruta,readonly=True)
     try:
         meta=base_datos.leer_metadata(con)
-        if meta.get("schema_version") not in {"4", "5", "6"}: raise RuntimeError("El recálculo requiere schema_version 4, 5 o 6")
+        if meta.get("schema_version") not in {"4", "5", "6", "7"}: raise RuntimeError("El recálculo requiere schema_version 4, 5, 6 o 7")
         cambios=propuestas(con)
-        universitarios=propuestas_universidades(con) if meta.get("schema_version") in {"5", "6"} and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} else []
+        universitarios=propuestas_universidades(con) if meta.get("schema_version") in {"5", "6", "7"} and "universidades" in {x[0] for x in con.execute("SELECT name FROM sqlite_master WHERE type='table'")} else []
         cambios += universitarios
-        enlaces = relaciones_territoriales_seguras_pendientes(con) if meta.get("schema_version") in {"5", "6"} else []
+        enlaces = relaciones_territoriales_seguras_pendientes(con) if meta.get("schema_version") in {"5", "6", "7"} else []
     finally: con.close()
     resumen={"dry_run":dry_run,"filas_cambiadas":len(cambios),"por_campo":dict(Counter(c for _,x,_ in cambios for c in x)),"por_confianza":dict(Counter(getattr(r,'confianza','ALTA') for _,_,r in cambios)),"por_evidencia":dict(Counter(getattr(r,'evidencia',r) for _,_,r in cambios)),"conflictos":sum(getattr(r,'confianza','')=="AMBIGUA" for _,_,r in cambios),"relaciones_territorios_nuevas":len(enlaces),"universidades_directas":sum(r=='UNIVERSIDAD_TEXTO_EXPLICITO' for _,_,r in universitarios),"universidades_propagadas":sum(r=='UNIVERSIDAD_PROPAGADA_PUBLICACION' for _,_,r in universitarios)}
     if dry_run or not (cambios or enlaces): return {**resumen,"backup":None,"data_version":meta["data_version"]}
@@ -101,7 +101,7 @@ def recalcular(ruta_bd="datos/boe.db",directorio_backup="backups/sqlite",dry_run
         with base_datos.transaccion(con):
             for oid,cam,_ in cambios:
                 con.execute("UPDATE oposiciones SET "+",".join(f"{c}=?" for c in cam)+" WHERE oposicion_id=?",(*cam.values(),oid))
-            if meta.get("schema_version") in {"5", "6"}:
+            if meta.get("schema_version") in {"5", "6", "7"}:
                 for oid,admin,puesto,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior in con.execute("SELECT oposicion_id,administracion,puesto,municipio,provincia,comunidad_autonoma,municipio_codigo_ine,provincia_id,comunidad_id FROM oposiciones"):
                     refs=normalizar_referencias_administrativas(con,mun,prov,com,codigo_anterior,provincia_id_anterior,comunidad_id_anterior)
                     codigo, provincia, comunidad, provincia_id, comunidad_id = refs

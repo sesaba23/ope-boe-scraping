@@ -16,6 +16,7 @@ from tqdm import tqdm
 
 import base_datos
 from normalizacion_puestos import normalizar_puesto
+from tipo_personal import VERSION as TIPO_PERSONAL_VERSION
 
 
 CLAVE_DEDUPLICACION = [
@@ -129,6 +130,47 @@ def importar(conexion, hojas, *, progreso=True):
             filas,
         )
         conteos["oposiciones"] = len(oposiciones)
+
+        # Las bases nuevas creadas por ``migrar`` ya son schema 7. La
+        # clasificación se hace aquí, dentro de la misma transacción de alta;
+        # los snapshots/fixtures antiguos sin columna siguen usando el camino
+        # histórico y no se modifican.
+        columnas_bd = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
+        metadata = base_datos.leer_metadata(conexion)
+        if "tipo_personal" in columnas_bd and metadata.get("schema_version") == "7":
+            from tipo_personal import VERSION, clasificar_tipo_personal
+            if metadata.get("tipo_personal_version") != VERSION:
+                raise RuntimeError(
+                    "La base schema 7 no declara una versión compatible de tipo_personal"
+                )
+            publicaciones = {
+                fila[0]: dict(zip(("publicacion_id", "enlace", "fecha_boe", "fecha_boe_original",
+                                   "titulo_original", "fecha_ultimo_analisis", "version_extractor",
+                                   "estado_analisis", "coincidencias", "departamento_boe",
+                                   "administracion_resuelta", "familia_administrativa",
+                                   "estado_resolucion", "metodo_resolucion", "confianza_resolucion",
+                                   "version_resolucion"), fila))
+                for fila in conexion.execute("SELECT * FROM publicaciones")
+            }
+            clasificados = []
+            for fila in conexion.execute(
+                """SELECT oposicion_id,puesto,puesto_normalizado,administracion,
+                          administracion_normalizada,escala,subescala,clase,ambito,
+                          tipo_entidad,sistema,turno,publicacion_id
+                     FROM oposiciones"""
+            ):
+                nombres = ("puesto", "puesto_normalizado", "administracion",
+                           "administracion_normalizada", "escala", "subescala",
+                           "clase", "ambito", "tipo_entidad", "sistema", "turno")
+                contexto = dict(zip(nombres, fila[1:12]))
+                clasificados.append((
+                    clasificar_tipo_personal(contexto, publicaciones.get(fila[12]))["categoria"],
+                    fila[0],
+                ))
+            conexion.executemany(
+                "UPDATE oposiciones SET tipo_personal=? WHERE oposicion_id=?",
+                clasificados,
+            )
 
         conexion.executemany("INSERT INTO busquedas(codigo) VALUES (?)", _filas(hojas["Búsquedas"], ["Código"]))
         conteos["busquedas"] = len(hojas["Búsquedas"])
@@ -297,6 +339,16 @@ def migrar(ruta_excel="BOE-oposiciones.xlsx", destino="datos/boe.db", *, recrear
         conexion = base_datos.conectar(temporal)
         try:
             base_datos.crear_esquema(conexion)
+            conexion.execute(
+                "ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL "
+                "DEFAULT 'No determinado' CHECK(tipo_personal IN "
+                "('Funcionario','Laboral','Estatutario','Universitario','Militar','Otros','No determinado'))"
+            )
+            base_datos.guardar_metadata(conexion, schema_version=7, data_version=0)
+            conexion.execute(
+                "INSERT INTO metadata(clave,valor) VALUES ('tipo_personal_version',?)",
+                (TIPO_PERSONAL_VERSION,),
+            )
             # Una base creada directamente ya nace con las tablas maestras v5
             # cargadas desde las mismas fuentes versionadas que usa la migración.
             from migrar_esquema_sqlite import importar_catalogos_administrativos

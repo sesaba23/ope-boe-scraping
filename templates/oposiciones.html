@@ -45,6 +45,14 @@
             </div>
             <div><label for="administracion">Administración</label><input id="administracion" name="administracion" type="search" value="{{ filtros.administracion }}" placeholder="Nombre exacto"></div>
         </div>
+        <fieldset class="filter-choice-group">
+            <legend>Tipo de personal</legend>
+            <div class="filter-choice-grid">
+            {% for valor in ['Funcionario','Laboral','Estatutario','Universitario','Militar','Otros','No determinado'] %}
+            <label><input type="checkbox" name="tipo_personal" value="{{ valor }}"{% if valor in filtros.tipo_personal %} checked{% endif %}> {{ valor }}</label>
+            {% endfor %}
+            </div>
+        </fieldset>
         <details class="advanced-filters"{% if avanzados_activos %} open{% endif %}>
             <summary>Más filtros</summary>
             <div class="filter-grid">
@@ -76,12 +84,12 @@
         <div id="resultados" class="results-heading">
             <h2>{{ "{:,}".format(resultados.total).replace(",", ".") }} resultados encontrados</h2>
             <form method="get" action="{{ url_for('oposiciones') }}">
-                {% for nombre, valor in query_actual.items() if nombre not in ('orden','tamano_pagina','pagina') %}<input type="hidden" name="{{ nombre }}" value="{{ valor }}">{% endfor %}
+                {% for nombre, valor in query_actual.items() if nombre not in ('orden','tamano_pagina','pagina') %}{% if valor is sequence and valor is not string %}{% for elemento in valor %}<input type="hidden" name="{{ nombre }}" value="{{ elemento }}">{% endfor %}{% else %}<input type="hidden" name="{{ nombre }}" value="{{ valor }}">{% endif %}{% endfor %}
                 <label for="orden">Ordenar</label><select id="orden" name="orden" onchange="this.form.submit()">{% for clave, etiqueta in [('fecha_desc','Más recientes'),('fecha_asc','Más antiguas'),('puesto_asc','Puesto A-Z'),('administracion_asc','Administración A-Z'),('plazas_desc','Mayor número de plazas')] %}<option value="{{ clave }}"{% if orden == clave %} selected{% endif %}>{{ etiqueta }}</option>{% endfor %}</select>
                 <label for="tamano_pagina">Por página</label><select id="tamano_pagina" name="tamano_pagina" onchange="this.form.submit()">{% for n in [25,50,100] %}<option value="{{ n }}"{% if tamano_pagina == n %} selected{% endif %}>{{ n }}</option>{% endfor %}</select>
             </form>
         </div>
-        <div class="results-table-wrap"><table class="results-table"><thead><tr><th>Fecha BOE</th><th>Puesto</th><th>Administración</th><th>N.º plazas</th><th>Municipio</th><th>Provincia</th><th>Comunidad Autónoma</th><th><span class="visually-hidden">Acción</span></th></tr></thead><tbody>{% for fila in resultados.filas %}<tr><td class="result-date" data-label="Fecha BOE">{{ fila.fecha_boe[8:10] }}/{{ fila.fecha_boe[5:7] }}/{{ fila.fecha_boe[:4] }}</td><td data-label="Puesto"><strong>{{ fila.puesto_normalizado or fila.puesto }}</strong></td><td data-label="Administración">{{ fila.administracion }}</td><td data-label="N.º plazas">{{ fila.num_plazas if fila.num_plazas is not none else '—' }}</td><td data-label="Municipio">{{ fila.municipio or '—' }}</td><td data-label="Provincia">{{ fila.provincia or '—' }}</td><td data-label="Comunidad Autónoma">{{ fila.comunidad_autonoma or '—' }}</td><td><a class="portal-button portal-button--small" href="{{ url_for('detalle_oposicion', oposicion_id=fila.oposicion_id, volver=volver_detalle) }}">Ver detalle</a></td></tr>{% endfor %}</tbody></table></div>
+        <div class="results-table-wrap"><table class="results-table"><thead><tr><th>Fecha BOE</th><th>Puesto</th><th>Tipo de personal</th><th>Administración</th><th>N.º plazas</th><th>Municipio</th><th>Provincia</th><th>Comunidad Autónoma</th><th><span class="visually-hidden">Acción</span></th></tr></thead><tbody>{% for fila in resultados.filas %}<tr><td class="result-date" data-label="Fecha BOE">{{ fila.fecha_boe[8:10] }}/{{ fila.fecha_boe[5:7] }}/{{ fila.fecha_boe[:4] }}</td><td data-label="Puesto"><strong>{{ fila.puesto_normalizado or fila.puesto }}</strong></td><td data-label="Tipo de personal">{{ fila.tipo_personal or 'No determinado' }}</td><td data-label="Administración">{{ fila.administracion }}</td><td data-label="N.º plazas">{{ fila.num_plazas if fila.num_plazas is not none else '—' }}</td><td data-label="Municipio">{{ fila.municipio or '—' }}</td><td data-label="Provincia">{{ fila.provincia or '—' }}</td><td data-label="Comunidad Autónoma">{{ fila.comunidad_autonoma or '—' }}</td><td><a class="portal-button portal-button--small" href="{{ url_for('detalle_oposicion', oposicion_id=fila.oposicion_id, volver=volver_detalle) }}">Ver detalle</a></td></tr>{% endfor %}</tbody></table></div>
         {% if resultados.total_paginas > 1 %}<nav class="pagination" aria-label="Paginación de resultados">{% set p=resultados.pagina %}{% if p > 1 %}<a href="{{ url_for('oposiciones', pagina=p-1, **query_actual) }}">Anterior</a>{% endif %}{% for n in range(1, resultados.total_paginas + 1) if n == 1 or n == resultados.total_paginas or (n >= p - 2 and n <= p + 2) %}<a{% if n == p %} aria-current="page"{% endif %} href="{{ url_for('oposiciones', pagina=n, **query_actual) }}">{{ n }}</a>{% endfor %}{% if p < resultados.total_paginas %}<a href="{{ url_for('oposiciones', pagina=p+1, **query_actual) }}">Siguiente</a>{% endif %}</nav>{% endif %}
         {% endif %}
     </section>

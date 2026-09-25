@@ -85,8 +85,8 @@ def reconciliar(ruta_bd="datos/boe.db", *, directorio_backup="backups/sqlite/rec
     lectura = base_datos.conectar(ruta, readonly=True)
     try:
         metadata_antes = _metadata(lectura)
-        if metadata_antes.get("schema_version") != "6":
-            raise RuntimeError("La reconciliación requiere schema_version 6")
+        if metadata_antes.get("schema_version") not in {"6", "7"}:
+            raise RuntimeError("La reconciliación requiere schema_version 6 o 7")
         candidatos, omitidos = seleccionar_candidatos(lectura)
     finally:
         lectura.close()

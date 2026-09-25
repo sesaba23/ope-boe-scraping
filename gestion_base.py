@@ -23,7 +23,7 @@ RELEASE_TAG = "database-latest"
 ASSET_DATABASE = "boe.db"
 ASSET_MANIFEST = "manifest.json"
 FORMAT_VERSION = 1
-SCHEMA_REQUERIDO = 6
+SCHEMA_REQUERIDO = 7
 _LOCK_OPERACION_BASE = Lock()
 
 
@@ -176,8 +176,14 @@ def inspeccionar_base_local(ruta: str | Path) -> dict:
 def crear_manifest(ruta: str | Path, *, publicado_en: datetime | None = None) -> dict:
     ruta = Path(ruta)
     estado = verificar_integridad(ruta)
-    if estado["schema_version"] != SCHEMA_REQUERIDO:
-        raise GestionBaseError(f"Schema incompatible: {estado['schema_version']} (requerido {SCHEMA_REQUERIDO})")
+    # Las copias publicadas con schema 6 siguen siendo legibles y forman parte
+    # del contrato de actualización; al descargarlas, ``asegurar_base_local``
+    # las eleva de forma atómica hasta schema 7. Las nuevas publicaciones
+    # locales usan siempre el schema requerido actual.
+    if estado["schema_version"] not in {6, SCHEMA_REQUERIDO}:
+        raise GestionBaseError(
+            f"Schema incompatible: {estado['schema_version']} (requerido {SCHEMA_REQUERIDO})"
+        )
     return {"format_version": FORMAT_VERSION, "database": ASSET_DATABASE,
             "schema_version": estado["schema_version"], "data_version": estado["data_version"],
             "sha256": _sha256(ruta), "size_bytes": ruta.stat().st_size,
@@ -465,12 +471,21 @@ def migrar_si_necesario(ruta: str | Path) -> dict:
     if actual == SCHEMA_REQUERIDO:
         return {"migrada": False, **estado}
     import migrar_esquema_sqlite
-    funciones = {5: migrar_esquema_sqlite.migrar_v5_v6_municipios_historicos}
+    from migrar_tipo_personal import migrar as migrar_v6_v7_tipo_personal
+    funciones = {5: migrar_esquema_sqlite.migrar_v5_v6_municipios_historicos,
+                 6: migrar_v6_v7_tipo_personal}
     if actual not in funciones:
         raise GestionBaseError(f"No hay migración explícita desde schema_version {actual} hasta {SCHEMA_REQUERIDO}")
     copia = base_datos.crear_backup(ruta)
     try:
-        funciones[actual](ruta)
+        while actual < SCHEMA_REQUERIDO:
+            funcion = funciones.get(actual)
+            if funcion is None:
+                raise GestionBaseError(
+                    f"No hay migración explícita desde schema_version {actual} hasta {SCHEMA_REQUERIDO}"
+                )
+            funcion(ruta)
+            actual = verificar_integridad(ruta)["schema_version"]
         final = verificar_integridad(ruta)
         if final["schema_version"] != SCHEMA_REQUERIDO: raise GestionBaseError("La migración no alcanzó el schema requerido")
         return {"migrada": True, "backup": str(copia), **final}

@@ -5,6 +5,7 @@ from pathlib import Path
 import hashlib
 import sqlite3
 import pandas as pd
+from tipo_personal import VERSION as TIPO_PERSONAL_VERSION, clasificar_tipo_personal
 
 
 ESQUEMA_V4 = """
@@ -304,7 +305,7 @@ def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None, sch
         # valores heredados 2/3 siguen promoviendo al esquema compatible 5,
         # como hacía el flujo previo a schema 6.
         schema_version = existente.get("schema_version")
-        if schema_version not in {VERSION_ESQUEMA, "6"}:
+        if schema_version not in {VERSION_ESQUEMA, "6", "7"}:
             schema_version = VERSION_ESQUEMA
     source_hash = source_excel_hash or existente.get("migration_source_hash")
     pares = [
@@ -345,7 +346,7 @@ def validar_base_principal(ruta_bd):
             f"SQLite usa schema_version {filas.get('schema_version')}. Ejecute: "
             "python migrar_esquema_sqlite.py --base-datos datos/boe.db"
         )
-    if filas.get("schema_version") not in {VERSION_ESQUEMA, "6"} or not obligatorias <= set(filas):
+    if filas.get("schema_version") not in {VERSION_ESQUEMA, "6", "7"} or not obligatorias <= set(filas):
         raise EspejoSQLiteError("SQLite no contiene metadatos válidos. Ejecute migrar_excel_sqlite.py.")
     return filas
 
@@ -479,6 +480,24 @@ def _funciones_migracion():
     return _filas, normalizar_fecha
 
 
+def _tipo_personal_activo(conexion):
+    """Comprueba si la conexión pertenece al pipeline productivo schema 7."""
+    columnas = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
+    if "tipo_personal" not in columnas:
+        return False
+    metadata = leer_metadata(conexion)
+    if metadata.get("schema_version") != "7":
+        raise EspejoSQLiteError(
+            "La columna tipo_personal sólo puede escribirse productivamente con schema_version 7"
+        )
+    if metadata.get("tipo_personal_version") != TIPO_PERSONAL_VERSION:
+        raise EspejoSQLiteError(
+            "La base y el código usan versiones incompatibles de tipo_personal; "
+            "ejecute un recálculo/migración explícito"
+        )
+    return True
+
+
 def insertar_publicaciones(conexion, df):
     filas, fecha = _funciones_migracion()
     conexion.executemany(
@@ -502,27 +521,66 @@ def insertar_oposiciones(conexion, df):
                 "Version_extractor", "Fecha_analisis"]
     from resolucion_geografica import resolver_administracion_geografia
     from migrar_esquema_sqlite import normalizar_referencias_administrativas
-    conexion.executemany(
-        """INSERT INTO oposiciones(
+    tipo_personal_activo = _tipo_personal_activo(conexion)
+    publicaciones = {
+        fila[0]: dict(zip(("publicacion_id", "enlace", "fecha_boe", "fecha_boe_original",
+                           "titulo_original", "fecha_ultimo_analisis", "version_extractor",
+                           "estado_analisis", "coincidencias", "departamento_boe",
+                           "administracion_resuelta", "familia_administrativa",
+                           "estado_resolucion", "metodo_resolucion", "confianza_resolucion",
+                           "version_resolucion"), fila))
+        for fila in conexion.execute("SELECT * FROM publicaciones")
+    }
+
+    def filas_preparadas():
+        for (num, puesto, administracion, escala, subescala, clase, sistema, turno,
+             f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
+             habitantes, publicacion_id, version, analisis) in filas(df, columnas):
+            geo = resolver_administracion_geografia(administracion, puesto)
+            municipio_final = geo.municipio or municipio
+            referencias = normalizar_referencias_administrativas(
+                conexion, municipio_final, geo.provincia or provincia,
+                geo.comunidad_autonoma,
+            )
+            puesto_normalizado = normalizar_puesto(puesto)
+            valores = (
+                num, puesto, puesto_normalizado, administracion,
+                geo.administracion_normalizada, geo.ambito, geo.tipo_entidad,
+                escala, subescala, clase, normalizar_sistema(sistema),
+                normalizar_turno(turno), fecha(f_boe), f_boe, publicacion, enlace,
+                municipio_final, referencias[1], referencias[2], geo.confianza,
+                geo.evidencia, geo.version_catalogo, referencias[0], referencias[3],
+                referencias[4], latitud, longitud, habitantes, publicacion_id,
+                version, analisis,
+            )
+            if tipo_personal_activo:
+                contexto = {
+                    "puesto": puesto, "puesto_normalizado": puesto_normalizado,
+                    "administracion": administracion,
+                    "administracion_normalizada": geo.administracion_normalizada,
+                    "escala": escala, "subescala": subescala, "clase": clase,
+                    "ambito": geo.ambito, "tipo_entidad": geo.tipo_entidad,
+                    "sistema": normalizar_sistema(sistema),
+                    "turno": normalizar_turno(turno),
+                }
+                tipo = clasificar_tipo_personal(contexto, publicaciones.get(publicacion_id))["categoria"]
+                yield valores + (tipo,)
+            else:
+                yield valores
+
+    columnas_insertar = """
             num_plazas, puesto, puesto_normalizado, administracion, administracion_normalizada, ambito, tipo_entidad, escala, subescala, clase, sistema, turno,
             fecha_boe, fecha_boe_original, publicacion, enlace, municipio, provincia,
             comunidad_autonoma, confianza_geografica, evidencia_geografica, version_resolutor,
             municipio_codigo_ine, provincia_id, comunidad_id,
             latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        ((num, puesto, normalizar_puesto(puesto), administracion, geo.administracion_normalizada, geo.ambito, geo.tipo_entidad, escala, subescala, clase, normalizar_sistema(sistema), normalizar_turno(turno),
-          fecha(f_boe), f_boe, publicacion, enlace, municipio_final, referencias[1], referencias[2],
-          geo.confianza, geo.evidencia, geo.version_catalogo, referencias[0], referencias[3], referencias[4],
-          latitud, longitud, habitantes, publicacion_id, version, analisis)
-         for num, puesto, administracion, escala, subescala, clase, sistema, turno,
-         f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
-         habitantes, publicacion_id, version, analisis in filas(df, columnas)
-         for geo in (resolver_administracion_geografia(administracion, puesto),)
-         for municipio_final in (geo.municipio or municipio,)
-         for referencias in (normalizar_referencias_administrativas(
-             conexion, municipio_final, geo.provincia or provincia,
-             geo.comunidad_autonoma,
-         ),)),
+    """
+    if tipo_personal_activo:
+        columnas_insertar += ", tipo_personal"
+    marcadores = ",".join("?" for _ in range(32 if tipo_personal_activo else 31))
+    conexion.executemany(
+        f"INSERT INTO oposiciones({columnas_insertar}) VALUES ({marcadores})",
+        filas_preparadas(),
     )
 
 
