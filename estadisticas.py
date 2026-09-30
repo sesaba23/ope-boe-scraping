@@ -27,12 +27,24 @@ MESES_NOMBRES = ("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 
 def calcular_estadisticas_sqlite(ruta_bd="datos/boe.db", **filtros):
     """Flujo productivo: obtiene la selección desde SQLite, nunca desde Excel."""
-    datos = oposiciones(ruta_bd, **filtros)
+    datos = cargar_datos_estadisticas_sqlite(ruta_bd, **filtros)
     return calcular_estadisticas(datos, puesto_seleccionado=filtros.get("puesto"))
 
 
-def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal=None, comparadores=(), **filtros):
-    """Construye hasta seis series con una única consulta base y filtros compartidos."""
+def cargar_datos_estadisticas_sqlite(ruta_bd="datos/boe.db", **filtros):
+    """Carga y prepara una única representación para todos los cálculos estadísticos."""
+    return preparar_datos_estadisticas(oposiciones(ruta_bd, **filtros))
+
+
+def preparar_datos_estadisticas(df):
+    """Prepara fechas y plazas una sola vez, sin mutar el DataFrame recibido."""
+    if "Fecha_dt" in df.columns and "Num_plazas_num" in df.columns:
+        return df
+    return normalizar_datos(df)
+
+
+def calcular_comparacion_puestos(datos, puesto_principal=None, comparadores=()):
+    """Construye hasta seis series a partir de un DataFrame ya preparado."""
     comparadores = [str(valor).strip() for valor in comparadores if str(valor).strip()]
     if len(comparadores) > 5:
         raise ValueError("Se permiten como máximo cinco puestos comparativos.")
@@ -40,13 +52,18 @@ def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal
         raise ValueError("No se permiten puestos comparativos duplicados.")
     if puesto_principal and puesto_principal in comparadores:
         raise ValueError("El puesto principal no puede repetirse como comparador.")
-    filtros_sin_puesto = {clave: valor for clave, valor in filtros.items() if clave != "puesto" and valor}
-    datos = oposiciones(ruta_bd, **filtros_sin_puesto)
-    datos = normalizar_datos(datos)
+    datos = preparar_datos_estadisticas(datos)
+    if datos.empty:
+        return {
+            "mode": "selected" if puesto_principal else ("manual" if comparadores else "top5"),
+            "puesto": puesto_principal,
+            "years": [],
+            "series": [],
+        }
     columna = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
     puestos = datos[columna].fillna(datos["Puesto"]).astype(str).str.strip()
     if puesto_principal:
-        principal = filtrar_datos(datos, puesto=puesto_principal)
+        principal = filtrar_datos(datos, puesto=puesto_principal, modo_sql=True)
         etiquetas = [(str(puesto_principal), principal)]
     else:
         principal = None
@@ -56,7 +73,7 @@ def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal
     if not etiquetas:
         return _evolucion_puestos(datos)
     union = pd.concat([fila for _, fila in etiquetas], ignore_index=True) if etiquetas else datos.iloc[0:0]
-    fechas = pd.to_datetime(union["Fecha_dt"], errors="coerce")
+    fechas = _fechas_preparadas(union["Fecha_dt"])
     anios = fechas.dropna().dt.year
     if anios.empty:
         return {"mode": "selected" if puesto_principal else "manual", "puesto": puesto_principal, "years": [], "series": []}
@@ -64,11 +81,18 @@ def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal
     series = []
     for etiqueta, frame in etiquetas:
         frame = frame.copy()
-        frame["_anio"] = pd.to_datetime(frame["Fecha_dt"], errors="coerce").dt.year
+        frame["_anio"] = _fechas_preparadas(frame["Fecha_dt"]).dt.year
         totals = frame.dropna(subset=["_anio"]).groupby("_anio")["Num_plazas_num"].sum().to_dict()
         series.append({"label": etiqueta, "values": [_numero_python(totals.get(year, 0)) for year in years]})
     mode = "selected" if puesto_principal else "manual"
     return {"mode": mode, "puesto": puesto_principal, "years": years, "series": series}
+
+
+def calcular_comparacion_puestos_sqlite(ruta_bd="datos/boe.db", puesto_principal=None, comparadores=(), **filtros):
+    """Compatibilidad pública: carga una vez y delega en el cálculo compartido."""
+    filtros_sin_puesto = {clave: valor for clave, valor in filtros.items() if clave != "puesto" and valor}
+    datos = cargar_datos_estadisticas_sqlite(ruta_bd, **filtros_sin_puesto)
+    return calcular_comparacion_puestos(datos, puesto_principal=puesto_principal, comparadores=comparadores)
 
 
 def normalizar_datos(df):
@@ -82,11 +106,36 @@ def normalizar_datos(df):
         )
 
     resultado = df.copy(deep=True)
-    resultado["Fecha_dt"] = resultado["Fecha_boe"].map(_convertir_fecha)
+    resultado["Fecha_dt"] = preparar_fechas(resultado["Fecha_boe"])
     resultado["Num_plazas_num"] = pd.to_numeric(
         resultado["Num_plazas"], errors="coerce"
     )
     return resultado
+
+
+def preparar_fechas(serie):
+    """Convierte fechas por formatos homogéneos y reserva el parser legacy para excepciones."""
+    valores = serie.copy()
+    resultado = pd.Series(pd.NaT, index=valores.index, dtype="datetime64[ns]")
+    textos = valores.astype("string")
+    mascara_iso = textos.str.fullmatch(r"\d{4}-\d{2}-\d{2}", na=False)
+    if mascara_iso.any():
+        resultado.loc[mascara_iso] = pd.to_datetime(
+            textos.loc[mascara_iso], format="%Y-%m-%d", errors="coerce"
+        )
+    mascara_fallback = ~mascara_iso & valores.notna()
+    if mascara_fallback.any():
+        resultado.loc[mascara_fallback] = pd.to_datetime(
+            valores.loc[mascara_fallback].map(_convertir_fecha), errors="coerce"
+        )
+    return resultado
+
+
+def _fechas_preparadas(serie):
+    """Reutiliza fechas ya convertidas y sólo convierte datos legacy sin preparar."""
+    if pd.api.types.is_datetime64_any_dtype(serie):
+        return serie
+    return pd.to_datetime(serie, errors="coerce")
 
 
 def filtrar_datos(
@@ -98,13 +147,13 @@ def filtrar_datos(
     sistema=None,
     turno=None,
     tipo_personal=None,
+    modo_sql=False,
 ):
     """Filtra por fechas inclusivas y por todas las palabras indicadas en el puesto."""
     resultado = df.copy(deep=True)
-    if "Fecha_dt" not in resultado.columns:
-        resultado = normalizar_datos(resultado)
+    resultado = preparar_datos_estadisticas(resultado)
 
-    fechas = pd.to_datetime(resultado["Fecha_dt"], errors="coerce")
+    fechas = _fechas_preparadas(resultado["Fecha_dt"])
     if fecha_inicio is not None:
         inicio = _convertir_fecha_filtro(fecha_inicio, "fecha inicial")
         resultado = resultado[fechas.dt.normalize() >= inicio]
@@ -113,14 +162,24 @@ def filtrar_datos(
         final = _convertir_fecha_filtro(fecha_final, "fecha final")
         resultado = resultado[fechas.dt.normalize() <= final]
 
-    palabras = _normalizar_texto(puesto).split() if puesto else []
+    # ``modo_sql`` debe reproducir literalmente el filtro de consultas SQLite:
+    # lower(puesto) LIKE lower('%palabra%').  No se eliminan diacríticos en
+    # este modo, porque SQLite tampoco los elimina y hacerlo produciría un
+    # universo distinto entre el resumen y las series comparativas.
+    palabras = (str(puesto).split() if modo_sql else _normalizar_texto(puesto).split()) if puesto else []
     if palabras:
         if "Puesto" not in resultado.columns:
             raise ValueError("Falta la columna obligatoria: Puesto")
-        puestos_normalizados = resultado["Puesto"].fillna("").map(_normalizar_texto)
-        mascara = puestos_normalizados.map(
-            lambda texto: all(palabra in texto for palabra in palabras)
-        )
+        if modo_sql:
+            puestos_normalizados = resultado["Puesto"].fillna("").astype(str).str.casefold()
+            mascara = pd.Series(True, index=resultado.index)
+            for palabra in palabras:
+                mascara &= puestos_normalizados.str.contains(palabra.casefold(), regex=False, na=False)
+        else:
+            puestos_normalizados = resultado["Puesto"].fillna("").map(_normalizar_texto)
+            mascara = puestos_normalizados.map(
+                lambda texto: all(palabra in texto for palabra in palabras)
+            )
         resultado = resultado[mascara]
 
     for valor, columna in (
@@ -156,13 +215,14 @@ def obtener_opciones_filtros(df):
 
 def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_seleccionado=None):
     """Calcula los indicadores y agrupaciones sobre los registros recibidos."""
-    datos = df.copy(deep=True)
-    if "Fecha_dt" not in datos.columns or "Num_plazas_num" not in datos.columns:
-        datos = normalizar_datos(datos)
+    datos = preparar_datos_estadisticas(df)
 
     columna_puesto = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
-    if columna_puesto == "Puesto_normalizado":
-        datos["Puesto_normalizado"] = datos["Puesto_normalizado"].fillna(datos["Puesto"])
+    datos_puestos = datos
+    if columna_puesto == "Puesto_normalizado" and datos["Puesto_normalizado"].isna().any():
+        datos_puestos = datos.assign(Puesto_normalizado=datos["Puesto_normalizado"].fillna(datos["Puesto"]))
+    mascara_administracion = _mascara_no_disponible(datos, "Administración")
+    mascara_comunidad = _mascara_no_disponible(datos, "Comunidad_autonoma")
     calidad_datos = {
         "fecha_no_utilizable": int(datos["Fecha_dt"].isna().sum()),
         "numero_plazas_no_utilizable": int(datos["Num_plazas_num"].isna().sum()),
@@ -170,7 +230,7 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
         "provincia_no_disponible": _contar_no_disponibles(
             datos, "Provincia", marcadores=("sin provincia",)
         ),
-        "administracion_no_disponible": _contar_no_disponibles(datos, "Administración"),
+        "administracion_no_disponible": int(mascara_administracion.sum()),
         "sistema_no_disponible": _contar_no_disponibles(datos, "Sistema"),
         "turno_no_disponible": _contar_no_disponibles(datos, "Turno"),
     }
@@ -181,15 +241,18 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
     if pd.isna(total_plazas):
         total_plazas = 0
 
-    administraciones_validas = datos[
-        ~_mascara_no_disponible(datos, "Administración")
-    ]
+    if "Administración" in datos.columns:
+        administraciones_validas = datos.loc[
+            ~mascara_administracion, ["Administración", "Num_plazas_num"]
+        ]
+    else:
+        administraciones_validas = pd.DataFrame({"Administración": pd.Series(index=datos.index, dtype=object), "Num_plazas_num": datos["Num_plazas_num"]})
     top_administraciones_datos = _agrupar(
         administraciones_validas, "Administración", top_administraciones
     )
-    top_puestos_datos = _agrupar(datos, columna_puesto, top_puestos)
+    top_puestos_datos = _agrupar(datos_puestos, columna_puesto, top_puestos)
 
-    provincias = datos.copy()
+    provincias = datos[["Provincia", "Num_plazas_num"]].copy() if "Provincia" in datos.columns else pd.DataFrame({"Provincia": pd.Series(index=datos.index, dtype=object), "Num_plazas_num": datos["Num_plazas_num"]})
     if "Provincia" not in provincias.columns:
         provincias["Provincia"] = "Sin provincia"
     provincias["Provincia"] = provincias["Provincia"].fillna("Sin provincia")
@@ -201,9 +264,10 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
         plazas_por_provincia["Num_plazas_num"] > 0
     ]
 
-    comunidades = datos[
-        ~_mascara_no_disponible(datos, "Comunidad_autonoma")
-    ].copy()
+    comunidades = datos.loc[
+        ~mascara_comunidad,
+        ["Comunidad_autonoma", "Num_plazas_num"],
+    ] if "Comunidad_autonoma" in datos.columns else pd.DataFrame({"Comunidad_autonoma": pd.Series(index=datos.index, dtype=object), "Num_plazas_num": datos["Num_plazas_num"]})
     plazas_por_comunidad_completas = _agrupar(
         comunidades, "Comunidad_autonoma"
     )
@@ -224,8 +288,11 @@ def calcular_estadisticas(df, top_administraciones=5, top_puestos=10, puesto_sel
         & (administraciones["Administración"].astype(str).str.strip() != "")
     ]
 
-    fechas_validas = datos.dropna(subset=["Fecha_dt"]).copy()
-    fechas_validas["Anio"] = pd.to_datetime(fechas_validas["Fecha_dt"]).dt.year
+    columnas_temporales = ["Fecha_dt", "Num_plazas_num"]
+    if columna_puesto not in columnas_temporales:
+        columnas_temporales.append(columna_puesto)
+    fechas_validas = datos_puestos.loc[datos_puestos["Fecha_dt"].notna(), columnas_temporales].copy()
+    fechas_validas["Anio"] = _fechas_preparadas(fechas_validas["Fecha_dt"]).dt.year
     evolucion_agrupada = (
         fechas_validas.groupby("Anio", as_index=False, dropna=False)["Num_plazas_num"]
         .sum()
@@ -283,7 +350,7 @@ def _plazas_por_mes(datos):
     """Acumula todo el histórico filtrado por mes del año, siempre 12 meses."""
     valores = {i: 0 for i in range(1, 13)}
     if not datos.empty:
-        meses = pd.to_datetime(datos["Fecha_dt"], errors="coerce").dt.month
+        meses = _fechas_preparadas(datos["Fecha_dt"]).dt.month
         for mes, plazas in datos.assign(_mes=meses).dropna(subset=["_mes"]).groupby("_mes")["Num_plazas_num"].sum().items():
             valores[int(mes)] = _numero_python(plazas)
     return [{"mes": i, "nombre": MESES_NOMBRES[i - 1], "plazas": valores[i]} for i in range(1, 13)]
@@ -296,7 +363,7 @@ def _evolucion_puestos(datos, puesto_seleccionado=None):
     columna = "Puesto_normalizado" if "Puesto_normalizado" in datos.columns else "Puesto"
     datos = datos.copy()
     datos[columna] = datos[columna].fillna(datos.get("Puesto", ""))
-    fechas = pd.to_datetime(datos["Fecha_dt"], errors="coerce")
+    fechas = _fechas_preparadas(datos["Fecha_dt"])
     datos = datos.assign(_anio=fechas.dt.year).dropna(subset=["_anio"])
     if datos.empty:
         return {"mode": "selected" if puesto_seleccionado else "top5", "puesto": str(puesto_seleccionado) if puesto_seleccionado else None, "years": [], "series": []}

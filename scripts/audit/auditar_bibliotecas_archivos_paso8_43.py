@@ -46,8 +46,12 @@ def auditar():
  for f in fs:d[f['puesto']].append(f)
  cls={x:[f for f in fs if f['clasificacion']==x] for x in 'ABCD'};con=[];sim=[]
  c=sqlite3.connect(DB);c.row_factory=sqlite3.Row
- try:allr=[dict(r) for r in c.execute('select oposicion_id,num_plazas,puesto from oposiciones')]
+ try:
+  allr=[dict(r) for r in c.execute('select oposicion_id,num_plazas,puesto from oposiciones')]
  finally:c.close()
+ source_ids = _source_ids()
+ if source_ids is not None:
+  allr = [r for r in allr if r['oposicion_id'] in source_ids]
  for canon,v in C.items():
   e=[f for f in fs if f['canon_propuesto']==canon];o=[r for r in allr if norm._clave(r['puesto']) in v];es={f['id'] for f in e};os={r['oposicion_id'] for r in o};con.append({'canon':canon,'variantes_exactas':sorted(v),'filas':len(e),'plazas':sum(f['plazas']or 0 for f in e),'evidencia':'género, barra, caso o preposición de la misma profesión; literal completo','contraejemplos':['Auxiliar/Ayudante/Técnico','Biblioteca/Archivo/Museo','escalas y mandos']});sim.append({'canon':canon,'filas_esperadas':len(e),'plazas_esperadas':sum(f['plazas']or 0 for f in e),'filas_obtenidas':len(o),'plazas_obtenidas':sum(r['num_plazas']or 0 for r in o),'faltantes':sorted(es-os),'inesperados':sorted(os-es),'colisiones':[]})
  tax={x:summary([f for f in fs if f['microfamilia']==x]) for x in ('BIBLIOTECARIO','AUXILIAR_BIBLIOTECA','AYUDANTE_BIBLIOTECA','TECNICO_BIBLIOTECA','ARCHIVERO','AUXILIAR_ARCHIVO','AYUDANTE_ARCHIVO','TECNICO_ARCHIVO','BIBLIOTECA_ARCHIVO_COMBINADO','DOCUMENTALISTA','DOCUMENTACION','FACULTATIVO','ESCALA_CUERPO','MANDOS','OTROS_CONTEXTUALES')};g=gate(DB);s1=state();n1=sha(ROOT/'normalizacion_puestos.py')

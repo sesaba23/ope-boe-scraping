@@ -157,6 +157,7 @@ def auditar() -> dict:
     finally:
         conexion.close()
     fuente = INF / "fase8_paso61_psicologia_detalle.csv"
+    ids_fuente = None
     if fuente.exists():
         with fuente.open(encoding="utf-8", newline="") as f:
             ids_fuente = {int(r["id"]) for r in csv.DictReader(f) if r.get("id")}
@@ -174,6 +175,10 @@ def auditar() -> dict:
         globales = [dict(fila) for fila in conexion.execute("select oposicion_id, puesto, puesto_normalizado, num_plazas from oposiciones")]
     finally:
         conexion.close()
+    if ids_fuente is not None:
+        # La simulación A reconcilia el snapshot histórico de la auditoría,
+        # no el universo vivo, que puede contener publicaciones posteriores.
+        globales = [fila for fila in globales if fila["oposicion_id"] in ids_fuente]
     cobertura = [fila for fila in globales if norm._clave(fila["puesto"]) in VARIANTES_GENERICAS]
     esperados = {fila["id"] for fila in clases["A"]}
     obtenidos = {fila["oposicion_id"] for fila in cobertura}

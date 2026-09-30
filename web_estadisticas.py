@@ -16,7 +16,10 @@ from consultas_boe import (
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
     resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
 )
-from estadisticas import calcular_estadisticas_sqlite, calcular_comparacion_puestos_sqlite
+from estadisticas import (
+    calcular_comparacion_puestos, calcular_estadisticas, cargar_datos_estadisticas_sqlite,
+    filtrar_datos,
+)
 from gestion_exportacion import GestorExportacionXlsx
 import servicio_exportacion
 from tipo_personal import TIPOS_PERSONAL
@@ -587,14 +590,16 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         ruta = app.config["RUTA_BD"]
         try:
             opciones = opciones_filtros(ruta)
-            estadisticas = calcular_estadisticas_sqlite(
-                ruta, desde=fecha_inicio, hasta=fecha_final, puesto=puesto,
-                provincia=provincia, ambito=ambito, sistema=sistema, turno=turno,
-                tipo_personal=tipo_personal)
-            evolucion_comparada = calcular_comparacion_puestos_sqlite(
-                ruta, puesto_principal=puesto, comparadores=comparadores,
-                desde=fecha_inicio, hasta=fecha_final, provincia=provincia,
-                ambito=ambito, sistema=sistema, turno=turno, tipo_personal=tipo_personal)
+            filtros_carga = {
+                "desde": fecha_inicio, "hasta": fecha_final,
+                "provincia": provincia, "ambito": ambito, "sistema": sistema, "turno": turno,
+                "tipo_personal": tipo_personal,
+            }
+            datos_preparados = cargar_datos_estadisticas_sqlite(ruta, **filtros_carga)
+            datos_principales = filtrar_datos(datos_preparados, puesto=puesto, modo_sql=True) if puesto else datos_preparados
+            estadisticas = calcular_estadisticas(datos_principales, puesto_seleccionado=puesto)
+            evolucion_comparada = calcular_comparacion_puestos(
+                datos_preparados, puesto_principal=puesto, comparadores=comparadores)
             datos_metadata = metadata(ruta)
         except (ErrorConsultaSQLite, OSError, ValueError) as error:
             return jsonify({"error": f"No se pudieron cargar las estadísticas: {error}"}), 503

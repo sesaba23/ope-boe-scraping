@@ -48,6 +48,8 @@ h2 { margin-bottom: 0; font-size: 1.1rem; }
 }
 
 .campo { display: grid; gap: 7px; }
+.campo-tipos-personal { grid-column: 1 / -1; display: block; min-width: 0; }
+.campo-tipos-personal legend { margin-bottom: 9px; }
 label { font-size: .86rem; font-weight: 700; }
 input, select { width: 100%; min-height: 44px; border: 1px solid #cbd4e1; border-radius: 9px; background: #fff; color: var(--texto); padding: 9px 11px; font: inherit; }
 input:focus, select:focus { border-color: var(--primario); outline: 3px solid rgba(36, 87, 214, .14); }

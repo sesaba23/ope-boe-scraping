@@ -46,6 +46,7 @@ def test_listado_html_conserva_checkboxes_y_tipo_en_la_ficha():
     assert 'name="tipo_personal"' in html
     assert 'value="Funcionario"' in html
     assert 'Tipo de personal' in html
+    assert 'class="filter-choice-grid"' in html
 
 
 def test_api_mapa_y_estadisticas_aceptan_tipo_personal_repetido():
@@ -55,6 +56,25 @@ def test_api_mapa_y_estadisticas_aceptan_tipo_personal_repetido():
     estadisticas = cliente.get("/api/estadisticas?tipo_personal=Funcionario&tipo_personal=Laboral")
     assert estadisticas.status_code == 200
     assert estadisticas.get_json()["filtros"]["tipo_personal"] == ["Funcionario", "Laboral"]
+
+
+def test_distribucion_estadisticas_reconcilia_con_sql_y_respeta_filtro():
+    cliente = crear_app(RUTA_PRODUCTIVA).test_client()
+    respuesta = cliente.get("/api/estadisticas")
+    distribucion = respuesta.get_json()["distribucion_tipo_personal"]
+    with sqlite3.connect(f"file:{RUTA_PRODUCTIVA}?mode=ro", uri=True) as conexion:
+        esperado = dict(conexion.execute(
+            "SELECT tipo_personal, COUNT(*) FROM oposiciones GROUP BY tipo_personal"
+        ).fetchall())
+    assert [fila["tipo_personal"] for fila in distribucion] == [
+        "Funcionario", "Laboral", "Estatutario", "Universitario", "Militar", "Otros", "No determinado"
+    ]
+    assert {fila["tipo_personal"]: fila["registros"] for fila in distribucion} == esperado
+    filtrada = cliente.get("/api/estadisticas?tipo_personal=Funcionario").get_json()
+    assert filtrada["distribucion_tipo_personal"] == [
+        {"tipo_personal": categoria, "registros": (esperado[categoria] if categoria == "Funcionario" else 0)}
+        for categoria in ["Funcionario", "Laboral", "Estatutario", "Universitario", "Militar", "Otros", "No determinado"]
+    ]
 
 
 def test_tipo_personal_desconocido_se_rechaza():

@@ -110,7 +110,11 @@ function actualizarGraficos(datos) {
     estado.textContent = evolucion.mode === "top5" ? "Mostrando los 5 puestos con más plazas" : evolucion.mode === "manual" ? `Comparando ${evolucion.series.length} puestos` : `Evolución de ${evolucion.series[0]?.label || "puesto seleccionado"}`;
     crearGraficoComunidades(datos.plazas_por_comunidad);
     crearGraficoProvincias(datos.plazas_por_provincia);
-    renderizarRanking("distribucion-tipo-personal", datos.distribucion_tipo_personal || [], "tipo_personal", 7);
+    const distribucion = (datos.distribucion_tipo_personal || []).map((fila) => ({
+        ...fila,
+        plazas: fila.registros,
+    }));
+    renderizarRanking("distribucion-tipo-personal", distribucion, "tipo_personal", 7);
 }
 
 function actualizarSelectoresComparacion(opciones, principal) {
@@ -150,6 +154,7 @@ function actualizarOpciones(opciones, filtros) {
         desplegable.value = seleccionado || "";
     });
     const contenedor = document.querySelector("#tipos-personal-filtros");
+    contenedor.className = "filter-choice-grid";
     const seleccionados = new Set(filtros.tipo_personal || []);
     contenedor.replaceChildren();
     (opciones.tipos_personal || []).forEach((valor) => {

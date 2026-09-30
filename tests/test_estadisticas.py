@@ -4,6 +4,8 @@ import pytest
 from estadisticas import (
     _convertir_fecha,
     calcular_estadisticas,
+    calcular_comparacion_puestos,
+    preparar_datos_estadisticas,
     filtrar_datos,
     normalizar_datos,
     obtener_opciones_filtros,
@@ -25,6 +27,19 @@ def test_convertir_fecha_admite_formatos_inequivocos(entrada, esperada):
 
 def test_convertir_fecha_rechaza_texto_corrupto():
     assert pd.isna(_convertir_fecha("fecha corrupta"))
+
+
+def test_calculos_comparten_dataframe_preparado_sin_repetir_normalizacion(monkeypatch):
+    datos = preparar_datos_estadisticas(_datos())
+    original = __import__("estadisticas").normalizar_datos
+
+    def fallo_si_se_repite(_):
+        raise AssertionError("no debe normalizarse de nuevo un DataFrame preparado")
+
+    monkeypatch.setattr("estadisticas.normalizar_datos", fallo_si_se_repite)
+    assert calcular_estadisticas(datos)["total_registros"] == len(datos)
+    assert calcular_comparacion_puestos(datos)["years"]
+    assert original is not fallo_si_se_repite
 
 
 def _datos():
@@ -417,3 +432,61 @@ def test_evolucion_anual_puestos_top5_ordena_empates_por_nombre():
     ]))
     series = calcular_estadisticas(datos)["evolucion_anual_puestos"]["series"]
     assert [fila["label"] for fila in series] == ["A", "B", "C"]
+
+
+def test_comparacion_puesto_principal_reconcilia_con_resumen_y_respeta_semantica_sql():
+    datos = normalizar_datos(pd.DataFrame([
+        {"Fecha_boe": "2024-01-01", "Num_plazas": 2,
+         "Puesto": "Ingeniero Técnico Industrial"},
+        {"Fecha_boe": "2025-01-01", "Num_plazas": 3,
+         "Puesto": "Ingeniero Técnico Industrial"},
+        {"Fecha_boe": "2024-01-01", "Num_plazas": 100,
+         "Puesto": "Ingeniero Técnico"},
+    ]))
+
+    resumen = calcular_estadisticas(
+        filtrar_datos(datos, puesto="Ingeniero Técnico Industrial", modo_sql=True),
+        puesto_seleccionado="Ingeniero Técnico Industrial",
+    )
+    comparacion = calcular_comparacion_puestos(
+        datos, puesto_principal="Ingeniero Técnico Industrial"
+    )
+
+    assert resumen["total_registros"] == 2
+    assert resumen["total_plazas"] == 5
+    assert comparacion["years"] == [2024, 2025]
+    assert comparacion["series"][0]["values"] == [2, 3]
+    assert sum(comparacion["series"][0]["values"]) == resumen["total_plazas"]
+
+
+def test_filtrado_modo_sql_no_elimina_diacriticos_del_termino():
+    datos = normalizar_datos(pd.DataFrame([
+        {"Fecha_boe": "2026-01-01", "Num_plazas": 1,
+         "Puesto": "Ingeniero Técnico Industrial"},
+        {"Fecha_boe": "2026-01-02", "Num_plazas": 1,
+         "Puesto": "Ingeniero Tecnico Industrial"},
+    ]))
+
+    resultado = filtrar_datos(
+        datos, puesto="Ingeniero Técnico Industrial", modo_sql=True
+    )
+
+    assert len(resultado) == 1
+    assert resultado.iloc[0]["Puesto"] == "Ingeniero Técnico Industrial"
+
+
+def test_distribucion_tipo_personal_mantiene_catalogo_y_suma_registros():
+    datos = normalizar_datos(pd.DataFrame([
+        {"Fecha_boe": "2026-01-01", "Num_plazas": 2, "Puesto": "A", "Tipo_personal": "Funcionario"},
+        {"Fecha_boe": "2026-01-02", "Num_plazas": 1, "Puesto": "B", "Tipo_personal": "Laboral"},
+        {"Fecha_boe": "2026-01-03", "Num_plazas": 4, "Puesto": "C", "Tipo_personal": None},
+    ]))
+
+    distribucion = calcular_estadisticas(datos)["distribucion_tipo_personal"]
+
+    assert [fila["tipo_personal"] for fila in distribucion] == [
+        "Funcionario", "Laboral", "Estatutario", "Universitario",
+        "Militar", "Otros", "No determinado",
+    ]
+    assert [fila["registros"] for fila in distribucion] == [1, 1, 0, 0, 0, 0, 1]
+    assert sum(fila["registros"] for fila in distribucion) == 3

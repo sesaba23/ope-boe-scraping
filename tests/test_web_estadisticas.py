@@ -718,6 +718,19 @@ def test_pagina_contiene_filtros_indicadores_y_graficos(cliente):
     assert html.index("Evolución anual de plazas") < html.index("Plazas por comunidad autónoma") < html.index("Plazas por provincia")
 
 
+def test_filtro_tipo_personal_estadisticas_tiene_grupo_compacto(cliente):
+    html = cliente.get("/estadisticas").get_data(as_text=True)
+    assert 'class="campo campo-tipos-personal"' in html
+    assert 'id="tipos-personal-filtros"' in html
+    assert 'legend>Tipo de personal' in html
+
+
+def test_js_distribucion_tipo_personal_adapta_registros_a_ranking(cliente):
+    javascript = cliente.get("/static/js/estadisticas.js").get_data(as_text=True)
+    assert "plazas: fila.registros" in javascript
+    assert 'renderizarRanking("distribucion-tipo-personal"' in javascript
+
+
 def test_pagina_carga_chart_css_y_javascript_desde_recursos_locales(cliente):
     html = cliente.get("/estadisticas").get_data(as_text=True)
 
