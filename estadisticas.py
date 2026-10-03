@@ -196,7 +196,7 @@ def filtrar_datos(
     if tipo_personal:
         valores = {tipo_personal} if isinstance(tipo_personal, str) else set(tipo_personal)
         if "Tipo_personal" in resultado.columns:
-            resultado = resultado[resultado["Tipo_personal"].fillna("No determinado").isin(valores)]
+            resultado = resultado[resultado["Tipo_personal"].fillna("Otros").isin(valores)]
         else:
             resultado = resultado.iloc[0:0]
 
@@ -341,7 +341,7 @@ def _distribucion_tipo_personal(datos):
     if "Tipo_personal" not in datos.columns:
         conteos = {}
     else:
-        conteos = datos["Tipo_personal"].fillna("No determinado").astype(str).value_counts().to_dict()
+        conteos = datos["Tipo_personal"].fillna("Otros").astype(str).value_counts().to_dict()
     return [{"tipo_personal": categoria, "registros": int(conteos.get(categoria, 0))}
             for categoria in TIPOS_PERSONAL]
 

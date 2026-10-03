@@ -7,16 +7,15 @@ import base_datos
 
 
 CATALOGO = {
-    "Funcionario", "Laboral", "Estatutario", "Universitario",
-    "Militar", "Otros", "No determinado",
+    "Funcionario", "Laboral", "Otros",
 }
 
 
-def _schema7(tmp_path, *, version="tipo-personal-v1"):
+def _schema7(tmp_path, *, version="tipo-personal-v2"):
     ruta = tmp_path / "boe.db"
     con = base_datos.conectar(ruta)
     base_datos.crear_esquema(con)
-    con.execute("ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL DEFAULT 'No determinado' CHECK(tipo_personal IN ('Funcionario','Laboral','Estatutario','Universitario','Militar','Otros','No determinado'))")
+    con.execute("ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL DEFAULT 'Otros' CHECK(tipo_personal IN ('Funcionario','Laboral','Otros'))")
     base_datos.guardar_metadata(con, schema_version=7, data_version=78)
     con.execute("INSERT INTO metadata(clave,valor) VALUES ('tipo_personal_version',?)", (version,))
     con.commit()
@@ -87,10 +86,7 @@ def test_altas_reales_persisten_todas_las_categorias(tmp_path):
         base_datos.insertar_oposiciones(con, datos["Oposiciones"])
     con.close()
     assert set(_stored(ruta)) == CATALOGO
-    assert _stored(ruta) == {
-        "Funcionario": 1, "Laboral": 1, "Universitario": 1,
-        "Militar": 1, "Estatutario": 1, "Otros": 1, "No determinado": 1,
-    }
+    assert _stored(ruta) == {"Funcionario": 1, "Laboral": 1, "Otros": 5}
 
 
 def test_prioridades_se_persisten_desde_el_pipeline(tmp_path):
@@ -108,7 +104,7 @@ def test_prioridades_se_persisten_desde_el_pipeline(tmp_path):
         base_datos.insertar_publicaciones(con, datos["Publicaciones"])
         base_datos.insertar_oposiciones(con, datos["Oposiciones"])
     con.close()
-    assert _stored(ruta) == {"Universitario": 2, "Laboral": 1, "Funcionario": 1, "No determinado": 1}
+    assert _stored(ruta) == {"Otros": 3, "Laboral": 1, "Funcionario": 1}
 
 
 def test_actualizacion_recalcula_y_cambio_irrelevante_no_cambia_resultado(tmp_path):
@@ -127,7 +123,7 @@ def test_actualizacion_recalcula_y_cambio_irrelevante_no_cambia_resultado(tmp_pa
 
 
 def test_version_incompatible_exige_migracion_explicita(tmp_path):
-    ruta = _schema7(tmp_path, version="tipo-personal-v2")
+    ruta = _schema7(tmp_path, version="tipo-personal-v1")
     datos = _frames([{"Publicacion_ID": "P1", "Puesto": "Funcionario de carrera"}])
     con = base_datos.conectar(ruta)
     with pytest.raises(base_datos.EspejoSQLiteError, match="versiones incompatibles"):

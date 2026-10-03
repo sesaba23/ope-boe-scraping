@@ -31,7 +31,7 @@ class GhSimulado:
   raise AssertionError(comando)
 
 def db(tmp_path):
- tmp_path.mkdir(parents=True, exist_ok=True); p=tmp_path/'boe.db'; c=base_datos.conectar(p); base_datos.crear_esquema(c); c.execute("ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL DEFAULT 'No determinado' CHECK(tipo_personal IN ('Funcionario','Laboral','Estatutario','Universitario','Militar','Otros','No determinado'))"); base_datos.guardar_metadata(c,schema_version=7,data_version=1); c.execute("INSERT INTO metadata(clave,valor) VALUES ('tipo_personal_version','tipo-personal-v1')"); c.commit(); c.close(); return p
+ tmp_path.mkdir(parents=True, exist_ok=True); p=tmp_path/'boe.db'; c=base_datos.conectar(p); base_datos.crear_esquema(c); c.execute("ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL DEFAULT 'Otros' CHECK(tipo_personal IN ('Funcionario','Laboral','Otros'))"); base_datos.guardar_metadata(c,schema_version=7,data_version=1); c.execute("INSERT INTO metadata(clave,valor) VALUES ('tipo_personal_version','tipo-personal-v2')"); c.commit(); c.close(); return p
 
 def test_manifest_y_validacion(tmp_path):
  p=db(tmp_path); m=gestion_base.crear_manifest(p); assert gestion_base.validar_manifest(m)['sha256']==base_datos.hash_archivo(p)

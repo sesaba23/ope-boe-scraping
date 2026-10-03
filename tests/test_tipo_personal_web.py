@@ -12,8 +12,7 @@ RUTA_PRODUCTIVA = Path(__file__).parents[1] / "datos" / "boe.db"
 def test_catalogo_y_filtro_repetido_se_aplican_en_la_consulta_compartida():
     opciones = opciones_busqueda(RUTA_PRODUCTIVA)
     assert opciones["tipos_personal"] == [
-        "Funcionario", "Laboral", "Estatutario", "Universitario",
-        "Militar", "Otros", "No determinado",
+        "Funcionario", "Laboral", "Otros",
     ]
     resultado = buscar_oposiciones(RUTA_PRODUCTIVA, tipo_personal=["Funcionario", "Laboral"], tamano_pagina=3)
     assert resultado["total"] > 0
@@ -22,7 +21,7 @@ def test_catalogo_y_filtro_repetido_se_aplican_en_la_consulta_compartida():
     assert buscar_oposiciones(RUTA_PRODUCTIVA, tipo_personal=list(opciones["tipos_personal"]), tamano_pagina=1)["total"] == 109429
 
 
-@pytest.mark.parametrize("categoria", ["Funcionario", "Laboral", "Estatutario", "Universitario", "Militar", "Otros", "No determinado"])
+@pytest.mark.parametrize("categoria", ["Funcionario", "Laboral", "Otros"])
 def test_cada_categoria_web_reconcilia_con_sql_directo(categoria):
     conexion = sqlite3.connect(f"file:{RUTA_PRODUCTIVA}?mode=ro", uri=True)
     esperado = conexion.execute("SELECT COUNT(*) FROM oposiciones WHERE tipo_personal = ?", (categoria,)).fetchone()[0]
@@ -45,6 +44,12 @@ def test_listado_html_conserva_checkboxes_y_tipo_en_la_ficha():
     html = respuesta.get_data(as_text=True)
     assert 'name="tipo_personal"' in html
     assert 'value="Funcionario"' in html
+    assert 'value="Laboral"' in html
+    assert 'value="Otros"' in html
+    assert html.count('class="filter-choice-item"') == 3
+    assert "Puedes seleccionar una o varias categorías" in html
+    assert "Estatutario" not in html
+    assert "No determinado" not in html
     assert 'Tipo de personal' in html
     assert 'class="filter-choice-grid"' in html
 
@@ -67,13 +72,13 @@ def test_distribucion_estadisticas_reconcilia_con_sql_y_respeta_filtro():
             "SELECT tipo_personal, COUNT(*) FROM oposiciones GROUP BY tipo_personal"
         ).fetchall())
     assert [fila["tipo_personal"] for fila in distribucion] == [
-        "Funcionario", "Laboral", "Estatutario", "Universitario", "Militar", "Otros", "No determinado"
+        "Funcionario", "Laboral", "Otros"
     ]
     assert {fila["tipo_personal"]: fila["registros"] for fila in distribucion} == esperado
     filtrada = cliente.get("/api/estadisticas?tipo_personal=Funcionario").get_json()
     assert filtrada["distribucion_tipo_personal"] == [
         {"tipo_personal": categoria, "registros": (esperado[categoria] if categoria == "Funcionario" else 0)}
-        for categoria in ["Funcionario", "Laboral", "Estatutario", "Universitario", "Militar", "Otros", "No determinado"]
+        for categoria in ["Funcionario", "Laboral", "Otros"]
     ]
 
 
@@ -81,3 +86,21 @@ def test_tipo_personal_desconocido_se_rechaza():
     cliente = crear_app(RUTA_PRODUCTIVA).test_client()
     respuesta = cliente.get("/api/oposiciones/mapa?tipo_personal=Inventado")
     assert respuesta.status_code == 400
+
+
+@pytest.mark.parametrize("categoria_antigua", [
+    "Estatutario", "Universitario", "Militar", "No determinado",
+])
+def test_categorias_v1_se_rechazan_como_filtros_productivos(categoria_antigua):
+    cliente = crear_app(RUTA_PRODUCTIVA).test_client()
+    assert cliente.get(f"/api/oposiciones/mapa?tipo_personal={categoria_antigua}").status_code == 400
+    assert cliente.get(f"/api/estadisticas?tipo_personal={categoria_antigua}").status_code == 400
+
+
+def test_estetica_compartida_de_filtros_personal():
+    cliente = crear_app(RUTA_PRODUCTIVA).test_client()
+    css = cliente.get("/static/css/portal.css").get_data(as_text=True)
+    assert ".filter-choice-item" in css
+    assert ".filter-choice-item:has(input[type=\"checkbox\"]:checked)" in css
+    assert "grid-template-columns: repeat(3, minmax(0, 1fr))" in css
+    assert "@media (max-width: 720px)" in css

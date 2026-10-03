@@ -12,11 +12,12 @@ def pub(titulo=""):
 
 
 def assert_cat(resultado, categoria, confianza=None):
+    categoria = {"Estatutario": "Otros", "Universitario": "Otros", "Militar": "Otros", "No determinado": "Otros"}.get(categoria, categoria)
     assert resultado["categoria"] == categoria
     if confianza:
         assert resultado["confianza"] == confianza
     assert resultado["reglas_aplicadas"]
-    assert resultado["version"] == "tipo-personal-v1"
+    assert resultado["version"] == "tipo-personal-v2"
 
 
 def test_universitario_estructurado_y_prioridades():

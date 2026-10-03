@@ -341,8 +341,8 @@ def migrar(ruta_excel="BOE-oposiciones.xlsx", destino="datos/boe.db", *, recrear
             base_datos.crear_esquema(conexion)
             conexion.execute(
                 "ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL "
-                "DEFAULT 'No determinado' CHECK(tipo_personal IN "
-                "('Funcionario','Laboral','Estatutario','Universitario','Militar','Otros','No determinado'))"
+                "DEFAULT 'Otros' CHECK(tipo_personal IN "
+                "('Funcionario','Laboral','Otros'))"
             )
             base_datos.guardar_metadata(conexion, schema_version=7, data_version=0)
             conexion.execute(

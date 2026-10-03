@@ -20,8 +20,18 @@ from tipo_personal import CATEGORIAS, VERSION, clasificar_tipo_personal
 SCHEMA_ORIGEN = "6"
 SCHEMA_DESTINO = "7"
 METADATA_VERSION = "tipo_personal_version"
+VERSION_ORIGEN = "tipo-personal-v1"
 CATALOGO = frozenset(CATEGORIAS)
-RECUENTOS_ESPERADOS = {
+CATALOGO_V1 = frozenset((
+    "Funcionario", "Laboral", "Estatutario", "Universitario", "Militar",
+    "Otros", "No determinado",
+))
+MAPEO_V1_V2 = {
+    "Funcionario": "Funcionario", "Laboral": "Laboral",
+    "Estatutario": "Otros", "Universitario": "Otros", "Militar": "Otros",
+    "Otros": "Otros", "No determinado": "Otros",
+}
+RECUENTOS_ESPERADOS_V1 = {
     "Funcionario": 55961,
     "Laboral": 18216,
     "Estatutario": 1,
@@ -30,6 +40,7 @@ RECUENTOS_ESPERADOS = {
     "Otros": 1,
     "No determinado": 32349,
 }
+RECUENTOS_ESPERADOS = {"Funcionario": 55961, "Laboral": 18216, "Otros": 35252}
 
 
 def _columnas(conexion: sqlite3.Connection, tabla: str) -> list[str]:
@@ -126,13 +137,51 @@ def generar_plan(ruta_bd: str | Path) -> dict[str, object]:
         conexion.close()
 
 
+def generar_plan_remapeo_v1_v2(ruta_bd: str | Path) -> dict[str, object]:
+    """Construye el plan explícito v1→v2 sin volver a interpretar las filas."""
+    ruta = Path(ruta_bd)
+    conexion = base_datos.conectar(ruta, readonly=True)
+    try:
+        metadata = base_datos.leer_metadata(conexion)
+        resultados = []
+        recuentos = Counter()
+        digest = hashlib.sha256()
+        for fila in conexion.execute(
+            "SELECT oposicion_id,tipo_personal FROM oposiciones ORDER BY oposicion_id"
+        ):
+            anterior = fila[1]
+            if anterior not in CATALOGO_V1:
+                raise RuntimeError(f"Categoría v1 fuera de catálogo: {anterior!r}")
+            registro = {
+                "oposicion_id": fila[0],
+                "tipo_personal": MAPEO_V1_V2[anterior],
+                "categoria_anterior": anterior,
+                "version": VERSION,
+            }
+            resultados.append(registro)
+            recuentos[registro["tipo_personal"]] += 1
+            digest.update((json.dumps(
+                registro, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+            ) + "\n").encode())
+        total = conexion.execute("SELECT count(*) FROM oposiciones").fetchone()[0]
+        if len(resultados) != total or sum(recuentos.values()) != total:
+            raise RuntimeError("El remapeo no cubre exactamente todas las oposiciones")
+        return {
+            "metadata": metadata, "total": total,
+            "recuentos": {categoria: recuentos[categoria] for categoria in CATEGORIAS},
+            "sha256": digest.hexdigest(), "resultados": resultados,
+        }
+    finally:
+        conexion.close()
+
+
 def validar_dry_run_doble(ruta_bd: str | Path, *, recuentos_esperados=None) -> dict[str, object]:
     primero = generar_plan(ruta_bd)
     segundo = generar_plan(ruta_bd)
     if primero["sha256"] != segundo["sha256"] or primero["resultados"] != segundo["resultados"]:
         raise RuntimeError("El clasificador no es determinista")
     esperados = recuentos_esperados
-    if esperados is None and primero["total"] == sum(RECUENTOS_ESPERADOS.values()):
+    if esperados is None and primero["total"] == sum(RECUENTOS_ESPERADOS_V1.values()):
         esperados = RECUENTOS_ESPERADOS
     if esperados is not None and primero["recuentos"] != {
         categoria: esperados.get(categoria, 0) for categoria in CATEGORIAS
@@ -141,14 +190,25 @@ def validar_dry_run_doble(ruta_bd: str | Path, *, recuentos_esperados=None) -> d
     return primero
 
 
+def _plan_remapeo_doble(ruta_bd: str | Path) -> dict[str, object]:
+    primero = generar_plan_remapeo_v1_v2(ruta_bd)
+    segundo = generar_plan_remapeo_v1_v2(ruta_bd)
+    if primero["sha256"] != segundo["sha256"] or primero["resultados"] != segundo["resultados"]:
+        raise RuntimeError("El remapeo v1→v2 no es determinista")
+    if primero["total"] == sum(RECUENTOS_ESPERADOS_V1.values()) and primero["recuentos"] != RECUENTOS_ESPERADOS:
+        raise RuntimeError("La distribución v2 no coincide con el remapeo aprobado")
+    return primero
+
+
 def escribir_informe(plan: dict[str, object], directorio: str | Path) -> dict[str, str]:
     destino = Path(directorio)
     destino.mkdir(parents=True, exist_ok=True)
-    csv_path = destino / "tipo_personal_v1_detalle.csv"
-    json_path = destino / "tipo_personal_v1_resumen.json"
+    sufijo = "v2" if VERSION == "tipo-personal-v2" else "v1"
+    csv_path = destino / f"tipo_personal_{sufijo}_detalle.csv"
+    json_path = destino / f"tipo_personal_{sufijo}_resumen.json"
     campos = (
         "oposicion_id", "tipo_personal", "confianza", "reglas_aplicadas",
-        "familias_detectadas", "grupos_evidencia", "version",
+        "familias_detectadas", "grupos_evidencia", "categoria_anterior", "version",
     )
     with csv_path.open("w", encoding="utf-8", newline="") as archivo:
         escritor = csv.DictWriter(archivo, fieldnames=campos)
@@ -156,9 +216,10 @@ def escribir_informe(plan: dict[str, object], directorio: str | Path) -> dict[st
         for fila in plan["resultados"]:
             escritor.writerow({
                 **fila,
-                "reglas_aplicadas": json.dumps(fila["reglas_aplicadas"], ensure_ascii=False),
-                "familias_detectadas": json.dumps(fila["familias_detectadas"], ensure_ascii=False),
-                "grupos_evidencia": json.dumps(fila["grupos_evidencia"], ensure_ascii=False),
+                "confianza": fila.get("confianza"),
+                "reglas_aplicadas": json.dumps(fila.get("reglas_aplicadas", []), ensure_ascii=False),
+                "familias_detectadas": json.dumps(fila.get("familias_detectadas", []), ensure_ascii=False),
+                "grupos_evidencia": json.dumps(fila.get("grupos_evidencia", []), ensure_ascii=False),
             })
     resumen = {
         "modo": "dry-run reproducible",
@@ -213,20 +274,76 @@ def migrar(
     finally:
         lectura.close()
     if metadata_antes.get("schema_version") == SCHEMA_DESTINO:
-        if "tipo_personal" not in columnas or metadata_antes.get(METADATA_VERSION) != VERSION:
+        if "tipo_personal" not in columnas:
             raise RuntimeError("Metadata v7 sin estructura/provenance de tipo_personal")
-        plan = validar_dry_run_doble(ruta)
+        version_origen = metadata_antes.get(METADATA_VERSION)
+        if version_origen == VERSION:
+            plan = validar_dry_run_doble(ruta)
+        elif version_origen == VERSION_ORIGEN:
+            plan = _plan_remapeo_doble(ruta)
+        else:
+            raise RuntimeError("La base usa una versión de tipo_personal no migrable")
+        informe = escribir_informe(plan, directorio_informe)
+        if version_origen == VERSION:
+            validacion = base_datos.conectar(ruta, readonly=True)
+            try:
+                _validar_persistencia(validacion, plan)
+            finally:
+                validacion.close()
+            return {
+                "actualizada": False, "dry_run": dry_run, "backup": None,
+                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
+                "informe": informe,
+            }
+        if dry_run:
+            return {
+                "actualizada": False, "dry_run": True, "backup": None,
+                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
+                "informe": informe, "invariantes": invariantes_antes,
+            }
         validacion = base_datos.conectar(ruta, readonly=True)
         try:
-            _validar_persistencia(validacion, plan)
+            actuales = dict(validacion.execute("SELECT oposicion_id,tipo_personal FROM oposiciones"))
         finally:
             validacion.close()
-        informe = escribir_informe(plan, directorio_informe)
+        cambios = [fila for fila in plan["resultados"] if fila["tipo_personal"] != actuales.get(fila["oposicion_id"])]
+        if not cambios:
+            return {
+                "actualizada": False, "dry_run": dry_run, "backup": None,
+                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
+                "informe": informe,
+            }
+        # Continúa por una transacción v2 explícita con el plan de remapeo.
+        backup = base_datos.crear_backup(ruta, directorio_backup)
+        conexion = base_datos.conectar(ruta)
+        try:
+            with base_datos.transaccion(conexion):
+                if base_datos.leer_metadata(conexion) != metadata_antes:
+                    raise RuntimeError("La base cambió durante la preparación de la migración")
+                _persistir_plan(conexion, plan)
+                base_datos.guardar_metadata(conexion, data_version=int(metadata_antes["data_version"]) + 1)
+                conexion.execute(
+                    "INSERT INTO metadata(clave,valor) VALUES (?,?) ON CONFLICT(clave) DO UPDATE SET valor=excluded.valor",
+                    (METADATA_VERSION, VERSION),
+                )
+                _validar_persistencia(conexion, plan)
+                if fingerprint_invariantes(conexion) != invariantes_antes:
+                    raise RuntimeError("La migración alteró datos ajenos a tipo_personal")
+                if base_datos.integrity_check(conexion) != ["ok"] or base_datos.foreign_key_check(conexion):
+                    raise RuntimeError("La base migrada no supera integridad")
+        finally:
+            conexion.close()
         return {
-            "actualizada": False, "dry_run": dry_run, "backup": None,
-            "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+            "actualizada": True, "dry_run": False, "backup": str(backup),
+            "schema_version": SCHEMA_DESTINO,
+            "data_version_antes": metadata_antes["data_version"],
+            "data_version_despues": str(int(metadata_antes["data_version"]) + 1),
             "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
-            "informe": informe,
+            "informe": informe, "invariantes_antes": invariantes_antes,
+            "invariantes_despues": invariantes_antes,
         }
     if metadata_antes.get("schema_version") != SCHEMA_ORIGEN or "tipo_personal" in columnas:
         raise RuntimeError("La base no es un esquema v6 migrable a tipo_personal v1")
@@ -252,7 +369,7 @@ def migrar(
             catalogo_sql = ",".join(f"'{categoria}'" for categoria in CATEGORIAS)
             conexion.execute(
                 "ALTER TABLE oposiciones ADD COLUMN tipo_personal TEXT NOT NULL "
-                f"DEFAULT 'No determinado' CHECK(tipo_personal IN ({catalogo_sql}))"
+                f"DEFAULT 'Otros' CHECK(tipo_personal IN ({catalogo_sql}))"
             )
             _persistir_plan(conexion, plan)
             base_datos.guardar_metadata(

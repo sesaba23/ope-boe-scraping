@@ -139,7 +139,7 @@ def test_puerta_entrada_y_exportacion_excel_con_temporales(tmp_path, monkeypatch
             )
         }
         assert metadata["schema_version"] == "7"
-        assert metadata["tipo_personal_version"] == "tipo-personal-v1"
+        assert metadata["tipo_personal_version"] == "tipo-personal-v2"
         assert conexion.execute("SELECT count(*) FROM oposiciones WHERE tipo_personal IS NULL").fetchone()[0] == 0
         assert metadata["migration_source_filename"] == "BOE-oposiciones.xlsx"
         assert {"metadata", "oposiciones", "publicaciones", "busquedas", "cobertura", "log_errores"} <= tablas

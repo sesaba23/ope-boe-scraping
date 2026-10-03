@@ -114,7 +114,7 @@ function actualizarGraficos(datos) {
         ...fila,
         plazas: fila.registros,
     }));
-    renderizarRanking("distribucion-tipo-personal", distribucion, "tipo_personal", 7);
+    renderizarRanking("distribucion-tipo-personal", distribucion, "tipo_personal", 3);
 }
 
 function actualizarSelectoresComparacion(opciones, principal) {
@@ -160,11 +160,14 @@ function actualizarOpciones(opciones, filtros) {
     (opciones.tipos_personal || []).forEach((valor) => {
         const etiqueta = document.createElement("label");
         const casilla = document.createElement("input");
+        etiqueta.className = "filter-choice-item";
         casilla.type = "checkbox";
         casilla.name = "tipo_personal";
         casilla.value = valor;
         casilla.checked = seleccionados.has(valor);
-        etiqueta.append(casilla, ` ${valor}`);
+        const texto = document.createElement("span");
+        texto.textContent = valor;
+        etiqueta.append(casilla, texto);
         contenedor.append(etiqueta);
     });
 }

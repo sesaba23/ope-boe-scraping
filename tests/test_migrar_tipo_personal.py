@@ -60,7 +60,7 @@ def test_dry_run_doble_es_determinista_y_no_escribe(tmp_path):
     assert plan["recuentos"]["Laboral"] == 1
     assert plan["recuentos"]["Funcionario"] == 1
     assert _estado(ruta) == antes
-    assert (tmp_path / "informe" / "tipo_personal_v1_detalle.csv").is_file()
+    assert (tmp_path / "informe" / "tipo_personal_v2_detalle.csv").is_file()
 
 
 def test_migracion_persiste_catalogo_metadata_y_preserva_datos(tmp_path):
@@ -76,7 +76,7 @@ def test_migracion_persiste_catalogo_metadata_y_preserva_datos(tmp_path):
         metadata = base_datos.leer_metadata(con)
         assert metadata["schema_version"] == "7"
         assert metadata["data_version"] == "11"
-        assert metadata["tipo_personal_version"] == "tipo-personal-v1"
+        assert metadata["tipo_personal_version"] == "tipo-personal-v2"
         assert dict(con.execute("SELECT oposicion_id,tipo_personal FROM oposiciones")) == {
             1: "Laboral", 2: "Funcionario"
         }
@@ -115,7 +115,7 @@ def test_recalculo_corrige_solo_tipo_personal_y_solo_una_vez(tmp_path):
     ruta = _base_v6(tmp_path)
     migrar_tipo_personal.migrar(ruta, tmp_path / "backups", tmp_path / "informe")
     con = base_datos.conectar(ruta)
-    con.execute("UPDATE oposiciones SET tipo_personal='No determinado' WHERE oposicion_id=1")
+    con.execute("UPDATE oposiciones SET tipo_personal='Otros' WHERE oposicion_id=1")
     con.commit()
     con.close()
     antes = _estado(ruta)[1]

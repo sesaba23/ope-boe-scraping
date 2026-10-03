@@ -1,4 +1,4 @@
-"""Clasificador experimental v1 del tipo funcional de personal BOE.
+"""Clasificador v2 del tipo funcional de personal BOE.
 
 El módulo es deliberadamente independiente de SQLite, de la extracción y de la
 persistencia. ``clasificar_tipo_personal`` sólo recibe mappings (por ejemplo
@@ -10,15 +10,11 @@ import re
 import unicodedata
 from collections.abc import Mapping
 
-VERSION = "tipo-personal-v1"
+VERSION = "tipo-personal-v2"
 CATEGORIAS = (
     "Funcionario",
     "Laboral",
-    "Estatutario",
-    "Universitario",
-    "Militar",
     "Otros",
-    "No determinado",
 )
 TIPOS_PERSONAL = CATEGORIAS
 CONFIANZAS = ("alta", "media", "baja")
@@ -331,7 +327,10 @@ def clasificar_tipo_personal(
 ) -> dict[str, object]:
     """Clasifica una oposición sin consultar ni modificar estado externo."""
     contexto = _contexto(oposicion, publicacion)
-    categoria, confianza, reglas = _clasificar(contexto)
+    categoria_detectada, confianza, reglas = _clasificar(contexto)
+    # Las familias específicas siguen siendo evidencia interna, pero el
+    # contrato v2 sólo conserva los dos regímenes principales y Otros.
+    categoria = categoria_detectada if categoria_detectada in CATEGORIAS[:2] else "Otros"
     grupos = []
     if categoria == "Funcionario" and any(
         regla in reglas for regla in (
@@ -342,17 +341,17 @@ def clasificar_tipo_personal(
         grupos.append("estructura_funcionarial")
     if "puesto_administrativo_reconocible" in reglas:
         grupos.append("denominacion_inequivoca")
-    if categoria in {"Laboral", "Estatutario"}:
+    if categoria_detectada in {"Laboral", "Estatutario"}:
         grupos.append("regimen_explicito")
-    if categoria in {"Universitario", "Militar"}:
+    if categoria_detectada in {"Universitario", "Militar"}:
         grupos.append("colectivo_inequivoco")
     if categoria == "Funcionario" and any(
         regla in reglas for regla in ("personal_funcionario_explicito", "cuerpo_civil_arsenales")
     ):
         grupos.append("regimen_o_cuerpo_explicito")
-    if categoria == "Otros":
+    if categoria_detectada == "Otros":
         grupos.append("regimen_explicito")
-    if categoria == "No determinado" and reglas != ["sin_evidencia_suficiente"]:
+    if categoria_detectada == "No determinado" and reglas != ["sin_evidencia_suficiente"]:
         grupos.append("conflicto_o_incompatibilidad")
     return {
         "categoria": categoria,

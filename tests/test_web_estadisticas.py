@@ -200,6 +200,9 @@ def test_menu_responsive_tiene_breakpoint_independiente_y_fallback(cliente):
     bloque_navegacion = css.split("@media (max-width: 960px)", 1)[1].split("@media (max-width: 720px)", 1)[0]
     assert ".js .site-menu-button" in bloque_navegacion
     assert ".js .site-navigation.is-open" in bloque_navegacion
+    assert "position: sticky" in bloque_navegacion
+    assert "top: 0" in bloque_navegacion
+    assert "z-index: 1100" in bloque_navegacion
     assert "top: 100%" in bloque_navegacion
     assert "max-height:" in bloque_navegacion and "overflow-y: auto" in bloque_navegacion
     assert "overflow-x: hidden" not in css
@@ -720,15 +723,17 @@ def test_pagina_contiene_filtros_indicadores_y_graficos(cliente):
 
 def test_filtro_tipo_personal_estadisticas_tiene_grupo_compacto(cliente):
     html = cliente.get("/estadisticas").get_data(as_text=True)
-    assert 'class="campo campo-tipos-personal"' in html
+    assert 'class="campo campo-tipos-personal filter-choice-group"' in html
     assert 'id="tipos-personal-filtros"' in html
     assert 'legend>Tipo de personal' in html
+    assert "Puedes seleccionar una o varias categorías" in html
 
 
 def test_js_distribucion_tipo_personal_adapta_registros_a_ranking(cliente):
     javascript = cliente.get("/static/js/estadisticas.js").get_data(as_text=True)
     assert "plazas: fila.registros" in javascript
     assert 'renderizarRanking("distribucion-tipo-personal"' in javascript
+    assert 'etiqueta.className = "filter-choice-item"' in javascript
 
 
 def test_pagina_carga_chart_css_y_javascript_desde_recursos_locales(cliente):

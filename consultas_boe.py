@@ -619,3 +619,20 @@ def metadata(ruta_bd="datos/boe.db"):
         return base_datos.leer_metadata(conexion)
     finally:
         conexion.close()
+
+
+def obtener_data_version(ruta_bd="datos/boe.db"):
+    """Lee sólo la versión de datos, sin consultar oposiciones ni validar toda la base."""
+    try:
+        conexion = base_datos.conectar(ruta_bd, readonly=True)
+        try:
+            fila = conexion.execute(
+                "SELECT valor FROM metadata WHERE clave = 'data_version'"
+            ).fetchone()
+            if fila is None:
+                raise ValueError("SQLite no contiene data_version")
+            return int(fila[0])
+        finally:
+            conexion.close()
+    except (OSError, sqlite3.Error, ValueError) as error:
+        raise ErrorConsultaSQLite(f"SQLite no está disponible: {ruta_bd}") from error

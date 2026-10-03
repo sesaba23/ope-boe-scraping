@@ -475,18 +475,17 @@ def test_filtrado_modo_sql_no_elimina_diacriticos_del_termino():
     assert resultado.iloc[0]["Puesto"] == "Ingeniero Técnico Industrial"
 
 
-def test_distribucion_tipo_personal_mantiene_catalogo_y_suma_registros():
+def test_distribucion_tipo_personal_mantiene_catalogo_de_tres_y_suma_registros():
     datos = normalizar_datos(pd.DataFrame([
         {"Fecha_boe": "2026-01-01", "Num_plazas": 2, "Puesto": "A", "Tipo_personal": "Funcionario"},
         {"Fecha_boe": "2026-01-02", "Num_plazas": 1, "Puesto": "B", "Tipo_personal": "Laboral"},
-        {"Fecha_boe": "2026-01-03", "Num_plazas": 4, "Puesto": "C", "Tipo_personal": None},
+        {"Fecha_boe": "2026-01-03", "Num_plazas": 4, "Puesto": "C", "Tipo_personal": "Otros"},
     ]))
 
     distribucion = calcular_estadisticas(datos)["distribucion_tipo_personal"]
 
     assert [fila["tipo_personal"] for fila in distribucion] == [
-        "Funcionario", "Laboral", "Estatutario", "Universitario",
-        "Militar", "Otros", "No determinado",
+        "Funcionario", "Laboral", "Otros",
     ]
-    assert [fila["registros"] for fila in distribucion] == [1, 1, 0, 0, 0, 0, 1]
+    assert [fila["registros"] for fila in distribucion] == [1, 1, 1]
     assert sum(fila["registros"] for fila in distribucion) == 3

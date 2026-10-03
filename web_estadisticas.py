@@ -12,10 +12,11 @@ from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_in
 
 from consultas_boe import (
     ErrorConsultaSQLite, buscar_municipios, buscar_oposiciones,
-    buscar_sugerencias_puesto, metadata, obtener_oposicion,
+    buscar_sugerencias_puesto, metadata, obtener_data_version, obtener_oposicion,
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
     resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
 )
+from cache_estadisticas import CacheEstadisticas, clave_estadisticas
 from estadisticas import (
     calcular_comparacion_puestos, calcular_estadisticas, cargar_datos_estadisticas_sqlite,
     filtrar_datos,
@@ -77,6 +78,7 @@ def _url_retorno_oposiciones(argumentos):
 
 def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx=None):
     app = Flask(__name__)
+    app.extensions["cache_estadisticas"] = CacheEstadisticas()
     ruta_fijada = Path(ruta_bd or Path.cwd() / "datos/boe.db").expanduser()
     app.config["RUTA_BD"] = ruta_fijada.resolve()
     app.config["GESTOR_ACTUALIZACIONES"] = gestor_actualizaciones or GestorActualizaciones(app.config["RUTA_BD"])
@@ -569,6 +571,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         sistema = request.args.get("sistema") or None
         turno = request.args.get("turno") or None
         tipo_personal = [valor for valor in request.args.getlist("tipo_personal") if valor]
+        invalidos_tipo = sorted(set(tipo_personal) - set(TIPOS_PERSONAL))
+        if invalidos_tipo:
+            return jsonify({"error": "tipo_personal no válido: " + ", ".join(invalidos_tipo)}), 400
         comparadores = request.args.getlist("comparar")
         if not comparadores:
             comparadores = [request.args.get(f"comparar_{indice}") for indice in range(1, 6)]
@@ -589,6 +594,24 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
 
         ruta = app.config["RUTA_BD"]
         try:
+            version = obtener_data_version(ruta)
+            clave = clave_estadisticas(
+                version, fecha_inicio=fecha_inicio, fecha_final=fecha_final,
+                puesto=puesto, provincia=provincia, ambito=ambito,
+                sistema=sistema, turno=turno, tipo_personal=tipo_personal,
+                comparadores=comparadores,
+            )
+            cache = app.extensions["cache_estadisticas"]
+            entrada = cache.obtener(clave)
+            if entrada is not None:
+                contenido, tipos_originales = entrada
+                if tipos_originales == tuple(tipo_personal):
+                    return app.response_class(contenido, mimetype="application/json")
+                # El orden y duplicados del filtro se reflejan en `filtros`.
+                # Se conserva ese contrato aun cuando la selección OR comparte clave.
+                respuesta_cacheada = app.json.loads(contenido)
+                respuesta_cacheada["filtros"]["tipo_personal"] = tipo_personal
+                return jsonify(respuesta_cacheada)
             opciones = opciones_filtros(ruta)
             filtros_carga = {
                 "desde": fecha_inicio, "hasta": fecha_final,
@@ -639,7 +662,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             }
         if "distribucion_tipo_personal" in estadisticas:
             respuesta["distribucion_tipo_personal"] = estadisticas["distribucion_tipo_personal"]
-        return jsonify(respuesta)
+        salida = jsonify(respuesta)
+        cache.guardar(clave, salida.get_data(), tipo_personal)
+        return salida
 
     @app.errorhandler(404)
     def pagina_no_encontrada(error):
