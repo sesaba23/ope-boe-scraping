@@ -2,7 +2,8 @@ import base_datos
 import pytest
 
 from consultas_boe import (_condiciones_busqueda, buscar_municipios, buscar_oposiciones,
-                           buscar_oposiciones_sin_coordenadas, buscar_sugerencias_puesto, obtener_oposicion,
+                           buscar_oposiciones_sin_coordenadas, buscar_plazos_abiertos,
+                           buscar_sugerencias_puesto, obtener_oposicion,
                            opciones_busqueda, resumen_mapa_oposiciones)
 
 
@@ -117,6 +118,25 @@ def test_buscar_oposiciones_sin_filtros_pagina_y_total(ruta_busqueda):
     assert (resultado["pagina"], resultado["tamano_pagina"], resultado["total_paginas"]) == (1, 2, 2)
     assert [fila["oposicion_id"] for fila in resultado["filas"]] == [3, 2]
     assert buscar_oposiciones(ruta_busqueda, pagina=99, tamano_pagina=2)["pagina"] == 2
+
+
+def test_buscar_plazos_abiertos_filtra_ordena_y_pagina(ruta_busqueda):
+    con = base_datos.conectar(ruta_busqueda)
+    con.execute("UPDATE oposiciones SET fecha_inicio_plazo = ?, fecha_fin_plazo = ?, plazo_solicitudes = ?, plazo_calculo = ? WHERE oposicion_id = 1",
+                ("2099-10-01", "2099-10-20", "20 días hábiles", "calendario"))
+    con.execute("UPDATE oposiciones SET fecha_inicio_plazo = ?, fecha_fin_plazo = ?, plazo_solicitudes = ?, plazo_calculo = ? WHERE oposicion_id = 2",
+                ("2099-10-01", "2099-10-10", "10 días", "natural"))
+    con.execute("UPDATE oposiciones SET fecha_inicio_plazo = ?, fecha_fin_plazo = ? WHERE oposicion_id = 3",
+                ("2020-01-01", "2020-01-15"))
+    con.commit(); con.close()
+
+    resultado = buscar_plazos_abiertos(ruta_busqueda, pagina=1, tamano=1)
+    assert resultado["total"] == 2
+    assert resultado["total_paginas"] == 2
+    assert resultado["filas"][0]["oposicion_id"] == 2
+    assert resultado["filas"][0]["fecha_fin_plazo"] == "2099-10-10"
+    assert resultado["filas"][0]["plazo_solicitudes"] == "10 días"
+    assert buscar_plazos_abiertos(ruta_busqueda, texto="ingeniero")["total"] == 1
 
 
 @pytest.mark.parametrize("filtros,esperado", [

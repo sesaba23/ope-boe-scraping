@@ -127,6 +127,7 @@ def test_mapa_de_rutas_publicas_y_metodos_se_mantiene_estable(ruta_bd):
         ("/api/administracion/base-datos/confirmar-actualizacion", ("POST",)),
         ("/api/administracion/base-datos/actualizacion", ("GET",)),
         ("/api/oposiciones/mapa", ("GET",)),
+        ("/api/oposiciones/plazos-abiertos", ("GET",)),
         ("/api/oposiciones/sin-coordenadas", ("GET",)),
         ("/api/actualizar-busqueda", ("POST",)),
         ("/api/trabajos/<trabajo_id>", ("GET",)),
@@ -523,6 +524,31 @@ def test_oposiciones_integra_pestanas_de_listado_y_mapa_sin_duplicar_filtros(cli
     assert 'leaflet@1.9.4' in html and 'leaflet.markercluster@1.5.3' in html
 
 
+def test_oposiciones_muestra_plazo_abierto_solo_si_hay_resultados(cliente, monkeypatch):
+    sin_plazos = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+    assert 'id="pestana-plazo-abierto"' not in sin_plazos
+
+    monkeypatch.setattr(web_estadisticas, "buscar_plazos_abiertos", lambda *_args, **_kwargs: {
+        "filas": [], "total": 2, "pagina": 1, "tamano": 1, "total_paginas": 2,
+        "fecha_referencia": "2099-01-01",
+    })
+    con_plazos = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+    assert 'id="pestana-plazo-abierto"' in con_plazos
+    assert 'aria-controls="panel-plazo-abierto"' in con_plazos
+    assert 'id="panel-plazo-abierto"' in con_plazos
+    assert 'data-results-panel="plazo-abierto" hidden' in con_plazos
+
+
+def test_api_plazos_abiertos_devuelve_contrato_y_controla_errores(cliente):
+    respuesta = cliente.get("/api/oposiciones/plazos-abiertos")
+    assert respuesta.status_code == 200
+    datos = respuesta.get_json()
+    assert set(datos) == {"filas", "total", "pagina", "tamano", "total_paginas", "fecha_referencia"}
+    assert datos["total"] == 0
+    assert cliente.get("/api/oposiciones/plazos-abiertos?pagina=0").status_code == 400
+    assert cliente.get("/api/oposiciones/plazos-abiertos?tamano=101").status_code == 400
+
+
 def test_mapas_redirige_al_mapa_integrado_y_conserva_filtros(cliente):
     respuesta = cliente.get("/mapas?provincia=Madrid&orden=fecha_desc")
 
@@ -561,6 +587,18 @@ def test_javascript_mapa_carga_diferida_conserva_filtros_y_no_inyecta_html(clien
     assert "window.L.markerClusterGroup" in javascript
     assert ".textContent =" in javascript
     assert ".innerHTML" not in javascript
+
+
+def test_javascript_plazos_abiertos_es_diferido_y_ordenado_por_vencimiento(cliente):
+    javascript = cliente.get("/static/js/oposiciones_mapa.js").get_data(as_text=True)
+
+    assert '"plazo"' in javascript
+    assert 'urlApi("/api/oposiciones/plazos-abiertos", parametros)' in javascript
+    assert "cachePlazos.has(pagina)" in javascript
+    assert "fecha_fin_plazo" in javascript
+    assert "Vence mañana" in javascript
+    assert 'pestana.dataset.resultsTab === "plazo-abierto"' in javascript
+    assert "replaceChildren()" in javascript
 
 
 def test_panel_sin_coordenadas_esta_oculto_y_no_se_consulta_al_renderizar(cliente, monkeypatch):

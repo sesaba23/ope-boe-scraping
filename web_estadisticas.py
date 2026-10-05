@@ -13,7 +13,7 @@ from actualizacion_boe import GestorActualizaciones, determinar_actualizacion_in
 
 from consultas_boe import (
     ErrorConsultaSQLite, buscar_municipios, buscar_oposiciones,
-    buscar_sugerencias_puesto, metadata, obtener_data_version, obtener_oposicion,
+    buscar_sugerencias_puesto, buscar_plazos_abiertos, metadata, obtener_data_version, obtener_oposicion,
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
     resumen_cobertura, resumen_cobertura_y_mes, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
     opciones_dias_inhabiles, calendario_dias_inhabiles, detalle_dia_inhabil,
@@ -422,12 +422,24 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                 municipio_provincia_exacto=municipio_provincia_exacto or None,
                 pagina=pagina, tamano_pagina=tamano_pagina, orden=orden,
             ) if hay_criterio and not pendientes_actualizacion else None
+            plazos_abiertos_total = 0
+            if resultados is not None and resultados["total"]:
+                if filtros["plazo"] == "en_plazo":
+                    plazos_abiertos_total = resultados["total"]
+                else:
+                    resumen_plazos = buscar_plazos_abiertos(
+                        app.config["RUTA_BD"], **{k: v or None for k, v in filtros.items()},
+                        municipio_exacto=municipio_exacto or None,
+                        municipio_provincia_exacto=municipio_provincia_exacto or None,
+                        pagina=1, tamano=1,
+                    )
+                    plazos_abiertos_total = resumen_plazos["total"]
         except (ErrorConsultaSQLite, ValueError) as error:
             return render_template(
                 "oposiciones.html", seccion_activa="oposiciones", filtros=filtros,
                 opciones={}, resultados=None, error=str(error), hay_criterio=False,
                 orden=orden, tamano_pagina=25, query_actual={}, avanzados_activos=False,
-                actualizacion_pendiente=[],
+                actualizacion_pendiente=[], plazos_abiertos_total=0,
             ), 400
         query_actual = {**{k: v for k, v in filtros.items() if v}, "orden": orden,
                          "tamano_pagina": tamano_pagina}
@@ -457,6 +469,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             avanzados_activos=any(filtros[nombre] for nombre in avanzados),
             actualizacion_pendiente=pendientes_actualizacion,
             advertencia_actualizacion=request.args.get("actualizacion") == "error",
+            plazos_abiertos_total=plazos_abiertos_total,
         )
 
     @app.get("/oposiciones/exportar.csv")
@@ -524,6 +537,28 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         except Exception:
             app.logger.exception("No se pudo preparar el resumen geográfico de oposiciones")
             return jsonify({"error": "No se pudo preparar el resumen geográfico."}), 500
+
+    @app.get("/api/oposiciones/plazos-abiertos")
+    def api_oposiciones_plazos_abiertos():
+        filtros, exactos = filtros_oposiciones_desde_request()
+        try:
+            inicio = _validar_fecha(filtros["fecha_desde"] or None, "fecha_desde")
+            final = _validar_fecha(filtros["fecha_hasta"] or None, "fecha_hasta")
+            if inicio and final and inicio > final:
+                raise ValueError("La fecha desde no puede ser posterior a la fecha hasta.")
+            return jsonify(buscar_plazos_abiertos(
+                app.config["RUTA_BD"], **{nombre: valor or None for nombre, valor in filtros.items()},
+                municipio_exacto=exactos["municipio_exacto"] or None,
+                municipio_provincia_exacto=exactos["municipio_provincia_exacto"] or None,
+                pagina=request.args.get("pagina", 1), tamano=request.args.get("tamano", 30),
+            ))
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+        except ErrorConsultaSQLite:
+            return jsonify({"error": "No se pudo consultar la base de datos."}), 503
+        except Exception:
+            app.logger.exception("No se pudieron consultar los plazos abiertos")
+            return jsonify({"error": "No se pudieron consultar los plazos abiertos."}), 500
 
     @app.get("/api/oposiciones/sin-coordenadas")
     def api_oposiciones_sin_coordenadas():

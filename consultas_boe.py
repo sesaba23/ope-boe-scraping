@@ -832,6 +832,79 @@ def buscar_oposiciones(
     }
 
 
+def buscar_plazos_abiertos(
+    ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
+    administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,
+    municipio=None, municipio_exacto=None, municipio_provincia_exacto=None,
+    tipo_entidad=None, sistema=None, turno=None, escala=None, subescala=None,
+    clase=None, tipo_personal=None, plazo=None, pagina=1, tamano=30,
+):
+    """Devuelve las convocatorias abiertas ordenadas por vencimiento.
+
+    Los filtros de búsqueda son exactamente los mismos que utiliza el listado;
+    el predicado de plazo abierto se añade al final y no depende de la página
+    actual del listado principal.
+    """
+    try:
+        pagina, tamano = int(pagina), int(tamano)
+    except (TypeError, ValueError) as error:
+        raise ValueError("pagina y tamano deben ser enteros positivos") from error
+    if pagina < 1 or not 1 <= tamano <= 100:
+        raise ValueError("pagina debe ser positiva y tamano debe estar entre 1 y 100")
+
+    conexion = _conexion(ruta_bd)
+    try:
+        tiene_plazos = _tiene_plazos(conexion)
+        if not tiene_plazos:
+            return {"filas": [], "total": 0, "pagina": 1, "tamano": tamano,
+                    "total_paginas": 0, "fecha_referencia": date.today().isoformat()}
+        where, parametros = _condiciones_busqueda(
+            texto=texto, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta,
+            administracion=administracion, ambito=ambito,
+            comunidad_autonoma=comunidad_autonoma, provincia=provincia,
+            municipio=municipio, municipio_exacto=municipio_exacto,
+            municipio_provincia_exacto=municipio_provincia_exacto,
+            tipo_entidad=tipo_entidad, sistema=sistema, turno=turno,
+            escala=escala, subescala=subescala, clase=clase,
+            tipo_personal=tipo_personal, plazo=plazo, tiene_plazos=tiene_plazos,
+        )
+        fecha_referencia = date.today().isoformat()
+        condicion_abierto = "fecha_fin_plazo IS NOT NULL AND fecha_fin_plazo >= ?"
+        where_abierto = f"{where} AND {condicion_abierto}" if where else f" WHERE {condicion_abierto}"
+        parametros_abierto = [*parametros, fecha_referencia]
+        total = conexion.execute(
+            f"SELECT count(*) FROM oposiciones{where_abierto}", parametros_abierto
+        ).fetchone()[0]
+        total_paginas = ceil(total / tamano) if total else 0
+        if total_paginas:
+            pagina = min(pagina, total_paginas)
+        offset = (pagina - 1) * tamano
+        tipo = _seleccion_tipo_personal(conexion)
+        seleccion = (
+            "oposicion_id,fecha_boe,puesto,puesto_normalizado,num_plazas,"
+            "administracion,comunidad_autonoma,provincia,municipio,"
+            "fecha_inicio_plazo,fecha_fin_plazo,plazo_solicitudes,plazo_calculo," + tipo
+        )
+        filas = conexion.execute(
+            f"SELECT {seleccion} FROM oposiciones{where_abierto} "
+            "ORDER BY fecha_fin_plazo ASC, fecha_boe DESC, oposicion_id DESC LIMIT ? OFFSET ?",
+            [*parametros_abierto, tamano, offset],
+        ).fetchall()
+    finally:
+        conexion.close()
+    columnas = [
+        "oposicion_id", "fecha_boe", "puesto", "puesto_normalizado", "num_plazas",
+        "administracion", "comunidad_autonoma", "provincia", "municipio",
+        "fecha_inicio_plazo", "fecha_fin_plazo", "plazo_solicitudes", "plazo_calculo",
+        "tipo_personal",
+    ]
+    return {
+        "filas": [dict(zip(columnas, fila)) for fila in filas],
+        "total": total, "pagina": pagina, "tamano": tamano,
+        "total_paginas": total_paginas, "fecha_referencia": fecha_referencia,
+    }
+
+
 def resumen_mapa_oposiciones(
     ruta_bd="datos/boe.db", *, texto=None, fecha_desde=None, fecha_hasta=None,
     administracion=None, ambito=None, comunidad_autonoma=None, provincia=None,

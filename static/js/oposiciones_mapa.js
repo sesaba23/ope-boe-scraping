@@ -21,9 +21,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const paginaSinCoordenadas = document.querySelector("#sin-coordenadas-pagina");
     const anteriorSinCoordenadas = document.querySelector("#sin-coordenadas-anterior");
     const siguienteSinCoordenadas = document.querySelector("#sin-coordenadas-siguiente");
+    const panelPlazo = document.querySelector("#panel-plazo-abierto");
+    const cargandoPlazos = document.querySelector("#plazo-abierto-cargando");
+    const errorPlazos = document.querySelector("#plazo-abierto-error");
+    const resumenPlazos = document.querySelector("#plazo-abierto-resumen");
+    const listadoPlazos = document.querySelector("#plazo-abierto-listado");
+    const paginacionPlazos = document.querySelector("#plazo-abierto-paginacion");
+    const paginaPlazos = document.querySelector("#plazo-abierto-pagina");
+    const anteriorPlazos = document.querySelector("#plazo-abierto-anterior");
+    const siguientePlazos = document.querySelector("#plazo-abierto-siguiente");
     const formatoNumero = new Intl.NumberFormat("es-ES");
+    const formatoFecha = new Intl.DateTimeFormat("es-ES", {day: "numeric", month: "long", year: "numeric"});
     const cacheSinCoordenadas = new Map();
-    let mapa, capaMunicipios, mapaCargado = false, paginaActualSinCoordenadas = 1;
+    const cachePlazos = new Map();
+    let mapa, capaMunicipios, mapaCargado = false, paginaActualSinCoordenadas = 1, paginaActualPlazos = 1;
 
     const mostrarPanel = nombre => {
         pestanas.forEach(pestana => {
@@ -48,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "texto", "fecha_desde", "fecha_hasta", "comunidad_autonoma", "provincia",
             "municipio", "municipio_exacto", "municipio_provincia_exacto", "administracion",
             "ambito", "tipo_entidad", "sistema", "turno", "escala", "subescala", "clase",
-            "tipo_personal",
+            "tipo_personal", "plazo",
         ]);
         const actuales = new URLSearchParams(window.location.search);
         const filtros = new URLSearchParams();
@@ -139,6 +150,112 @@ document.addEventListener("DOMContentLoaded", () => {
         const limites = window.L.featureGroup(marcadores).getBounds();
         if (marcadores.length === 1) mapa.setView(limites.getCenter(), 12);
         else mapa.fitBounds(limites, {padding: [24, 24]});
+    };
+    const fechaDesdeIso = iso => new Date(`${iso}T00:00:00`);
+    const fechaLegible = iso => {
+        const texto = formatoFecha.format(fechaDesdeIso(iso));
+        return texto.charAt(0).toUpperCase() + texto.slice(1);
+    };
+    const diasHasta = (fecha, referencia) => Math.round(
+        (fechaDesdeIso(fecha) - fechaDesdeIso(referencia)) / 86400000
+    );
+    const urgenciaPlazo = dias => dias <= 1 ? "urgente" : dias <= 3 ? "proximo" : dias <= 14 ? "cercano" : "abierto";
+    const textoVencimiento = dias => dias <= 0 ? "Vence hoy" : dias === 1 ? "Vence mañana" : `Vence en ${dias} días`;
+    const pintarPlazos = datos => {
+        listadoPlazos.replaceChildren();
+        const grupos = new Map();
+        datos.filas.forEach(fila => {
+            if (!grupos.has(fila.fecha_fin_plazo)) grupos.set(fila.fecha_fin_plazo, []);
+            grupos.get(fila.fecha_fin_plazo).push(fila);
+        });
+        const proximo = datos.filas[0]?.fecha_fin_plazo;
+        resumenPlazos.textContent = `${formatoNumero.format(datos.total)} convocatorias en plazo · Próximo vencimiento: ${proximo ? fechaLegible(proximo) : "—"}`;
+        const volver = urlApi("/oposiciones", parametrosFiltros());
+        grupos.forEach((filas, fecha) => {
+            const dias = diasHasta(fecha, datos.fecha_referencia);
+            const grupo = document.createElement("section");
+            grupo.className = `open-deadlines-group open-deadlines-group--${urgenciaPlazo(dias)}`;
+            const encabezado = document.createElement("header");
+            encabezado.className = "open-deadlines-group-heading";
+            const titulo = document.createElement("h3");
+            titulo.textContent = fechaLegible(fecha);
+            const contador = document.createElement("span");
+            contador.className = "open-deadlines-count";
+            contador.textContent = `${filas.length} ${filas.length === 1 ? "convocatoria" : "convocatorias"}`;
+            encabezado.append(titulo, contador);
+            const urgencia = document.createElement("p");
+            urgencia.className = "open-deadlines-urgency";
+            urgencia.textContent = textoVencimiento(dias);
+            encabezado.append(urgencia);
+            grupo.append(encabezado);
+            const lista = document.createElement("div");
+            lista.className = "open-deadlines-items";
+            filas.forEach(fila => {
+                const tarjeta = document.createElement("article");
+                tarjeta.className = "open-deadline-card";
+                const cabecera = document.createElement("div");
+                cabecera.className = "open-deadline-card-heading";
+                const puesto = document.createElement("h4");
+                puesto.textContent = fila.puesto_normalizado || fila.puesto || "Puesto no disponible";
+                cabecera.append(puesto);
+                const enlace = document.createElement("a");
+                enlace.className = "portal-button portal-button--small";
+                enlace.href = `/oposiciones/${encodeURIComponent(String(fila.oposicion_id))}?volver=${encodeURIComponent(volver)}`;
+                enlace.textContent = "Ver detalle";
+                cabecera.append(enlace);
+                tarjeta.append(cabecera);
+                const meta = document.createElement("div");
+                meta.className = "open-deadline-card-meta";
+                [
+                    ["Plazas", fila.num_plazas === null ? null : formatoNumero.format(fila.num_plazas)],
+                    ["Administración", fila.administracion],
+                    ["Ubicación", [fila.municipio, fila.provincia, fila.comunidad_autonoma].filter(Boolean).join(" · ")],
+                    ["Tipo de personal", fila.tipo_personal || "Otros"],
+                    ["Plazo", fila.plazo_solicitudes],
+                ].forEach(([etiqueta, valor]) => {
+                    if (!valor) return;
+                    const dato = document.createElement("span");
+                    dato.textContent = `${etiqueta}: ${valor}`;
+                    meta.append(dato);
+                });
+                tarjeta.append(meta);
+                lista.append(tarjeta);
+            });
+            grupo.append(lista);
+            listadoPlazos.append(grupo);
+        });
+        paginacionPlazos.hidden = datos.total_paginas <= 1;
+        paginaPlazos.textContent = datos.total_paginas ? `Página ${datos.pagina} de ${datos.total_paginas}` : "";
+        anteriorPlazos.disabled = datos.pagina <= 1;
+        siguientePlazos.disabled = datos.pagina >= datos.total_paginas;
+    };
+    const mostrarCargaPlazos = visible => { cargandoPlazos.hidden = !visible; };
+    const cargarPlazos = async pagina => {
+        if (!panelPlazo) return;
+        paginaActualPlazos = pagina;
+        errorPlazos.hidden = true;
+        if (cachePlazos.has(pagina)) {
+            pintarPlazos(cachePlazos.get(pagina));
+            return;
+        }
+        mostrarCargaPlazos(true);
+        try {
+            const parametros = parametrosFiltros();
+            parametros.set("pagina", String(pagina));
+            parametros.set("tamano", "30");
+            const respuesta = await fetch(urlApi("/api/oposiciones/plazos-abiertos", parametros), {
+                headers: {Accept: "application/json"},
+            });
+            const datos = await respuesta.json().catch(() => ({}));
+            if (!respuesta.ok) throw new Error(datos.error || "No se pudieron cargar los plazos abiertos.");
+            cachePlazos.set(pagina, datos);
+            pintarPlazos(datos);
+        } catch (error) {
+            errorPlazos.textContent = error.message || "No se pudieron cargar los plazos abiertos.";
+            errorPlazos.hidden = false;
+        } finally {
+            mostrarCargaPlazos(false);
+        }
     };
     const motivoLegible = motivo => ({
         sin_codigo_ine: "Municipio no identificado",
@@ -249,10 +366,15 @@ document.addEventListener("DOMContentLoaded", () => {
         mostrarPanel("mapa");
         cargarMapa();
     };
+    const activarPlazos = () => {
+        mostrarPanel("plazo-abierto");
+        cargarPlazos(paginaActualPlazos);
+    };
 
     pestanas.forEach((pestana, indice) => {
         pestana.addEventListener("click", () => {
             if (pestana.dataset.resultsTab === "mapa") activarMapa();
+            else if (pestana.dataset.resultsTab === "plazo-abierto") activarPlazos();
             else mostrarPanel("listado");
         });
         pestana.addEventListener("keydown", evento => {
@@ -272,6 +394,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     anteriorSinCoordenadas.addEventListener("click", () => cargarSinCoordenadas(paginaActualSinCoordenadas - 1));
     siguienteSinCoordenadas.addEventListener("click", () => cargarSinCoordenadas(paginaActualSinCoordenadas + 1));
+    if (panelPlazo) {
+        anteriorPlazos.addEventListener("click", () => cargarPlazos(paginaActualPlazos - 1));
+        siguientePlazos.addEventListener("click", () => cargarPlazos(paginaActualPlazos + 1));
+    }
     const estadoVisual = new URLSearchParams(window.location.search);
     if (estadoVisual.get("vista") === "mapa") {
         document.querySelector('[data-results-tab="mapa"]').focus();

@@ -77,6 +77,7 @@
     <div class="results-export-controls" aria-label="Exportar resultados"><span>Exportar resultados</span><a class="portal-button" href="{{ url_for('exportar_oposiciones_xlsx', **query_exportacion) }}">Excel</a><a class="portal-button portal-button--secondary" href="{{ url_for('exportar_oposiciones_csv', **query_exportacion) }}">CSV</a></div>
     <div class="results-tabs" role="tablist" aria-label="Visualización de resultados">
         <button id="pestana-listado" class="results-tab" type="button" role="tab" aria-selected="true" aria-controls="panel-listado" data-results-tab="listado">Listado</button>
+        {% if plazos_abiertos_total|default(0) > 0 %}<button id="pestana-plazo-abierto" class="results-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-plazo-abierto" data-results-tab="plazo-abierto">Plazo abierto <span class="results-tab-count">{{ plazos_abiertos_total }}</span></button>{% endif %}
         <button id="pestana-mapa" class="results-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-mapa" data-results-tab="mapa">Mapa</button>
     </div>
     <section id="panel-listado" role="tabpanel" aria-labelledby="pestana-listado" data-results-panel="listado">
@@ -95,6 +96,22 @@
         {% if resultados.total_paginas > 1 %}<nav class="pagination" aria-label="Paginación de resultados">{% set p=resultados.pagina %}{% if p > 1 %}<a href="{{ url_for('oposiciones', pagina=p-1, **query_actual) }}">Anterior</a>{% endif %}{% for n in range(1, resultados.total_paginas + 1) if n == 1 or n == resultados.total_paginas or (n >= p - 2 and n <= p + 2) %}<a{% if n == p %} aria-current="page"{% endif %} href="{{ url_for('oposiciones', pagina=n, **query_actual) }}">{{ n }}</a>{% endfor %}{% if p < resultados.total_paginas %}<a href="{{ url_for('oposiciones', pagina=p+1, **query_actual) }}">Siguiente</a>{% endif %}</nav>{% endif %}
         {% endif %}
     </section>
+    {% if plazos_abiertos_total|default(0) > 0 %}<section id="panel-plazo-abierto" class="open-deadlines-panel" role="tabpanel" aria-labelledby="pestana-plazo-abierto" data-results-panel="plazo-abierto" hidden>
+        <div class="open-deadlines-heading">
+            <div>
+                <h2>Convocatorias con plazo abierto</h2>
+                <p id="plazo-abierto-resumen" class="portal-note">Ordenadas por fecha de vencimiento.</p>
+            </div>
+        </div>
+        <p id="plazo-abierto-cargando" class="map-status" role="status" hidden>Cargando convocatorias en plazo…</p>
+        <p id="plazo-abierto-error" class="portal-message portal-message--error" role="alert" hidden></p>
+        <div id="plazo-abierto-listado" class="open-deadlines-timeline" aria-live="polite"></div>
+        <nav id="plazo-abierto-paginacion" class="without-coordinates-pagination" aria-label="Paginación de convocatorias en plazo" hidden>
+            <button id="plazo-abierto-anterior" class="portal-button portal-button--secondary" type="button">Anterior</button>
+            <span id="plazo-abierto-pagina" aria-live="polite"></span>
+            <button id="plazo-abierto-siguiente" class="portal-button portal-button--secondary" type="button">Siguiente</button>
+        </nav>
+    </section>{% endif %}
     <section id="panel-mapa" class="results-map-panel" role="tabpanel" aria-labelledby="pestana-mapa" data-results-panel="mapa" hidden>
         <p id="mapa-cargando" class="map-status" role="status" hidden><span class="admin-spinner" aria-hidden="true"></span>Cargando mapa...</p>
         <p id="mapa-error" class="portal-message portal-message--error" role="alert" hidden></p>
