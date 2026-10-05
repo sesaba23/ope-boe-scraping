@@ -946,6 +946,43 @@ def _estado(ruta_bd):
         conexion.close()
 
 
+def migrar_v7_v8_plazos(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
+    """Añade los campos de plazo de solicitudes sin alterar filas existentes."""
+    ruta_bd = Path(ruta_bd)
+    metadata, columnas = _estado(ruta_bd)
+    if metadata.get("schema_version") == "8":
+        requeridas = {"plazo_solicitudes", "fecha_inicio_plazo", "fecha_fin_plazo",
+                      "plazo_calculo", "evidencia_plazo"}
+        if not requeridas <= set(columnas):
+            raise RuntimeError("Metadata v8 sin columnas de plazos")
+        return {"actualizada": False, "schema_version": "8", "data_version": metadata["data_version"]}
+    if metadata.get("schema_version") != "7":
+        raise RuntimeError("La base no es un esquema v7 migrable a v8")
+    nuevas = ("plazo_solicitudes", "fecha_inicio_plazo", "fecha_fin_plazo",
+              "plazo_calculo", "evidencia_plazo")
+    backup = base_datos.crear_backup(ruta_bd, directorio_backup)
+    inicio = time.perf_counter()
+    conexion = base_datos.conectar(ruta_bd)
+    try:
+        with base_datos.transaccion(conexion):
+            columnas_actuales = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
+            for columna in nuevas:
+                if columna not in columnas_actuales:
+                    conexion.execute(f"ALTER TABLE oposiciones ADD COLUMN {columna} TEXT")
+            base_datos.guardar_metadata(
+                conexion, schema_version=8, data_version=int(metadata["data_version"]) + 1
+            )
+            if base_datos.integrity_check(conexion) != ["ok"] or base_datos.foreign_key_check(conexion):
+                raise RuntimeError("La migración de plazos no supera integridad")
+    finally:
+        conexion.close()
+    return {
+        "actualizada": True, "backup": str(backup), "schema_version": "8",
+        "data_version": str(int(metadata["data_version"]) + 1),
+        "segundos": time.perf_counter() - inicio,
+    }
+
+
 def migrar_v2_v3(ruta_bd="datos/boe.db", directorio_backup="backups/sqlite"):
     ruta_bd = Path(ruta_bd)
     if not ruta_bd.is_file():
@@ -1092,7 +1129,8 @@ def main(argv=None):
     version = _estado(args.base_datos)[0].get("schema_version")
     from migrar_tipo_personal import migrar as migrar_v6_v7_tipo_personal
     funciones = {"2": migrar_v2_v3, "3": migrar_v3_v4, "4": migrar_v4_v5,
-                 "5": migrar_v5_v6_municipios_historicos, "6": migrar_v6_v7_tipo_personal}
+                 "5": migrar_v5_v6_municipios_historicos, "6": migrar_v6_v7_tipo_personal,
+                 "7": migrar_v7_v8_plazos}
     if version not in funciones:
         raise RuntimeError(f"No hay migración disponible desde schema_version {version!r}")
     print(json.dumps(funciones[version](args.base_datos, args.directorio_backup), ensure_ascii=False, indent=2))

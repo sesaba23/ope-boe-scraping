@@ -15,8 +15,8 @@ def _leer(ruta_bd):
     try:
         metadata = base_datos.leer_metadata(conexion)
         columnas = {fila[1].casefold() for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
-        if metadata.get("schema_version") not in {"3", "4", "5", "6", "7"} or "puesto_normalizado" not in columnas:
-            raise RuntimeError("El recálculo requiere schema_version 3, 4, 5, 6 o 7 con Puesto_normalizado")
+        if metadata.get("schema_version") not in {"3", "4", "5", "6", "7", "8"} or "puesto_normalizado" not in columnas:
+            raise RuntimeError("El recálculo requiere schema_version 3, 4, 5, 6, 7 u 8 con Puesto_normalizado")
         filas = conexion.execute(
             """SELECT oposicion_id, puesto, puesto_normalizado, administracion,
                       ambito, tipo_entidad, escala, subescala, sistema, municipio, provincia

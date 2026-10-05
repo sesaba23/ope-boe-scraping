@@ -63,6 +63,11 @@ CREATE TABLE oposiciones (
     publicacion_id TEXT NOT NULL,
     version_extractor TEXT NOT NULL,
     fecha_analisis TEXT,
+    plazo_solicitudes TEXT,
+    fecha_inicio_plazo TEXT,
+    fecha_fin_plazo TEXT,
+    plazo_calculo TEXT,
+    evidencia_plazo TEXT,
     FOREIGN KEY (publicacion_id) REFERENCES publicaciones(publicacion_id)
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -207,7 +212,49 @@ CREATE TABLE alias_universidades (
 ALTER TABLE oposiciones ADD COLUMN universidad_id INTEGER REFERENCES universidades(universidad_id) ON DELETE RESTRICT;
 """
 
-ESQUEMA = ESQUEMA_V4 + ESQUEMA_V5
+ESQUEMA_CALENDARIOS = """
+CREATE TABLE IF NOT EXISTS calendarios_festivos (
+    calendario_id INTEGER PRIMARY KEY,
+    anio INTEGER NOT NULL,
+    tipo TEXT NOT NULL,
+    ambito TEXT NOT NULL,
+    comunidad_autonoma TEXT,
+    estado TEXT NOT NULL,
+    publicacion_id TEXT,
+    fuente_url TEXT,
+    fecha_publicacion TEXT,
+    version_parser TEXT,
+    fecha_busqueda TEXT,
+    error TEXT,
+    UNIQUE (anio, tipo, ambito, comunidad_autonoma)
+);
+
+CREATE TABLE IF NOT EXISTS dias_inhabiles (
+    dia_id INTEGER PRIMARY KEY,
+    calendario_id INTEGER NOT NULL REFERENCES calendarios_festivos(calendario_id) ON DELETE CASCADE,
+    fecha TEXT NOT NULL,
+    nombre TEXT NOT NULL,
+    ambito TEXT NOT NULL,
+    comunidad_autonoma TEXT,
+    fuente_url TEXT,
+    UNIQUE (calendario_id, fecha, ambito, comunidad_autonoma)
+);
+
+CREATE INDEX IF NOT EXISTS ix_dias_inhabiles_fecha ON dias_inhabiles(fecha);
+CREATE INDEX IF NOT EXISTS ix_dias_inhabiles_calendario ON dias_inhabiles(calendario_id);
+
+CREATE TABLE IF NOT EXISTS busquedas_calendarios (
+    anio INTEGER PRIMARY KEY,
+    ventana_desde TEXT NOT NULL,
+    ventana_hasta TEXT NOT NULL,
+    estado TEXT NOT NULL,
+    fecha_ultima_busqueda TEXT,
+    consultas INTEGER NOT NULL DEFAULT 0,
+    error TEXT
+);
+"""
+
+ESQUEMA = ESQUEMA_V4 + ESQUEMA_V5 + ESQUEMA_CALENDARIOS
 
 VERSION_ESQUEMA = "5"
 
@@ -305,7 +352,7 @@ def guardar_metadata(conexion, *, source_excel_hash=None, data_version=None, sch
         # valores heredados 2/3 siguen promoviendo al esquema compatible 5,
         # como hacía el flujo previo a schema 6.
         schema_version = existente.get("schema_version")
-        if schema_version not in {VERSION_ESQUEMA, "6", "7"}:
+        if schema_version not in {VERSION_ESQUEMA, "6", "7", "8"}:
             schema_version = VERSION_ESQUEMA
     source_hash = source_excel_hash or existente.get("migration_source_hash")
     pares = [
@@ -346,7 +393,7 @@ def validar_base_principal(ruta_bd):
             f"SQLite usa schema_version {filas.get('schema_version')}. Ejecute: "
             "python migrar_esquema_sqlite.py --base-datos datos/boe.db"
         )
-    if filas.get("schema_version") not in {VERSION_ESQUEMA, "6", "7"} or not obligatorias <= set(filas):
+    if filas.get("schema_version") not in {VERSION_ESQUEMA, "6", "7", "8"} or not obligatorias <= set(filas):
         raise EspejoSQLiteError("SQLite no contiene metadatos válidos. Ejecute migrar_excel_sqlite.py.")
     return filas
 
@@ -380,12 +427,30 @@ def cargar_para_lectura(ruta_bd, fecha_inicio, fecha_fin, *, fechas=None):
         parametros = (inicio, fin)
     conexion = conectar(ruta_bd, readonly=True)
     try:
+        columnas_bd = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
+        campos_oposiciones = [
+            ("num_plazas", "Num_plazas"), ("puesto", "Puesto"),
+            ("puesto_normalizado", "Puesto_normalizado"), ("administracion", "Administración"),
+            ("escala", "Escala"), ("subescala", "Subescala"), ("clase", "Clase"),
+            ("sistema", "Sistema"), ("turno", "Turno"), ("fecha_boe_original", "Fecha_boe"),
+            ("publicacion", "Publicación"), ("enlace", "Enlace"), ("municipio", "Municipio"),
+            ("provincia", "Provincia"), ("latitud", "Latitud"), ("longitud", "Longitud"),
+            ("habitantes", "Habitantes"), ("publicacion_id", "Publicacion_ID"),
+            ("version_extractor", "Version_extractor"), ("fecha_analisis", "Fecha_analisis"),
+            ("plazo_solicitudes", "Plazo_solicitudes"), ("fecha_inicio_plazo", "Fecha_inicio_plazo"),
+            ("fecha_fin_plazo", "Fecha_fin_plazo"), ("plazo_calculo", "Plazo_calculo"),
+            ("evidencia_plazo", "Evidencia_plazo"),
+        ]
+        seleccion_oposiciones = ",".join(
+            f"{campo} AS '{alias}'" if campo in columnas_bd else f"NULL AS '{alias}'"
+            for campo, alias in campos_oposiciones
+        )
         return {
             # Búsquedas es global: sus códigos no incluyen necesariamente una fecha.
             "Búsquedas": _dataframe(conexion, "SELECT codigo FROM busquedas", ["Código"]),
             # Fecha_boe pertenece a la clave funcional: fuera del intervalo no puede
             # existir un duplicado de una convocatoria del intervalo.
-            "Oposiciones": _dataframe(conexion, f"""SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones WHERE {condicion_oposiciones}""", ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"], parametros),
+            "Oposiciones": _dataframe(conexion, f"SELECT {seleccion_oposiciones} FROM oposiciones WHERE {condicion_oposiciones}", [alias for _, alias in campos_oposiciones], parametros),
             "Publicaciones": _dataframe(conexion, f"SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones WHERE {condicion_publicaciones}", ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias", "Departamento_BOE", "Administracion_resuelta", "Familia_administrativa", "Estado_resolucion", "Metodo_resolucion", "Confianza_resolucion", "Version_resolucion"], parametros),
             "Cobertura": _dataframe(conexion, f"SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura WHERE {condicion_cobertura}", ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"], parametros),
             # Sólo hay 33 filas; se conserva la semántica de append del libro.
@@ -481,14 +546,14 @@ def _funciones_migracion():
 
 
 def _tipo_personal_activo(conexion):
-    """Comprueba si la conexión pertenece al pipeline productivo schema 7."""
+    """Comprueba si la conexión pertenece al pipeline productivo schema 7/8."""
     columnas = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
     if "tipo_personal" not in columnas:
         return False
     metadata = leer_metadata(conexion)
-    if metadata.get("schema_version") != "7":
+    if metadata.get("schema_version") not in {"7", "8"}:
         raise EspejoSQLiteError(
-            "La columna tipo_personal sólo puede escribirse productivamente con schema_version 7"
+            "La columna tipo_personal sólo puede escribirse productivamente con schema_version 7 u 8"
         )
     if metadata.get("tipo_personal_version") != TIPO_PERSONAL_VERSION:
         raise EspejoSQLiteError(
@@ -518,7 +583,12 @@ def insertar_oposiciones(conexion, df):
     columnas = ["Num_plazas", "Puesto", "Administración", "Escala", "Subescala", "Clase",
                 "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio",
                 "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID",
-                "Version_extractor", "Fecha_analisis"]
+                "Version_extractor", "Fecha_analisis", "Plazo_solicitudes",
+                "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo"]
+    df = df.copy()
+    for columna in columnas:
+        if columna not in df.columns:
+            df[columna] = None
     from resolucion_geografica import resolver_administracion_geografia
     from migrar_esquema_sqlite import normalizar_referencias_administrativas
     tipo_personal_activo = _tipo_personal_activo(conexion)
@@ -535,7 +605,8 @@ def insertar_oposiciones(conexion, df):
     def filas_preparadas():
         for (num, puesto, administracion, escala, subescala, clase, sistema, turno,
              f_boe, publicacion, enlace, municipio, provincia, latitud, longitud,
-             habitantes, publicacion_id, version, analisis) in filas(df, columnas):
+             habitantes, publicacion_id, version, analisis, plazo_solicitudes,
+             fecha_inicio_plazo, fecha_fin_plazo, plazo_calculo, evidencia_plazo) in filas(df, columnas):
             geo = resolver_administracion_geografia(administracion, puesto)
             municipio_final = geo.municipio or municipio
             referencias = normalizar_referencias_administrativas(
@@ -551,7 +622,8 @@ def insertar_oposiciones(conexion, df):
                 municipio_final, referencias[1], referencias[2], geo.confianza,
                 geo.evidencia, geo.version_catalogo, referencias[0], referencias[3],
                 referencias[4], latitud, longitud, habitantes, publicacion_id,
-                version, analisis,
+                version, analisis, plazo_solicitudes, fecha_inicio_plazo,
+                fecha_fin_plazo, plazo_calculo, evidencia_plazo,
             )
             if tipo_personal_activo:
                 contexto = {
@@ -573,11 +645,12 @@ def insertar_oposiciones(conexion, df):
             fecha_boe, fecha_boe_original, publicacion, enlace, municipio, provincia,
             comunidad_autonoma, confianza_geografica, evidencia_geografica, version_resolutor,
             municipio_codigo_ine, provincia_id, comunidad_id,
-            latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis
+            latitud, longitud, habitantes, publicacion_id, version_extractor, fecha_analisis,
+            plazo_solicitudes, fecha_inicio_plazo, fecha_fin_plazo, plazo_calculo, evidencia_plazo
     """
     if tipo_personal_activo:
         columnas_insertar += ", tipo_personal"
-    marcadores = ",".join("?" for _ in range(32 if tipo_personal_activo else 31))
+    marcadores = ",".join("?" for _ in range(37 if tipo_personal_activo else 36))
     conexion.executemany(
         f"INSERT INTO oposiciones({columnas_insertar}) VALUES ({marcadores})",
         filas_preparadas(),

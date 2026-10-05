@@ -28,6 +28,7 @@ backups/snapshots/
 /backups/enriquecimiento_administraciones/
 /backups/procesamiento_historico/
 /backups/reprocesamiento_legacy/
+/backups/plazos/
 
 # Exportaciones generadas
 BOE-oposiciones_exportado.xlsx

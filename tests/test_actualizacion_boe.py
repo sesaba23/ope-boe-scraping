@@ -60,6 +60,20 @@ def test_estado_de_trabajo_expone_porcentaje_real_del_pipeline():
     assert trabajo.serializar()["porcentaje"] == 100
 
 
+def test_estado_de_trabajo_expone_progreso_del_dia_y_del_total():
+    trabajo = actualizacion_boe.TrabajoActualizacion("id", ["2025-01-01", "2025-01-02"])
+    trabajo.fase = "indices"
+    trabajo.fecha_actual = "2025-01-02"
+    trabajo.actual, trabajo.total = 1, 2
+    estado = trabajo.serializar()
+    assert estado["porcentaje_dia"] == 50
+    assert estado["porcentaje_total"] == 25
+    trabajo.fase = "fecha_completada"
+    trabajo.completadas = 1
+    trabajo.actual, trabajo.total = 1, 2
+    assert trabajo.serializar()["porcentaje_total"] == 50
+
+
 def test_gestor_acepta_eventos_de_progreso_del_pipeline():
     def actualizar(fechas, ruta, progreso):
         progreso({"fase": "publicaciones", "actual": 43, "total": 100,

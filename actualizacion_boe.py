@@ -2,6 +2,7 @@
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 import logging
+from pathlib import Path
 from threading import Lock, Thread
 import time
 from uuid import uuid4
@@ -12,6 +13,7 @@ from cobertura import crear_verificador_cobertura_indice
 
 FECHA_MINIMA_AUTOMATICA = date(2004, 1, 1)
 LOG = logging.getLogger(__name__)
+_PENDIENTES_CACHE = {}
 
 
 def _fecha(valor):
@@ -42,6 +44,20 @@ def determinar_actualizacion_intervalo(ruta_bd, *, fecha_desde=None, fecha_hasta
     inicio = max(inicio, FECHA_MINIMA_AUTOMATICA)
     if inicio > fin:
         return {"requiere_actualizacion": False, "fechas_pendientes": []}
+    try:
+        ruta = Path(ruta_bd).expanduser().resolve()
+        estado = ruta.stat()
+        clave_cache = (
+            str(ruta), estado.st_mtime_ns, estado.st_ctime_ns, estado.st_size,
+            inicio.isoformat(), fin.isoformat(), hoy.isoformat(),
+        )
+    except OSError:
+        # Las pruebas y las bases aún no creadas siguen el camino original y
+        # reciben exactamente sus mismos errores/resultados.
+        clave_cache = None
+    if clave_cache is not None and clave_cache in _PENDIENTES_CACHE:
+        pendientes = list(_PENDIENTES_CACHE[clave_cache])
+        return {"requiere_actualizacion": bool(pendientes), "fechas_pendientes": pendientes}
     datos = base_datos.cargar_para_lectura(ruta_bd, inicio.isoformat(), fin.isoformat())
     cobertura_reutilizable = crear_verificador_cobertura_indice(
         datos["Cobertura"], datos["Publicaciones"]
@@ -51,10 +67,15 @@ def determinar_actualizacion_intervalo(ruta_bd, *, fecha_desde=None, fecha_hasta
         texto = dia.strftime("%Y/%m/%d")
         if not cobertura_reutilizable(texto):
             pendientes.append(dia.isoformat())
-    return {
+    resultado = {
         "requiere_actualizacion": bool(pendientes),
         "fechas_pendientes": pendientes,
     }
+    if clave_cache is not None:
+        _PENDIENTES_CACHE[clave_cache] = list(pendientes)
+        if len(_PENDIENTES_CACHE) > 32:
+            _PENDIENTES_CACHE.pop(next(iter(_PENDIENTES_CACHE)))
+    return resultado
 
 
 def fechas_pendientes(ruta_bd, **kwargs):
@@ -93,10 +114,19 @@ class TrabajoActualizacion:
             tiempo_fase = ahora - self.inicio_fase_monotonic
             if tiempo_fase >= 1:
                 restante = max(0, round(tiempo_fase * (self.total - self.actual) / self.actual))
+        porcentaje_dia = round(100 * self.actual / total) if total else 100
+        if self.fase == "fecha_completada":
+            porcentaje_dia = 100
+        progreso_dia = porcentaje_dia / 100
+        dias_avanzados = self.completadas if self.fase == "fecha_completada" else self.completadas + progreso_dia
+        porcentaje_total = round(100 * dias_avanzados / fechas_totales) if fechas_totales else 100
+        if self.estado == "completado":
+            porcentaje_total = 100
         return {"id": self.trabajo_id, "estado": self.estado, "fecha_actual": self.fecha_actual,
                 "fechas_totales": fechas_totales, "fechas_completadas_count": self.completadas,
                 "actual": self.actual, "total": total,
-                "porcentaje": round(100 * self.actual / total) if total else 100,
+                "porcentaje": porcentaje_dia, "porcentaje_dia": porcentaje_dia,
+                "porcentaje_total": porcentaje_total,
                 "fechas_completadas": list(self.fechas_completadas),
                 "mensaje": self.mensaje, "error": self.error, "fase": self.fase,
                 "transcurrido_segundos": transcurrido,
@@ -144,7 +174,8 @@ class GestorActualizaciones:
                 if fase != trabajo.fase:
                     trabajo.fase = fase
                     trabajo.inicio_fase_monotonic = time.monotonic()
-                trabajo.fecha_actual = evento.get("fecha")
+                if evento.get("fecha"):
+                    trabajo.fecha_actual = evento["fecha"]
                 trabajo.actual = max(0, int(evento.get("actual", 0)))
                 trabajo.total = max(0, int(evento.get("total", 0)))
                 if evento.get("fecha_completada"):

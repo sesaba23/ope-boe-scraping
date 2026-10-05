@@ -14,6 +14,7 @@ import requests
 
 from analizar_xml_boe import MUESTRA_2004, analizar_xml, integridad_excel, obtener_muestra_api
 from extraer_tablas_xml_boe import extraer_bloques_tabla_estructurados, extraer_resultados_tabla, identificar_columnas, parsear_tablas_xml
+from plazos_solicitudes import enriquecer_con_plazo
 
 
 CAMPOS = [
@@ -667,6 +668,9 @@ def extraer_desde_contenido(publicacion_id, contenido_xml, url_xml, url_html=Non
             resultado["convocatorias"].append(_convocatoria_desde_evidencias(ev, metadatos, enlace))
             resultado["evidencias"].append(ev)
         resultado["filas_antes_reconciliacion"] = len(resultado["convocatorias"])
+        resultado["convocatorias"] = enriquecer_con_plazo(
+            resultado["convocatorias"], texto, metadatos.get("fecha_publicacion")
+        )
         return resultado
     if reconciliacion["estado"] == "TOTAL_DESGLOSADO" and not tabulares:
         for grupo in reconciliacion["grupos"]:
@@ -710,6 +714,9 @@ def extraer_desde_contenido(publicacion_id, contenido_xml, url_xml, url_html=Non
             resultado["convocatorias"].extend(filas_tabla); resultado["evidencias"].extend(evidencias_tabla)
     if not resultado["convocatorias"]:
         resultado["advertencias"].append("Clasificado como convocatoria, pero sin bloques o tablas aprovechables")
+    resultado["convocatorias"] = enriquecer_con_plazo(
+        resultado["convocatorias"], texto, metadatos.get("fecha_publicacion")
+    )
     resultado["filas_antes_reconciliacion"] = len(resultado["convocatorias"]) + len(reconciliacion["totales_descartados"])
     return resultado
 

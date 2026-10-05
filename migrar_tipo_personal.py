@@ -245,8 +245,8 @@ def _validar_persistencia(conexion, plan):
     if set(distribucion) - CATALOGO:
         raise RuntimeError("La persistencia contiene categorías fuera de catálogo")
     metadata = base_datos.leer_metadata(conexion)
-    if metadata.get("schema_version") != SCHEMA_DESTINO:
-        raise RuntimeError("schema_version no alcanzó la versión 7")
+    if metadata.get("schema_version") not in {SCHEMA_DESTINO, "8"}:
+        raise RuntimeError("schema_version no conserva una versión compatible")
     if metadata.get(METADATA_VERSION) != VERSION:
         raise RuntimeError("Falta la versión del clasificador en metadata")
 
@@ -273,7 +273,7 @@ def migrar(
         invariantes_antes = fingerprint_invariantes(lectura)
     finally:
         lectura.close()
-    if metadata_antes.get("schema_version") == SCHEMA_DESTINO:
+    if metadata_antes.get("schema_version") in {SCHEMA_DESTINO, "8"}:
         if "tipo_personal" not in columnas:
             raise RuntimeError("Metadata v7 sin estructura/provenance de tipo_personal")
         version_origen = metadata_antes.get(METADATA_VERSION)
@@ -292,14 +292,14 @@ def migrar(
                 validacion.close()
             return {
                 "actualizada": False, "dry_run": dry_run, "backup": None,
-                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "schema_version": metadata_antes["schema_version"], "data_version": metadata_antes["data_version"],
                 "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
                 "informe": informe,
             }
         if dry_run:
             return {
                 "actualizada": False, "dry_run": True, "backup": None,
-                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "schema_version": metadata_antes["schema_version"], "data_version": metadata_antes["data_version"],
                 "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
                 "informe": informe, "invariantes": invariantes_antes,
             }
@@ -312,7 +312,7 @@ def migrar(
         if not cambios:
             return {
                 "actualizada": False, "dry_run": dry_run, "backup": None,
-                "schema_version": SCHEMA_DESTINO, "data_version": metadata_antes["data_version"],
+                "schema_version": metadata_antes["schema_version"], "data_version": metadata_antes["data_version"],
                 "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
                 "informe": informe,
             }
@@ -338,7 +338,7 @@ def migrar(
             conexion.close()
         return {
             "actualizada": True, "dry_run": False, "backup": str(backup),
-            "schema_version": SCHEMA_DESTINO,
+            "schema_version": metadata_antes["schema_version"],
             "data_version_antes": metadata_antes["data_version"],
             "data_version_despues": str(int(metadata_antes["data_version"]) + 1),
             "recuentos": plan["recuentos"], "sha256_resultado": plan["sha256"],
@@ -415,8 +415,8 @@ def recalcular(ruta_bd: str | Path = "datos/boe.db", *, dry_run: bool = True,
     conexion = base_datos.conectar(ruta, readonly=True)
     try:
         metadata = base_datos.leer_metadata(conexion)
-        if metadata.get("schema_version") != SCHEMA_DESTINO or "tipo_personal" not in _columnas(conexion, "oposiciones"):
-            raise RuntimeError("El recálculo requiere schema_version 7 con tipo_personal")
+        if metadata.get("schema_version") not in {SCHEMA_DESTINO, "8"} or "tipo_personal" not in _columnas(conexion, "oposiciones"):
+            raise RuntimeError("El recálculo requiere schema_version 7 u 8 con tipo_personal")
         actuales = dict(conexion.execute("SELECT oposicion_id,tipo_personal FROM oposiciones"))
         invariantes_antes = fingerprint_invariantes(conexion)
     finally:
@@ -444,7 +444,7 @@ def recalcular(ruta_bd: str | Path = "datos/boe.db", *, dry_run: bool = True,
                 ((fila["tipo_personal"], fila["oposicion_id"]) for fila in cambios),
             )
             base_datos.guardar_metadata(
-                escritura, schema_version=SCHEMA_DESTINO,
+                escritura, schema_version=metadata["schema_version"],
                 data_version=int(metadata["data_version"]) + 1,
             )
             escritura.execute(

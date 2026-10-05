@@ -106,6 +106,7 @@ def test_mapa_de_rutas_publicas_y_metodos_se_mantiene_estable(ruta_bd):
         ("/terminos-y-condiciones", ("GET",)),
         ("/politica-de-privacidad", ("GET",)),
         ("/cobertura", ("GET",)),
+        ("/dias-inhabiles", ("GET",)),
         ("/administracion/base-datos", ("GET",)),
         ("/administracion/base-datos/exportar.zip", ("GET",)),
         ("/administracion/base-datos/exportar.xlsx", ("GET",)),
@@ -130,7 +131,9 @@ def test_mapa_de_rutas_publicas_y_metodos_se_mantiene_estable(ruta_bd):
         ("/api/actualizar-busqueda", ("POST",)),
         ("/api/trabajos/<trabajo_id>", ("GET",)),
         ("/api/cobertura/dia", ("GET",)),
+        ("/api/dias-inhabiles/dia", ("GET",)),
         ("/api/cobertura/actualizar", ("POST",)),
+        ("/api/cobertura/actualizar-todas", ("POST",)),
         ("/api/filtros/provincias", ("GET",)),
         ("/api/filtros/municipios", ("GET",)),
         ("/api/filtros/puestos", ("GET",)),
@@ -162,6 +165,39 @@ def test_navegacion_principal_incluye_acerca_y_contacto(cliente):
     assert 'aria-label="Información legal y de contacto"' in html
 
 
+def test_dias_inhabiles_muestra_filtro_calendario_y_detalle(ruta_bd):
+    conexion = base_datos.conectar(ruta_bd)
+    with base_datos.transaccion(conexion):
+        conexion.execute(
+            "INSERT INTO calendarios_festivos(calendario_id,anio,tipo,ambito,estado,publicacion_id,fuente_url) VALUES (?,?,?,?,?,?,?)",
+            (9001, 2025, "PRUEBA", "BOE", "PARSEADO", "BOE-A-2025-999", "https://boe.test/calendario"),
+        )
+        conexion.execute(
+            "INSERT INTO dias_inhabiles(dia_id,calendario_id,fecha,nombre,ambito,comunidad_autonoma,fuente_url) VALUES (?,?,?,?,?,?,?)",
+            (9001, 9001, "2025-01-01", "Año Nuevo", "NACIONAL", None, "https://boe.test/1"),
+        )
+        conexion.execute(
+            "INSERT INTO dias_inhabiles(dia_id,calendario_id,fecha,nombre,ambito,comunidad_autonoma,fuente_url) VALUES (?,?,?,?,?,?,?)",
+            (9002, 9001, "2025-01-02", "Día autonómico", "AUTONOMICO", "Comunidad de Madrid", "https://boe.test/2"),
+        )
+        conexion.execute(
+            "INSERT INTO dias_inhabiles(dia_id,calendario_id,fecha,nombre,ambito,comunidad_autonoma,fuente_url) VALUES (?,?,?,?,?,?,?)",
+            (9003, 9001, "2025-01-02", "Día andaluz", "AUTONOMICO", "Andalucía", "https://boe.test/3"),
+        )
+    conexion.close()
+    app = web_estadisticas.crear_app(ruta_bd); app.config["TESTING"] = True
+    cliente_local = app.test_client()
+    html = cliente_local.get("/dias-inhabiles?anio=2025&comunidad=Comunidad%20de%20Madrid").get_data(as_text=True)
+    assert "Días inhábiles" in html and 'name="comunidad"' in html
+    assert 'data-fecha="2025-01-01"' in html and 'data-fecha="2025-01-02"' in html
+    detalle = cliente_local.get("/api/dias-inhabiles/dia?fecha=2025-01-02&comunidad=Comunidad%20de%20Madrid").get_json()
+    assert [fila["comunidad_autonoma"] for fila in detalle["inhabiles"]] == ["Comunidad de Madrid"]
+    assert detalle["festividades"] == ["Día autonómico"]
+    assert detalle["inhabiles"][0]["fuente_url"] == "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-999"
+    solo_nacional = cliente_local.get("/api/dias-inhabiles/dia?fecha=2025-01-02&comunidades_aplicadas=1").get_json()
+    assert solo_nacional["inhabiles"] == []
+
+
 def test_menu_principal_conserva_enlaces_y_contrato_accesible(cliente):
     pagina = cliente.get("/").get_data(as_text=True)
     boton = re.search(r'<button class="site-menu-button"[^>]*>(.*?)</button>', pagina, re.DOTALL)
@@ -174,8 +210,8 @@ def test_menu_principal_conserva_enlaces_y_contrato_accesible(cliente):
     assert 'aria-label="Abrir menú de navegación"' in boton.group(0)
     assert re.sub(r"<[^>]+>", "", boton.group(1)).strip() == "☰"
     assert 'aria-label="Principal"' in navegacion.group(0)
-    assert re.findall(r'<a\b', navegacion.group(1)) == ["<a"] * 7
-    for texto in ("Inicio", "Oposiciones", "Estadísticas", "Cobertura", "Administración", "Acerca de", "Contacto"):
+    assert re.findall(r'<a\b', navegacion.group(1)) == ["<a"] * 8
+    for texto in ("Inicio", "Oposiciones", "Estadísticas", "Cobertura", "Días inhábiles", "Administración", "Acerca de", "Contacto"):
         assert f">{texto}</a>" in navegacion.group(1)
 
 
@@ -206,6 +242,17 @@ def test_menu_responsive_tiene_breakpoint_independiente_y_fallback(cliente):
     assert "top: 100%" in bloque_navegacion
     assert "max-height:" in bloque_navegacion and "overflow-y: auto" in bloque_navegacion
     assert "overflow-x: hidden" not in css
+
+
+def test_busqueda_expone_filtro_de_plazo_y_reserva_datos_para_detalle(cliente):
+    pagina = cliente.get("/oposiciones?ver_todas=1").get_data(as_text=True)
+    assert 'id="plazo" name="plazo"' in pagina
+    assert "En plazo" in pagina
+    assert "Plazo de solicitud" in pagina
+    assert "Plazo de solicitudes" not in pagina
+    assert "Fecha límite" not in pagina
+    assert 'data-label="Municipio"' not in pagina
+    assert 'data-label="Comunidad Autónoma"' not in pagina
 
 
 def test_componentes_secundarios_tienen_breakpoint_intermedio_de_tablet(cliente):
@@ -271,7 +318,32 @@ def test_buscador_detalle_y_apis_territoriales(cliente):
     assert detalle.status_code == 200
     assert b"Ver publicaci" in detalle.data
     assert b'rel="noopener noreferrer"' in detalle.data
+    assert "1 de enero de 2025" in detalle.get_data(as_text=True)
     assert cliente.get("/oposiciones/99999999").status_code == 404
+
+
+def test_detalle_convocatoria_normaliza_enlace_historico_xml_a_boe(ruta_bd, cliente):
+    conexion = base_datos.conectar(ruta_bd)
+    conexion.execute(
+        "UPDATE oposiciones SET enlace=? WHERE oposicion_id=1",
+        ("https://www.boe.es/diario_boe/xml.php?id=BOE-A-2025-0",),
+    )
+    conexion.commit(); conexion.close()
+    html = cliente.get("/oposiciones/1").get_data(as_text=True)
+    assert "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-0" in html
+    assert "https://www.boe.es/diario_boe/xml.php?id=BOE-A-2025-0" not in html
+
+
+def test_detalle_advierte_de_festivos_locales_en_plazo_habil(ruta_bd, cliente):
+    conexion = base_datos.conectar(ruta_bd)
+    conexion.execute(
+        "UPDATE oposiciones SET plazo_solicitudes=?,fecha_inicio_plazo=?,fecha_fin_plazo=?,plazo_calculo=? WHERE oposicion_id=1",
+        ("5 días hábiles", "2025-01-02", "2025-01-08", "CALCULADO_DIAS_HABILES_CON_FESTIVOS"),
+    )
+    conexion.commit(); conexion.close()
+    html_detalle = cliente.get("/oposiciones/1").get_data(as_text=True)
+    assert "Advertencia sobre la fecha límite" in html_detalle
+    assert "festivos locales" in html_detalle
     assert cliente.get("/api/filtros/provincias?comunidad=Andaluc%C3%ADa").get_json()["provincias"] == ["Sevilla"]
     assert cliente.get("/api/filtros/municipios?q=Ma&provincia=Madrid").get_json()["municipios"] == []
     assert cliente.get("/api/filtros/municipios?q=").get_json()["municipios"] == []
@@ -630,16 +702,41 @@ def _resumen_prueba():
 
 
 def test_pagina_cobertura_calendario_y_detalle(monkeypatch, ruta_bd):
-    monkeypatch.setattr(web_estadisticas, "resumen_cobertura", lambda *a: _resumen_prueba())
-    monkeypatch.setattr(web_estadisticas, "cobertura_mes", lambda *a, **k: _calendario_prueba(k["anio"], k["mes"]))
+    monkeypatch.setattr(web_estadisticas, "resumen_cobertura_y_mes", lambda *a, **k: (_resumen_prueba(), _calendario_prueba(k["anio"], k["mes"])))
     monkeypatch.setattr(web_estadisticas, "detalle_cobertura_dia", lambda *a, **k: _calendario_prueba()["dias"][0])
     app = web_estadisticas.crear_app(ruta_bd); app.config["TESTING"] = True
     cliente_local = app.test_client()
     html = cliente_local.get("/cobertura?anio=2025&mes=1").get_data(as_text=True)
-    assert "Cobertura del BOE" in html and "Cobertura BOE operativa" in html and "Actualizar pendientes" in html
+    assert "Cobertura del BOE" in html and "Cobertura BOE operativa" in html and "Descargar convocatorias pendientes" in html
+    assert 'id="actualizar-pendientes"' in html and ">Mes</button>" in html
+    assert 'id="actualizar-todas-pendientes"' in html and ">Todo</button>" in html
+    assert "Enero de 2025" in html and "2025 está actualizado" in html
+    assert 'action="/cobertura#calendario-cobertura"' in html and 'id="calendario-cobertura"' in html
+    assert "Ver periodo" not in html
+    javascript = cliente_local.get("/static/js/cobertura.js").get_data(as_text=True)
+    assert '#cobertura-anio, #cobertura-mes' in javascript and 'select.form?.submit()' in javascript
     assert 'coverage-day--consultado' in html and ">Cobertura</a>" in html
     detalle = cliente_local.get("/api/cobertura/dia?fecha=2025-01-01").get_json()
     assert detalle["estado_visual"] == "CONSULTADO"
+
+
+def test_cobertura_deshabilita_todo_cuando_no_quedan_pendientes(monkeypatch, ruta_bd):
+    resumen = _resumen_prueba(); resumen.update({"dias_pendientes": 0, "dias_cubiertos": 2, "porcentaje": 100})
+    monkeypatch.setattr(web_estadisticas, "resumen_cobertura_y_mes", lambda *a, **k: (resumen, _calendario_prueba(k["anio"], k["mes"])))
+    app = web_estadisticas.crear_app(ruta_bd); app.config["TESTING"] = True
+    html = app.test_client().get("/cobertura?anio=2025&mes=1").get_data(as_text=True)
+    assert 'id="actualizar-todas-pendientes"' in html and 'id="actualizar-todas-pendientes" class="portal-button coverage-all-update-button" type="button" disabled' in html
+    assert "Toda la cobertura está actualizada." in html
+
+
+def test_cobertura_deshabilita_periodos_futuros_en_selectores(monkeypatch, ruta_bd):
+    monkeypatch.setattr(web_estadisticas, "resumen_cobertura_y_mes", lambda *a, **k: (_resumen_prueba(), _calendario_prueba(k["anio"], k["mes"])))
+    hoy = web_estadisticas.datetime.today()
+    app = web_estadisticas.crear_app(ruta_bd); app.config["TESTING"] = True
+    html = app.test_client().get(f"/cobertura?anio={hoy.year}&mes={hoy.month}").get_data(as_text=True)
+    if hoy.month < 12:
+        assert f'value="{hoy.month + 1}" disabled' in html
+    assert f'value="{hoy.year + 1}"' not in html
 
 
 def test_cobertura_muestra_incoherencia_verificada(monkeypatch, ruta_bd):
@@ -648,8 +745,7 @@ def test_cobertura_muestra_incoherencia_verificada(monkeypatch, ruta_bd):
     dia = _calendario_prueba()["dias"][0]
     dia.update({"estado_visual": "INCOHERENCIA_VERIFICADA", "estado": "incoherencia_historica_verificada",
                 "motivo": "Incoherencia histórica verificada.", "publicaciones_sqlite": 17})
-    monkeypatch.setattr(web_estadisticas, "resumen_cobertura", lambda *a: resumen)
-    monkeypatch.setattr(web_estadisticas, "cobertura_mes", lambda *a, **k: {"anio": k["anio"], "mes": k["mes"], "dias": [dia]})
+    monkeypatch.setattr(web_estadisticas, "resumen_cobertura_y_mes", lambda *a, **k: (resumen, {"anio": k["anio"], "mes": k["mes"], "dias": [dia]}))
     monkeypatch.setattr(web_estadisticas, "detalle_cobertura_dia", lambda *a, **k: dia)
     app = web_estadisticas.crear_app(ruta_bd); app.config["TESTING"] = True
     cliente_local = app.test_client()
@@ -679,6 +775,27 @@ def test_cobertura_actualiza_solo_pendientes_y_mes_cubierto_no_crea_job(monkeypa
     assert llamadas == [["2025-01-03", "2025-01-17"]]
 
 
+def test_cobertura_actualiza_todas_las_fechas_pendientes(monkeypatch, ruta_bd):
+    llamadas = []
+    argumentos = []
+    monkeypatch.setattr(
+        web_estadisticas, "determinar_actualizacion_intervalo",
+        lambda *a, **k: argumentos.append(k) or {"requiere_actualizacion": True, "fechas_pendientes": ["2004-01-02", "2025-01-03"]},
+    )
+    def actualizar(fechas, ruta, progreso):
+        llamadas.append(fechas)
+        progreso({"fase": "indices", "actual": 1, "total": 1, "mensaje": "Actualizando datos del BOE…"})
+    app = web_estadisticas.crear_app(ruta_bd, GestorActualizaciones(ruta_bd, actualizador=actualizar)); app.config["TESTING"] = True
+    respuesta = app.test_client().post("/api/cobertura/actualizar-todas")
+    assert respuesta.status_code == 202
+    for _ in range(30):
+        if llamadas:
+            break
+        time.sleep(.01)
+    assert llamadas == [["2004-01-02", "2025-01-03"]]
+    assert argumentos and argumentos[0]["fecha_desde"] == "2004-01-01"
+
+
 def test_oposiciones_mantiene_silenciosa_la_comprobacion_de_cobertura(cliente):
     html = cliente.get("/oposiciones").get_data(as_text=True)
     assert "Comprobando cobertura del BOE" not in html
@@ -695,7 +812,10 @@ def test_pagina_contiene_filtros_indicadores_y_graficos(cliente):
     assert 'id="provincia"' in html
     assert 'id="sistema"' in html
     assert 'id="turno"' in html
-    assert html.count('>Todas</option>') == 3
+    assert html.count('>Todas</option>') == 4
+    assert 'id="plazo" name="plazo"' in html
+    assert 'Plazo de solicitud' in html
+    assert '>En plazo</option>' in html
     assert 'id="aplicar-filtros"' in html
     assert 'id="limpiar-filtros"' in html
     assert 'id="total-plazas"' in html
@@ -1046,6 +1166,22 @@ def test_api_aplica_y_devuelve_los_filtros_de_fecha(cliente):
         "total_provincias": 1,
         "total_administraciones": 1,
     }
+
+
+def test_api_aplica_filtro_de_plazo_y_devuelve_su_valor(cliente):
+    respuesta = cliente.get("/api/estadisticas?plazo=en_plazo")
+    datos = respuesta.get_json()
+
+    assert respuesta.status_code == 200
+    assert datos["filtros"]["plazo"] == "en_plazo"
+    assert datos["resumen"]["total_registros"] == 0
+
+
+def test_api_rechaza_plazo_no_valido(cliente):
+    respuesta = cliente.get("/api/estadisticas?plazo=solo")
+
+    assert respuesta.status_code == 400
+    assert "plazo" in respuesta.get_json()["error"]
 
 
 def test_api_aplica_filtro_por_puesto(cliente):

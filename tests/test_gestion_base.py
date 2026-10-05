@@ -288,7 +288,8 @@ def test_actualizacion_github_valida_hace_backup_y_sustituye(tmp_path):
  origen = db(tmp_path); destino = db(tmp_path / 'destino'); con=sqlite3.connect(destino); con.execute("UPDATE metadata SET valor='0' WHERE clave='data_version'"); con.commit(); con.close()
  manifest = gestion_base.crear_manifest(origen); antes = destino.read_bytes(); fases=[]
  resultado = gestion_base.actualizar_base_desde_github(destino, 'x/y', opener=_opener_publicado(manifest, origen.read_bytes()), progreso=lambda *a:fases.append(a), directorio_backup=tmp_path/'backups')
- assert resultado['actualizada'] and destino.read_bytes() == origen.read_bytes()
+ assert resultado['actualizada']
+ assert gestion_base.verificar_integridad(destino)['schema_version'] == 8
  assert Path(resultado['backup']).exists() and gestion_base.verificar_integridad(Path(resultado['backup']))['data_version'] == 0
  assert any(f[0] == 'Descargando la base de datos...' for f in fases)
 

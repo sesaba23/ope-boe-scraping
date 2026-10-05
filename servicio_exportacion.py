@@ -20,7 +20,7 @@ from migrar_excel_sqlite import _fingerprint, _registros_excel
 
 CONTRATOS = {
     "Búsquedas": ("SELECT codigo FROM busquedas ORDER BY codigo", ["Código"]),
-    "Oposiciones": ("", ["Oposicion_ID", "Publicacion_ID", "Fecha_boe", "Fecha_boe_original", "Puesto", "Puesto_normalizado", "Num_plazas", "Administración", "Administración_normalizada", "Ambito", "Tipo_entidad", "Comunidad_Autónoma", "Provincia", "Municipio", "Sistema", "Turno", "Escala", "Subescala", "Clase", "Publicación", "Latitud", "Longitud", "Habitantes", "Version_extractor", "Fecha_analisis", "Confianza_geografica", "Evidencia_geografica", "Version_resolutor", "Enlace"]),
+    "Oposiciones": ("", ["Oposicion_ID", "Publicacion_ID", "Fecha_boe", "Fecha_boe_original", "Puesto", "Puesto_normalizado", "Num_plazas", "Administración", "Administración_normalizada", "Ambito", "Tipo_entidad", "Comunidad_Autónoma", "Provincia", "Municipio", "Sistema", "Turno", "Escala", "Subescala", "Clase", "Publicación", "Latitud", "Longitud", "Habitantes", "Version_extractor", "Fecha_analisis", "Plazo_solicitudes", "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo", "Confianza_geografica", "Evidencia_geografica", "Version_resolutor", "Enlace"]),
     "Log-errores": ("SELECT fecha,tipo_error,enlace_web FROM log_errores ORDER BY error_id", ["Fecha", "Tipo de error", "Enlace Web"]),
     "Publicaciones": ("""SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias,departamento_boe,administracion_resuelta,familia_administrativa,estado_resolucion,metodo_resolucion,confianza_resolucion,version_resolucion FROM publicaciones ORDER BY fecha_boe,publicacion_id""", ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias", "Departamento_BOE", "Administracion_resuelta", "Familia_administrativa", "Estado_resolucion", "Metodo_resolucion", "Confianza_resolucion", "Version_resolucion"]),
     "Cobertura": ("SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura ORDER BY fecha", ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"]),
@@ -33,6 +33,8 @@ MAPA_OPOSICIONES = {
     "Ambito": "ambito", "Tipo_entidad": "tipo_entidad", "Comunidad_Autónoma": "comunidad_autonoma",
     "Provincia": "provincia", "Municipio": "municipio", "Sistema": "sistema", "Turno": "turno",
     "Escala": "escala", "Subescala": "subescala", "Clase": "clase", "Publicación": "publicacion",
+    "Plazo_solicitudes": "plazo_solicitudes", "Fecha_inicio_plazo": "fecha_inicio_plazo",
+    "Fecha_fin_plazo": "fecha_fin_plazo", "Plazo_calculo": "plazo_calculo", "Evidencia_plazo": "evidencia_plazo",
     "Latitud": "latitud", "Longitud": "longitud", "Habitantes": "habitantes", "Version_extractor": "version_extractor",
     "Fecha_analisis": "fecha_analisis", "Confianza_geografica": "confianza_geografica",
     "Evidencia_geografica": "evidencia_geografica", "Version_resolutor": "version_resolutor", "Enlace": "enlace",
@@ -52,7 +54,8 @@ COLUMNAS_OPOSICIONES_FILTRADAS = [
     "Fecha BOE", "Puesto", "Puesto normalizado", "Número de plazas",
     "Administración", "Ámbito", "Tipo de entidad", "Comunidad autónoma",
     "Provincia", "Municipio", "Sistema", "Turno", "Escala", "Subescala",
-    "Clase", "Confianza geográfica", "Evidencia geográfica", "Enlace BOE",
+    "Clase", "Plazo de solicitudes", "Fecha fin del plazo", "Confianza geográfica",
+    "Evidencia geográfica", "Enlace BOE",
 ]
 
 _SELECCION_OPOSICIONES_FILTRADAS = """fecha_boe AS 'Fecha BOE', puesto AS 'Puesto',
@@ -60,7 +63,8 @@ _SELECCION_OPOSICIONES_FILTRADAS = """fecha_boe AS 'Fecha BOE', puesto AS 'Puest
     administracion AS 'Administración', ambito AS 'Ámbito', tipo_entidad AS 'Tipo de entidad',
     comunidad_autonoma AS 'Comunidad autónoma', provincia AS 'Provincia', municipio AS 'Municipio',
     sistema AS 'Sistema', turno AS 'Turno', escala AS 'Escala', subescala AS 'Subescala',
-    clase AS 'Clase', confianza_geografica AS 'Confianza geográfica',
+    clase AS 'Clase', plazo_solicitudes AS 'Plazo de solicitudes', fecha_fin_plazo AS 'Fecha fin del plazo',
+    confianza_geografica AS 'Confianza geográfica',
     evidencia_geografica AS 'Evidencia geográfica', enlace AS 'Enlace BOE'"""
 
 _FILTROS_OPOSICIONES = {
@@ -68,6 +72,7 @@ _FILTROS_OPOSICIONES = {
     "comunidad_autonoma", "provincia", "municipio", "municipio_exacto",
     "municipio_provincia_exacto", "tipo_entidad", "sistema", "turno",
     "escala", "subescala", "clase",
+    "plazo",
 }
 
 
@@ -175,11 +180,20 @@ def obtener_oposiciones_filtradas(ruta_bd="datos/boe.db", *, orden="fecha_desc",
         for nombre in _FILTROS_OPOSICIONES
         if nombre in filtros
     }
-    where, parametros = consultas_boe._condiciones_busqueda(**filtros_logicos)
     conexion = consultas_boe._conexion(ruta_bd)
     try:
+        tiene_plazos = consultas_boe._tiene_plazos(conexion)
+        where, parametros = consultas_boe._condiciones_busqueda(
+            **filtros_logicos, tiene_plazos=tiene_plazos
+        )
+        seleccion = _SELECCION_OPOSICIONES_FILTRADAS
+        if not tiene_plazos:
+            seleccion = seleccion.replace(
+                "plazo_solicitudes AS 'Plazo de solicitudes', fecha_fin_plazo AS 'Fecha fin del plazo'",
+                "NULL AS 'Plazo de solicitudes', NULL AS 'Fecha fin del plazo'",
+            )
         return pd.read_sql_query(
-            f"SELECT {_SELECCION_OPOSICIONES_FILTRADAS} FROM oposiciones{where} "
+            f"SELECT {seleccion} FROM oposiciones{where} "
             f"ORDER BY {consultas_boe._ORDEN_BUSQUEDA[orden]}",
             conexion,
             params=parametros,

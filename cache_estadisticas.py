@@ -8,11 +8,12 @@ MAX_ENTRADAS_ESTADISTICAS = 8
 
 
 def clave_estadisticas(version, *, fecha_inicio, fecha_final, puesto, provincia,
-                       ambito, sistema, turno, tipo_personal, comparadores):
+                       ambito, sistema, turno, tipo_personal, comparadores,
+                       plazo=None):
     """Usa parámetros efectivos; sólo el filtro multivalor OR ignora el orden."""
     return (
         int(version), fecha_inicio, fecha_final, puesto, provincia, ambito,
-        sistema, turno, tuple(sorted(set(tipo_personal))), tuple(comparadores),
+        sistema, turno, plazo, tuple(sorted(set(tipo_personal))), tuple(comparadores),
     )
 
 

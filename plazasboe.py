@@ -4,7 +4,13 @@ import barraprogreso
 import impresiones
 import preparar_archivo_datos
 import base_datos
-from boe_api import ErrorAPIBOE, extraer_publicaciones_2b_api, obtener_sumario_api
+from boe_api import (
+    ErrorAPIBOE,
+    extraer_calendarios_api,
+    extraer_publicaciones_2b_api,
+    obtener_sumario_api,
+)
+from calendarios_festivos import descargar_y_guardar_calendario, festivos_para_anio
 from cobertura import (crear_verificador_cobertura_indice, registrar_cobertura,
                        normalizar_cobertura)
 from trazabilidad import añadir_trazabilidad_convocatorias
@@ -19,6 +25,7 @@ from mapa_plazas import enriquecer_filas_sin_coordenadas, generar_mapa_municipio
 from extractor_historico_boe import extraer_desde_contenido
 from procesamiento_historico import procesar_intervalo_historico
 from resolucion_administraciones import enriquecer_convocatorias
+from plazos_solicitudes import enriquecer_con_plazo
 
 from datetime import datetime
 import requests
@@ -225,12 +232,20 @@ def _descubrir_indice_api_con_fallback(
     consultar_api = consultar_api or obtener_sumario_api
     consultar_html = consultar_html or _descubrir_indice_html
     try:
-        resultado_api = extraer_publicaciones_2b_api(consultar_api(fecha))
+        respuesta_sumario = consultar_api(fecha)
+        candidatos_calendario = extraer_calendarios_api(respuesta_sumario)
+        resultado_api = extraer_publicaciones_2b_api(respuesta_sumario)
         estado_api = resultado_api["estado"]
         if estado_api == "SIN_EDICION":
-            return {"estado": "sin_edicion", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
+            respuesta = {"estado": "sin_edicion", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
+            if candidatos_calendario:
+                respuesta["calendarios"] = candidatos_calendario
+            return respuesta
         if estado_api == "SIN_SECCION_2B":
-            return {"estado": "consultado", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
+            respuesta = {"estado": "consultado", "enlaces": [], "fichas": [], "errores": [], "mensaje": None, "fuente": "api"}
+            if candidatos_calendario:
+                respuesta["calendarios"] = candidatos_calendario
+            return respuesta
         if estado_api != "CON_PUBLICACIONES":
             raise ErrorAPIBOE("ESTRUCTURA", f"Estado API no fiable: {estado_api}")
         enlaces, fichas = [], []
@@ -245,7 +260,10 @@ def _descubrir_indice_api_con_fallback(
                 fichas.append({"Publicacion_ID": publicacion_id, "titulo": publicacion.get("titulo", ""),
                                "departamento": publicacion.get("departamento", ""), "url_html": enlace,
                                "url_xml": publicacion.get("url_xml", "")})
-        return {"estado": "consultado", "enlaces": enlaces, "fichas": fichas, "errores": [], "mensaje": None, "fuente": "api"}
+        respuesta = {"estado": "consultado", "enlaces": enlaces, "fichas": fichas, "errores": [], "mensaje": None, "fuente": "api"}
+        if candidatos_calendario:
+            respuesta["calendarios"] = candidatos_calendario
+        return respuesta
     except (ErrorAPIBOE, ValueError, KeyError, TypeError):
         return consultar_html(url_html)
 
@@ -334,7 +352,10 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
         )
 
     # SQLite es la fuente de verdad. La validación es ligera y no depende del XLSX.
-    base_datos.validar_base_principal(ruta_bd)
+    estado_base = base_datos.validar_base_principal(ruta_bd)
+    if estado_base.get("schema_version") not in {None, "8"}:
+        import gestion_base
+        gestion_base.migrar_si_necesario(ruta_bd)
     dataframes_dict = base_datos.cargar_para_lectura(
         ruta_bd, lista_fechas[0], lista_fechas[-1],
         fechas=lista_fechas if fechas_explicitamente is not None else None,
@@ -393,6 +414,15 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
             continue
         indices_consultados_http += 1
         resultado_indice = _descubrir_indice_api_con_fallback(fecha_indice, url)
+        for candidato_calendario in resultado_indice.get("calendarios", []):
+            try:
+                descargar_y_guardar_calendario(ruta_bd, candidato_calendario)
+            except Exception as error:  # el calendario no debe detener la cobertura de oposiciones
+                lista_diccionario_errores.append({
+                    "enlace_web": candidato_calendario.get("url_html") or candidato_calendario.get("url_xml") or "",
+                    "tipo_error": "CalendarioFestivo",
+                    "error": str(error),
+                })
         estado_indice = resultado_indice["estado"]
         enlaces_dia = resultado_indice["enlaces"]
         fichas_dia = resultado_indice.get("fichas", [])
@@ -599,6 +629,16 @@ def _ejecutar_aplicacion(*, texto_busqueda=None, fecha_inicio=None, fecha_fin=No
                         continue
 
                 if analisis_correcto:
+                    texto_documento = " ".join(contenido.get_text(" ", strip=True) for contenido in contenidos)
+                    anio_publicacion = str(fecha_boe)[-4:]
+                    try:
+                        festivos = festivos_para_anio(ruta_bd, int(anio_publicacion))
+                    except (TypeError, ValueError):
+                        festivos = None
+                    convocatorias_publicacion = enriquecer_con_plazo(
+                        convocatorias_publicacion, texto_documento, fecha_boe,
+                        festivos=festivos,
+                    )
                     # Una única resolución por publicación, antes de que la clave
                     # funcional (que incluye Administración) llegue a deduplicarse.
                     metadatos_publicacion = {

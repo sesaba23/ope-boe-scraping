@@ -1,4 +1,5 @@
 import argparse
+import calendar
 from datetime import datetime, timedelta
 from pathlib import Path
 import re
@@ -14,7 +15,8 @@ from consultas_boe import (
     ErrorConsultaSQLite, buscar_municipios, buscar_oposiciones,
     buscar_sugerencias_puesto, metadata, obtener_data_version, obtener_oposicion,
     opciones_busqueda, opciones_filtros, cobertura_mes, detalle_cobertura_dia,
-    resumen_cobertura, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
+    resumen_cobertura, resumen_cobertura_y_mes, resumen_mapa_oposiciones, buscar_oposiciones_sin_coordenadas,
+    opciones_dias_inhabiles, calendario_dias_inhabiles, detalle_dia_inhabil,
 )
 from cache_estadisticas import CacheEstadisticas, clave_estadisticas
 from estadisticas import (
@@ -30,11 +32,62 @@ _FILTROS_RETORNO_OPOSICIONES = (
     "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
     "comunidad_autonoma", "provincia", "municipio", "municipio_exacto",
     "municipio_provincia_exacto", "tipo_entidad", "sistema", "turno",
-    "escala", "subescala", "clase", "tipo_personal",
+    "escala", "subescala", "clase", "tipo_personal", "plazo",
 )
 _ORDENES_RETORNO_OPOSICIONES = {
     "fecha_desc", "fecha_asc", "puesto_asc", "administracion_asc", "plazas_desc",
 }
+
+_MESES_FECHA_LARGA = (
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+)
+_MESES_COBERTURA = (
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+)
+
+
+def _fecha_larga(valor):
+    """Formatea fechas ISO para las fichas de oposición."""
+    if not valor:
+        return ""
+    texto = str(valor).strip()
+    if re.search(r"\bde\s+(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+de\s+\d{4}\b", texto, re.IGNORECASE):
+        return texto
+    fecha = None
+    for formato in ("%Y-%m-%d", "%d/%m/%Y", "%Y%m%d"):
+        try:
+            fecha = datetime.strptime(texto[:10] if formato == "%Y-%m-%d" else texto, formato)
+            break
+        except ValueError:
+            continue
+    if fecha is None:
+        return texto
+    return f"{fecha.day} de {_MESES_FECHA_LARGA[fecha.month - 1]} de {fecha.year}"
+
+
+def _meses_dias_inhabiles(anio, filas):
+    """Construye los doce paneles mensuales para la vista del calendario."""
+    por_fecha = {}
+    for fila in filas:
+        por_fecha.setdefault(fila["fecha"], []).append(fila)
+    nombres = ("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+               "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+    meses = []
+    for mes, nombre in enumerate(nombres, 1):
+        semanas = []
+        for semana in calendar.monthcalendar(int(anio), mes):
+            celdas = []
+            for dia in semana:
+                if not dia:
+                    celdas.append(None)
+                    continue
+                fecha = f"{int(anio):04d}-{mes:02d}-{dia:02d}"
+                celdas.append({"dia": dia, "fecha": fecha, "entradas": por_fecha.get(fecha, [])})
+            semanas.append(celdas)
+        meses.append({"numero": mes, "nombre": nombre, "semanas": semanas})
+    return meses
 
 
 def _url_retorno_oposiciones(argumentos):
@@ -78,6 +131,7 @@ def _url_retorno_oposiciones(argumentos):
 
 def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx=None):
     app = Flask(__name__)
+    app.jinja_env.filters["fecha_larga"] = _fecha_larga
     app.extensions["cache_estadisticas"] = CacheEstadisticas()
     ruta_fijada = Path(ruta_bd or Path.cwd() / "datos/boe.db").expanduser()
     app.config["RUTA_BD"] = ruta_fijada.resolve()
@@ -92,9 +146,11 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         nombres = (
             "texto", "fecha_desde", "fecha_hasta", "administracion", "ambito",
             "comunidad_autonoma", "provincia", "municipio", "tipo_entidad",
-            "sistema", "turno", "escala", "subescala", "clase",
+            "sistema", "turno", "escala", "subescala", "clase", "plazo",
         )
         filtros = {nombre: (request.args.get(nombre) or "").strip() for nombre in nombres}
+        if filtros["plazo"] not in {"", "todas", "en_plazo"}:
+            raise BadRequest("plazo no válido: debe ser 'todas' o 'en_plazo'")
         tipos = [valor.strip() for valor in request.args.getlist("tipo_personal") if valor.strip()]
         invalidos = sorted(set(tipos) - set(TIPOS_PERSONAL))
         if invalidos:
@@ -167,11 +223,52 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                 raise ValueError("El periodo de cobertura no es válido.")
             if (anio, mes) > (hoy.year, hoy.month):
                 raise ValueError("No se puede consultar un mes futuro.")
-            resumen = resumen_cobertura(app.config["RUTA_BD"])
-            calendario = cobertura_mes(app.config["RUTA_BD"], anio=anio, mes=mes)
+            resumen, calendario = resumen_cobertura_y_mes(
+                app.config["RUTA_BD"], anio=anio, mes=mes, hoy=hoy.date()
+            )
         except (ErrorConsultaSQLite, ValueError) as error:
             return render_template("error.html", seccion_activa="cobertura", codigo=400, mensaje=str(error)), 400
-        return render_template("cobertura.html", seccion_activa="cobertura", resumen=resumen, calendario=calendario)
+        fecha_hoy = hoy.date().isoformat()
+        dias_mes = [dia for dia in calendario["dias"] if not dia.get("vacio") and dia["fecha"] <= fecha_hoy]
+        mes_actualizado = bool(dias_mes) and all(dia["cubierto"] for dia in dias_mes)
+        todo_actualizado = resumen["dias_pendientes"] == 0
+        return render_template(
+            "cobertura.html", seccion_activa="cobertura", resumen=resumen, calendario=calendario,
+            nombre_mes=_MESES_COBERTURA[mes - 1], mes_actualizado=mes_actualizado,
+            todo_actualizado=todo_actualizado, anio_actual=hoy.year, mes_actual=hoy.month,
+        )
+
+    @app.get("/dias-inhabiles")
+    def dias_inhabiles():
+        try:
+            opciones = opciones_dias_inhabiles(app.config["RUTA_BD"])
+            anios = opciones["anios"]
+            if anios:
+                anio = int(request.args.get("anio", anios[0]))
+                if anio not in anios:
+                    raise ValueError("El año de días inhábiles no está disponible.")
+            else:
+                anio = datetime.today().year
+            comunidades_disponibles = opciones["comunidades"]
+            recibidas = request.args.getlist("comunidad")
+            comunidades = [valor for valor in recibidas if valor in comunidades_disponibles]
+            if not request.args.get("comunidades_aplicadas"):
+                comunidades = list(comunidades_disponibles)
+            filas = calendario_dias_inhabiles(
+                app.config["RUTA_BD"], anio=anio, comunidades=comunidades,
+            )
+        except (ErrorConsultaSQLite, ValueError) as error:
+            return render_template("error.html", seccion_activa="dias_inhabiles", codigo=400, mensaje=str(error)), 400
+        colores = {
+            comunidad: f"dias-inhabiles-color--{indice % 8}"
+            for indice, comunidad in enumerate(comunidades_disponibles)
+        }
+        return render_template(
+            "dias_inhabiles.html", seccion_activa="dias_inhabiles", anio=anio,
+            anios=anios, comunidades=comunidades_disponibles,
+            comunidades_seleccionadas=comunidades, meses=_meses_dias_inhabiles(anio, filas),
+            colores=colores,
+        )
 
     @app.get("/administracion/base-datos")
     def administracion_base_datos():
@@ -310,7 +407,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                 app.config["RUTA_BD"], comunidad_autonoma=filtros["comunidad_autonoma"] or None,
                 provincia=filtros["provincia"] or None, municipio=filtros["municipio"] or None,
             )
-            hay_criterio = request.args.get("ver_todas") == "1" or any(filtros.values()) or vista_mapa
+            hay_criterio = request.args.get("ver_todas") == "1" or any(
+                valor for nombre, valor in filtros.items() if nombre != "plazo"
+            ) or filtros["plazo"] == "en_plazo" or vista_mapa
             es_navegacion = any(nombre in request.args for nombre in ("pagina", "orden", "tamano_pagina"))
             decision_actualizacion = determinar_actualizacion_intervalo(
                 app.config["RUTA_BD"], fecha_desde=filtros["fecha_desde"] or None,
@@ -481,6 +580,19 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         except (ErrorConsultaSQLite, ValueError) as error:
             return jsonify({"error": str(error)}), 400
 
+    @app.get("/api/dias-inhabiles/dia")
+    def api_dias_inhabiles_dia():
+        comunidades = request.args.getlist("comunidad")
+        if not comunidades and not request.args.get("comunidades_aplicadas"):
+            comunidades = None
+        try:
+            return jsonify(detalle_dia_inhabil(
+                app.config["RUTA_BD"], fecha=request.args.get("fecha", ""),
+                comunidades=comunidades,
+            ))
+        except (ErrorConsultaSQLite, ValueError) as error:
+            return jsonify({"error": str(error)}), 400
+
     @app.post("/api/cobertura/actualizar")
     def api_actualizar_cobertura():
         datos = request.get_json(silent=True) or {}
@@ -500,6 +612,19 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             return jsonify({"actualizacion": False})
         trabajo, creado = app.config["GESTOR_ACTUALIZACIONES"].iniciar(decision["fechas_pendientes"])
         return jsonify({"actualizacion": True, "creado": creado, "trabajo": trabajo.serializar()}), 202
+
+    @app.post("/api/cobertura/actualizar-todas")
+    def api_actualizar_todas_cobertura():
+        try:
+            decision = determinar_actualizacion_intervalo(
+                app.config["RUTA_BD"], fecha_desde="2004-01-01", fecha_hasta=datetime.today().date().isoformat(),
+            )
+        except (ErrorConsultaSQLite, ValueError) as error:
+            return jsonify({"error": str(error)}), 400
+        if not decision["requiere_actualizacion"]:
+            return jsonify({"actualizacion": False, "alcance": "todas"})
+        trabajo, creado = app.config["GESTOR_ACTUALIZACIONES"].iniciar(decision["fechas_pendientes"])
+        return jsonify({"actualizacion": True, "alcance": "todas", "creado": creado, "trabajo": trabajo.serializar()}), 202
 
     @app.get("/oposiciones/<int:oposicion_id>")
     def detalle_oposicion(oposicion_id):
@@ -570,6 +695,9 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
         ambito = request.args.get("ambito") or None
         sistema = request.args.get("sistema") or None
         turno = request.args.get("turno") or None
+        plazo = (request.args.get("plazo") or "").strip()
+        if plazo not in {"", "todas", "en_plazo"}:
+            return jsonify({"error": "plazo no válido: debe ser 'todas' o 'en_plazo'"}), 400
         tipo_personal = [valor for valor in request.args.getlist("tipo_personal") if valor]
         invalidos_tipo = sorted(set(tipo_personal) - set(TIPOS_PERSONAL))
         if invalidos_tipo:
@@ -599,7 +727,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                 version, fecha_inicio=fecha_inicio, fecha_final=fecha_final,
                 puesto=puesto, provincia=provincia, ambito=ambito,
                 sistema=sistema, turno=turno, tipo_personal=tipo_personal,
-                comparadores=comparadores,
+                comparadores=comparadores, plazo=plazo,
             )
             cache = app.extensions["cache_estadisticas"]
             entrada = cache.obtener(clave)
@@ -616,7 +744,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
             filtros_carga = {
                 "desde": fecha_inicio, "hasta": fecha_final,
                 "provincia": provincia, "ambito": ambito, "sistema": sistema, "turno": turno,
-                "tipo_personal": tipo_personal,
+                "tipo_personal": tipo_personal, "plazo": plazo,
             }
             datos_preparados = cargar_datos_estadisticas_sqlite(ruta, **filtros_carga)
             datos_principales = filtrar_datos(datos_preparados, puesto=puesto, modo_sql=True) if puesto else datos_preparados
@@ -637,6 +765,7 @@ def crear_app(ruta_bd=None, gestor_actualizaciones=None, gestor_exportacion_xlsx
                     "sistema": sistema,
                     "turno": turno,
                     "tipo_personal": tipo_personal,
+                    "plazo": plazo,
                 },
                 "opciones": opciones,
                 "resumen": {

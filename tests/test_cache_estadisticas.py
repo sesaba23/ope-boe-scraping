@@ -132,8 +132,8 @@ def test_multiseleccion_comparte_calculo_y_preserva_filtros_observables():
     ]
     for respuesta in (primera, segunda, tercera):
         datos = respuesta.get_json()
-        assert datos["resumen"]["total_registros"] == 74177
-        assert sum(fila["registros"] for fila in datos["distribucion_tipo_personal"]) == 74177
+        assert datos["resumen"]["total_registros"] == 74446
+        assert sum(fila["registros"] for fila in datos["distribucion_tipo_personal"]) == 74446
 
 
 @pytest.mark.parametrize("url", [
@@ -180,8 +180,8 @@ def test_distribucion_global_siete_categorias_miss_hit():
     for _ in range(2):
         datos = cliente.get("/api/estadisticas").get_json()
         assert [x["tipo_personal"] for x in datos["distribucion_tipo_personal"]] == TIPOS
-        assert sum(x["registros"] for x in datos["distribucion_tipo_personal"]) == 109429
-        assert datos["resumen"]["total_registros"] == 109429
+        assert sum(x["registros"] for x in datos["distribucion_tipo_personal"]) == 109698
+        assert datos["resumen"]["total_registros"] == 109698
 
 
 def test_filtro_funcionario_reconcilia_sql_en_miss_y_hit():

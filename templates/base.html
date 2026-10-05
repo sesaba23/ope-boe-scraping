@@ -19,6 +19,7 @@
                 <a href="{{ url_for('oposiciones') }}"{% if seccion_activa == 'oposiciones' %} aria-current="page"{% endif %}>Oposiciones</a>
                 <a href="{{ url_for('pagina_estadisticas') }}"{% if seccion_activa == 'estadisticas' %} aria-current="page"{% endif %}>Estadísticas</a>
                 <a href="{{ url_for('cobertura') }}"{% if seccion_activa == 'cobertura' %} aria-current="page"{% endif %}>Cobertura</a>
+                <a href="{{ url_for('dias_inhabiles') }}"{% if seccion_activa == 'dias_inhabiles' %} aria-current="page"{% endif %}>Días inhábiles</a>
                 <a href="{{ url_for('administracion_base_datos') }}"{% if seccion_activa == 'administracion' %} aria-current="page"{% endif %}>Administración</a>
                 <a href="{{ url_for('acerca_de') }}"{% if seccion_activa == 'acerca' %} aria-current="page"{% endif %}>Acerca de</a>
                 <a href="{{ url_for('contacto') }}"{% if seccion_activa == 'contacto' %} aria-current="page"{% endif %}>Contacto</a>

@@ -153,6 +153,8 @@ function actualizarOpciones(opciones, filtros) {
         valores.forEach((valor) => desplegable.add(new Option(valor, valor)));
         desplegable.value = seleccionado || "";
     });
+    const plazo = document.querySelector("#plazo");
+    plazo.value = filtros.plazo || "todas";
     const contenedor = document.querySelector("#tipos-personal-filtros");
     contenedor.className = "filter-choice-grid";
     const seleccionados = new Set(filtros.tipo_personal || []);
@@ -187,6 +189,7 @@ function actualizarMetadatos(datos) {
     if (datos.filtros.ambito) filtros.push(`Ámbito: ${datos.filtros.ambito}`);
     if (datos.filtros.sistema) filtros.push(`Sistema: ${datos.filtros.sistema}`);
     if (datos.filtros.turno) filtros.push(`Turno: ${datos.filtros.turno}`);
+    if (datos.filtros.plazo === "en_plazo") filtros.push("Plazo de solicitud: En plazo");
     if ((datos.filtros.tipo_personal || []).length) filtros.push(`Tipo de personal: ${datos.filtros.tipo_personal.join(", ")}`);
     document.querySelector("#filtros-activos").textContent = filtros.length ? filtros.join(" · ") : "Sin filtros aplicados";
 }

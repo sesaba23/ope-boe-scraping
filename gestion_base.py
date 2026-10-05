@@ -23,7 +23,7 @@ RELEASE_TAG = "database-latest"
 ASSET_DATABASE = "boe.db"
 ASSET_MANIFEST = "manifest.json"
 FORMAT_VERSION = 1
-SCHEMA_REQUERIDO = 7
+SCHEMA_REQUERIDO = 8
 _LOCK_OPERACION_BASE = Lock()
 
 
@@ -178,9 +178,9 @@ def crear_manifest(ruta: str | Path, *, publicado_en: datetime | None = None) ->
     estado = verificar_integridad(ruta)
     # Las copias publicadas con schema 6 siguen siendo legibles y forman parte
     # del contrato de actualización; al descargarlas, ``asegurar_base_local``
-    # las eleva de forma atómica hasta schema 7. Las nuevas publicaciones
+    # las eleva de forma atómica hasta el schema requerido. Las nuevas publicaciones
     # locales usan siempre el schema requerido actual.
-    if estado["schema_version"] not in {6, SCHEMA_REQUERIDO}:
+    if estado["schema_version"] not in {6, 7, SCHEMA_REQUERIDO}:
         raise GestionBaseError(
             f"Schema incompatible: {estado['schema_version']} (requerido {SCHEMA_REQUERIDO})"
         )
@@ -473,7 +473,8 @@ def migrar_si_necesario(ruta: str | Path) -> dict:
     import migrar_esquema_sqlite
     from migrar_tipo_personal import migrar as migrar_v6_v7_tipo_personal
     funciones = {5: migrar_esquema_sqlite.migrar_v5_v6_municipios_historicos,
-                 6: migrar_v6_v7_tipo_personal}
+                 6: migrar_v6_v7_tipo_personal,
+                 7: migrar_esquema_sqlite.migrar_v7_v8_plazos}
     if actual not in funciones:
         raise GestionBaseError(f"No hay migración explícita desde schema_version {actual} hasta {SCHEMA_REQUERIDO}")
     copia = base_datos.crear_backup(ruta)

@@ -81,7 +81,10 @@ def _filas(df, columnas):
 def importar(conexion, hojas, *, progreso=True):
     """Inserta las hojas en una única transacción; devuelve conteos."""
     publicaciones = hojas["Publicaciones"]
-    oposiciones = hojas["Oposiciones"]
+    oposiciones = hojas["Oposiciones"].copy()
+    for columna in ("Plazo_solicitudes", "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo"):
+        if columna not in oposiciones.columns:
+            oposiciones[columna] = None
     from migrar_esquema_sqlite import referencias_administrativas
     conteos = {}
     with base_datos.transaccion(conexion):
@@ -109,12 +112,15 @@ def importar(conexion, hojas, *, progreso=True):
             (num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
              normalizar_fecha(fecha), fecha, publicacion, enlace, municipio, provincia,
              *referencias_administrativas(conexion, municipio, provincia, ""),
-             latitud, longitud, habitantes, publicacion_id, version, analisis)
+             latitud, longitud, habitantes, publicacion_id, version, analisis,
+             plazo_solicitudes, fecha_inicio_plazo, fecha_fin_plazo, plazo_calculo, evidencia_plazo)
             for num, puesto, puesto_normalizado, administracion, escala, subescala, clase, sistema, turno,
             fecha, publicacion, enlace, municipio, provincia, latitud, longitud,
-            habitantes, publicacion_id, version, analisis in _filas(
+            habitantes, publicacion_id, version, analisis, plazo_solicitudes,
+            fecha_inicio_plazo, fecha_fin_plazo, plazo_calculo, evidencia_plazo in _filas(
                 oposiciones,
-                ["Num_plazas", "Puesto", "Puesto_normalizado", *columnas_oposiciones[2:]],
+                ["Num_plazas", "Puesto", "Puesto_normalizado", *columnas_oposiciones[2:],
+                 "Plazo_solicitudes", "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo"],
             )
         )
         if progreso:
@@ -125,23 +131,24 @@ def importar(conexion, hojas, *, progreso=True):
                 turno, fecha_boe, fecha_boe_original, publicacion, enlace, municipio,
                 provincia, municipio_codigo_ine, provincia_id, comunidad_id,
                 latitud, longitud, habitantes, publicacion_id,
-                version_extractor, fecha_analisis
-            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                version_extractor, fecha_analisis, plazo_solicitudes, fecha_inicio_plazo,
+                fecha_fin_plazo, plazo_calculo, evidencia_plazo
+            ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             filas,
         )
         conteos["oposiciones"] = len(oposiciones)
 
-        # Las bases nuevas creadas por ``migrar`` ya son schema 7. La
+        # Las bases nuevas creadas por ``migrar`` ya son schema 8. La
         # clasificación se hace aquí, dentro de la misma transacción de alta;
         # los snapshots/fixtures antiguos sin columna siguen usando el camino
         # histórico y no se modifican.
         columnas_bd = {fila[1] for fila in conexion.execute("PRAGMA table_info(oposiciones)")}
         metadata = base_datos.leer_metadata(conexion)
-        if "tipo_personal" in columnas_bd and metadata.get("schema_version") == "7":
+        if "tipo_personal" in columnas_bd and metadata.get("schema_version") in {"7", "8"}:
             from tipo_personal import VERSION, clasificar_tipo_personal
             if metadata.get("tipo_personal_version") != VERSION:
                 raise RuntimeError(
-                    "La base schema 7 no declara una versión compatible de tipo_personal"
+                    "La base schema 7/8 no declara una versión compatible de tipo_personal"
                 )
             publicaciones = {
                 fila[0]: dict(zip(("publicacion_id", "enlace", "fecha_boe", "fecha_boe_original",
@@ -215,15 +222,19 @@ def _fingerprint(registros):
 def _registros_excel(hojas, hoja):
     columnas = {
         "Búsquedas": ["Código"],
-        "Oposiciones": ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis"],
+        "Oposiciones": ["Num_plazas", "Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Latitud", "Longitud", "Habitantes", "Publicacion_ID", "Version_extractor", "Fecha_analisis", "Plazo_solicitudes", "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo"],
         "Log-errores": ["Fecha", "Tipo de error", "Enlace Web"],
         "Publicaciones": ["Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis", "Coincidencias"],
         "Cobertura": ["Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta", "Numero_publicaciones"],
     }[hoja]
-    registros = list(_filas(hojas[hoja], columnas))
+    fuente = hojas[hoja].copy()
+    for columna in columnas:
+        if columna not in fuente.columns:
+            fuente[columna] = None
+    registros = list(_filas(fuente, columnas))
     texto_por_hoja = {
         "Búsquedas": {"Código"},
-        "Oposiciones": {"Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Publicacion_ID", "Version_extractor", "Fecha_analisis"},
+        "Oposiciones": {"Puesto", "Puesto_normalizado", "Administración", "Escala", "Subescala", "Clase", "Sistema", "Turno", "Fecha_boe", "Publicación", "Enlace", "Municipio", "Provincia", "Publicacion_ID", "Version_extractor", "Fecha_analisis", "Plazo_solicitudes", "Fecha_inicio_plazo", "Fecha_fin_plazo", "Plazo_calculo", "Evidencia_plazo"},
         "Log-errores": {"Fecha", "Tipo de error", "Enlace Web"},
         "Publicaciones": {"Publicacion_ID", "Enlace", "Fecha_BOE", "Titulo_original", "Fecha_ultimo_analisis", "Version_extractor", "Estado_analisis"},
         "Cobertura": {"Fecha", "Estado", "Version_extractor", "Fecha_ultima_consulta"},
@@ -246,7 +257,7 @@ def _registros_excel(hojas, hoja):
 def _registros_sqlite(conexion, hoja):
     consultas = {
         "Búsquedas": "SELECT codigo FROM busquedas",
-        "Oposiciones": "SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis FROM oposiciones",
+        "Oposiciones": "SELECT num_plazas,puesto,puesto_normalizado,administracion,escala,subescala,clase,sistema,turno,fecha_boe_original,publicacion,enlace,municipio,provincia,latitud,longitud,habitantes,publicacion_id,version_extractor,fecha_analisis,plazo_solicitudes,fecha_inicio_plazo,fecha_fin_plazo,plazo_calculo,evidencia_plazo FROM oposiciones",
         "Log-errores": "SELECT fecha,tipo_error,enlace_web FROM log_errores",
         "Publicaciones": "SELECT publicacion_id,enlace,fecha_boe_original,titulo_original,fecha_ultimo_analisis,version_extractor,estado_analisis,coincidencias FROM publicaciones",
         "Cobertura": "SELECT fecha,estado,version_extractor,fecha_ultima_consulta,numero_publicaciones FROM cobertura",
@@ -344,7 +355,7 @@ def migrar(ruta_excel="BOE-oposiciones.xlsx", destino="datos/boe.db", *, recrear
                 "DEFAULT 'Otros' CHECK(tipo_personal IN "
                 "('Funcionario','Laboral','Otros'))"
             )
-            base_datos.guardar_metadata(conexion, schema_version=7, data_version=0)
+            base_datos.guardar_metadata(conexion, schema_version=8, data_version=0)
             conexion.execute(
                 "INSERT INTO metadata(clave,valor) VALUES ('tipo_personal_version',?)",
                 (TIPO_PERSONAL_VERSION,),

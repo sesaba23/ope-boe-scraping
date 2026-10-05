@@ -149,6 +149,17 @@ def extraer_publicaciones_2b_api(resultado_sumario):
     return {"estado": "CON_PUBLICACIONES", "publicaciones": publicaciones}
 
 
+def extraer_calendarios_api(resultado_sumario, anio_objetivo=None):
+    """Extrae candidatos de calendarios desde todas las secciones del sumario.
+
+    Se mantiene separado del extractor de II.B para no ampliar el universo de
+    publicaciones que consume el pipeline de oposiciones.
+    """
+    from calendarios_festivos import extraer_candidatos_sumario
+
+    return extraer_candidatos_sumario(resultado_sumario, anio_objetivo=anio_objetivo)
+
+
 def _normalizar_fecha(valor):
     if isinstance(valor, datetime):
         valor = valor.date()
